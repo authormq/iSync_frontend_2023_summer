@@ -12,6 +12,7 @@
         @click="handleClick(img.hint)"
       >
     </StylishSlider>
+    <h1>来自 mq 的测试</h1>
   </div>
 </template>
 

@@ -1,0 +1,91 @@
+body,
+h1, h2, h3, h4, h5, h6,
+hr,
+p, pre,
+blockquote,
+dl, dt, dd, ul, ol, li,
+form, fieldset, legend, input, button, textarea,
+th, td {
+    /* 常见标签的内外边距 */
+    margin: 0;
+    padding: 0;
+}
+
+ul, ol {
+    /* 列表符号 */
+    list-style: none;
+}
+
+img {
+    /* 图片显示方式 */
+    display: block;
+    border: 0;
+}
+
+b, strong {
+    /* 强调性文字不加粗 */
+    font-weight: normal;
+}
+
+i, em {
+    /* 强调性文字不倾斜 */
+    font-style: normal;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    /* 标题字体 */
+    font-size: 100%;
+    font-weight: normal;
+}
+
+u, s, ins, del {
+    /* 删除线和下划线 */
+    text-decoration: none;
+}
+
+table {
+    /* 表格默认样式 */
+    border: 1px solid #000;     /* 默认边框 */
+    border-spacing: 0;            /* 单元格取消间隔 */
+    border-collapse: collapse;    /* 单元格边框合并 */
+}
+
+th, td {
+    /* 单元格默认边框 */
+    border: 1px solid #000;
+}
+
+input, button {
+    /* 删除轮廓 */
+    outline: none;
+    border: none;
+}
+
+a {
+    /* 超链接默认样式 */
+    text-decoration: none;
+    color: #000;
+}
+
+a:hover {
+    /* 超链接悬浮样式 */
+    text-decoration: none;
+    color: #888;
+}
+
+/* 左浮动 */
+.leftfix {
+    float: left;
+}
+
+/* 右浮动 */
+.rightfix {
+    float: right;
+}
+
+/* 清除浮动 */
+.clearfix::after {
+    content: "";
+    display: block;
+    clear: both;
+}

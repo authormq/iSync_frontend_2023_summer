@@ -1,3 +1,6 @@
+* {
+    font-size: 16px;
+}
 body,
 h1, h2, h3, h4, h5, h6,
 hr,
@@ -65,12 +68,6 @@ a {
     /* 超链接默认样式 */
     text-decoration: none;
     color: #000;
-}
-
-a:hover {
-    /* 超链接悬浮样式 */
-    text-decoration: none;
-    color: #888;
 }
 
 /* 左浮动 */

@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import StylishSlider from '../components/StylishSlider.vue'
+import StylishSlider from '../components/Stylish/StylishSlider.vue'
 export default {
   name: 'HomeView',
   components: {

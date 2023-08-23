@@ -12,16 +12,18 @@
         <li>nav4</li>
         <li>nav5</li>
       </ul>
-      <div 
-        class="user-avatar"
-        @mouseover="showAvatarHint = true"
-        @mouseleave="handleMouseLeaveAvatar"
-      >
+      <div class="user-avatar-container">
+        <img 
+          class="user-avatar" 
+          src="/src/assets/avatar.jpeg"
+          @mouseover="avatarIsHovered = true; showAvatarHint = true"
+          @mouseleave="handleMouseLeaveAvatar"
+        >
         <div 
           class="user-avatar-hint" 
           v-if="showAvatarHint"
           @mouseover="avatarHintIsHovered = true"
-          @mouseleave="avatarHintIsHovered = false; showAvatarHint = false"
+          @mouseleave="handleMouseLeaveAvatarHint"
         >
           <button @click="showLoginModal = true">立即登录</button>
           <div>首次使用？<a @click="showRegisterModal = true">点击以注册</a></div>
@@ -58,6 +60,7 @@ export default {
   },
   data() {
     return { 
+      avatarIsHovered: false,
       showAvatarHint: false,
       avatarHintIsHovered: false,
       showLoginModal: false,
@@ -67,8 +70,17 @@ export default {
   },
   methods: {
     handleMouseLeaveAvatar() {
+      this.avatarIsHovered = false
       setTimeout(() => {
-        if (!this.avatarHintIsHovered) {
+        if (!this.avatarIsHovered && !this.avatarHintIsHovered) {
+          this.showAvatarHint = false
+        }
+      }, 300);
+    },
+    handleMouseLeaveAvatarHint() {
+      this.avatarHintIsHovered = false
+      setTimeout(() => {
+        if (!this.avatarIsHovered && !this.avatarHintIsHovered) {
           this.showAvatarHint = false
         }
       }, 300);
@@ -116,13 +128,13 @@ export default {
 .header-nav>li:last-child {
   border-right: 0;
 }
-
-.user-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: bisque;
+.user-avatar-container {
   position: relative;
+}
+.user-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
   cursor: pointer;
 }
 

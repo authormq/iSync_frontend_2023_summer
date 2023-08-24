@@ -40,7 +40,8 @@ export default {
         'userId': '这是用户id',
         'avatar': '这是用户头像',
         'nickname': '这是昵称',
-        'realname': '这是真实姓名',
+        'firstName': '这是名',
+        'lastName':'这是姓',
         'mailAddress': '这是邮箱',
         'Identity': '这是身份(团队创建者)'
       }],
@@ -49,14 +50,16 @@ export default {
         'userId': '这是用户id',
         'avatar': '这是用户头像',
         'nickname': '这是昵称',
-        'realname': '这是真实姓名',
+        'firstName': '这是名',
+        'lastName': '这是姓',
         'mailAddress': '这是邮箱',
         'Identity': '这是身份(团队管理员)'
       }, {
         'userId': '这是用户id',
         'avatar': '这是用户头像',
         'nickname': '这是昵称',
-        'realname': '这是真实姓名',
+        'firstName': '这是名',
+        'lastName': '这是姓',
         'mailAddress': '这是邮箱',
         'Identity': '这是身份(团队管理员)'
       }],
@@ -65,14 +68,16 @@ export default {
         'userId': '这是用户id',
         'avatar': '这是用户头像',
         'nickname': '这是昵称',
-        'realname': '这是真实姓名',
+        'firstName': '这是名',
+        'lastName': '这是姓',
         'mailAddress': '这是邮箱',
         'Identity': '这是身份(普通成员)'
       }, {
         'userId': '这是用户id',
         'avatar': '这是用户头像',
         'nickname': '这是昵称',
-        'realname': '这是真实姓名',
+        'firstName': '这是名',
+        'lastName': '这是姓',
         'mailAddress': '这是邮箱',
         'Identity': '这是身份(普通成员)'
       }]

@@ -22,13 +22,14 @@ export default {
   data() {
     return {
       //临时数据。
-      //对于每一个item，要有id,群聊/ 私聊名称，聊天类型，群聊/ 私聊头像，新消息数量，最近一条消息的时间，最近一条消息的发送者姓名和内容,是否被@
+      //对于每一个item，要有id,群聊/ 私聊名称，聊天类型，群聊/ 私聊头像，群聊人数，新消息数量，最近一条消息的时间，最近一条消息的发送者用户名和内容,是否被@
       chatData:
         [{
           chatId:1,
           chatName: '群聊1',
           chatType: 'public',
           chatAvatar: '/src/assets/1.jpg',
+          population:10,
           newMessageCnt: 10,
           latestMessageTime: '12:12',
           latestSpeaker: 'User2',
@@ -40,6 +41,7 @@ export default {
           chatName: 'User2',
           chatType: 'personal',
           chatAvatar: '/src/assets/2.jpg',
+          population:2,
           newMessageCnt: 0,
           latestMessageTime: '昨天12:34',
           latestSpeaker: 'User1',

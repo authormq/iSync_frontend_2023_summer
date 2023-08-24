@@ -4,8 +4,8 @@
       <div></div>
       <div class="login-title">登录</div>
       <div class="close-icon" @click="handleClose">
-        <CloseIcon size="30"/>
-        </div>
+        <CloseIcon size="30" />
+      </div>
     </div>
     <div class="login-inputs">
       <StylishInput type="text" v-model:value="username" placeholder="用户名" spacing="30px" clearable />
@@ -50,8 +50,30 @@ export default {
       this.$emit('changeToFindPassword')
     },
     login() {
-      alert('未完成登录功能')
-    }
+      if (this.username.length < 1 || this.username.length > 150) {
+        alert('用户名长度不符合要求')
+        return
+      }
+      if (/^[\w]+$/.test(this.username) === false) {
+        alert('用户名格式不符合要求')
+        return
+      }
+      if (this.password.length < 8 || this.password.length > 20) {
+        alert('密码长度不符合要求')
+        return
+      }
+      let postData = {
+        username: this.username,
+        password: this.password
+      }
+      this.$http.post('/api/accounts/login/', postData).then((response) => {
+        alert('登陆成功')
+        this.$emit('flushUserData')
+        this.$emit('close')
+      }, (error) => {
+        alert(error)
+      })
+    }// alert('未完成登录功能')
   }
 }
 </script>
@@ -98,6 +120,7 @@ export default {
   cursor: pointer;
   font-size: 16px;
 }
+
 .login-buttons>button:hover {
   background-color: rgb(210, 210, 210);
 }
@@ -107,6 +130,7 @@ export default {
   color: rgba(100, 149, 237, 0.9);
   cursor: pointer;
 }
+
 .input-hint:hover {
   color: rgb(100, 149, 237);
   text-decoration: underline;

@@ -1,12 +1,10 @@
 <template>
   <TopNav />
   <RouterView />
-  <project-list-view />
 </template>
 
 <script setup>
 import TopNav from './components/TopNav/TopNav.vue'
-import ProjectListView from './views/team/subroute/ProjectListView.vue';
 </script>
 
 <style>

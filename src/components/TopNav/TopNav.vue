@@ -13,38 +13,21 @@
         <li>nav5</li>
       </ul>
       <div class="user-avatar-container">
-        <img 
-          class="user-avatar" 
-          src="/src/assets/avatar.jpeg"
-          @mouseover="avatarIsHovered = true; showAvatarHint = true"
-          @mouseleave="handleMouseLeaveAvatar"
-        >
-        <div 
-          class="user-avatar-hint" 
-          v-if="showAvatarHint"
-          @mouseover="avatarHintIsHovered = true"
-          @mouseleave="handleMouseLeaveAvatarHint"
-        >
+        <img class="user-avatar" :src="avatarUrl" @mouseover="avatarIsHovered = true; showAvatarHint = true"
+          @mouseleave="handleMouseLeaveAvatar">
+        <div class="user-avatar-hint" v-if="showAvatarHint" @mouseover="avatarHintIsHovered = true"
+          @mouseleave="handleMouseLeaveAvatarHint">
           <button @click="showLoginModal = true">立即登录</button>
           <div>首次使用？<a @click="showRegisterModal = true">点击以注册</a></div>
         </div>
       </div>
     </div>
   </div>
-  <Login 
-    :show="showLoginModal" 
-    @close="showLoginModal = false"
+  <Login :show="showLoginModal" @close="showLoginModal = false"
     @changeToRegister="showLoginModal = false; showRegisterModal = true;"
-    @changeToFindPassword="showLoginModal = false; showFindPasswordModal = true"
-  />
-  <Register 
-    :show="showRegisterModal"
-    @close="showRegisterModal = false"
-  />
-  <FindPassword
-    :show="showFindPasswordModal"
-    @close="showFindPasswordModal = false"
-  />
+    @changeToFindPassword="showLoginModal = false; showFindPasswordModal = true" @flushUserData="flushUserData" />
+  <Register :show="showRegisterModal" @close="showRegisterModal = false" />
+  <FindPassword :show="showFindPasswordModal" @close="showFindPasswordModal = false" />
 </template>
 
 <script>
@@ -59,13 +42,14 @@ export default {
     FindPassword
   },
   data() {
-    return { 
+    return {
       avatarIsHovered: false,
       showAvatarHint: false,
       avatarHintIsHovered: false,
       showLoginModal: false,
       showRegisterModal: false,
-      showFindPasswordModal: false
+      showFindPasswordModal: false,
+      avatarUrl: '/src/assets/avatar.jpeg'
     }
   },
   methods: {
@@ -84,6 +68,14 @@ export default {
           this.showAvatarHint = false
         }
       }, 300);
+    },
+    flushUserData() {
+      this.$http.get(`/api/accounts/${this.$cookies.get('user_id')}/`).then((response) => {
+        this.avatarUrl = response.data.avatar
+      }, (error) => {
+        alert(error)
+      })
+
     }
   }
 }
@@ -98,10 +90,12 @@ export default {
   background-color: yellow;
   height: 60px;
 }
+
 .header-container>div {
   display: flex;
   align-items: center;
 }
+
 .header-left>div {
   display: inline-block;
 }
@@ -125,12 +119,15 @@ export default {
   padding: 0 20px;
   border-right: 1px solid black;
 }
+
 .header-nav>li:last-child {
   border-right: 0;
 }
+
 .user-avatar-container {
   position: relative;
 }
+
 .user-avatar {
   width: 50px;
   height: 50px;
@@ -164,13 +161,16 @@ export default {
   color: white;
   letter-spacing: 5px;
 }
+
 .user-avatar-hint button:hover {
   background-color: rgb(210, 210, 210);
 }
+
 .user-avatar-hint a {
   cursor: pointer;
-  color:cornflowerblue;
+  color: cornflowerblue;
 }
+
 .user-avatar-hint a:hover {
   text-decoration: underline;
 }

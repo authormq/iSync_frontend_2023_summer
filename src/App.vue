@@ -1,10 +1,12 @@
 <template>
   <!-- <TopNav /> -->
   <RouterView />
+  <UserView />
 </template>
 
 <script setup>
-  import TopNav from './components/TopNav/TopNav.vue'
+import TopNav from './components/TopNav/TopNav.vue'
+import UserView from './views/UserView.vue';
 </script>
 
 <style>

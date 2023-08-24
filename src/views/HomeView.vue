@@ -68,6 +68,8 @@
 <script>
 import HomeBanner from '../components/TopNav/HomeBanner.vue'
 import StylishSlider from '../components/Stylish/StylishSlider.vue'
+import ProjectView from './project/ProjectView.vue';
+import TeamView from './team/TeamView.vue';
 export default {
   name: 'HomeView',
   components: {

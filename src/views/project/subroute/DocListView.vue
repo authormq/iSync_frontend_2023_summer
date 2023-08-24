@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import DocListItem from src/components/ListItem/project/DocListItem.vue;
+import DocListItem from '/src/components/ListItem/project/DocListItem.vue'
 export default {
     name: 'DocListView',
     components:{

@@ -4,7 +4,7 @@
 </template>
 
 <script setup>
-import TopNav from './components/TopNav/TopNav.vue'
+  import TopNav from './components/TopNav/TopNav.vue'
 </script>
 
 <style>

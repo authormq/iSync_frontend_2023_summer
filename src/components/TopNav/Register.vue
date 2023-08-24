@@ -8,7 +8,7 @@
         </div>
     </div>
     <div class="register-inputs">
-      <StylishInput type="text" v-model:value="username" placeholder="用户名" spacing="30px" clearable>
+      <StylishInput type="text" v-model:value="username" placeholder="用户名" spacing="30px" clearable autofocus>
         <template #hint>
           <div class="input-hint">用户名将作为你登录的账号</div>
         </template>

@@ -8,7 +8,7 @@
         </div>
     </div>
     <div class="pwd-inputs">
-      <StylishInput type="text" v-model:value="username" placeholder="用户名" spacing="30px" clearable />
+      <StylishInput type="text" v-model:value="username" placeholder="用户名" spacing="30px" clearable autofocus/>
       <StylishInput type="text" v-model:value="email" placeholder="输入邮箱以验证" spacing="30px" clearable>
         <template #hint>
           <div class="input-hint">确认后，一封重置密码的邮件将发送到此邮箱</div>

@@ -1,6 +1,6 @@
 <!-- 团队信息 -->
 <template>
-  
+
 </template>
 
 <script>

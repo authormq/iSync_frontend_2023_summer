@@ -8,7 +8,7 @@
         </div>
     </div>
     <div class="login-inputs">
-      <StylishInput type="text" v-model:value="username" placeholder="用户名" spacing="30px" clearable />
+      <StylishInput type="text" v-model:value="username" placeholder="用户名" spacing="30px" clearable autofocus/>
       <StylishInput type="password" v-model:value="password" placeholder="密码" spacing="35px" clearable>
         <template #hint>
           <span class="input-hint" @click="changeToFindPassword">找回密码</span>

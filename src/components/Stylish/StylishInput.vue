@@ -7,7 +7,7 @@
     <input ref="input" class="stylish-input" :type="type" :value="value" 
       :placeholder="placeholder" @input="change" 
       @focus="isFocused = true" @blur="handleBlur" 
-      :autofocus="autofocus" :autocomplete="autocomplete"
+      :autocomplete="autocomplete"
     >
     <div>
       <slot name="hint"></slot>
@@ -152,6 +152,9 @@ export default {
       if (this.max) this.$refs.input.max = this.max
       if (this.min) this.$refs.input.min = this.min
       if (this.step) this.$refs.input.step = this.step
+    }
+    if (this.autofocus) {
+      this.$refs.input.focus()
     }
   },
   methods: {
@@ -505,17 +508,18 @@ export default {
   font-family: var(--stylish-input-ph-font-family);
 }
 /* hover 样式 */
-.st/* ylish-input:hover {
+/*.st ylish-input:hover {
   outline: var(--stylish-input-hover-outline);
   border: var(--stylish-input-hover-border);
   box-shadow: var(--stylish-input-hover-box-shadow);
 } */
 /* focus 样式 */
-/* .stylish-input:focus-visible {
-  outline: var(--stylish-input-focus-outline);
+.stylish-input:focus {
+  outline: 1px solid black;
+  /* outline: var(--stylish-input-focus-outline);
   border: var(--stylish-input-focus-border);
-  box-shadow: var(--stylish-input-focus-box-shadow);
-} */
+  box-shadow: var(--stylish-input-focus-box-shadow); */
+}
 
 .stylish-input-count {
   display: inline-block;

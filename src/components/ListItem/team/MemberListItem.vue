@@ -1,12 +1,10 @@
 <template>
-
+  
 </template>
 
 <script>
 export default {
-  name: 'MainView',
-  components: {
-  }
+  name: 'MemberListItem'
 }
 </script>
 

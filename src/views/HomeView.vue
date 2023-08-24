@@ -1,3 +1,4 @@
+<!-- 首页（未登录）展示 -->
 <template>
   <div class="container">
     <h1>测试一下我写的轮播图</h1>

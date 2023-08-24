@@ -1,6 +1,7 @@
 <!-- 登录后的展示页 -->
 <!-- zby -->
 <template>
+  <topNav />
   <div class="outer-container">
     <ul>
       <li>团队信息</li>
@@ -21,9 +22,11 @@
 </template>
 
 <script>
+import TopNav from '../../components/TopNav/TopNav.vue';
 export default {
   name: 'TeamView',
   components: {
+    TopNav
   }
 }
 </script>

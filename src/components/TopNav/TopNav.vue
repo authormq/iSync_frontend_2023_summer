@@ -14,18 +14,23 @@
       </ul>
       <div class="user-avatar-container">
         <img class="user-avatar" :src="avatarUrl" @mouseover="avatarIsHovered = true; showAvatarHint = true"
-          @mouseleave="handleMouseLeaveAvatar">
+          @mouseleave="handleMouseLeaveAvatar" @click="handleClickAvatar">
         <div class="user-avatar-hint" v-if="showAvatarHint" @mouseover="avatarHintIsHovered = true"
           @mouseleave="handleMouseLeaveAvatarHint">
-          <button @click="showLoginModal = true">立即登录</button>
-          <div>首次使用？<a @click="showRegisterModal = true">点击以注册</a></div>
+          <div v-if="this.$cookies.isKey('user_id') == false">
+            <button @click="showLoginModal = true">立即登录</button>
+            <div>首次使用？<a @click="showRegisterModal = true">点击以注册</a></div>
+          </div>
+          <div v-else>
+            <button @click="logout">登出</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
   <Login :show="showLoginModal" @close="showLoginModal = false"
     @changeToRegister="showLoginModal = false; showRegisterModal = true;"
-    @changeToFindPassword="showLoginModal = false; showFindPasswordModal = true" @flushUserData="flushUserData" />
+    @changeToFindPassword="showLoginModal = false; showFindPasswordModal = true" @flushUserData="handleFlushUserData" />
   <Register :show="showRegisterModal" @close="showRegisterModal = false" />
   <FindPassword :show="showFindPasswordModal" @close="showFindPasswordModal = false" />
 </template>
@@ -41,6 +46,9 @@ export default {
     Register,
     FindPassword
   },
+  mounted() {
+    this.handleFlushUserData()
+  },
   data() {
     return {
       avatarIsHovered: false,
@@ -49,7 +57,7 @@ export default {
       showLoginModal: false,
       showRegisterModal: false,
       showFindPasswordModal: false,
-      avatarUrl: '/src/assets/avatar.jpeg'
+      avatarUrl: ''
     }
   },
   methods: {
@@ -69,13 +77,34 @@ export default {
         }
       }, 300);
     },
-    flushUserData() {
-      this.$http.get(`/api/accounts/${this.$cookies.get('user_id')}/`).then((response) => {
-        this.avatarUrl = response.data.avatar
+    logout() {
+      this.$http.get('/api/accounts/logout/').then((response) => {
+        alert('登出成功')
+        this.handleFlushUserData()
+        this.$router.push('/')
       }, (error) => {
-        alert(error)
+        alert(error.response.data)
       })
-
+    },
+    handleClickAvatar() {
+      if (this.$cookies.isKey('user_id') == true) {
+        this.$router.push('/user')
+      }
+      else {
+        this.showLoginModal=true
+      }
+    },
+    handleFlushUserData() {
+      if (this.$cookies.isKey('user_id') == true) {
+        this.$http.get(`/api/accounts/${this.$cookies.get('user_id')}/`).then((response) => {
+          this.avatarUrl = response.data.avatar
+        }, (error) => {
+          alert(error.response.data)
+        })
+      }
+      else {
+        this.avatarUrl= '/src/assets/avatar.jpeg'
+      }
     }
   }
 }

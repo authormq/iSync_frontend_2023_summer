@@ -103,13 +103,19 @@ export default {
         first_name: this.firstname,
         last_name: this.lastname,
         password: this.password,
-        password_confirm: this.password_confirm,
+        password_confirm: this.confirmedPassword,
         email: this.email
       }
       this.$http.post('/api/accounts/register/', postData).then((response) => {
         alert('注册成功,请前往邮箱验证后方可登录')
+        this.handleClose()
       }, (error) => {
-        alert('注册失败', error)
+        if (error.response.data.errors !== undefined) {
+          alert(error.response.data.errors)
+        }
+        else {
+          alert('注册失败')
+        }
       })
       return
     }

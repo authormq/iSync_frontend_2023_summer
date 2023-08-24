@@ -10,7 +10,7 @@
       <router-link to="/project/1/page">page</router-link>
       <router-link to="/project/1/doc">doc</router-link>
     </div>
-    <!-- 这里目前有一个不正常的地方，这里应该只是显示上面四个模块对应的信息，但是这样会直接把本来应该主页的轮播图给挤占掉 -->
+    <!-- 这里目前有一个不正常的地方，这里应该只是显示上面2个模块对应的信息，但是这样会直接把本来应该主页的轮播图给挤占掉 -->
     <RouterView></RouterView>
   </div>
 </template>

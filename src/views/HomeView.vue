@@ -1,6 +1,8 @@
 <!-- 首页（未登录）展示 -->
 <template>
   <div class="container">
+    <TeamView></TeamView>
+    <ProjectView></ProjectView>
     <h1>测试一下我写的轮播图</h1>
     <div class="hint">图片比较大，切换时可能因为加载速度慢而不流畅</div>
     <StylishSlider
@@ -19,11 +21,15 @@
 
 <script>
 import StylishSlider from '../components/Stylish/StylishSlider.vue'
+import ProjectView from './project/ProjectView.vue';
+import TeamView from './team/TeamView.vue';
 export default {
   name: 'HomeView',
   components: {
-    StylishSlider
-  },
+    StylishSlider,
+    TeamView,
+    ProjectView
+},
   data() {
     return {
       images: [

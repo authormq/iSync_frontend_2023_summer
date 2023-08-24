@@ -1,5 +1,9 @@
 <!-- 团队成员列表 -->
 <template>
+  <div>
+    <input type="text">
+    <button>这是搜索按钮</button>
+  </div>
   <div class="outer-container">
     <!-- 顶部盒子用来放置邀请成员按钮，仅创建者和管理员可用 -->
     <div class="top-box">
@@ -33,8 +37,8 @@ export default {
     return {
       //团队创建者数据
       founderData: [{
-        'id': '这是用户id',
-        'avatar':'这是用户头像',
+        'userId': '这是用户id',
+        'avatar': '这是用户头像',
         'nickname': '这是昵称',
         'realname': '这是真实姓名',
         'mailAddress': '这是邮箱',
@@ -42,14 +46,14 @@ export default {
       }],
       //团队管理员数据
       adminData: [{
-        'id': '这是用户id',
+        'userId': '这是用户id',
         'avatar': '这是用户头像',
         'nickname': '这是昵称',
         'realname': '这是真实姓名',
         'mailAddress': '这是邮箱',
         'Identity': '这是身份(团队管理员)'
       }, {
-        'id': '这是用户id',
+        'userId': '这是用户id',
         'avatar': '这是用户头像',
         'nickname': '这是昵称',
         'realname': '这是真实姓名',
@@ -58,14 +62,14 @@ export default {
       }],
       //团队普通成员数据
       ordinaryData: [{
-        'id': '这是用户id',
+        'userId': '这是用户id',
         'avatar': '这是用户头像',
         'nickname': '这是昵称',
         'realname': '这是真实姓名',
         'mailAddress': '这是邮箱',
         'Identity': '这是身份(普通成员)'
       }, {
-        'id': '这是用户id',
+        'userId': '这是用户id',
         'avatar': '这是用户头像',
         'nickname': '这是昵称',
         'realname': '这是真实姓名',

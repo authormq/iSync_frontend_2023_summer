@@ -105,7 +105,7 @@ export default {
     }
   },
   mounted() {
-    this.$http.get('/api/accounts/1/').then(
+    this.$http.get('/api/accounts/4/').then(
       (response) => {
         this.nickname = response.data.username
         this.first_name = response.data.first_name
@@ -117,7 +117,7 @@ export default {
         if (this.intro.length === 0) this.intro = '暂无简介。'
       },
       (error) => {
-        console.error(error)
+        console.log(error)
       }
     )
   },

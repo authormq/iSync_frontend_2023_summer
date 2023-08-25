@@ -107,6 +107,8 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
+  position: relative;
+  z-index: 100;
   
   box-shadow: 2px 2px 3px lightgrey;
 }

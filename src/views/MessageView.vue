@@ -3,64 +3,75 @@
   <div>This is message Page</div>
   <div>
     <ul>
-      <li><router-link to="/message/all">全部消息</router-link></li>
-      <li><router-link to="/message/unread">未读消息</router-link></li>
+      <li @click="showAllMsg=true">全部消息</li>
+      <li @click="showAllMsg=false">未读消息</li>
     </ul>
-    <RouterView></RouterView>
+    <!-- mq: 简单的逻辑展示 -->
+    <div v-if="showAllMsg">
+      <MessageItem v-for="msg in allMessage" :key="msg" :msg="msg"></MessageItem>
+    </div>
+    <div v-else>
+      <MessageItem v-for="msg in unReadMessage" :key="msg" :msg="msg"></MessageItem>
+    </div>
   </div>
 </template>
 
+
 <script>
+import MessageItem from '../components/ListItem/message/MessageItem.vue'
 export default {
   name: 'MessageView',
+  components: { MessageItem },
   data() {
     return {
-      message: {
-        timeStamp: '',
-        sender: '',
-        receiver: '',
-        isRead: false,
-        content: ''
-      },
-      allMessage: [{
-        timeStamp: '1',
-        sender: '1',
-        receiver: '1',
-        isRead: false,
-        content: '1'
-      },
-    {
-      timeStamp: '2',
-        sender: '2',
-        receiver: '2',
-        isRead: false,
-        content: '2'
-    }],
+      showAllMsg: true,
+      allMessage: [
+        {
+          timeStamp: '1',
+          sender: '1',
+          receiver: '1',
+          isRead: false,
+          content: '1'
+        },
+        {
+          timeStamp: '2',
+          sender: '2',
+          receiver: '2',
+          isRead: true,
+          content: '2'
+        },
+        {
+          timeStamp: '3',
+          sender: '3',
+          receiver: '3',
+          isRead: false,
+          content: '3'
+        }
+      ],
       unReadMessage: []
-    }
+    };
   },
   methods: {
     handleReadStatus(message) {
       message.isRead = !message.isRead
-      let messageIdx = indexthis.unReadMessage.indexOf(message)
+      let messageIdx = this.unReadMessage.indexOf(message)
       if (messageIdx != -1) {
-        this.unReadMessage.slice(messageIdx, 1);
+        this.unReadMessage.splice(messageIdx, 1)
       } else {
-        this.unReadMessage.shift(message)
+        this.unReadMessage.unshift(message)
       }
     },
     divideUnReadMessage() {
-      let messageLen = this.allMessage.length
-      for (let i = 0; i < messageLen; i++) {
-        if (this.allMessage[i].isRead) {
-          this.unReadMessage.shift(this.allMessage[i])
-        }
-      }
+      this.unReadMessage = this.allMessage.filter(message => message.isRead == false)
     },
   },
+  mounted() {
+    // 这一行必须有，用来获取未读的信息
+    this.divideUnReadMessage()
+    // 具体需不需要这些函数，看后期后端怎么给我返回数据
+    this.$bus.on('sendChangeStatusSignal', this.handleReadStatus)
+  }
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

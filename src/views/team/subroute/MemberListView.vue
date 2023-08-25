@@ -36,52 +36,48 @@ export default {
   data() {
     return {
       //团队创建者数据
-      founderData: [{
-        'userId': '这是用户id',
-        'avatar': '这是用户头像',
-        'nickname': '这是昵称',
-        'firstName': '这是名',
-        'lastName':'这是姓',
-        'mailAddress': '这是邮箱',
-        'Identity': '这是身份(团队创建者)'
-      }],
+      founderData: [],
       //团队管理员数据
-      adminData: [{
-        'userId': '这是用户id',
-        'avatar': '这是用户头像',
-        'nickname': '这是昵称',
-        'firstName': '这是名',
-        'lastName': '这是姓',
-        'mailAddress': '这是邮箱',
-        'Identity': '这是身份(团队管理员)'
-      }, {
-        'userId': '这是用户id',
-        'avatar': '这是用户头像',
-        'nickname': '这是昵称',
-        'firstName': '这是名',
-        'lastName': '这是姓',
-        'mailAddress': '这是邮箱',
-        'Identity': '这是身份(团队管理员)'
-      }],
+      adminData: [],
       //团队普通成员数据
-      ordinaryData: [{
-        'userId': '这是用户id',
-        'avatar': '这是用户头像',
-        'nickname': '这是昵称',
-        'firstName': '这是名',
-        'lastName': '这是姓',
-        'mailAddress': '这是邮箱',
-        'Identity': '这是身份(普通成员)'
-      }, {
-        'userId': '这是用户id',
-        'avatar': '这是用户头像',
-        'nickname': '这是昵称',
-        'firstName': '这是名',
-        'lastName': '这是姓',
-        'mailAddress': '这是邮箱',
-        'Identity': '这是身份(普通成员)'
-      }]
+      ordinaryData: []
     }
+  },
+  mounted() {
+    this.$http.get('/api/teams/1/').then(
+      (response) => {
+        this.founderData = response.data.members.filter(item => item.identity == 'leader').map((member) => 
+        ({
+          userId: member.user.id,
+          avatar: member.user.avatar,
+          nickname: member.user.username,
+          firstName: member.user.first_name,
+          lastName: member.user.last_name,
+          mailAddress: member.user.email,
+          Identity:'团队创建者'
+        }))
+        this.adminData = response.data.members.filter(item => item.identity == 'admin').map((member) =>
+        ({
+          userId: member.user.id,
+          avatar: member.user.avatar,
+          nickname: member.user.username,
+          firstName: member.user.first_name,
+          lastName: member.user.last_name,
+          mailAddress: member.user.email,
+          Identity:'团队管理员'
+        }))
+        this.ordinaryData = response.data.members.filter(item => item.identity == 'member').map((member) =>
+        ({
+          userId: member.user.id,
+          avatar: member.user.avatar,
+          nickname: member.user.username,
+          firstName: member.user.first_name,
+          lastName: member.user.last_name,
+          mailAddress: member.user.email,
+          Identity:'普通成员'
+        }))
+      }
+    )
   }
 }
 </script>

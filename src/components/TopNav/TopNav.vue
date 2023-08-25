@@ -6,8 +6,10 @@
     <div>
       <ul class="header-nav">
         <li @click="jumpToChatPage"><ChatIcon /></li>
-        <li @click="jumpToMailPage"><MailIcon /></li>
-        <li @click="jumpToMailUnreadPage"><MailUnreadIcon /></li>
+        <li v-if="hasUnreadMsg"
+        @click="jumpToMailPage"><MailIcon /></li>
+        <li v-else
+        @click="jumpToMailUnreadPage"><MailUnreadIcon /></li>
       </ul>
       <div class="user-avatar-container">
         <img class="user-avatar" :src="avatarUrl" @mouseover="avatarIsHovered = true; showAvatarHint = true"
@@ -15,7 +17,7 @@
         <div class="user-avatar-hint" v-if="showAvatarHint" @mouseover="avatarHintIsHovered = true"
           @mouseleave="handleMouseLeaveAvatarHint">
           <span>{{ username }}</span>
-          <a>修改信息</a>
+          <a @click="handleClickAvatar">修改信息</a>
           <a @click="logout">退出登录</a>
         </div>
       </div>
@@ -45,7 +47,8 @@ export default {
       showAvatarHint: false,
       avatarHintIsHovered: false,
       username: '',
-      avatarUrl: '/src/assets/avatar.jpeg'
+      avatarUrl: '/src/assets/avatar.jpeg',
+      hasUnreadMsg: true
     }
   },
   methods: {

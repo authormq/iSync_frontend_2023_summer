@@ -79,7 +79,7 @@ export default {
     StylishSlider,
     UserView,
     TeamView
-},
+  },
   data() {
     return {
       teamIntro: [

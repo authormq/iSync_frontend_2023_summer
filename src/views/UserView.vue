@@ -1,6 +1,5 @@
 <!-- 个人设置中心 -->
 <template>
-  <TopNav />
   <div class="container">
     <div class="user-left">
       <img
@@ -88,10 +87,8 @@
 </template>
 
 <script>
-import TopNav from '/src/components/TopNav/TopNav.vue'
 export default {
   name: 'UserView',
-  components: { TopNav },
   data() {
     return {
       nickname: '',

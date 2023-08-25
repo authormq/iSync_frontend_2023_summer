@@ -5,9 +5,9 @@
     </div>
     <div>
       <ul class="header-nav">
-        <li><ChatIcon /></li>
-        <li><MailIcon /></li>
-        <li><MailUnreadIcon /></li>
+        <li @click="jumpToChatPage"><ChatIcon /></li>
+        <li @click="jumpToMailPage"><MailIcon /></li>
+        <li @click="jumpToMailUnreadPage"><MailUnreadIcon /></li>
       </ul>
       <div class="user-avatar-container">
         <img class="user-avatar" :src="avatarUrl" @mouseover="avatarIsHovered = true; showAvatarHint = true"
@@ -27,13 +27,15 @@
 import MailIcon from '../Svg/MailIcon.vue'
 import MailUnreadIcon from '../Svg/MailUnreadIcon.vue'
 import ChatIcon from '../Svg/ChatIcon.vue'
+import { RouterView, routeLocationKey } from 'vue-router'
 export default {
   name: 'TopNav',
   components: {
     MailIcon,
     MailUnreadIcon,
-    ChatIcon
-  },
+    ChatIcon,
+    RouterView
+},
   mounted() {
     this.handleFlushUserData()
   },
@@ -92,6 +94,15 @@ export default {
       else {
         this.avatarUrl= '/src/assets/avatar.jpeg'
       }
+    },
+    jumpToChatPage() {
+      this.$router.push('/team/1/chat')
+    },
+    jumpToMailPage() {
+      this.$router.push('/message')
+    },
+    jumpToMailUnreadPage() {
+      this.$router.push('/messgae')
     }
   }
 }

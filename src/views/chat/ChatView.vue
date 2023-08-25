@@ -19,6 +19,12 @@ import { register } from 'vue-advanced-chat'
 register()
 export default {
   name: 'ChatView',
+	mounted() {
+		const ws = new WebSocket('ws://43.138.14.231:9000/ws/chat/group/8/')
+		// console.log(this.$cookies.get('sessionid'))
+		const sessionid = this.$cookies.get('sessionid')
+		// ws.setRequestHeader('Cookie', `sessionid=${sessionid}`)
+	},
   data() {
     return {
       currentUserId: '1234',
@@ -51,7 +57,6 @@ export default {
 
 		addMessages(reset) {
 			const messages = []
-
 			for (let i = 0; i < 30; i++) {
 				messages.push({
 					_id: reset ? i : this.messages.length + i,

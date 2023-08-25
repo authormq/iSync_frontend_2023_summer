@@ -1,7 +1,7 @@
 <!-- 首页（未登录）展示 -->
 <template>
   <!-- <HomeBanner /> -->
-  <UserView></UserView>
+  <!-- <UserView></UserView> -->
   <div class="welcome-image">
     <div class="welcome-msg">
       <h2>团队协作与管理</h2>

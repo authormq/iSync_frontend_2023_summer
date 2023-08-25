@@ -17,7 +17,7 @@
         <div class="user-avatar-hint" v-if="showAvatarHint" @mouseover="avatarHintIsHovered = true"
           @mouseleave="handleMouseLeaveAvatarHint">
           <span>{{ username }}</span>
-          <a>修改信息</a>
+          <a @click="handleClickAvatar">修改信息</a>
           <a @click="logout">退出登录</a>
         </div>
       </div>

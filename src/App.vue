@@ -1,11 +1,10 @@
 <template>
-  <!-- <TopNav /> -->
-  <RouterView />
+  <!-- <RouterView /> -->
+  <text-editor />
 </template>
 
 <script setup>
-// import TopNav from './components/TopNav/TopNav.vue'
+import TextEditor from './components/wheels/TextEditor.vue';
 </script>
 
-<style>
-</style>
+<style></style>

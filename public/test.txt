@@ -1,1 +1,213 @@
-This is a test uploaded by Illli.
+	<div class="editor-wrapper">
+		<!-- 气泡菜单 -->
+		<bubble-menu v-if="editor && !editor.isActive('codeBlock')" :editor="editor" class="editor-bubble-menu">
+			<button @click="editor.chain().focus().toggleBold().run()"
+				:disabled="!editor.can().chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
+				加粗
+			</button>
+			<button @click="editor.chain().focus().toggleItalic().run()"
+				:disabled="!editor.can().chain().focus().toggleItalic().run()"
+				:class="{ 'is-active': editor.isActive('italic') }">
+				倾斜
+			</button>
+			<button @click="editor.chain().focus().toggleStrike().run()"
+				:disabled="!editor.can().chain().focus().toggleStrike().run()"
+				:class="{ 'is-active': editor.isActive('strike') }">
+				划掉
+			</button>
+			<button @click="editor.chain().focus().toggleUnderline().run()"
+				:disabled="!editor.can().chain().focus().toggleUnderline().run()"
+				:class="{ 'is-active': editor.isActive('underline') }">
+				下划线
+			</button>
+			<select v-model="selectedFontFamily" @change="changeFont" :style="{ 'font-family': `${selectedFontFamily}` }">
+				<option v-for="fontOption in fontOptions" :value="fontOption.value" :key="fontOption.value"
+					:style="{ 'font-family': `${fontOption.label}` }">
+					{{ fontOption.label }}
+				</option>
+			</select>
+		</bubble-menu>
+		<!-- 悬浮菜单 -->
+		<floating-menu v-if="editor && !editor.isActive('codeBlock')" :editor="editor" class="editor-floating-menu">
+			<button @click="editor.chain().focus().toggleTaskList().run()"
+				:class="{ 'is-active': editor.isActive('taskList') }">
+				{{ editor.isActive('taskList') ? '清除' : '创建' }}任务项
+			</button>
+			<button @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
+				:class="{ 'is-active': editor.isActive('heading', { level: 1 }) }">
+				h1
+			</button>
+			<button @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
+				:class="{ 'is-active': editor.isActive('heading', { level: 2 }) }">
+				h2
+			</button>
+			<button @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
+				:class="{ 'is-active': editor.isActive('heading', { level: 3 }) }">
+				h3
+			</button>
+			<!-- <button @click="editor.chain().focus().toggleCodeBlock().run()"
+				:class="{ 'is-active': editor.isActive('codeBlock') }">
+				代码块
+			</button> -->
+			<button @click="editor.chain().focus().toggleBlockquote().run()"
+				:class="{ 'is-active': editor.isActive('blockquote') }">
+				块引用
+			</button>
+			<button @click="editor.chain().focus().setHorizontalRule().run()">
+				水平分栏
+			</button>
+		</floating-menu>
+		<!-- 顶部工具栏 -->
+		<div v-if="editor" class="editor-bar">
+			<div class="color-input">
+				<input type="color" @input="editor.chain().focus().setColor($event.target.value).run()"
+					:value="editor.getAttributes('textStyle').color">
+			</div>
+			<button @click="editor.chain().focus().toggleBold().run()"
+				:disabled="!editor.can().chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
+				加粗
+			</button>
+			<button @click="editor.chain().focus().toggleItalic().run()"
+				:disabled="!editor.can().chain().focus().toggleItalic().run()"
+				:class="{ 'is-active': editor.isActive('italic') }">
+				倾斜
+			</button>
+			<button @click="editor.chain().focus().toggleStrike().run()"
+				:disabled="!editor.can().chain().focus().toggleStrike().run()"
+				:class="{ 'is-active': editor.isActive('strike') }">
+				划掉
+			</button>
+			<button @click="editor.chain().focus().toggleUnderline().run()"
+				:disabled="!editor.can().chain().focus().toggleUnderline().run()"
+				:class="{ 'is-active': editor.isActive('underline') }">
+				下划线
+			</button>
+			<button @click="editor.chain().focus().toggleCode().run()"
+				:disabled="!editor.can().chain().focus().toggleCode().run()" :class="{ 'is-active': editor.isActive('code') }">
+				代码碎片
+			</button>
+			<button @click="editor.chain().focus().toggleHighlight({ color: '#ffc078' }).run()"
+				:class="{ 'is-active': editor.isActive('highlight', { color: '#ffc078' }) }">
+				橙色强调
+			</button>
+			<button @click="editor.chain().focus().toggleHighlight({ color: '#8ce99a' }).run()"
+				:class="{ 'is-active': editor.isActive('highlight', { color: '#8ce99a' }) }">
+				绿色强调
+			</button>
+			<button @click="editor.chain().focus().toggleHighlight({ color: '#74c0fc' }).run()"
+				:class="{ 'is-active': editor.isActive('highlight', { color: '#74c0fc' }) }">
+				蓝色强调
+			</button>
+			<button @click="editor.chain().focus().toggleHighlight({ color: '#b197fc' }).run()"
+				:class="{ 'is-active': editor.isActive('highlight', { color: '#b197fc' }) }">
+				紫色强调
+			</button>
+			<button @click="editor.chain().focus().toggleHighlight({ color: '#ce4444' }).run()"
+				:class="{ 'is-active': editor.isActive('highlight', { color: '#ce4444' }) }">
+				深红色强调
+			</button>
+			<button @click="editor.chain().focus().toggleHighlight({ color: '#ee9999' }).run()"
+				:class="{ 'is-active': editor.isActive('highlight', { color: '#ee9999' }) }">
+				浅红色强调
+			</button>
+			<button @click="editor.chain().focus().setTextAlign('left').run()"
+				:class="{ 'is-active': editor.isActive({ textAlign: 'left' }) }">
+				左对齐
+			</button>
+			<button @click="editor.chain().focus().setTextAlign('center').run()"
+				:class="{ 'is-active': editor.isActive({ textAlign: 'center' }) }">
+				居中对齐
+			</button>
+			<button @click="editor.chain().focus().setTextAlign('right').run()"
+				:class="{ 'is-active': editor.isActive({ textAlign: 'right' }) }">
+				右对齐
+			</button>
+			<button @click="editor.chain().focus().setTextAlign('justify').run()"
+				:class="{ 'is-active': editor.isActive({ textAlign: 'justify' }) }">
+				两端对齐
+			</button>
+			<select v-model="selectedFontFamily" @change="changeFont" :style="{ 'font-family': `${selectedFontFamily}` }">
+				<option v-for="fontOption in  fontOptions" :value="fontOption.value" :key="fontOption.value"
+					:style="{ 'font-family': `${fontOption.label}` }">
+					{{ fontOption.label }}
+				</option>
+			</select>
+			<button @click="editor.chain().focus().toggleTaskList().run()"
+				:class="{ 'is-active': editor.isActive('taskList') }">
+				{{ editor.isActive('taskList') ? '清除' : '创建' }}任务项
+			</button>
+			<button @click="editor.chain().focus().sinkListItem('taskItem').run()"
+				:disabled="!editor.can().sinkListItem('taskItem')">
+				降低任务项级别
+			</button>
+			<button @click="editor.chain().focus().liftListItem('taskItem').run()"
+				:disabled="!editor.can().liftListItem('taskItem')">
+				抬升任务项级别
+			</button>
+			<button @click="editor.chain().focus().setParagraph().run()" :class="{ 'is-active': editor.isActive('paragraph') }">
+				普通段落
+			</button>
+			<button @click="editor.chain().focus().unsetAllMarks().run()">
+				清除标记
+			</button>
+			<button @click="editor.chain().focus().clearNodes().run()">
+				清除节点
+			</button>
+			<button @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
+				:class="{ 'is-active': editor.isActive('heading', { level: 1 }) }">
+				h1
+			</button>
+			<button @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
+				:class="{ 'is-active': editor.isActive('heading', { level: 2 }) }">
+				h2
+			</button>
+			<button @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
+				:class="{ 'is-active': editor.isActive('heading', { level: 3 }) }">
+				h3
+			</button>
+			<button @click="editor.chain().focus().toggleHeading({ level: 4 }).run()"
+				:class="{ 'is-active': editor.isActive('heading', { level: 4 }) }">
+				h4
+			</button>
+			<button @click="editor.chain().focus().toggleHeading({ level: 5 }).run()"
+				:class="{ 'is-active': editor.isActive('heading', { level: 5 }) }">
+				h5
+			</button>
+			<button @click="editor.chain().focus().toggleHeading({ level: 6 }).run()"
+				:class="{ 'is-active': editor.isActive('heading', { level: 6 }) }">
+				h6
+			</button>
+			<button @click="editor.chain().focus().toggleBulletList().run()"
+				:class="{ 'is-active': editor.isActive('bulletList') }">
+				bullet list
+			</button>
+			<button @click="editor.chain().focus().toggleOrderedList().run()"
+				:class="{ 'is-active': editor.isActive('orderedList') }">
+				ordered list
+			</button>
+			<button ref="a" @click="editor.chain().focus().toggleCodeBlock().run()"
+				:class="{ 'is-active': editor.isActive('codeBlock') }">
+				代码块
+			</button>
+			<button @click="editor.chain().focus().toggleBlockquote().run()"
+				:class="{ 'is-active': editor.isActive('blockquote') }">
+				块引用
+			</button>
+			<button @click="editor.chain().focus().setHorizontalRule().run()">
+				水平分栏
+			</button>
+			<button @click="editor.chain().focus().setHardBreak().run()">
+				hard break
+			</button>
+			<button @click="editor.chain().focus().undo().run()" :disabled="!editor.can().chain().focus().undo().run()">
+				撤销
+			</button>
+			<button @click="editor.chain().focus().redo().run()" :disabled="!editor.can().chain().focus().redo().run()">
+				重做
+			</button>
+			<button @click="exportAsPDF">保存为PDF</button>
+			<button @click="exportAsWord">保存为Word</button>
+			<button @click="save">保存到云端</button>
+		</div>
+		<editor-content :editor="editor" id="document-content" />
+	</div>

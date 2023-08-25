@@ -5,9 +5,11 @@
     </div>
     <div>
       <ul class="header-nav">
-        <li><ChatIcon /></li>
-        <li><MailIcon /></li>
-        <li><MailUnreadIcon /></li>
+        <li @click="jumpToChatPage"><ChatIcon /></li>
+        <li v-if="hasUnreadMsg"
+        @click="jumpToMailPage"><MailIcon /></li>
+        <li v-else
+        @click="jumpToMailUnreadPage"><MailUnreadIcon /></li>
       </ul>
       <div class="user-avatar-container">
         <img class="user-avatar" :src="avatarUrl" @mouseover="avatarIsHovered = true; showAvatarHint = true"
@@ -15,7 +17,7 @@
         <div class="user-avatar-hint" v-if="showAvatarHint" @mouseover="avatarHintIsHovered = true"
           @mouseleave="handleMouseLeaveAvatarHint">
           <span>{{ username }}</span>
-          <a>修改信息</a>
+          <a @click="handleClickAvatar">修改信息</a>
           <a @click="logout">退出登录</a>
         </div>
       </div>
@@ -27,13 +29,15 @@
 import MailIcon from '../Svg/MailIcon.vue'
 import MailUnreadIcon from '../Svg/MailUnreadIcon.vue'
 import ChatIcon from '../Svg/ChatIcon.vue'
+import { RouterView, routeLocationKey } from 'vue-router'
 export default {
   name: 'TopNav',
   components: {
     MailIcon,
     MailUnreadIcon,
-    ChatIcon
-  },
+    ChatIcon,
+    RouterView
+},
   mounted() {
     this.handleFlushUserData()
   },
@@ -43,7 +47,8 @@ export default {
       showAvatarHint: false,
       avatarHintIsHovered: false,
       username: '',
-      avatarUrl: '/src/assets/avatar.jpeg'
+      avatarUrl: '/src/assets/avatar.jpeg',
+      hasUnreadMsg: true
     }
   },
   methods: {
@@ -92,6 +97,15 @@ export default {
       else {
         this.avatarUrl= '/src/assets/avatar.jpeg'
       }
+    },
+    jumpToChatPage() {
+      this.$router.push('/team/1/chat')
+    },
+    jumpToMailPage() {
+      this.$router.push('/message')
+    },
+    jumpToMailUnreadPage() {
+      this.$router.push('/message')
     }
   }
 }

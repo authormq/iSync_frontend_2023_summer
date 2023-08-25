@@ -70,10 +70,20 @@ export default {
         alert('登陆成功')
         this.$emit('flushUserData')
         this.$emit('close')
+        this.$router.push('/team/all')
       }, (error) => {
-        alert(error)
+        let errStr = error.response.data.username
+        if (errStr === undefined) {
+          errStr=error.response.data.password
+        }
+        if (errStr !== undefined) {
+          alert(errStr)
+        }
+        else {
+          alert('登录失败')
+        }
       })
-    }// alert('未完成登录功能')
+    }
   }
 }
 </script>

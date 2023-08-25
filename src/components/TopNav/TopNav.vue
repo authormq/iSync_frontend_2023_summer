@@ -11,11 +11,13 @@
       </ul>
       <div class="user-avatar-container">
         <img class="user-avatar" :src="avatarUrl" @mouseover="avatarIsHovered = true; showAvatarHint = true"
-          @mouseleave="handleMouseLeaveAvatar">
+          @mouseleave="handleMouseLeaveAvatar" @click="handleClickAvatar">
         <div class="user-avatar-hint" v-if="showAvatarHint" @mouseover="avatarHintIsHovered = true"
           @mouseleave="handleMouseLeaveAvatarHint">
+          用户名
           <a>修改信息</a>
-          <a @click="showRegisterModal = true">退出登录</a>
+          <a @click="logout">退出登录</a>
+          
         </div>
       </div>
     </div>
@@ -32,6 +34,9 @@ export default {
     MailIcon,
     MailUnreadIcon,
     ChatIcon
+  },
+  mounted() {
+    this.handleFlushUserData()
   },
   data() {
     return {
@@ -58,13 +63,34 @@ export default {
         }
       }, 300);
     },
-    flushUserData() {
-      this.$http.get(`/api/accounts/${this.$cookies.get('user_id')}/`).then((response) => {
-        this.avatarUrl = response.data.avatar
+    logout() {
+      this.$http.get('/api/accounts/logout/').then((response) => {
+        alert('登出成功')
+        this.handleFlushUserData()
+        this.$router.push('/')
       }, (error) => {
-        alert(error)
+        alert(error.response.data)
       })
-
+    },
+    handleClickAvatar() {
+      if (this.$cookies.isKey('user_id') == true) {
+        this.$router.push('/user')
+      }
+      else {
+        this.showLoginModal=true
+      }
+    },
+    handleFlushUserData() {
+      if (this.$cookies.isKey('user_id') == true) {
+        this.$http.get(`/api/accounts/${this.$cookies.get('user_id')}/`).then((response) => {
+          this.avatarUrl = response.data.avatar
+        }, (error) => {
+          alert(error.response.data)
+        })
+      }
+      else {
+        this.avatarUrl= '/src/assets/avatar.jpeg'
+      }
     }
   }
 }

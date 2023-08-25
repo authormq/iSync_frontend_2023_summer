@@ -8,12 +8,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tiptap/extension-collaboration": "^2.1.7",
+    "@tiptap/pm": "^2.1.7",
+    "@tiptap/starter-kit": "^2.1.7",
+    "@tiptap/vue-3": "^2.1.7",
     "axios": "^1.4.0",
     "mitt": "^3.0.1",
     "vue": "^3.3.4",
+    "vue-advanced-chat": "^2.0.7",
     "vue-cookies": "^1.8.3",
     "vue-router": "^4.2.4",
-    "vuex": "^4.1.0"
+    "vuex": "^4.1.0",
+    "yjs": "^13.6.7"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.3.1",

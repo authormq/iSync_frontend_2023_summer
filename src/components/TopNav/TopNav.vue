@@ -14,10 +14,9 @@
           @mouseleave="handleMouseLeaveAvatar" @click="handleClickAvatar">
         <div class="user-avatar-hint" v-if="showAvatarHint" @mouseover="avatarHintIsHovered = true"
           @mouseleave="handleMouseLeaveAvatarHint">
-          用户名
+          <span>{{ username }}</span>
           <a>修改信息</a>
           <a @click="logout">退出登录</a>
-          
         </div>
       </div>
     </div>
@@ -43,6 +42,7 @@ export default {
       avatarIsHovered: false,
       showAvatarHint: false,
       avatarHintIsHovered: false,
+      username: '',
       avatarUrl: '/src/assets/avatar.jpeg'
     }
   },
@@ -84,6 +84,7 @@ export default {
       if (this.$cookies.isKey('user_id') == true) {
         this.$http.get(`/api/accounts/${this.$cookies.get('user_id')}/`).then((response) => {
           this.avatarUrl = response.data.avatar
+          this.username = response.data.username
         }, (error) => {
           alert(error.response.data)
         })
@@ -146,43 +147,32 @@ export default {
 }
 
 .user-avatar-hint {
-  width: 150px;
-  height: 100px;
+  width: 200px;
+  height: 130px;
   background-color: white;
   border-radius: 5px;
   box-shadow: 1px 1px 5px grey;
   position: absolute;
   top: 100%;
-  left: -100px;
-  margin-top: 10px;
+  left: -150px;
+  margin-top: 5px;
+  padding-top: 10px;
   text-align: center;
   overflow: hidden;
 }
-
-.user-avatar-hint button {
-  height: 50px;
-  margin: 10px;
-  width: 90%;
-  border-radius: 5px;
-  cursor: pointer;
-  background-color: rgb(180, 180, 180);
-  transition: all 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
-  font-size: 20px;
-  color: white;
-  letter-spacing: 5px;
+.user-avatar-hint>span {
+  font-size: 18px;
+  font-weight: bold;
 }
 
-.user-avatar-hint button:hover {
-  background-color: rgb(210, 210, 210);
-}
 
 .user-avatar-hint a {
   display: block;
-  width: 120px;
+  width: 80%;
   height: 35px;
   box-shadow: 1px 1px 3px grey;
   color: grey;
-  margin: 10px 15px;
+  margin: 10px auto;
   transition: 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
   cursor: pointer;
   display: flex;

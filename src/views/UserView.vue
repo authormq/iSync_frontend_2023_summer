@@ -131,7 +131,7 @@ export default {
       // data.append('email', this.email)
       data.append('profile', this.profile)
       if (this.avatarChanged) {
-      data.append('avatar', this.avatarFile)
+        data.append('avatar', this.avatarFile)
       }
       this.$http.put('/api/accounts/4/', data).then(
         response => {

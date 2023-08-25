@@ -202,12 +202,12 @@ export default {
       if (this.showArrow && this.arrowAnimate) {
         if (newValue) {
           // 如果正被 hover，背景不透明度降低
-          document.documentElement.style.setProperty('--stylish-slider-larrow-bgcolor', 'rgba(60, 60, 60, 0.7)')
-          document.documentElement.style.setProperty('--stylish-slider-rarrow-bgcolor', 'rgba(60, 60, 60, 0.7)')
+          document.documentElement.style.setProperty('--stylish-slider-larrow-bgcolor', 'rgba(199,29,35, 0.7)')
+          document.documentElement.style.setProperty('--stylish-slider-rarrow-bgcolor', 'rgba(199,29,35, 0.7)')
         } else {
           // 如果 hover 结束，背景不透明度提高
-          document.documentElement.style.setProperty('--stylish-slider-larrow-bgcolor', 'rgba(60, 60, 60, 0.9)')
-          document.documentElement.style.setProperty('--stylish-slider-rarrow-bgcolor', 'rgba(60, 60, 60, 0.9)')
+          document.documentElement.style.setProperty('--stylish-slider-larrow-bgcolor', 'rgba(199,29,35, 0.9)')
+          document.documentElement.style.setProperty('--stylish-slider-rarrow-bgcolor', 'rgba(199,29,35, 0.9)')
         }
       }
     },
@@ -219,9 +219,9 @@ export default {
     leftArrowIsClicked(newValue) {
       if (this.showArrow && this.arrowAnimate) {
         if (newValue) {
-          document.documentElement.style.setProperty('--stylish-slider-larrow-bgcolor', 'rgba(60, 60, 60, 0.5)')
+          document.documentElement.style.setProperty('--stylish-slider-larrow-bgcolor', 'rgba(199,29,35, 0.5)')
         } else {
-          document.documentElement.style.setProperty('--stylish-slider-larrow-bgcolor', 'rgba(60, 60, 60, 0.9)')
+          document.documentElement.style.setProperty('--stylish-slider-larrow-bgcolor', 'rgba(199,29,35, 0.5)')
         }
       }
     },
@@ -229,9 +229,9 @@ export default {
     rightArrowIsClicked(newValue) {
       if (this.showArrow && this.arrowAnimate) {
         if (newValue) {
-          document.documentElement.style.setProperty('--stylish-slider-rarrow-bgcolor', 'rgba(60, 60, 60, 0.5)')
+          document.documentElement.style.setProperty('--stylish-slider-rarrow-bgcolor', 'rgba(199,29,35, 0.5)')
         } else {
-          document.documentElement.style.setProperty('--stylish-slider-rarrow-bgcolor', 'rgba(60, 60, 60, 0.9)')
+          document.documentElement.style.setProperty('--stylish-slider-rarrow-bgcolor', 'rgba(199,29,35, 0.5)')
         }
       }
     }
@@ -391,8 +391,8 @@ export default {
   --stylish-slider-bottom-dots-color-active: white;
   --stylish-slider-arrow-opacity: 1;
   --stylish-slider-arrow-size: 40px;
-  --stylish-slider-larrow-bgcolor: rgba(60, 60, 60, 0.9);
-  --stylish-slider-rarrow-bgcolor: rgba(60, 60, 60, 0.9);
+  --stylish-slider-larrow-bgcolor: rgba(199,29,35, 0.9);
+  --stylish-slider-rarrow-bgcolor: rgba(199,29,35, 0.9);
 }
 
 /* 整体容器设置，采用 flex 完全居中布局 */

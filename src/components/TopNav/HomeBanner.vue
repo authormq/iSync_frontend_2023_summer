@@ -72,6 +72,8 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  
+  background-color: rgba(255, 255, 255, 0.2);
 
   overflow: hidden;
 }
@@ -83,12 +85,13 @@ export default {
 .web-title {
   font-size: 30px;
   font-weight: bold;
+  color: #c71d23;
 }
 
 ul>li {
   display: inline-block;
   padding: 0 20px;
-  border-right: 1px solid black;
+  border-right: 1px solid #c71d23;
 }
 ul>li:last-child {
   border-right: 0;
@@ -96,6 +99,7 @@ ul>li:last-child {
 ul>li>a {
   cursor: pointer;
   font-size: 20px;
+  color: #c71d23;
 }
 
 button {
@@ -109,22 +113,22 @@ button {
   transition: 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 button:first-of-type {
-  background-color: rgb(180, 180, 180);
+  background-color: rgb(199,29,35);
   color: white;
 }
 button:first-of-type:hover {
-  background-color: rgb(210, 210, 210);
+  background-color: rgba(199,29,35, 0.8);
 }
 button:last-of-type {
   box-sizing: border-box;
-  border: 1px solid rgb(180, 180, 180);
+  border: 1px solid rgb(199,29,35);
   background: transparent;
-  color: rgb(180, 180, 180);
+  color: rgb(199,29,35);
 }
 button:last-of-type:hover {
   box-sizing: border-box;
-  border: 1px solid rgb(150, 150, 150);
+  border: 1px solid rgba(199,29,35, 0.8);
   background: transparent;
-  color: rgb(150, 150, 150);
+  color: rgba(199,29,35, 0.8);
 }
 </style>

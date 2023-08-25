@@ -40,7 +40,7 @@ export default {
 },
   mounted() {
     this.handleFlushUserData()
-    this.$bus.on('updateTopNavAvatar', this.handleFlushUserData)
+    this.$bus.on('updateTopNavAvatar', this.updateTopNavAvatarAfterModify)
   },
   data() {
     return {
@@ -98,6 +98,9 @@ export default {
       else {
         this.avatarUrl= '/src/assets/avatar.jpeg'
       }
+    },
+    updateTopNavAvatarAfterModify(avatar) {
+      this.avatarUrl = avatar
     },
     jumpToChatPage() {
       this.$router.push('/team/1/chat')

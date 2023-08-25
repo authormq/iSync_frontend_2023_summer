@@ -1,10 +1,12 @@
 <template>
+  <div>
+    <TopNav v-if="'/'!==this.$route.path" /> 
+  </div>
   <RouterView />
   <!-- <text-editor /> -->
 </template>
-
 <script setup>
-// import TextEditor from './components/wheels/TextEditor.vue';
+import TopNav from './components/TopNav/TopNav.vue'
 </script>
-
-<style></style>
+<style scoped>
+</style>

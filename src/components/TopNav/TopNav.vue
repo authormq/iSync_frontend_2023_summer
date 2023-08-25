@@ -5,9 +5,11 @@
     </div>
     <div>
       <ul class="header-nav">
-        <li><ChatIcon /></li>
-        <li><MailIcon /></li>
-        <li><MailUnreadIcon /></li>
+        <li @click="jumpToChatPage"><ChatIcon /></li>
+        <li v-if="!hasUnreadMsg"
+        @click="jumpToMailPage"><MailIcon /></li>
+        <li v-else
+        @click="jumpToMailUnreadPage"><MailUnreadIcon /></li>
       </ul>
       <div class="user-avatar-container">
         <img class="user-avatar" :src="avatarUrl" @mouseover="avatarIsHovered = true; showAvatarHint = true"
@@ -15,7 +17,7 @@
         <div class="user-avatar-hint" v-if="showAvatarHint" @mouseover="avatarHintIsHovered = true"
           @mouseleave="handleMouseLeaveAvatarHint">
           <span>{{ username }}</span>
-          <a>修改信息</a>
+          <a @click="handleClickAvatar">修改信息</a>
           <a @click="logout">退出登录</a>
         </div>
       </div>
@@ -27,15 +29,18 @@
 import MailIcon from '../Svg/MailIcon.vue'
 import MailUnreadIcon from '../Svg/MailUnreadIcon.vue'
 import ChatIcon from '../Svg/ChatIcon.vue'
+import { RouterView, routeLocationKey } from 'vue-router'
 export default {
   name: 'TopNav',
   components: {
     MailIcon,
     MailUnreadIcon,
-    ChatIcon
-  },
+    ChatIcon,
+    RouterView
+},
   mounted() {
     this.handleFlushUserData()
+    this.$bus.on('updateTopNavAvatar', this.updateTopNavAvatarAfterModify)
   },
   data() {
     return {
@@ -43,7 +48,8 @@ export default {
       showAvatarHint: false,
       avatarHintIsHovered: false,
       username: '',
-      avatarUrl: '/src/assets/avatar.jpeg'
+      avatarUrl: '/src/assets/avatar.jpeg',
+      hasUnreadMsg: true
     }
   },
   methods: {
@@ -92,6 +98,18 @@ export default {
       else {
         this.avatarUrl= '/src/assets/avatar.jpeg'
       }
+    },
+    updateTopNavAvatarAfterModify(avatar) {
+      this.avatarUrl = avatar
+    },
+    jumpToChatPage() {
+      this.$router.push('/team/1/chat')
+    },
+    jumpToMailPage() {
+      this.$router.push('/message')
+    },
+    jumpToMailUnreadPage() {
+      this.$router.push('/message')
     }
   }
 }
@@ -99,7 +117,7 @@ export default {
 
 <style scoped>
 .header-container {
-  width: 99.5%;
+  width: 100%;
   height: 70px;
   box-sizing: border-box;
   border-radius: 5px;
@@ -107,6 +125,8 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
+  position: relative;
+  z-index: 100;
   
   box-shadow: 2px 2px 3px lightgrey;
 }

@@ -34,14 +34,20 @@
     "js-export-word": "^1.0.5",
     "jspdf": "^2.5.1",
     "lowlight": "^2.9.0",
+    "echarts": "^5.4.3",
     "mitt": "^3.0.1",
+    "socket.io-client": "^4.7.2",
+    "sockjs-client": "^1.6.1",
+    "stompjs": "^2.3.3",
     "vue": "^3.3.4",
+    "vue-advanced-chat": "^2.0.7",
     "vue-cookies": "^1.8.3",
     "vue-router": "^4.2.4",
     "vuex": "^4.1.0",
     "yjs": "^13.6.7"
   },
   "devDependencies": {
+    "@types/sockjs-client": "^1.5.1",
     "@vitejs/plugin-vue": "^4.3.1",
     "vite": "^4.4.9"
   }

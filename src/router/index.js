@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import UserView from '../views/UserView.vue'
 import TeamView from '../views/team/TeamView.vue'
-import ChatListView from  '../views/team/subroute/ChatListView.vue'
+import ChatView from '../views/chat/ChatView.vue'
 import InfoView from  '../views/team/subroute/InfoView.vue'
 import MemberListView from  '../views/team/subroute/MemberListView.vue'
 import ProjectListView from  '../views/team/subroute/ProjectListView.vue'
@@ -25,7 +25,7 @@ const router = createRouter({
     },
     {
       path: '/message',
-      component: MessageView
+      component: MessageView,
     },
     {
       path: '/team/all',
@@ -41,7 +41,16 @@ const router = createRouter({
         },
         {
           path: 'chat',
-          component: ChatListView
+          component: ChatView,
+          children: [
+            // 这里chat应该分为群聊和私聊两种情况
+            {
+              path: 'group',
+            },
+            {
+              path: 'personal'
+            }
+          ]
         },
         {
           path: 'member',

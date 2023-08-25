@@ -9,7 +9,7 @@
       @focus="isFocused = true" @blur="handleBlur" 
       :autocomplete="autocomplete"
     >
-    <div>
+    <div class="bottom-hint">
       <slot name="hint"></slot>
     </div>
     <!-- 后缀插槽 -->
@@ -43,6 +43,8 @@ export default {
     }
   },
   props: {
+    width: { type: String, default: undefined },
+    block: { type: Boolean, default: false },
     // 输入框类型
     type: { type: String, default: 'text' },
     // 输入的值
@@ -146,6 +148,14 @@ export default {
     // this.configSuffix()
     this.configCount()
 
+    if (this.block) {
+      this.$refs.container.style.display = 'block'
+    }
+    if (this.width) {
+      this.$refs.container.style.width = this.width
+      this.$refs.input.style.width = this.width
+    }
+
     this.$refs.container.style.marginBottom = this.spacing
 
     if (this.type === 'number') {
@@ -153,6 +163,7 @@ export default {
       if (this.min) this.$refs.input.min = this.min
       if (this.step) this.$refs.input.step = this.step
     }
+
     if (this.autofocus) {
       this.$refs.input.focus()
     }
@@ -472,7 +483,7 @@ export default {
   width: 350px;
   height: 50px;
   padding: 10px 10px;
-  border: 1px solid black;
+  border: 1px solid rgba(199,29,35, 1);
   border-radius: 5px;
   font-size: 18px;
 
@@ -515,7 +526,7 @@ export default {
 } */
 /* focus 样式 */
 .stylish-input:focus {
-  outline: 1px solid black;
+  outline: 1px solid rgba(199,29,35, 1);
   /* outline: var(--stylish-input-focus-outline);
   border: var(--stylish-input-focus-border);
   box-shadow: var(--stylish-input-focus-box-shadow); */
@@ -544,4 +555,8 @@ export default {
   cursor: pointer;
 }
 
+.bottom-hint {
+  white-space: nowrap;
+  overflow: visible;
+}
 </style>

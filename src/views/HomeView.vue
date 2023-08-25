@@ -41,8 +41,8 @@
   <div id="project" class="homepage-intro project-intro">
     <StylishSlider 
       type="single" showDots showArrow :autoplay="2000"
-      imgWidth="1000px" imgHeight="500px"
-      dotSize="15px" dotSpacing="25px" dotDistance="20px"
+      imgWidth="1000px" imgHeight="600px"
+      dotSize="15px" dotSpacing="25px" dotDistance="-20px"
       borderRadius="15px"
     >
       <div v-for="(intro, index) in projectsIntro" :key="index">
@@ -54,15 +54,16 @@
     </StylishSlider>
   </div>
   <div id="doc" class="homepage-intro doc-intro">
-    <div class="doc-intro-card" v-for="(intro, index) in docIntro" :key="index">
-      <img :src="intro.src" alt="">
-      <p>{{ intro.msg }}</p>
+    <h3 class="doc-intro-1">见识一下协同编辑的威力</h3>
+    <h3 class="doc-intro-2">组队办公，小菜一碟</h3>
+    <div class="doc-intro-cards-container">
+      <div class="doc-intro-card" v-for="(intro, index) in docIntro" :key="index">
+        <img :src="intro.src" alt="">
+        <p>{{ intro.msg }}</p>
+      </div>
     </div>
+    
   </div>
-  <br>
-  <br>
-  <br>
-  <br>
 </template>
 
 <script>
@@ -234,6 +235,7 @@ export default {
 
 .team-intro {
   width: 100%;
+  height: 110vh;
   padding: 50px 100px;
   padding-bottom: 0;
   padding-right: 0;
@@ -292,10 +294,13 @@ export default {
   width: 750px;
   height: 500px;
   border-radius: 15px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .message-intro {
   width: 100%;
+  height: 110vh;
   padding: 50px 100px;
   padding-left: 0;
   padding-top: 0;
@@ -351,14 +356,18 @@ export default {
   width: 750px;
   height: 500px;
   border-radius: 15px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 
 
 .project-intro {
+  height: 110vh;
   background: linear-gradient(to right, 
     rgb(240, 240, 240) 20%, white 80%, rgb(240, 240, 240));
   display: flex;
   justify-content: center;
+  align-items: center;
   padding: 20px 0;
 }
 .project-intro-item {
@@ -383,19 +392,34 @@ export default {
 
 
 .doc-intro {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  padding: 30px;
-
+  height: 110vh;
+  padding: 100px 10%;
 }
+.doc-intro-1 {
+  font-size: 50px;
+  font-weight: bold;
+  color: rgba(199,29,35, 1);
+}
+.doc-intro-2 {
+  font-size: 40px;
+  font-weight: bold;
+  color: rgba(199,29,35, 1);
+}
+
+.doc-intro-cards-container {
+   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 60px;
+}
+
 .doc-intro-card {
   width: 200px;
   height: 300px;
   padding: 20px;
   padding-top: 10px;
   padding-bottom: 0;
-  box-shadow: 3px 3px rgba(199,29,35, 0.2);
+  box-shadow: 3px 3px rgba(199,29,35, 0.5);
   border-radius: 15px;
 
   display: flex;
@@ -405,7 +429,7 @@ export default {
   transition: 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 .doc-intro-card:hover {
-  box-shadow: 5px 5px  rgba(199,29,35, 0.5);
+  box-shadow: 5px 5px  rgba(199,29,35, 0.6);
   transform: translate(-3px, -3px) scale(1.05);
 }
 .doc-intro-card>img {

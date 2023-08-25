@@ -16,12 +16,35 @@
 
 <script>
 import { register } from 'vue-advanced-chat'
+// import { typeListPushGenerics } from 'yjs/dist/src/internals'
 register()
 export default {
   name: 'ChatView',
+	mounted() {
+		this.currentUserId = this.$cookies.get('user_id')
+		this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/chat/group/8/${this.currentUserId}/`)
+		this.ws.onmessage = (messageEvent) => {
+			const data = JSON.parse(messageEvent.data)
+			const message = data.message
+			this.messages = [
+				...this.messages,
+				{
+					_id: this.messages.length,
+					content: message.text_content,
+					senderId: `${message.sender.user.id}`,
+					timestamp: message.create_datetime.substring(11, 16).replace('-', ':'),
+					date: message.create_datetime.substring(5, 10).replace('-', ':')
+				}
+			]
+		}
+	},
+	unmounted() {
+		this.ws.close()
+	},
   data() {
     return {
-      currentUserId: '1234',
+			ws: null,
+      currentUserId: '',
       rooms: [
         {
           roomId: '1',
@@ -51,7 +74,6 @@ export default {
 
 		addMessages(reset) {
 			const messages = []
-
 			for (let i = 0; i < 30; i++) {
 				messages.push({
 					_id: reset ? i : this.messages.length + i,
@@ -67,16 +89,11 @@ export default {
 		},
 
 		sendMessage(message) {
-			this.messages = [
-				...this.messages,
-				{
-					_id: this.messages.length,
-					content: message.content,
-					senderId: this.currentUserId,
-					timestamp: new Date().toString().substring(16, 21),
-					date: new Date().toDateString()
-				}
-			]
+			this.ws.send(JSON.stringify({
+				'text_content': message.content,
+				'mentioned_user_id': 1,
+				'mentioned_all': false
+			}))
 		},
 
 		addNewMessage() {

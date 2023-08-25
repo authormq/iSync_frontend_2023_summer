@@ -44,7 +44,7 @@ export default {
   name: 'WebIcon',
   props: {
     size: { type: String, default: '40px' },
-    color: { type: String, default: '#707070' }
+    color: { type: String, default: '#c71d23' }
   }
 }
 </script>

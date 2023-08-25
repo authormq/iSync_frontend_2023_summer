@@ -192,6 +192,7 @@ export default {
 
 .welcome-msg {
   text-align: center;
+  color: white;
 }
 .welcome-msg>h2, .welcome-msg>h3 {
   text-align: center;
@@ -210,7 +211,7 @@ export default {
   height: 50px;
   margin-top: 20px;
   border-radius: 10px;
-  background-color: rgb(180, 180, 180);
+  background-color: rgba(199,29,35, 0.8);
   color: white;
   font-size: 20px;
   cursor: pointer;
@@ -218,7 +219,7 @@ export default {
   transition: 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 .welcome-msg>button:hover {
-  background-color: rgb(150, 150, 150);
+  background-color: rgba(199,29,35, 1);
   transform: translate(-3px, -3px);
 }
 
@@ -251,13 +252,14 @@ export default {
   font-size: 35px;
   margin-bottom: 30px;
   font-weight: bold;
+  color: rgba(199,29,35, 1);
 }
 .team-intro-border {
   width: 50px;
   height: 50px;
   box-sizing: border-box;
-  border-left: 2px solid black;
-  border-top: 2px solid black;
+  border-left: 2px solid rgba(199,29,35, 1);
+  border-top: 2px solid rgba(199,29,35, 1);
   position: absolute;
   top: 0;
   left: 0;
@@ -277,6 +279,7 @@ export default {
 .team-intro-text ul li p {
   font-size: 24px;
   font-weight: bold;
+  color: rgba(199,29,35, 1);
 }
 .team-intro-text ul li span {
   font-size: 18px;
@@ -301,6 +304,7 @@ export default {
   align-items: center;
   align-content: center;
   justify-content: space-between;
+  background-color: #d24a4f;
 }
 .message-intro-text {
   position: relative;
@@ -310,13 +314,14 @@ export default {
   font-size: 35px;
   margin-bottom: 30px;
   font-weight: bold;
+  color: white;
 }
 .message-intro-border {
   width: 50px;
   height: 50px;
   box-sizing: border-box;
-  border-right: 2px solid black;
-  border-bottom: 2px solid black;
+  border-right: 2px solid white;
+  border-bottom: 2px solid white;
   position: absolute;
   right: 0;
   bottom: 0;
@@ -336,10 +341,11 @@ export default {
 .message-intro-text ul li p {
   font-size: 24px;
   font-weight: bold;
+  color: white;
 }
 .message-intro-text ul li span {
   font-size: 18px;
-  color: grey;
+  color: lightgrey;
 }
 .message-intro-img img {
   width: 750px;
@@ -353,7 +359,7 @@ export default {
     rgb(240, 240, 240) 20%, white 80%, rgb(240, 240, 240));
   display: flex;
   justify-content: center;
-  margin: 20px 0;
+  padding: 20px 0;
 }
 .project-intro-item {
   width: 100%;
@@ -389,7 +395,7 @@ export default {
   padding: 20px;
   padding-top: 10px;
   padding-bottom: 0;
-  box-shadow: 3px 3px 5px lightgrey;
+  box-shadow: 3px 3px rgba(199,29,35, 0.2);
   border-radius: 15px;
 
   display: flex;
@@ -399,7 +405,7 @@ export default {
   transition: 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 .doc-intro-card:hover {
-  box-shadow: 3px 3px 10px grey;
+  box-shadow: 5px 5px  rgba(199,29,35, 0.5);
   transform: translate(-3px, -3px) scale(1.05);
 }
 .doc-intro-card>img {
@@ -410,5 +416,9 @@ export default {
 .doc-intro-card>p {
   font-size: 18px;
   vertical-align: middle;
+  color: rgba(199,29,35, 1);
+}
+.doc-intro-card:hover>p {
+  font-weight: bold;
 }
 </style>

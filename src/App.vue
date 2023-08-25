@@ -1,10 +1,10 @@
 <template>
-  <!-- <RouterView /> -->
-  <text-editor />
+  <RouterView />
+  <!-- <text-editor /> -->
 </template>
 
 <script setup>
-import TextEditor from './components/wheels/TextEditor.vue';
+// import TextEditor from './components/wheels/TextEditor.vue';
 </script>
 
 <style></style>

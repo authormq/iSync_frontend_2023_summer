@@ -4,7 +4,7 @@
   <div class="container">
     <div class="user-left">
       <img
-        :src="'/src/assets/avatar.jpeg'"
+        :src="avatarUrl"
         @mouseover="avatarIsHovered = true"
         @mouseleave="handleMouseLeaveAvatar"
         @click="uploadAvatar"
@@ -63,16 +63,16 @@
         />
       </div>
 
-      <div class="intro-container">
+      <div class="profile-container">
         <div class="name-hint">个人简介</div>
         <div 
-          class="intro-content" 
-          ref="intro" @click="handleClick('intro')"
-        >{{ intro }}</div>
+          class="profile-content" 
+          ref="profile" @click="handleClick('profile')"
+        >{{ profile }}</div>
         <textarea 
-          class="intro" cols="30" rows="6" v-model="intro" 
-          ref="introInput" 
-          @blur="handleBlur('intro')" @keyup.enter="handleBlur('intro')"
+          class="profile" cols="30" rows="6" v-model="profile" 
+          ref="profileInput" 
+          @blur="handleBlur('profile')" @keyup.enter="handleBlur('profile')"
         ></textarea>
       </div>
       <!-- <br>
@@ -98,10 +98,11 @@ export default {
       first_name: '',
       last_name: '',
       email: '',
-      intro: '',
+      profile: '',
       avatarIsHovered: false,
       avatarFile: null,
       avatarUrl: '',
+      avatarChanged: false // 头像是否被更改过
     }
   },
   mounted() {
@@ -111,10 +112,10 @@ export default {
         this.first_name = response.data.first_name
         this.last_name = response.data.last_name
         this.email = response.data.email
-        this.intro = response.data.profile
+        this.profile = response.data.profile
         this.avatarFile = response.data.avatar
         this.avatarUrl = response.data.avatar
-        if (this.intro.length === 0) this.intro = '暂无简介。'
+        if (this.profile.length === 0) this.profile = '暂无简介。'
       },
       (error) => {
         console.log(error)
@@ -123,24 +124,30 @@ export default {
   },
   methods: {
     back() {
-      alert('返回上一页，请mq加路由')
-      //todo for mq
+      this.$router.back()
     },
     confirm() {
-      alert('保存修改信息并返回，请mq加路由')
-      //todo for mq
       let data = new FormData()
       data.append('username', this.nickname)
       data.append('first_name', this.first_name)
       data.append('last_name', this.last_name)
-      data.append('email', this.email)
+      // data.append('email', this.email)
       data.append('profile', this.profile)
+      if (this.avatarChanged) {
       data.append('avatar', this.avatarFile)
-      this.$http.post('/api/accounts/update/', data).then((response) => {
-        if (response.data.code === '0') {
-          // todo for mq
+      }
+      this.$http.put('/api/accounts/4/', data).then(
+        response => {
+          if (response.status >= 200 && response.status < 300) {
+            console.log(response.data)
+          } else if (response.status >= 400) {
+            console.log('修改个人信息失败，请重试');
+          }
+        },
+        error => {
+          console.log(error.message);
         }
-      })
+      )
     },
     handleMouseLeaveAvatar() {
       this.avatarIsHovered = false
@@ -149,6 +156,7 @@ export default {
       this.$refs.fileInput.click()
     },
     handleFileChange(e) {
+      this.avatarChanged = true
       this.avatarFile = e.target.files[0]
       this.avatarUrl = URL.createObjectURL(this.avatarFile)
     },
@@ -280,17 +288,17 @@ input.nickname {
   border-radius: 5px;
   font-size: 24px;
 }
-.intro-content {
+.profile-content {
   font-size: 18px;
   width: 400px;
   height: 150px;
   border-radius: 5px;
   cursor: pointer;
 }
-.intro-content:hover {
+.profile-content:hover {
   outline: 2px dashed lightgrey;
 }
-.intro {
+.profile {
   display: none;
   padding: 10px;
   width: 376px;
@@ -298,7 +306,7 @@ input.nickname {
   border-radius: 5px;
   font-size: 18px;
 }
-.intro:focus-visible {
+.profile:focus-visible {
   outline: 0;
 }
 

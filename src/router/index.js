@@ -25,7 +25,17 @@ const router = createRouter({
     },
     {
       path: '/message',
-      component: MessageView
+      component: MessageView,
+      children: [
+        {
+          path: 'all',
+          component: MessageView
+        },
+        {
+          path: 'unread',
+          component: MessageView
+        }
+      ]
     },
     {
       path: '/team/all',

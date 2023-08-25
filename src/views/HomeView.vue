@@ -1,7 +1,6 @@
 <!-- 首页（未登录）展示 -->
 <template>
-  <!-- <HomeBanner /> -->
-  <!-- <UserView></UserView> -->
+  <HomeBanner />
   <div class="welcome-image">
     <div class="welcome-msg">
       <h2>团队协作与管理</h2>
@@ -9,7 +8,6 @@
       <button @click="showLogin">开启新体验</button>
     </div>  
   </div>
-  <TeamView></TeamView>
   <div id="team" class="homepage-intro team-intro">
     <div class="team-intro-text">
       <h3>Team Leader：管理原来如此简单</h3>

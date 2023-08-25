@@ -102,7 +102,7 @@ export default {
       this.$router.push('/message')
     },
     jumpToMailUnreadPage() {
-      this.$router.push('/messgae')
+      this.$router.push('/message')
     }
   }
 }

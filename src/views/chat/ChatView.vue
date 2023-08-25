@@ -15,14 +15,22 @@
 </template>
 
 <script>
+import SockJS from 'sockjs-client'
+import Stomp from 'stompjs'
 import { register } from 'vue-advanced-chat'
 register()
 export default {
   name: 'ChatView',
 	mounted() {
-		const ws = new WebSocket('ws://43.138.14.231:9000/ws/chat/group/8/')
-		// console.log(this.$cookies.get('sessionid'))
 		const sessionid = this.$cookies.get('sessionid')
+		const ws = new SockJS('ws://43.138.14.231:9000/ws/chat/group/8/', {
+			headers: {
+				'Cookie': `sessionid=${sessionid}`
+			}
+		})
+
+		// console.log(this.$cookies.get('sessionid'))
+		
 		// ws.setRequestHeader('Cookie', `sessionid=${sessionid}`)
 	},
   data() {

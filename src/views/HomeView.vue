@@ -1,6 +1,7 @@
 <!-- 首页（未登录）展示 -->
 <template>
-  <HomeBanner />
+  <!-- <HomeBanner /> -->
+  <UserView></UserView>
   <div class="welcome-image">
     <div class="welcome-msg">
       <h2>团队协作与管理</h2>
@@ -70,12 +71,14 @@ import HomeBanner from '../components/TopNav/HomeBanner.vue'
 import StylishSlider from '../components/Stylish/StylishSlider.vue'
 import ProjectView from './project/ProjectView.vue';
 import TeamView from './team/TeamView.vue';
+import UserView from './UserView.vue';
 export default {
   name: 'HomeView',
   components: {
     HomeBanner,
-    StylishSlider
-  },
+    StylishSlider,
+    UserView
+},
   data() {
     return {
       teamIntro: [

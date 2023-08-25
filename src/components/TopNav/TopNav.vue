@@ -6,7 +6,7 @@
     <div>
       <ul class="header-nav">
         <li @click="jumpToChatPage"><ChatIcon /></li>
-        <li v-if="hasUnreadMsg"
+        <li v-if="!hasUnreadMsg"
         @click="jumpToMailPage"><MailIcon /></li>
         <li v-else
         @click="jumpToMailUnreadPage"><MailUnreadIcon /></li>
@@ -40,6 +40,7 @@ export default {
 },
   mounted() {
     this.handleFlushUserData()
+    this.$bus.on('updateTopNavAvatar', this.handleFlushUserData)
   },
   data() {
     return {

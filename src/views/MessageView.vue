@@ -13,6 +13,8 @@
     <div v-else>
       <MessageItem v-for="msg in unReadMessage" :key="msg" :msg="msg"></MessageItem>
     </div>
+    <button @click="setAllRead">设置全部已读</button>
+    <button @click="deleteAllRead">删除全部已读</button>
   </div>
 </template>
 
@@ -64,6 +66,12 @@ export default {
     divideUnReadMessage() {
       this.unReadMessage = this.allMessage.filter(message => message.isRead == false)
     },
+    setAllRead() {
+      this.allMessage.filter(message => message.isRead == false).forEach(message => message.isRead = true)
+    },
+    deleteAllRead() {
+      this.allMessage = this.allMessage.filter(message => message.isRead == false)
+    }
   },
   mounted() {
     // 这一行必须有，用来获取未读的信息

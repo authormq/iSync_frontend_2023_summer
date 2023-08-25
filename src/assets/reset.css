@@ -86,3 +86,11 @@ a {
     display: block;
     clear: both;
 }
+
+svg {
+    display: inline-block;
+}
+
+textarea {
+    resize: none;
+}

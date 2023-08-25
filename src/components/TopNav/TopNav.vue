@@ -1,54 +1,43 @@
 <template>
-  <div class="container header-container">
+  <div class="header-container">
     <div>
-      <div class="web-icon"></div>
-      <h1 class="web-title">小学期项目网页的标题</h1>
+      一个选择团队的组件
     </div>
     <div>
       <ul class="header-nav">
-        <li>nav1</li>
-        <li>nav2</li>
-        <li>nav3</li>
-        <li>nav4</li>
-        <li>nav5</li>
+        <li><ChatIcon /></li>
+        <li><MailIcon /></li>
+        <li><MailUnreadIcon /></li>
       </ul>
       <div class="user-avatar-container">
         <img class="user-avatar" :src="avatarUrl" @mouseover="avatarIsHovered = true; showAvatarHint = true"
           @mouseleave="handleMouseLeaveAvatar">
         <div class="user-avatar-hint" v-if="showAvatarHint" @mouseover="avatarHintIsHovered = true"
           @mouseleave="handleMouseLeaveAvatarHint">
-          <button @click="showLoginModal = true">立即登录</button>
-          <div>首次使用？<a @click="showRegisterModal = true">点击以注册</a></div>
+          <a>修改信息</a>
+          <a @click="showRegisterModal = true">退出登录</a>
         </div>
       </div>
     </div>
   </div>
-  <Login :show="showLoginModal" @close="showLoginModal = false"
-    @changeToRegister="showLoginModal = false; showRegisterModal = true;"
-    @changeToFindPassword="showLoginModal = false; showFindPasswordModal = true" @flushUserData="flushUserData" />
-  <Register :show="showRegisterModal" @close="showRegisterModal = false" />
-  <FindPassword :show="showFindPasswordModal" @close="showFindPasswordModal = false" />
 </template>
 
 <script>
-import Login from './Login.vue'
-import Register from './Register.vue'
-import FindPassword from './FindPassword.vue'
+import MailIcon from '../Svg/MailIcon.vue'
+import MailUnreadIcon from '../Svg/MailUnreadIcon.vue'
+import ChatIcon from '../Svg/ChatIcon.vue'
 export default {
   name: 'TopNav',
   components: {
-    Login,
-    Register,
-    FindPassword
+    MailIcon,
+    MailUnreadIcon,
+    ChatIcon
   },
   data() {
     return {
       avatarIsHovered: false,
       showAvatarHint: false,
       avatarHintIsHovered: false,
-      showLoginModal: false,
-      showRegisterModal: false,
-      showFindPasswordModal: false,
       avatarUrl: '/src/assets/avatar.jpeg'
     }
   },
@@ -83,12 +72,16 @@ export default {
 
 <style scoped>
 .header-container {
+  width: 99.5%;
+  height: 70px;
+  box-sizing: border-box;
+  border-radius: 5px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
-  background-color: yellow;
-  height: 60px;
+  
+  box-shadow: 2px 2px 3px lightgrey;
 }
 
 .header-container>div {
@@ -100,32 +93,18 @@ export default {
   display: inline-block;
 }
 
-.web-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: skyblue;
-}
-
-.web-title {
-  margin: 0 10px;
-  font-size: 30px;
-  background-color: skyblue;
-}
-
 
 .header-nav>li {
   display: inline-block;
-  padding: 0 20px;
-  border-right: 1px solid black;
+  padding: 0 10px;
+  cursor: pointer;
+  /* border-right: 1px solid black; */
 }
 
-.header-nav>li:last-child {
-  border-right: 0;
-}
 
 .user-avatar-container {
   position: relative;
+  margin-left: 10px;
 }
 
 .user-avatar {
@@ -133,17 +112,22 @@ export default {
   height: 50px;
   border-radius: 50%;
   cursor: pointer;
+  transition: 0.5 s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.user-avatar:hover {
+  transform: scale(1.05);
 }
 
 .user-avatar-hint {
-  width: 300px;
+  width: 150px;
   height: 100px;
   background-color: white;
   border-radius: 5px;
   box-shadow: 1px 1px 5px grey;
   position: absolute;
   top: 100%;
-  left: -250px;
+  left: -100px;
   margin-top: 10px;
   text-align: center;
   overflow: hidden;
@@ -167,11 +151,21 @@ export default {
 }
 
 .user-avatar-hint a {
+  display: block;
+  width: 120px;
+  height: 35px;
+  box-shadow: 1px 1px 3px grey;
+  color: grey;
+  margin: 10px 15px;
+  transition: 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
   cursor: pointer;
-  color: cornflowerblue;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .user-avatar-hint a:hover {
-  text-decoration: underline;
+  font-weight: bold;
+  transform: translate(-2px, -2px) scale(1.02);
 }
 </style>

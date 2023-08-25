@@ -138,7 +138,7 @@ export default {
           if (response.status >= 200 && response.status < 300) {
             console.log(response.data)
             // mq
-            this.$bus.emit('updateTopNavAvatar')
+            this.$bus.emit('updateTopNavAvatar', response.data.avatar)
           } else if (response.status >= 400) {
             console.log('修改个人信息失败，请重试')
           }

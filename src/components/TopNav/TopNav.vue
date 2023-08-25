@@ -40,7 +40,7 @@ export default {
 },
   mounted() {
     this.handleFlushUserData()
-    this.$bus.on('updateTopNavAvatar', this.handleFlushUserData)
+    this.$bus.on('updateTopNavAvatar', this.updateTopNavAvatarAfterModify)
   },
   data() {
     return {
@@ -99,6 +99,9 @@ export default {
         this.avatarUrl= '/src/assets/avatar.jpeg'
       }
     },
+    updateTopNavAvatarAfterModify(avatar) {
+      this.avatarUrl = avatar
+    },
     jumpToChatPage() {
       this.$router.push('/team/1/chat')
     },
@@ -114,7 +117,7 @@ export default {
 
 <style scoped>
 .header-container {
-  width: 99.5%;
+  width: 100%;
   height: 70px;
   box-sizing: border-box;
   border-radius: 5px;

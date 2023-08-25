@@ -67,7 +67,7 @@ export default {
       isEditing: false,                   // 是否处于编辑状态，控制按钮是否出现
       avatarIsHovered: false,
       teamAvatarUrl: '',
-      teamAatarChanged: false, //头像是否被修改过
+      teamAvatarChanged: false, //头像是否被修改过
       teamAvatar: null,
       teamName: '',
       teamFounder: '',
@@ -81,7 +81,7 @@ export default {
     this.$http.get('/api/teams/1/').then(
       (response) => {
         this.teamAvatar = response.data.avatar
-        this.teamAatarUrl = response.data.avatar
+        this.teamAvatarUrl = response.data.avatar
         this.teamName = response.data.name
         this.teamFound = response.data.members.filter(item => item.identity == 'leader')
         this.teamFoundTime = response.data.create_datetime
@@ -131,7 +131,7 @@ export default {
       let data = new FormData()
       data.append('name', this.teamName)
       data.append('profile', this.teamIntroduction)
-      if (this.teamAatarChanged) {
+      if (this.teamAvatarChanged) {
         data.append('avatar', this.teamAvatar)
       }
       this.$http.put('/api/teams/1/', data).then(

@@ -2,13 +2,18 @@
 <template>
   <div class="info-header">
     <img 
-      src="/src/assets/avatar.jpeg" 
+      :src="teamAvatarUrl" 
       ref="avatar" 
       @click="uploadAvatar" 
       @mouseover="avatarIsHovered = true"
       @mouseleave="avatarIsHovered = false"
     >
-    <input type="file" accept="image/*" ref="fileInput" @change="handleFileChange">
+    <input 
+      type="file" 
+      accept="image/*" 
+      ref="fileInput" 
+      @change="handleFileChange"
+    >
     <div class="info-header-right">
       <div class="info-header-upper">
         <div class="info-text">
@@ -61,14 +66,34 @@ export default {
     return {
       isEditing: false,                   // 是否处于编辑状态，控制按钮是否出现
       avatarIsHovered: false,
-      teamAvatar: '/src/assets/3.jpg',
-      teamName: '团队名称XXX',
-      teamFounder: '小明',
-      teamFoundTime: '2023-10-01',
-      teamPopulation: '5',
-      teamProjectCount: '6',
-      teamIntroduction:'这是团队简介。'
+      teamAvatarUrl: '',
+      teamAatarChanged: false, //头像是否被修改过
+      teamAvatar: null,
+      teamName: '',
+      teamFounder: '',
+      teamFoundTime: '',
+      teamPopulation: '',
+      teamProjectCount: '6', //接口还没写好
+      teamIntroduction:''
     }
+  },
+  mounted() {
+    this.$http.get('/api/teams/1/').then(
+      (response) => {
+        this.teamAvatar = response.data.avatar
+        this.teamAatarUrl = response.data.avatar
+        this.teamName = response.data.name
+        this.teamFound = response.data.members.filter(item => item.identity == 'leader')
+        this.teamFoundTime = response.data.create_datetime
+        this.teamPopulation = response.data.members.length
+        this.teamIntroduction = response.data.profile
+        if (this.teamIntroduction.length === 0) this.teamIntroduction = '该团队暂无简介。'
+        //团队项目数后端未完成
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
   },
   watch: {
     avatarIsHovered(newValue) {
@@ -103,13 +128,35 @@ export default {
   methods: {
     updateTeamInfo() {
       // todo
-
+      let data = new FormData()
+      data.append('name', this.teamName)
+      data.append('profile', this.teamIntroduction)
+      if (this.teamAatarChanged) {
+        data.append('avatar', this.teamAvatar)
+      }
+      this.$http.put('/api/teams/1/', data).then(
+        response => {
+          if (response.status >= 200 && response.status < 300) {
+            console.log(response.data)
+          } else if (response.status >= 400) {
+            console.log('修改团队信息失败，请重试');
+          }
+        },
+        error => {
+          console.log(error.message);
+        }
+      )
       this.isEditing = false
     },
     uploadAvatar() {
       if (this.isEditing) {
         this.$refs.fileInput.click()
       }
+    },
+    handleFileChange(e) {
+      this.teamAvatarChanged = true
+      this.teamAvatar = e.target.files[0]
+      this.teamAvatarUrl = URL.createObjectURL(this.teamAvatar)
     }
   }
 }

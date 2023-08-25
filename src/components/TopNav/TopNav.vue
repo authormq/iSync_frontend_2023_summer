@@ -99,7 +99,7 @@ export default {
 
 <style scoped>
 .header-container {
-  width: 99.5%;
+  width: 100%;
   height: 70px;
   box-sizing: border-box;
   border-radius: 5px;

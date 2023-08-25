@@ -50,7 +50,7 @@ ul {
 }
 
 .container>div {
-  margin-left: 30px;
+  margin-left: 10px;
   width: calc(100% - 330px);
   padding: 20px;
   /* background-color: lightgrey; */

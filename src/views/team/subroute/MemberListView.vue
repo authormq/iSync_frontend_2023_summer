@@ -25,7 +25,7 @@ export default {
       adminData: [],
       //团队普通成员数据
       ordinaryData: [],
-      curIdentity: 'member',
+      curIdentity: 'admin',
       userKeyword: ''
     }
   },
@@ -42,6 +42,7 @@ export default {
           realName: member.user.first_name + member.user.last_name,
           email: member.user.email,
           identity: member.identity,
+          profile: member.user.profile === '' ? '暂无' : member.user.profile,
           joinDateTime: member.join_datetime
         }))
         this.founderData = response.data.members.filter(item => item.identity == 'leader').map((member) =>
@@ -53,7 +54,8 @@ export default {
           lastName: member.user.last_name,
           email: member.user.email,
           identity: member.identity,
-          Identity: '团队创建者', // 注意这两个 identity 首字母大小写不一样
+          Identity: '创建者', // 注意这两个 identity 首字母大小写不一样
+          profile: member.user.profile === '' ? '暂无' : member.user.profile,
           joinDateTime: member.join_datetime
         }))
         this.adminData = response.data.members.filter(item => item.identity == 'admin').map((member) =>
@@ -65,7 +67,8 @@ export default {
           lastName: member.user.last_name,
           email: member.user.email,
           identity: member.identity,
-          Identity: '团队管理员',
+          Identity: '管理员',
+          profile: member.user.profile === '' ? '暂无' : member.user.profile,
           joinDateTime: member.join_datetime
         }))
         this.ordinaryData = response.data.members.filter(item => item.identity == 'member').map((member) =>
@@ -77,7 +80,8 @@ export default {
           lastName: member.user.last_name,
           email: member.user.email,
           identity: member.identity,
-          Identity: '普通成员',
+          Identity: '成员',
+          profile: member.user.profile === '' ? '暂无' : member.user.profile,
           joinDateTime: member.join_datetime
         }))
         let curUserId = this.$cookies.get('user_id') // 当前登录用户id
@@ -172,7 +176,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   /* justify-content: center; */
-  justify-content: space-evenly;
+  /* justify-content: space-evenly; */
   align-content: flex-start;
   /* padding-left: 30px; */
 }

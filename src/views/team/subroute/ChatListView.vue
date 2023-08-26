@@ -8,7 +8,6 @@
     <ul>
       <li v-for="data in chatData" :key="data">
         {{ data }}
-        <!-- <ChatListView :data="tempData"/> -->
       </li>
     </ul>
   </div>

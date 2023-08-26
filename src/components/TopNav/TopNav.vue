@@ -1,7 +1,7 @@
 <template>
   <div class="header-container">
     <div>
-      一个选择团队的组件
+      <TeamSelector/>
     </div>
     <div>
       <ul class="header-nav">
@@ -30,13 +30,15 @@ import MailIcon from '../Svg/MailIcon.vue'
 import MailUnreadIcon from '../Svg/MailUnreadIcon.vue'
 import ChatIcon from '../Svg/ChatIcon.vue'
 import { RouterView, routeLocationKey } from 'vue-router'
+import TeamSelector from './TeamSelector.vue'
 export default {
   name: 'TopNav',
   components: {
     MailIcon,
     MailUnreadIcon,
     ChatIcon,
-    RouterView
+    RouterView,
+    TeamSelector
 },
   mounted() {
     this.handleFlushUserData()

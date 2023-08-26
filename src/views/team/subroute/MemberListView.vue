@@ -1,9 +1,15 @@
 <!-- 团队成员列表 -->
 <template>
   <div class="member-top">待补充的邀请和搜索组件
-    <input type="text" v-model="userKeyword"/>
+    <input type="text" v-model="userKeyword" />
     {{ userKeyword }}
+    <button @click="searchUser">click to search</button>
+    <div v-if="curIdentity === 'leader' || curIdentity === 'admin'">这是分享链接 需要加一个v-if，只有管理员或者团队创建者可以看到并点击
+      <button @click="getInviteUrl">getInviteUrl</button>
+      <div>显示获得分享的链接{{ inviteUrl }}</div>
+    </div>
   </div>
+  
   <div class="container">
     <MemberListItem v-for="user in founderData" :key="user" :data="user" :curIdentity="curIdentity"></MemberListItem>
     <MemberListItem v-for="user in adminData" :key="user" :data="user" :curIdentity="curIdentity"></MemberListItem>
@@ -18,7 +24,6 @@ export default {
   components: { MemberListItem },
   data() {
     return {
-      allMember: [],
       //团队创建者数据
       founderData: [],
       //团队管理员数据
@@ -26,24 +31,15 @@ export default {
       //团队普通成员数据
       ordinaryData: [],
       curIdentity: 'member',
-      userKeyword: ''
+      userKeyword: '',
+      // 存放搜索到的成员的数据
+      searchResault: [],
+      inviteUrl: ''
     }
   },
   mounted() {
     this.$http.get('/api/teams/1/').then(
       (response) => {
-        this.allMember = response.data.members.map((member) =>
-        ({
-          userId: member.user.id,
-          avatar: member.user.avatar,
-          username: member.user.username,
-          firstName: member.user.first_name,
-          lastName: member.user.last_name,
-          realName: member.user.first_name + member.user.last_name,
-          email: member.user.email,
-          identity: member.identity,
-          joinDateTime: member.join_datetime
-        }))
         this.founderData = response.data.members.filter(item => item.identity == 'leader').map((member) =>
         ({
           userId: member.user.id,
@@ -151,12 +147,36 @@ export default {
         }
       )
     },
-    handleKeyword() {
-      let filterData = this.allMember.filter(item => {
-        return item.realName.includes(this.userKeyword) || item.username.includes(this.userKeyword)
-      })
-      return filterData
+    searchUser() {
+      this.$http.get(`/api/teams/1/find/?keyword=${this.userKeyword}`).then(
+        response => {
+          this.searchResault = response.data.map((item) => ({
+            userId: item.user.id,
+            avatar: item.user.avatar,
+            username: item.user.username,
+            firstName: item.user.first_name,
+            lastName: item.user.last_name,
+            email: item.user.email,
+            identity: item.identity,
+            joinDateTime: item.join_datetime
+          }))
+        },
+        error => {
+          console.log(error.message);
+        },
+      )
     },
+    getInviteUrl() {
+      this.$http.get(`/api/teams/1/generate_invite_url/`).then(
+        response => {
+          this.inviteUrl = response.data.url
+          console.log(this.inviteUrl);
+        },
+        error => {
+          console.log(error.message);
+        }
+      )
+    }
   }
 }
 </script>

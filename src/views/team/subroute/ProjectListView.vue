@@ -3,9 +3,11 @@
   <div class="project-top">或许需要一个项目搜索
     <button @click="handleCreateProject">新建</button>
     <button>回收站</button>
+    <div v-if="false">回收站
+    </div>
   </div>
   <div class="container">
-    <ProjectListItem v-for="project in projectData" :key="project" :data="project"></ProjectListItem>
+    <ProjectListItem v-for="project in projectData" :key="project" :data="project" :isRestore="true"></ProjectListItem>
   </div>
 </template>
 
@@ -34,7 +36,7 @@ export default {
         }))
       },
       error => {
-        console.log(error.message);
+        console.log(error.message)
       }
     )
     this.$http.get(`/api/projects/list/deleted/1/`).then(
@@ -50,23 +52,45 @@ export default {
         }))
       },
       error => {
-        console.log(error.message);
+        console.log(error.message)
       }
     )
     this.$bus.on('renameRequest', this.handleRenameProject)
     this.$bus.on('deleteRequest', this.handleDeleteProject)
+    this.$bus.on('restoreRequest', this.handleRestoreProject)
   },
   methods: {
     handleCreateProject() {
 
     },
     handleRenameProject(data) {
-      this.$http.post()
+      let renameInfo = new FormData()
+      renameInfo.append('name', data.rename)
+      this.$http.post(`/api/projects/${data.project.id}/rename/`, renameInfo).then(
+        response => {
+          data.project.name = data.rename
+        },
+        error => {
+          console.log(error.message)
+        }
+      )
     },
     handleDeleteProject(data) {
       this.$http.post(`/api/projects/${data.id}/delete/`).then(
         response => {
-          console.log(response.data);
+          this.projectData.splice(this.projectData.indexOf(data), 1)
+          this.recycleData.push(response)
+        }
+      )
+    },
+    handleRestoreProject(data) {
+      this.$http.post(`/api/projects/${data.id}/restore/`).then(
+        response => {
+          this.projectData.push(data)
+          this.recycleData.splice(this.recycleData.indexOf(data), 1)
+        },
+        error => {
+          console.log(error)
         }
       )
     }

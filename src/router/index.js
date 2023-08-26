@@ -11,6 +11,7 @@ import DocEditingView from '../views/editing/DocEditingView.vue'
 import DocListView from '../views/project/subroute/DocListView.vue'
 import PageListView from '../views/project/subroute/PageListView.vue'
 import MessageView from '../views/MessageView.vue'
+import WebBuilder from '../views/editing/WebBuilder.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

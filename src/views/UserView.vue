@@ -74,16 +74,10 @@
           @blur="handleBlur('profile')" @keyup.enter="handleBlur('profile')"
         ></textarea>
       </div>
-      <!-- <br>
-      <br>
-      <br>
-      <br> -->
       <button @click="back">返回</button>
       <button @click="confirm">确认</button>
       </div>
     </div>
-  
-  
 </template>
 
 <script>

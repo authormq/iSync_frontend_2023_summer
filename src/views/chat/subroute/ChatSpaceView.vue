@@ -1,5 +1,6 @@
 <template>
-  
+  <input>
+  <button>发送</button>
 </template>
 
 <script>

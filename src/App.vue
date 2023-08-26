@@ -1,6 +1,6 @@
 <template>
   <div>
-    <TopNav v-if="'/'!==this.$route.path" /> 
+    <TopNav v-if="'/'!==instance.proxy.$route.path" /> 
   </div>
   <RouterView />
   <!-- 消息组件 -->

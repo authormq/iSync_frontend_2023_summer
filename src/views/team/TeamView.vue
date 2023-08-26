@@ -11,7 +11,6 @@
     <div>
       <RouterView ></RouterView>
     </div>
-    
   </div>
 </template>
 

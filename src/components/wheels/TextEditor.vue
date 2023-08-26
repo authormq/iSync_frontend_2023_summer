@@ -1,10 +1,12 @@
+<!-- 文本编辑器 -->
 <template>
 	<div id="editor-wrapper" v-if="editor">
 		<!-- 气泡菜单 除了样式不要乱改 -->
 		<bubble-menu :editor="editor" class="editor-bubble-menu">
 			<div v-if="editor.isActive('codeBlock') === false">
 				<button @click="editor.chain().focus().toggleBold().run()"
-					:disabled="!editor.can().chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
+					:disabled="!editor.can().chain().focus().toggleBold().run()"
+					:class="{ 'is-active': editor.isActive('bold') }">
 					加粗
 				</button>
 				<button @click="editor.chain().focus().toggleItalic().run()"
@@ -22,7 +24,8 @@
 					:class="{ 'is-active': editor.isActive('underline') }">
 					下划线
 				</button>
-				<select v-model="selectedFontFamily" @change="changeFont" :style="{ 'font-family': `${selectedFontFamily}` }">
+				<select v-model="selectedFontFamily" @change="changeFont"
+					:style="{ 'font-family': `${selectedFontFamily}` }">
 					<option v-for="fontOption in fontOptions" :value="fontOption.value" :key="fontOption.value"
 						:style="{ 'font-family': `${fontOption.label}` }">
 						{{ fontOption.label }}
@@ -66,8 +69,12 @@
 				<input type="color" @input="editor.chain().focus().setColor($event.target.value).run()"
 					:value="editor.getAttributes('textStyle').color">
 			</div>字体颜色
+			<button @click="editable = !editable" :class="{ 'is-active': editable }">
+				编辑模式
+			</button>
 			<button @click="editor.chain().focus().toggleBold().run()"
-				:disabled="!editor.can().chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
+				:disabled="!editor.can().chain().focus().toggleBold().run()"
+				:class="{ 'is-active': editor.isActive('bold') }">
 				加粗
 			</button>
 			<button @click="editor.chain().focus().toggleItalic().run()"
@@ -86,7 +93,8 @@
 				下划线
 			</button>
 			<button @click="editor.chain().focus().toggleCode().run()"
-				:disabled="!editor.can().chain().focus().toggleCode().run()" :class="{ 'is-active': editor.isActive('code') }">
+				:disabled="!editor.can().chain().focus().toggleCode().run()"
+				:class="{ 'is-active': editor.isActive('code') }">
 				代码碎片
 			</button>
 			<button @click="editor.chain().focus().toggleHighlight({ color: '#ffc078' }).run()"
@@ -147,7 +155,8 @@
 				:disabled="!editor.can().liftListItem('taskItem')">
 				抬升任务项级别
 			</button>
-			<button @click="editor.chain().focus().setParagraph().run()" :class="{ 'is-active': editor.isActive('paragraph') }">
+			<button @click="editor.chain().focus().setParagraph().run()"
+				:class="{ 'is-active': editor.isActive('paragraph') }">
 				普通段落
 			</button>
 			<button @click="editor.chain().focus().unsetAllMarks().run()">
@@ -216,10 +225,11 @@
 			<button @click="saveDocument">保存到云端</button>
 		</div>
 		<editor-content :editor="editor" id="document-content" />
+		<div id="hidden-area"></div>
 		<div class="document-words">
 			{{ editor.storage.characterCount.words() }} 个单词
 			<div class="document-characters">{{ editor.storage.characterCount.characters() }} / {{ docLimit }} 个字符
-				{{ editor.storage.collaborationCursor.users.length }}
+				{{ editor.storage.collaborationCursor.users.length }}人正在编辑该文档
 			</div>
 		</div>
 
@@ -246,7 +256,7 @@ import CodeBlockLowLight from '@tiptap/extension-code-block-lowlight'//代码高
 import { Editor, EditorContent, BubbleMenu, FloatingMenu } from '@tiptap/vue-3'
 //协作重要插件
 import * as Y from 'yjs'
-import { WebrtcProvider } from 'y-webrtc'
+// import { WebrtcProvider } from 'y-webrtc'
 // import { HocuspocusProvider } from '@hocuspocus/provider'
 import Collaboration from '@tiptap/extension-collaboration'
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
@@ -279,6 +289,7 @@ export default {
 			docContent: '',
 			docLimit: 100000,
 			autoSavePeriod: 10000,
+			editable: false,
 			fullScreen: false,
 			editor: undefined,
 			provider: undefined,
@@ -318,28 +329,26 @@ export default {
 			this.editor.chain().focus().setFontFamily(this.selectedFontFamily || 'unset').run()
 		},
 		exportAsPDF() {
-			let page = document.querySelector('#document-content')
+			let original = document.querySelector('#document-content')
+			let page = original.cloneNode(true)//需要对原样式进行一些修改，因此深拷贝
+
+			//修改样式和显示内容
+			page.querySelectorAll('.ProseMirror').forEach(element => {
+				element.style.backgroundColor = 'white';
+			});
+			page.querySelectorAll('.collaboration-cursor__caret, .collaboration-cursor__label').forEach(element => {
+				element.style.display = 'none';
+			});
+			original.style.display = 'none'//隐藏显示
+			document.querySelector('#hidden-area').appendChild(page)
+
 			const docName = this.docName
-			let pageWidth = page.offsetWidth//page宽度
-			let pageHeight = page.offsetHeight//page高度
-			let pageTop = page.offsetTop//到顶部距离
-			let pageLeft = page.offsetLeft//到左端距离
-
-			let canvas = document.createElement("canvas")
 			let abs = 0
-
 			let innerWidth = document.documentElement.clientWidth || document.body.clientWidth // 获得当前可视窗口的宽度（不包含滚动条）
 			let outerWidth = window.innerWidth // 获得当前窗口的宽度（包含滚动条）
 			if (outerWidth > innerWidth) {
 				abs = (outerWidth - innerWidth) / 2    // 获得滚动条宽度的一半
 			}
-			canvas.width = pageWidth * 2   // 将画布宽高放大为page两倍
-			canvas.height = pageHeight * 2
-
-			let context = canvas.getContext("2d")
-			context.scale(2, 2)
-			context.translate(-pageLeft - abs, -pageTop)
-
 			html2canvas(page, {
 				dpi: 300,
 				useCORS: true  //允许canvas画布内 可以跨域请求外部链接图片, 允许跨域请求。
@@ -361,9 +370,10 @@ export default {
 					if (renderedHeight < canvas.height)
 						pdf.addPage()//如果后面还有内容，添加一个空页
 				}
-
 				pdf.save(docName)
 			}).then(() => {
+				original.style.display = 'block'//恢复显示
+				document.querySelector('#hidden-area').removeChild(page)
 				alert('成功保存为PDF')
 			})
 		},
@@ -399,6 +409,11 @@ export default {
 				}
 			})
 		}
+	},
+	watch: {
+		editable() {
+			this.editor.setEditable(this.editable)
+		},
 	},
 	mounted() {
 		this.yDOC = new Y.Doc()
@@ -451,7 +466,7 @@ export default {
 					Placeholder.configure(
 						{
 							placeholder: ({ node }) => {
-								return '从这里开始编写文档'
+								return '从这里开始编写文档 支持Markdown快捷键'
 							}
 						}
 					),
@@ -460,6 +475,7 @@ export default {
 					})
 				],
 				content: this.docContent,
+				editable: this.editable,
 				onSelectionUpdate: () => {
 					let selected = window.getSelection()
 					if (selected.rangeCount !== 0) {
@@ -516,7 +532,7 @@ export default {
 					Placeholder.configure(
 						{
 							placeholder: ({ node }) => {
-								return '从这里开始编写文档'
+								return '从这里开始编写文档\n支持Markdown快捷键'
 							}
 						}
 					),
@@ -524,10 +540,12 @@ export default {
 						multicolor: true
 					})
 				],
+				editable: this.editable,
 				content: this.docContent,
 				onSelectionUpdate: () => {
 					let selected = window.getSelection()
 					if (selected.rangeCount !== 0) {
+						// console.log(selected.getRangeAt(0));
 						let range = selected.getRangeAt(0)
 						let node = range.commonAncestorContainer
 						if (node.nodeType != 1) {
@@ -552,6 +570,7 @@ export default {
 ::selection {
 	background: lightgray;
 }
+
 
 /* 最外层盒子 */
 #editor-wrapper {
@@ -657,12 +676,12 @@ export default {
 /* 编辑器内容区 */
 #document-content {
 	padding: 20px;
-	max-height: 100%;
 	overflow: auto;
 }
 
 
 .ProseMirror {
+	min-height: 100px;
 	padding: 20px;
 	line-height: 2;
 	border-radius: 5px;
@@ -688,6 +707,11 @@ export default {
 	transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.7s;
 }
 
+/* placeholder样式 */
+.ProseMirror p.is-editor-empty:first-child::before {
+	font-weight: 700;
+	color: #777 !important
+}
 
 /* 加粗样式 */
 .ProseMirror strong {
@@ -893,5 +917,32 @@ export default {
 .ProseMirror hr {
 	border: 2px solid rgba(#555);
 	margin: 2rem 0;
+}
+
+/* 协作光标样式 */
+.ProseMirror .collaboration-cursor__caret {
+	border-left: 1px solid #0D0D0D;
+	border-right: 1px solid #0D0D0D;
+	margin-left: -1px;
+	margin-right: -1px;
+	pointer-events: none;
+	position: relative;
+	word-break: normal;
+}
+
+/* Render the username above the caret */
+.ProseMirror .collaboration-cursor__label {
+	border-radius: 3px 3px 3px 0;
+	color: #eee;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: 600;
+	left: -1px;
+	line-height: normal;
+	padding: 0.1rem 0.3rem;
+	position: absolute;
+	top: -1.4em;
+	user-select: none;
+	white-space: nowrap;
 }
 </style>

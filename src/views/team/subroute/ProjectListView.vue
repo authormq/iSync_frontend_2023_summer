@@ -61,7 +61,7 @@ export default {
 
     },
     handleRenameProject(data) {
-      
+      this.$http.post()
     },
     handleDeleteProject(data) {
       this.$http.post(`/api/projects/${data.id}/delete/`).then(

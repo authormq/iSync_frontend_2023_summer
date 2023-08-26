@@ -14,11 +14,17 @@
     </li>
   </ul>
   <button @click="createNewTeam">新建团队</button>
+  <CreateTeamModal :showCreateTeamModal="showCreateTeamModal"
+      @closeCreateTeamModal="closeM"></CreateTeamModal>
 </template>
 
 <script>
+import CreateTeamModal from '../Modal/CreateTeamModal.vue'
 export default {
-  name: 'TeamListView',
+  name: 'TeamSelector',
+  components: {
+    CreateTeamModal
+  },
   data() {
     return {
       curTeamName: '当前团队',
@@ -36,7 +42,8 @@ export default {
           'teamAvatar': '团队头像3',
           'teamName': '团队名称3',
         }
-      ]
+      ],
+      showCreateTeamModal: false
     }
   },
   methods: {
@@ -47,8 +54,11 @@ export default {
       alert("跳转到团队详情页，请mq改路由")
     },
     createNewTeam() {
-      alert("弹出新建团队模态框")
-    }
+      this.showCreateTeamModal = true
+    },
+    closeM() {
+      this.showCreateTeamModal = false
+    } 
   }
 }
 </script>

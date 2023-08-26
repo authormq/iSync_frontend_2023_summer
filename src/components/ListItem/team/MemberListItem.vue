@@ -1,5 +1,5 @@
 <template>
-  <div class="member-container" @click="handleClick">
+  <div class="member-container" @click="handleClick" @mouseleave="$refs.popover.style.display = 'none'">
     <img :src="data.avatar" />
     <div class="member-info">
       <div class="member-info-left">

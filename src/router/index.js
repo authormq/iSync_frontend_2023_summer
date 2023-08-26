@@ -7,6 +7,7 @@ import InfoView from  '../views/team/subroute/InfoView.vue'
 import MemberListView from  '../views/team/subroute/MemberListView.vue'
 import ProjectListView from  '../views/team/subroute/ProjectListView.vue'
 import ProjectView from '../views/project/ProjectView.vue'
+import DocEditingView from '../views/editing/DocEditingView.vue'
 import DocListView from '../views/project/subroute/DocListView.vue'
 import PageListView from '../views/project/subroute/PageListView.vue'
 import MessageView from '../views/MessageView.vue'
@@ -59,7 +60,7 @@ const router = createRouter({
       children: [
         {
           path: 'doc',
-          component: DocListView
+          component: DocEditingView
         },
         {
           path: 'page',

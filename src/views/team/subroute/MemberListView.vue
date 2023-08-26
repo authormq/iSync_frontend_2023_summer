@@ -117,7 +117,9 @@ export default {
     setAdmin(user) {
       this.$http.put(`/api/teams/1/add/admin/${user.userId}/`).then(
         response => {
-          // console.log(response.data);
+          this.ordinaryData.splice(this.ordinaryData.indexOf(user), 1)
+          user.identity = 'admin'
+          user.Identity = '团队管理员'
           this.adminData.push(user)
         },
         error => {
@@ -130,6 +132,9 @@ export default {
         response => {
           // console.log(response.data);
           this.adminData.splice(this.adminData.indexOf(user), 1)
+          user.identity = 'member'
+          user.Identity = '普通成员'
+          this.ordinaryData.push(user)
         },
         error => {
           console.log(error.message);
@@ -152,10 +157,6 @@ export default {
       })
       return filterData
     },
-    // 突然没懂为什么需要这个search接口
-    // searchTeammates(searchData) {
-    //   let len = 
-    // }
   }
 }
 </script>

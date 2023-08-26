@@ -1,64 +1,79 @@
 <template>
-  <div>
-    <img 
-      src='curAvatarUrl'
-      @mouseover="avatarIsHovered = true"
-      @mouseleave="handleMouseLeaveAvatar"
-      @click="gotoCurTeamInfo"
-    >
-    <span @click="gotoCurTeamInfo">{{ teamNameNow }}</span>
+  <div class="select-container">
+    <StylishSelect v-model:value="currentTeam" :options="options"/>
   </div>
-  <ul>
-    <li v-for="data in teamData" :key="data">
-      {{ data }}
-    </li>
-  </ul>
-  <button @click="createNewTeam">新建团队</button>
-  <CreateTeamModal :showCreateTeamModal="showCreateTeamModal"
-      @closeCreateTeamModal="closeM"></CreateTeamModal>
+  <CreateTeamModal 
+    :show="showCreateTeamModal"
+    @close="showCreateTeamModal = false"
+  ></CreateTeamModal>
 </template>
 
 <script>
 import CreateTeamModal from '../Modal/CreateTeamModal.vue'
+import StylishSelect from '../Stylish/StylishSelect.vue'
 export default {
   name: 'TeamSelector',
   components: {
-    CreateTeamModal
+    CreateTeamModal,
+    StylishSelect
   },
   data() {
     return {
-      curTeamName: '当前团队',
-      curAvatarUrl: '',
-      avatarIsHovered: false,
-      teamData: [{
-        'teamAvatar': '团队头像1',
-        'teamName': '团队名称1',
+      // 当前团队对应option之value
+      currentTeam: '未选中',
+      /* 
+        说明
+        （1）每一项的label为展示文字，value为真实值，
+            click为点击后调用的方法（应在这个文件的methods中配置）。
+            如果设置某一个元素的 selected 属性为 true，它将被选中
+        （2）第一项必须这么写，其 value 无意义，click 已经写好，就是展示模态框
+      */
+      options: [
+        {
+          label: '新建团队',
+          value: 'XXX',
+          click: this.showModal
         },
         {
-          'teamAvatar': '团队头像2',
-          'teamName': '团队名称2',
+          label: '团队A',
+          value: 'a',
+          click: this.jump
         },
         {
-          'teamAvatar': '团队头像3',
-          'teamName': '团队名称3',
-        }
+          label: '团队B',
+          value: 'b',
+          click: this.jump
+        },
+        {
+          label: '团队C',
+          value: 'c',
+          click: this.jump
+        },
+        {
+          label: '团队D',
+          value: 'd',
+          click: this.jump
+        },
+        {
+          label: '团队E',
+          value: 'e',
+          click: this.jump
+        },
       ],
       showCreateTeamModal: false
     }
   },
   methods: {
-    handleMouseLeaveAvatar() {
-      this.avatarIsHovered = false
+    // 这个 jump 可以换成点击切换当前团队的方法
+    // 当前团队最好保存在 store 中
+    // 上面 options 数组的第一项已经固定，后面的项应当调用接口 push 进去
+    // 其中每一项的 value 可以是跳转路由，下面的 jump 方法可以接收一个参数，调用$router.push实现跳转
+    jump(path) {
+      // console.log(message)
     },
-    gotoCurTeamInfo() {
-      alert("跳转到团队详情页，请mq改路由")
-    },
-    createNewTeam() {
+    showModal() {
       this.showCreateTeamModal = true
     },
-    closeM() {
-      this.showCreateTeamModal = false
-    } 
   }
 }
 </script>

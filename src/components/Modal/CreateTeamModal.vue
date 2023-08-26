@@ -3,11 +3,12 @@
     <div>
       <button @click="closeModal">X</button>
     </div>
-    <img
+    <img 
         :src="avatarUrl"
         @mouseover="avatarIsHovered = true"
         @mouseleave="handleMouseLeaveAvatar"
         @click="uploadAvatar"
+        style="width: 30px;"
       />
     <input 
       type="file"
@@ -17,7 +18,8 @@
     >
     <div>欢迎来到XXX，请创建团队</div>
     <div>
-      团队名称：<input type="text">
+      团队名称：<StylishInput type="text" v-model:value="teamName"/>
+      团队简介：<StylishInput type="text" v-model:value="teamProfile"/>
     </div>
     <button @click="createTeam">创建团队</button>
   </StylishModal>
@@ -26,10 +28,12 @@
 
 <script>
 import StylishModal from '../Stylish/StylishModal.vue';
+import StylishInput from '../Stylish/StylishInput.vue';
 export default {
   name: 'CreateTeamModal',
   components: {
-    StylishModal
+    StylishModal,
+    StylishInput
   },
   props: {
     showCreateTeamModal: Boolean
@@ -39,7 +43,9 @@ export default {
       avatarIsHovered: false,
       avatarFile: null,
       avatarUrl: '',
-      avatarChanged: false 
+      avatarChanged: false,
+      teamName: '',
+      teamProfile: ''
     }
   },
   methods: {
@@ -47,9 +53,27 @@ export default {
       this.$emit("closeCreateTeamModal")
       this.avatarFile = null
       this.avatarUrl = ''
+      this.teamName = ''
+      this.teamProfile = ''
     },
     createTeam() {
-      this.closeModal()
+      let data = new FormData()
+      data.append('name', this.teamName)
+      data.append('profile', this.teamProfile)
+      if (this.avatarChanged) {
+        data.append('avatar', this.avatarFile)
+      }
+      this.$http.post('api/teams/create/', data).then((response) => {
+        alert('创建团队成功')
+        this.closeModal()
+      }), (error) => {
+        if (error.response.data.errors !== undefined) {
+          alert(error.response.data.errors)
+        }
+        else {
+          alert('创建团队失败')
+        }
+      }
       //还需实现真正的创建
     },
     handleMouseLeaveAvatar() {

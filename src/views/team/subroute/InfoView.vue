@@ -1,19 +1,9 @@
 <!-- 团队信息 -->
 <template>
   <div class="info-header">
-    <img 
-      :src="teamAvatarUrl" 
-      ref="avatar" 
-      @click="uploadAvatar" 
-      @mouseover="avatarIsHovered = true"
-      @mouseleave="avatarIsHovered = false"
-    >
-    <input 
-      type="file" 
-      accept="image/*" 
-      ref="fileInput" 
-      @change="handleFileChange"
-    >
+    <img :src="teamAvatarUrl" ref="avatar" @click="uploadAvatar" @mouseover="avatarIsHovered = true"
+      @mouseleave="avatarIsHovered = false">
+    <input type="file" accept="image/*" ref="fileInput" @change="handleFileChange">
     <div class="info-header-right">
       <div class="info-header-upper">
         <div class="info-text">
@@ -28,7 +18,7 @@
         </div>
         <div class="number-box" v-if="!isEditing">
           <p>项目</p>
-          <span>{{ teamProjectCount}}</span>
+          <span>{{ teamProjectCount }}</span>
         </div>
       </div>
       <div class="info-intro" ref="teamIntro">
@@ -39,21 +29,20 @@
       <div class="modify-info">
         <PenIcon v-if="!isEditing" @click="isEditing = true" />
         <template v-else>
-          <CrossIcon class="close-icon" @click="isEditing = false"/>&nbsp;&nbsp;
+          <CrossIcon class="close-icon" @click="isEditing = false" />&nbsp;&nbsp;
           <!-- 接口待编写 -->
-          <CheckIcon @click="updateTeamInfo"/>
+          <CheckIcon @click="updateTeamInfo" />
         </template>
       </div>
     </div>
-      
-    
+
+
   </div>
-    
+
   <div class="info-charts">
     <div id="active-users"></div>
     <div id="active-projects"></div>
   </div>
-  
 </template>
 
 <script>
@@ -76,7 +65,7 @@ export default {
       teamFoundTime: '',
       teamPopulation: '',
       teamProjectCount: '6', //接口还没写好
-      teamIntroduction:''
+      teamIntroduction: ''
     }
   },
   mounted() {
@@ -96,38 +85,6 @@ export default {
         console.log(error)
       }
     )
-  },
-  watch: {
-    avatarIsHovered(newValue) {
-      if (this.isEditing) {
-        if (newValue) {
-          this.$refs.avatar.style.transform = 'translate(-2px, -2px) scale(1.02)'
-          this.$refs.avatar.style.boxShadow = '2px 2px 5px grey'
-        } else {
-          this.$refs.avatar.style.transform = 'none'
-          this.$refs.avatar.style.boxShadow = 'none'
-        }
-      }
-    },
-    isEditing(newValue) {
-      if (newValue) {
-        this.$refs.avatar.style.cursor = 'pointer'
-        this.$refs.teamName.style.display = 'none'
-        this.$refs.teamIntro.style.display = 'none'
-        this.$refs.teamNameInput.style.display = 'inline-block'
-        this.$refs.teamIntroInput.style.display = 'block'
-        this.$refs.teamNameInput.focus()
-        
-      } else {
-        this.$refs.avatar.style.cursor = 'default'
-        this.$refs.teamName.style.display = 'inline-block'
-        this.$refs.teamIntro.style.display = 'block'
-        this.$refs.teamNameInput.style.display = 'none'
-        this.$refs.teamIntroInput.style.display = 'none'
-      }
-    }
-  },
-  mounted() {
     let users = echarts.init(document.getElementById('active-users'))
     users.setOption({
       title: {
@@ -174,7 +131,37 @@ export default {
         }
       ]
     })
-},
+  },
+  watch: {
+    avatarIsHovered(newValue) {
+      if (this.isEditing) {
+        if (newValue) {
+          this.$refs.avatar.style.transform = 'translate(-2px, -2px) scale(1.02)'
+          this.$refs.avatar.style.boxShadow = '2px 2px 5px grey'
+        } else {
+          this.$refs.avatar.style.transform = 'none'
+          this.$refs.avatar.style.boxShadow = 'none'
+        }
+      }
+    },
+    isEditing(newValue) {
+      if (newValue) {
+        this.$refs.avatar.style.cursor = 'pointer'
+        this.$refs.teamName.style.display = 'none'
+        this.$refs.teamIntro.style.display = 'none'
+        this.$refs.teamNameInput.style.display = 'inline-block'
+        this.$refs.teamIntroInput.style.display = 'block'
+        this.$refs.teamNameInput.focus()
+
+      } else {
+        this.$refs.avatar.style.cursor = 'default'
+        this.$refs.teamName.style.display = 'inline-block'
+        this.$refs.teamIntro.style.display = 'block'
+        this.$refs.teamNameInput.style.display = 'none'
+        this.$refs.teamIntroInput.style.display = 'none'
+      }
+    }
+  },
   methods: {
     updateTeamInfo() {
       // todo
@@ -218,9 +205,10 @@ export default {
 }
 
 .info-header {
-  display: flex; 
+  display: flex;
   position: relative;
 }
+
 .info-header img {
   width: 240px;
   height: 240px;
@@ -240,23 +228,28 @@ export default {
   margin-left: 40px;
   /* padding-top: 50px; */
 }
+
 .info-text>h2,
 .info-text>h3 {
   padding-top: 35px;
 }
+
 .info-text>h2,
 .info-text>h3 {
   display: inline-block;
 }
+
 .info-text>h2 {
   font-size: 40px;
   font-weight: bold;
 }
+
 .info-text>h3 {
   font-size: 18px;
   padding-left: 5px;
   color: grey;
 }
+
 .number-box {
   width: 80px;
   height: 80px;
@@ -267,6 +260,7 @@ export default {
   flex-wrap: wrap;
   align-content: center;
 }
+
 .number-box>p {
   width: 80px;
   margin-bottom: 5px;
@@ -274,12 +268,14 @@ export default {
   font-size: 20px;
   font-weight: bold;
 }
+
 .number-box>span {
   width: 80px;
   display: block;
   text-align: center;
   font-size: 16px;
 }
+
 .info-header-upper>div:nth-of-type(2) {
   margin: 0 40px;
 }
@@ -296,7 +292,8 @@ export default {
   cursor: pointer;
 }
 
-input, textarea {
+input,
+textarea {
   display: none;
 }
 
@@ -325,6 +322,7 @@ input, textarea {
   margin-left: 40px;
   margin-top: 40px;
 }
+
 .team-intro-input:focus-visible {
   outline: 0;
   border: 0;
@@ -335,7 +333,8 @@ input, textarea {
   margin-top: 50px;
 }
 
-#active-users, #active-projects {
+#active-users,
+#active-projects {
   width: 500px;
   height: 350px;
   padding-top: 20px;

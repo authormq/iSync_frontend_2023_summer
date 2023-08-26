@@ -22,25 +22,32 @@
     <ProjectListItem :data="project"/>
     <ProjectListItem :data="project"/>
   </div>
-  <!-- <div>
+  <div>
     <input type="text">
     <button>这是搜索按钮</button>
-    <button>这是新建项目按钮</button>
+    <button @click="createNewProject">这是新建项目按钮</button>
   </div>
-  <ul>
+  <!-- <ul>
     <li v-for="data in projectData" :key="data">
       {{ data }}
     </li>
   </ul> -->
+  <CreateProjectModal :showCreateProjectModal="showCreateProjectModal"
+      @closeCreateProjectModal="closeM"></CreateProjectModal>
 </template>
 
 <script>
 import ProjectListItem from '../../../components/ListItem/team/ProjectListItem.vue'
+import CreateProjectModal from '../../../components/Modal/CreatProjectModal.vue';
 export default {
   name: 'ProjectListView',
-  components: { ProjectListItem },
+  components: { 
+    ProjectListItem, 
+    CreateProjectModal 
+  },
   data() {
     return {
+      showCreateProjectModal: false,
       project: {
         name: '项目名称hhhh',
         image: '/src/assets/avatar.jpeg',
@@ -61,6 +68,14 @@ export default {
         'projectDocCount': '这是项目文档数量',
         'latestUpdateTime': '这是最近修改时间'
       }]
+    }
+  },
+  methods: {
+    closeM() {
+      this.showCreateProjectModal = false
+    },
+    createNewProject() {
+      this.showCreateProjectModal = true
     }
   }
 }

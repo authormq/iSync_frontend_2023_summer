@@ -7,16 +7,14 @@
           {{ data.username }}
         </div>
         <div class="member-info-realname">
-          {{ data.lastName }}{{ data.firstName }} 
+          {{ data.lastName }}{{ data.firstName }}
         </div>
       </div>
       <div class="member-info-right">
-        <div 
-          class="member-info-identity" 
-          :style="{ 
-            'background-color': data.identity === 'leader' ? '#8b1419' :
-              (data.identity === 'admin' ? 'rgba(199,29,35,1)' : 'grey')
-          }">
+        <div class="member-info-identity" :style="{
+          'background-color': data.identity === 'leader' ? '#8b1419' :
+            (data.identity === 'admin' ? 'rgba(199,29,35,1)' : 'grey')
+        }">
           {{ data.Identity }}
         </div>
       </div>
@@ -41,35 +39,19 @@
         </div>
       </div>
       <div class="popover-button">
-        <button 
-          v-if="(curIdentity === 'leader' || curIdentity === 'admin') && data.identity === 'member'" 
-          @click="setAdminOpt"
-        >
+        <button v-if="(curIdentity === 'leader' || curIdentity === 'admin') && data.identity === 'member'"
+          @click="setAdminOpt">
           添加管理权限
         </button>
-        <button 
-          v-else-if="this.curIdentity === 'leader' && data.identity === 'admin'" 
-          @click="cancelAdminOpt"
-        >
+        <button v-else-if="this.curIdentity === 'leader' && data.identity === 'admin'" @click="cancelAdminOpt">
           移除管理权限
         </button>
-        <button 
-          v-if="curIdentity !== 'member' && data.identity === 'member'" 
-          @click="deleteMemberOpt"
-        >
+        <button v-if="curIdentity !== 'member' && data.identity === 'member'" @click="deleteMemberOpt">
           移出团队
         </button>
       </div>
-      <!-- <button v-if="(this.curIdentity === 'leader' || this.curIdentity === 'admin') && data.identity === 'member'" @click="setAdminOpt">设置为管理员</button>
-      <button v-if="this.curIdentity === 'leader' && data.identity === 'admin'"
-        @click="cancelAdminOpt">取消管理员身份</button>
-      <button v-if="this.curIdentity !== 'member' && data.identity === 'member'"
-        @click="deleteMemberOpt">移出团队</button> -->
     </div>
   </div>
-  <!-- <div class="member-info-profile">
-        {{ data.profile }}
-      </div> -->
 </template>
 
 <script>
@@ -96,6 +78,9 @@ export default {
         this.$bus.emit('adminHandleIdentity', { data: this.data, handleIdentity: this.handleIdentity })
       }
       this.$refs.popover.style.display = 'none'
+      this.handleIdentity.setAdminfalse = false
+      this.handleIdentity.cancelAdmin = false
+      this.handleIdentity.deleteMember = false
     },
     setAdminOpt() {
       this.handleIdentity.setAdmin = true
@@ -137,6 +122,7 @@ export default {
   left: -2px; */
   /* transform: translate(-2px, -2px) scale(1.02); */
 }
+
 .member-container:hover .member-info-username {
   text-decoration: underline;
 }
@@ -172,7 +158,7 @@ img {
   text-overflow: ellipsis;
   font-size: 20px;
   font-weight: bold;
-  color: rgba(199,29,35, 1);
+  color: rgba(199, 29, 35, 1);
 }
 
 .member-info-realname {
@@ -211,7 +197,7 @@ img {
   top: 90%;
   left: 80px;
   width: 280px;
-  border: 3px solid rgba(199,29,35, 1);
+  border: 3px solid rgba(199, 29, 35, 1);
   border-radius: 10px;
   background-color: white;
   z-index: 1;
@@ -230,7 +216,7 @@ img {
   max-width: 80px;
   font-size: 20px;
   font-weight: bold;
-  color: rgba(199,29,35, 1);
+  color: rgba(199, 29, 35, 1);
 }
 
 .popover-item-content {
@@ -250,7 +236,7 @@ img {
   height: 30px;
   padding: 0 10px;
   border-radius: 5px;
-  background-color: rgba(199,29,35, 1);
+  background-color: rgba(199, 29, 35, 1);
   color: white;
   font-size: 18px;
   font-weight: bold;
@@ -258,11 +244,10 @@ img {
 }
 
 .popover-button button:hover {
-  background-color: rgba(199,29,35, 0.8);
+  background-color: rgba(199, 29, 35, 0.8);
 }
 
 /* .popover-button button:first-child {
   margin-right: 20px;
 } */
-
 </style>

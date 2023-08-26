@@ -73,7 +73,7 @@ export default {
       this.allMessage = this.allMessage.filter(message => message.isRead == false)
     }
   },
-  mounted() {
+  mounted() { 
     // 这一行必须有，用来获取未读的信息
     this.divideUnReadMessage()
     // 具体需不需要这些函数，看后期后端怎么给我返回数据

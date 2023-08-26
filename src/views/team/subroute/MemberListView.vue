@@ -40,18 +40,6 @@ export default {
   mounted() {
     this.$http.get('/api/teams/1/').then(
       (response) => {
-        // this.allMember = response.data.members.map((member) =>
-        // ({
-        //   userId: member.user.id,
-        //   avatar: member.user.avatar,
-        //   username: member.user.username,
-        //   firstName: member.user.first_name,
-        //   lastName: member.user.last_name,
-        //   realName: member.user.first_name + member.user.last_name,
-        //   email: member.user.email,
-        //   identity: member.identity,
-        //   joinDateTime: member.join_datetime
-        // }))
         this.founderData = response.data.members.filter(item => item.identity == 'leader').map((member) =>
         ({
           userId: member.user.id,
@@ -141,7 +129,6 @@ export default {
     cancelAdmin(user) {
       this.$http.put(`/api/teams/1/remove/admin/${user.userId}/`).then(
         response => {
-          // console.log(response.data);
           this.adminData.splice(this.adminData.indexOf(user), 1)
           user.identity = 'member'
           user.Identity = '普通成员'
@@ -153,7 +140,7 @@ export default {
       )
     },
     deleteMember(user) {
-      this.$http.put(`/api/teams/1/remove/member/${user.userId}/`).then(
+      this.$http.delete(`/api/teams/1/remove/member/${user.userId}/`).then(
         response => {
           this.ordinaryData.splice(this.ordinaryData.indexOf(user), 1)
         },

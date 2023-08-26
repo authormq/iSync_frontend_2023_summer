@@ -11,13 +11,13 @@
     <div>
       <RouterView ></RouterView>
     </div>
-    
   </div>
 </template>
 
 <script>
 export default {
   name: 'TeamView',
+  
 }
 </script>
 
@@ -65,7 +65,8 @@ ul {
 
 .router-link-active {
   box-sizing: border-box;
-  color: rgb(120, 120, 120);
-  border: 1px solid rgb(120, 120, 120);;
+  color: rgba(199,29,35, 1);
+  border: 1px solid rgba(199,29,35, 1);
+  box-shadow: 2px 2px  rgba(199,29,35, 1);
 }
 </style>

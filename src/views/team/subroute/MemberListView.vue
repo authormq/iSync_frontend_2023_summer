@@ -1,69 +1,20 @@
 <!-- 团队成员列表 -->
 <template>
-  <div class="member-top">待补充的邀请和搜索组件</div>
-  <div class="container">
-    <!-- 用 v-for 传入循环渲染，每个元素是一个对象
-      avatar: 用户头像路径
-      username: 用户名
-      lastname: 姓
-      firstname: 名
-      identity: 身份，取值'成员' / '管理员'
-      profile: 简介
-     -->
-    <MemberListItem :data="user" />
-    <MemberListItem :data="user" />
-    <MemberListItem :data="user" />
-    <MemberListItem :data="user" />
-      <MemberListItem :data="user" />
-      <MemberListItem :data="user" />
-      <MemberListItem :data="user" />
-      <MemberListItem :data="user" />
-      <MemberListItem :data="user" />
-      <MemberListItem :data="user" />
-      <MemberListItem :data="user" />
-      <MemberListItem :data="user" />
-      <MemberListItem :data="user" />
-      <MemberListItem :data="user" />
-      <MemberListItem :data="user" />
-      <MemberListItem :data="user" />
-      <MemberListItem :data="user" />
-      <MemberListItem :data="user" />
-      <MemberListItem :data="user" />
-      <MemberListItem :data="user" />
+  <div class="member-top">待补充的邀请和搜索组件
+    <input type="text" v-model="userKeyword" />
+    {{ userKeyword }}
+    <button @click="searchUser">click to search</button>
+    <div v-if="curIdentity === 'leader' || curIdentity === 'admin'">这是分享链接 需要加一个v-if，只有管理员或者团队创建者可以看到并点击
+      <button @click="getInviteUrl">getInviteUrl</button>
+      <div>显示获得分享的链接{{ inviteUrl }}</div>
+    </div>
   </div>
   
-  <!-- <br>
-  <br>
-  <br>
-  <br>
-  <div>
-    <input type="text">
-    <button>这是搜索按钮</button>
+  <div class="container">
+    <MemberListItem v-for="user in founderData" :key="user" :data="user" :curIdentity="curIdentity"></MemberListItem>
+    <MemberListItem v-for="user in adminData" :key="user" :data="user" :curIdentity="curIdentity"></MemberListItem>
+    <MemberListItem v-for="user in ordinaryData" :key="user" :data="user" :curIdentity="curIdentity"></MemberListItem>
   </div>
-  <div class="outer-container">
-    顶部盒子用来放置邀请成员按钮，仅创建者和管理员可用
-    <div class="top-box">
-      <button>邀请新成员</button>
-    </div>
-    第一个表展示团队创建者
-    <ul class="team-founder-list">团队创建者列表
-      <li v-for="data in founderData" :key="data">
-        {{ data }}
-      </li>
-    </ul>
-    第二个表展示团队管理者
-    <ul class="team-admin-list">团队管理员列表
-      <li v-for="data in adminData" :key="data">
-        {{ data }}
-      </li>
-    </ul>
-    第三个表展示团队普通成员
-    <ul class="team-ordinary-member-list">普通成员列表
-      <li v-for="data in ordinaryData" :key="data">
-        {{ data }}
-      </li>
-    </ul>
-  </div> -->
 </template>
 
 <script>
@@ -78,44 +29,156 @@ export default {
       //团队管理员数据
       adminData: [],
       //团队普通成员数据
-      ordinaryData: []
+      ordinaryData: [],
+      curIdentity: 'member',
+      userKeyword: '',
+      // 存放搜索到的成员的数据
+      searchResault: [],
+      inviteUrl: ''
     }
   },
   mounted() {
     this.$http.get('/api/teams/1/').then(
       (response) => {
-        this.founderData = response.data.members.filter(item => item.identity == 'leader').map((member) => 
+        this.founderData = response.data.members.filter(item => item.identity == 'leader').map((member) =>
         ({
           userId: member.user.id,
           avatar: member.user.avatar,
-          nickname: member.user.username,
+          username: member.user.username,
           firstName: member.user.first_name,
           lastName: member.user.last_name,
-          mailAddress: member.user.email,
-          Identity:'团队创建者'
+          email: member.user.email,
+          identity: member.identity,
+          Identity: '创建者', // 注意这两个 identity 首字母大小写不一样
+          profile: member.user.profile === '' ? '暂无' : member.user.profile,
+          joinDateTime: member.join_datetime
         }))
         this.adminData = response.data.members.filter(item => item.identity == 'admin').map((member) =>
         ({
           userId: member.user.id,
           avatar: member.user.avatar,
-          nickname: member.user.username,
+          username: member.user.username,
           firstName: member.user.first_name,
           lastName: member.user.last_name,
-          mailAddress: member.user.email,
-          Identity:'团队管理员'
+          email: member.user.email,
+          identity: member.identity,
+          Identity: '管理员',
+          profile: member.user.profile === '' ? '暂无' : member.user.profile,
+          joinDateTime: member.join_datetime
         }))
         this.ordinaryData = response.data.members.filter(item => item.identity == 'member').map((member) =>
         ({
           userId: member.user.id,
           avatar: member.user.avatar,
-          nickname: member.user.username,
+          username: member.user.username,
           firstName: member.user.first_name,
           lastName: member.user.last_name,
-          mailAddress: member.user.email,
-          Identity:'普通成员'
+          email: member.user.email,
+          identity: member.identity,
+          Identity: '成员',
+          profile: member.user.profile === '' ? '暂无' : member.user.profile,
+          joinDateTime: member.join_datetime
         }))
+        let curUserId = this.$cookies.get('user_id') // 当前登录用户id
+        if (this.founderData.some(founder => founder.userId == curUserId)) {
+          this.curIdentity = 'leader'
+        } else if (this.adminData.some(admin => admin.userId == curUserId)) {
+          this.curIdentity = 'admin'
+        }
       }
     )
+    this.$bus.on('leaderHandleIdentity', this.leaderHandleIndentity)
+    this.$bus.on('adminHandleIdentity', this.adminHandleIdentity)
+  },
+  methods: {
+    leaderHandleIndentity(value) {
+      if (value.data.identity === 'admin') {
+        if (value.handleIdentity.cancelAdmin) {
+          this.cancelAdmin(value.data)
+        }
+      } else if (value.data.identity === 'member') {
+        if (value.handleIdentity.setAdmin) {
+          this.setAdmin(value.data)
+        } else if (value.handleIdentity.deleteMember) {
+          this.deleteMember(value.data)
+        }
+      }
+    },
+    adminHandleIdentity(value) {
+      if (value.data.identity === 'member') {
+        if (value.handleIdentity.setAdmin) {
+          this.setAdmin(value.data)
+        } else if (value.handleIdentity.deleteMember) {
+          this.deleteMember(value.data)
+        }
+      }
+    },
+    setAdmin(user) {
+      this.$http.put(`/api/teams/1/add/admin/${user.userId}/`).then(
+        response => {
+          this.ordinaryData.splice(this.ordinaryData.indexOf(user), 1)
+          user.identity = 'admin'
+          user.Identity = '团队管理员'
+          this.adminData.push(user)
+        },
+        error => {
+          console.log(error.message);
+        }
+      )
+    },
+    cancelAdmin(user) {
+      this.$http.put(`/api/teams/1/remove/admin/${user.userId}/`).then(
+        response => {
+          this.adminData.splice(this.adminData.indexOf(user), 1)
+          user.identity = 'member'
+          user.Identity = '普通成员'
+          this.ordinaryData.push(user)
+        },
+        error => {
+          console.log(error.message);
+        }
+      )
+    },
+    deleteMember(user) {
+      this.$http.delete(`/api/teams/1/remove/member/${user.userId}/`).then(
+        response => {
+          this.ordinaryData.splice(this.ordinaryData.indexOf(user), 1)
+        },
+        error => {
+          console.log(error.message);
+        }
+      )
+    },
+    searchUser() {
+      this.$http.get(`/api/teams/1/find/?keyword=${this.userKeyword}`).then(
+        response => {
+          this.searchResault = response.data.map((item) => ({
+            userId: item.user.id,
+            avatar: item.user.avatar,
+            username: item.user.username,
+            firstName: item.user.first_name,
+            lastName: item.user.last_name,
+            email: item.user.email,
+            identity: item.identity,
+            joinDateTime: item.join_datetime
+          }))
+        },
+        error => {
+          console.log(error.message);
+        },
+      )
+    },
+    getInviteUrl() {
+      this.$http.get(`/api/teams/1/generate_invite_url/`).then(
+        response => {
+          this.inviteUrl = response.data.url
+          console.log(this.inviteUrl);
+        },
+        error => {
+          console.log(error.message);
+        }
+      )
+    }
   }
 }
 </script>
@@ -124,6 +187,7 @@ export default {
 .member-top {
   height: 10%;
 }
+
 .container {
   width: 1200px;
   height: 90%;
@@ -131,7 +195,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   /* justify-content: center; */
-  justify-content: space-evenly;
+  /* justify-content: space-evenly; */
   align-content: flex-start;
   /* padding-left: 30px; */
 }

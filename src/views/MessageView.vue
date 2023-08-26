@@ -28,27 +28,27 @@ export default {
     return {
       showAllMsg: true,
       allMessage: [
-        {
-          timeStamp: '1',
-          sender: '1',
-          receiver: '1',
-          isRead: false,
-          content: '1'
-        },
-        {
-          timeStamp: '2',
-          sender: '2',
-          receiver: '2',
-          isRead: true,
-          content: '2'
-        },
-        {
-          timeStamp: '3',
-          sender: '3',
-          receiver: '3',
-          isRead: false,
-          content: '3'
-        }
+        // {
+        //   timeStamp: '1',
+        //   sender: '1',
+        //   receiver: '1',
+        //   isRead: false,
+        //   content: '1'
+        // },
+        // {
+        //   timeStamp: '2',
+        //   sender: '2',
+        //   receiver: '2',
+        //   isRead: true,
+        //   content: '2'
+        // },
+        // {
+        //   timeStamp: '3',
+        //   sender: '3',
+        //   receiver: '3',
+        //   isRead: false,
+        //   content: '3'
+        // }
       ],
       unReadMessage: []
     };
@@ -67,7 +67,11 @@ export default {
       this.unReadMessage = this.allMessage.filter(message => message.isRead == false)
     },
     setAllRead() {
-      this.allMessage.filter(message => message.isRead == false).forEach(message => message.isRead = true)
+      this.allMessage.filter(message => message.isRead == false).forEach(message => {
+        if (message.isRead == false) {
+          message.isRead = true
+        }
+      })
     },
     deleteAllRead() {
       this.allMessage = this.allMessage.filter(message => message.isRead == false)
@@ -77,6 +81,16 @@ export default {
     // 这一行必须有，用来获取未读的信息
     this.divideUnReadMessage()
     // 具体需不需要这些函数，看后期后端怎么给我返回数据
+    this.$bus.on('newMessage', (message) => {
+      alert(`${message.sender.user.username}提到了你`)
+      this.unReadMessage.push({
+          timeStamp: message.create_datetime,
+          sender: message.sender.user.username,
+          receiver: '1',
+          isRead: false,
+          content: message.text_content
+      })
+    })
     this.$bus.on('sendChangeStatusSignal', this.handleReadStatus)
   }
 }

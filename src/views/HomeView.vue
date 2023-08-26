@@ -40,7 +40,7 @@
   </div>
   <div id="project" class="homepage-intro project-intro">
     <StylishSlider 
-      type="single" showDots showArrow :autoplay="2000"
+      type="single" showDots :autoplay="2000"
       imgWidth="1000px" imgHeight="600px"
       dotSize="15px" dotSpacing="25px" dotDistance="-20px"
       borderRadius="15px"
@@ -236,7 +236,9 @@ export default {
 .team-intro {
   width: 100%;
   height: 110vh;
-  padding: 50px 100px;
+  /* padding: 50px 100px; */
+  padding-left: 30px;
+  padding-top: 50px;
   padding-bottom: 0;
   padding-right: 0;
   display: flex;
@@ -264,7 +266,7 @@ export default {
   border-top: 2px solid rgba(199,29,35, 1);
   position: absolute;
   top: 0;
-  left: 0;
+  left: 10px;
 }
 .team-intro-text ul li {
   overflow: hidden;
@@ -272,10 +274,10 @@ export default {
 }
 .team-intro-text ul li:nth-child(2),
 .team-intro-text ul li:nth-child(4) {
-  transform: translateX(100px);
+  transform: translateX(150px);
 }
 .team-intro-text ul li:nth-child(3) {
-  transform: translateX(200px);
+  transform: translateX(300px);
 }
 
 .team-intro-text ul li p {
@@ -301,8 +303,10 @@ export default {
 .message-intro {
   width: 100%;
   height: 110vh;
-  padding: 50px 100px;
+  /* padding: 50px 100px; */
   padding-left: 0;
+  padding-top: 50px;
+  padding-right: 30px;
   padding-top: 0;
   display: flex;
   /* height: 90vh; */
@@ -328,7 +332,7 @@ export default {
   border-right: 2px solid white;
   border-bottom: 2px solid white;
   position: absolute;
-  right: 0;
+  right: 10px;
   bottom: 0;
 }
 .message-intro-text ul li {
@@ -337,10 +341,10 @@ export default {
 }
 .message-intro-text ul li:nth-child(2),
 .message-intro-text ul li:nth-child(4) {
-  transform: translateX(-120px);
+  transform: translateX(-150px);
 }
 .message-intro-text ul li:nth-child(3) {
-  transform: translateX(-240px);
+  transform: translateX(-300px);
   margin-bottom: 0;
 }
 .message-intro-text ul li p {

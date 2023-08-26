@@ -33,5 +33,4 @@ instance.proxy.$bus.on('message', (data) => {
 })
 
 </script>
-<style scoped>
-</style>
+<style scoped></style>

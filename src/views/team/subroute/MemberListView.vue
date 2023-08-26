@@ -168,7 +168,6 @@ export default {
     },
     searchUser() {
       this.userKeyword = this.userKeyword.trim()
-      console.log('hfia')
       // 输入内容为空但是搜索 默认展示全部
       if (this.userKeyword.length === 0) {
         this.showAll = true

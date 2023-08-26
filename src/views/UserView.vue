@@ -132,6 +132,7 @@ export default {
       data.append('profile', this.profile)
       if (this.avatarChanged) {
         data.append('avatar', this.avatarFile)
+        console.log(this.avatarFile);
       }
       this.$http.put('/api/accounts/4/', data).then(
         response => {

@@ -66,15 +66,14 @@ export default {
       this.$http.post('api/teams/create/', data).then((response) => {
         alert('创建团队成功')
         this.closeModal()
-      }), (error) => {
+      }, (error) => {
         if (error.response.data.errors !== undefined) {
           alert(error.response.data.errors)
         }
         else {
           alert('创建团队失败')
         }
-      }
-      //还需实现真正的创建
+      })
     },
     handleMouseLeaveAvatar() {
       this.avatarIsHovered = false

@@ -1,37 +1,12 @@
 <!-- 团队项目列表 -->
 <template>
-  <div class="project-top">或许需要一个项目搜索</div>
-  <!-- 用 v-for 生成项目列表，每个元素是一个对象
-    name: 项目名称
-    image: 项目图片路径
-    creator: 创建者的 username
-    latestUpdateTime: 最近一次更新时间 参考格式 ‘YYYY-MM-DD hh:mm:ss’
-   -->
+  <div class="project-top">或许需要一个项目搜索
+    <button @click="handleCreateProject">新建</button>
+    <button>回收站</button>
+  </div>
   <div class="container">
-    <ProjectListItem :data="project"/>
-    <ProjectListItem :data="project"/>
-    <ProjectListItem :data="project"/>
-    <ProjectListItem :data="project"/>
-    <ProjectListItem :data="project"/>
-    <ProjectListItem :data="project"/>
-    <ProjectListItem :data="project"/>
-    <ProjectListItem :data="project"/>
-    <ProjectListItem :data="project"/>
-    <ProjectListItem :data="project"/>
-    <ProjectListItem :data="project"/>
-    <ProjectListItem :data="project"/>
-    <ProjectListItem :data="project"/>
+    <ProjectListItem v-for="project in projectData" :key="project" :data="project"></ProjectListItem>
   </div>
-  <!-- <div>
-    <input type="text">
-    <button>这是搜索按钮</button>
-    <button>这是新建项目按钮</button>
-  </div>
-  <ul>
-    <li v-for="data in projectData" :key="data">
-      {{ data }}
-    </li>
-  </ul> -->
 </template>
 
 <script>
@@ -41,26 +16,52 @@ export default {
   components: { ProjectListItem },
   data() {
     return {
-      project: {
-        name: '项目名称hhhh',
-        image: '/src/assets/avatar.jpeg',
-        creator: '张三哈哈哈哈hh',
-        latestUpdateTime: '2023-10-14 12:06:21'
+      projectData: [],
+      recycleData: []
+    }
+  },
+  mounted() {
+    this.$http.get(`/api/projects/list/1/`).then(
+      response => {
+        this.projectData = response.data.map((project) => ({
+          id: project.id,
+          name: project.name,
+          creator: project.creator,
+          latestUpdateTime: project.changedDate,
+          image: project.image,
+          interfaceNum: project.interfaceNum,
+          documentsNum: project.documentsNum
+        }))
       },
-      projectData: [{
-        'projectId': 1,
-        'projectName': '这是项目名称',
-        'projectPageCount': '这是项目原型数量',
-        'projectDocCount': '这是项目文档数量',
-        'latestUpdateTime':'这是最近修改时间'
+      error => {
+        console.log(error.message);
+      }
+    )
+    this.$http.get(`/api/projects/list/deleted/1/`).then(response => {
+        this.recycleData = response.data.map((project) => ({
+          id: project.id,
+          name: project.name,
+          creator: project.creator,
+          latestUpdateTime: project.changedDate,
+          image: project.image,
+          interfaceNum: project.interfaceNum,
+          documentsNum: project.documentsNum
+        }))
       },
-        {
-        'projectId': 2,
-        'projectName': '这是项目名称',
-        'projectPageCount': '这是项目原型数量',
-        'projectDocCount': '这是项目文档数量',
-        'latestUpdateTime': '这是最近修改时间'
-      }]
+      error => {
+        console.log(error.message);
+      })
+  },
+  methods: {
+    handleCreateProject() {
+      
+    },
+    handleDeleteProject(pid) {
+      this.$http.post(`/api/projects/${pid}/delete/`).then(
+        response => {
+          console.log(response.data);
+        }
+      )
     }
   }
 }
@@ -70,6 +71,7 @@ export default {
 .project-top {
   height: 5%;
 }
+
 .container {
   width: 1200px;
   height: 95%;

@@ -18,7 +18,7 @@
 <script>
 export default {
   name: 'ProjectListItem',
-  props: ['data']
+  props: ['data'],
 }
 </script>
 

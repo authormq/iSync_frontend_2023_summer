@@ -1,18 +1,16 @@
 <template>
   <!-- <div> -->
-    <!-- <TopNav v-if="'/'!==this.$route.path" />  -->
+  <!-- <TopNav v-if="'/'!==this.$route.path" />  -->
   <!-- </div> -->
   <!-- <RouterView /> -->
   <!-- 消息组件 -->
   <!-- <StylishMessage :show="showMessage" :title="messageTitle" :content="messageContent"/> -->
-  <!-- <text-editor/> -->
-  <!-- <version-inspector /> -->
-  <document></document>
+  <document-view></document-view>
 </template>
 
 <script setup>
 import { ref, getCurrentInstance } from 'vue'
-import Document from './components/wheels/Document.vue';
+import DocumentView from './components/DocumentWheels/DocumentView.vue';
 import TopNav from './components/TopNav/TopNav.vue'
 import StylishMessage from './components/Stylish/StylishMessage.vue'
 
@@ -36,7 +34,7 @@ instance.proxy.$bus.on('message', (data) => {
 
 </script>
 <style>
-:deep(.vac-rooms-container.vac-rooms-container-full)  {
+:deep(.vac-rooms-container.vac-rooms-container-full) {
   background: yellow !important;
 }
 </style>

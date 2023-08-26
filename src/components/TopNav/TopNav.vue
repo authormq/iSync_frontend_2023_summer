@@ -183,6 +183,7 @@ export default {
 .user-avatar-hint>span {
   font-size: 18px;
   font-weight: bold;
+  color: rgba(199,29,35, 1);
 }
 
 

@@ -23,6 +23,7 @@ export default {
 		this.currentUserId = this.$cookies.get('user_id')
 		this.roomsLoaded = false
 		this.$http.get('/api/groups/list_by_team_id/', {params: {team_id: 1}}).then((response) => {
+      // rooms
 			this.rooms = response.data.map((group) => ({
 				index: this.rooms.length,
 				roomId: group.id,
@@ -33,7 +34,21 @@ export default {
 					username: member.user.username
 				}))
 			}))
+      // @all && last_message
 			for (let i = 0; i < this.rooms.length; i++) {
+        this.$http.get(`/api/groups/${this.rooms[i].roomId}/current_user_identity/`).then((response) => {
+          if (response.status == 200) {
+            if (response.data.identity != 'member') {
+              this.rooms[i].users = [
+                {
+                  _id: '0',
+                  username: '所有人'
+                },
+                ...this.rooms[i].users
+              ]
+            }
+          }
+        })
 				this.$http.get(`/api/groups/${this.rooms[i].roomId}/last_message/`).then((response) => {
 					if (response.status == 200) {
 						const message = response.data
@@ -44,11 +59,22 @@ export default {
 							username: message.sender.user.username,
 							avatar: message.sender.user.avatar,
 							timestamp: message.create_datetime.substring(11, 16).replace('-', ':'),
-							date: message.create_datetime.substring(5, 10).replace('-', ':'),
+							date: message.create_datetime.substring(5, 10),
 							new: false,
+              replyMessage: message.reply_message == null ? null : {
+                _id: message.reply_message.id,
+                content: message.reply_message.text_content,
+                senderId: `${message.reply_message.sender.user.id}`,
+                username: message.reply_message.sender.user.username,
+                avatar: message.reply_message.sender.user.avatar,
+                timestamp: message.reply_message.create_datetime.substring(11, 16).replace('-', ':'),
+                date: message.reply_message.create_datetime.substring(5, 10),
+                new: false,
+              }
 						}
 					}
 				})
+        // WebSocket
 				this.ws[i] = new WebSocket(`ws://43.138.14.231:9000/ws/chat/group/${this.rooms[i].roomId}/${this.currentUserId}/`)
 				this.ws[i].onmessage = (messageEvent) => {
 					const data = JSON.parse(messageEvent.data)
@@ -60,15 +86,26 @@ export default {
 						username: message.sender.user.username,
 						avatar: message.sender.user.avatar,
 						timestamp: message.create_datetime.substring(11, 16).replace('-', ':'),
-						date: message.create_datetime.substring(5, 10).replace('-', ':'),
-						new: true
+						date: message.create_datetime.substring(5, 10),
+						new: true,
+            replyMessage: message.reply_message == null ? null : {
+              _id: message.reply_message.id,
+              content: message.reply_message.text_content,
+              senderId: `${message.reply_message.sender.user.id}`,
+              username: message.reply_message.sender.user.username,
+              avatar: message.reply_message.sender.user.avatar,
+              timestamp: message.reply_message.create_datetime.substring(11, 16).replace('-', ':'),
+              date: message.reply_message.create_datetime.substring(5, 10),
+              new: false,
+            }
 					}
 					this.messages = [
 						...this.messages,
 						this.rooms[i].lastMessage
 					]
+          // @
 					for (let j = 0; j < data.mentioned_users.length; j++) {
-						if (data.mentioned_users[j]._id == this.currentUserId) {
+						if (data.mentioned_users[j]._id == this.currentUserId || data.mentioned_users[j]._id == '0') {
 							this.$bus.emit('newMessage', message)
 						}
 						break
@@ -106,8 +143,18 @@ export default {
 						username: message.sender.user.username,
 						avatar: message.sender.user.avatar,
 						timestamp: message.create_datetime.substring(11, 16).replace('-', ':'),
-						date: message.create_datetime.substring(5, 10).replace('-', ':'),
-            new: false
+						date: message.create_datetime.substring(5, 10),
+            new: false,
+            replyMessage: message.reply_message == null ? null : {
+              _id: message.reply_message.id,
+              content: message.reply_message.text_content,
+              senderId: `${message.reply_message.sender.user.id}`,
+              username: message.reply_message.sender.user.username,
+              avatar: message.reply_message.sender.user.avatar,
+              timestamp: message.reply_message.create_datetime.substring(11, 16).replace('-', ':'),
+              date: message.reply_message.create_datetime.substring(5, 10),
+              new: false,
+            }
 					}))
 					this.messagesLoaded = true
 				})
@@ -115,12 +162,13 @@ export default {
 		},
 
 		sendMessage(message) {
+      console.log(message)
 			for (let i = 0; i < this.rooms.length; i++) {
 				if (this.rooms[i].roomId == message.roomId) {
 					this.ws[i].send(JSON.stringify({
 						'text_content': message.content,
 						'mentioned_users': message.usersTag,
-						'mentioned_all': false
+            'reply_message': message.replyMessage
 					}))
 					break
 				}

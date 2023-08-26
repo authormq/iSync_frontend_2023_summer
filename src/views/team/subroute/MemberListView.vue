@@ -1,29 +1,43 @@
 <!-- 团队成员列表 -->
 <template>
-  <div class="member-top">待补充的邀请和搜索组件
-    <input type="text" v-model="userKeyword" />
-    {{ userKeyword }}
-    <button @click="searchUser">click to search</button>
-    <div v-if="curIdentity === 'leader' || curIdentity === 'admin'">这是分享链接 需要加一个v-if，只有管理员或者团队创建者可以看到并点击
-      <button @click="getInviteUrl">getInviteUrl</button>
-      <div>显示获得分享的链接{{ inviteUrl }}</div>
+  <div class="member-top">
+    <input type="text" v-model="userKeyword" @keyup.enter="searchUser"/>
+    <div 
+      class="search-icon" 
+      @click="searchUser" 
+      @mouseover="searchIconIsHovered = true" @mouseleave="searchIconIsHovered = false"
+    >
+      <SearchIcon :color="searchIconIsHovered ? 'rgba(199,29,35, 1)' : 'lightgrey'"/>
     </div>
+    <a class="invite-link" v-if="curIdentity === 'leader' || curIdentity === 'admin'" @click="getInviteUrl">
+      邀请新成员
+      <!-- <button >getInviteUrl</button> -->
+      <!-- <div>显示获得分享的链接{{ inviteUrl }}</div> -->
+    </a>
   </div>
   
   <div class="container">
-    <MemberListItem v-for="user in founderData" :key="user" :data="user" :curIdentity="curIdentity"></MemberListItem>
-    <MemberListItem v-for="user in adminData" :key="user" :data="user" :curIdentity="curIdentity"></MemberListItem>
-    <MemberListItem v-for="user in ordinaryData" :key="user" :data="user" :curIdentity="curIdentity"></MemberListItem>
+    <template v-if="showAll">
+      <MemberListItem v-for="user in founderData" :key="user" :data="user" :curIdentity="curIdentity"></MemberListItem>
+      <MemberListItem v-for="user in adminData" :key="user" :data="user" :curIdentity="curIdentity"></MemberListItem>
+      <MemberListItem v-for="user in ordinaryData" :key="user" :data="user" :curIdentity="curIdentity"></MemberListItem>
+    </template>
+    <template v-else>
+      <MemberListItem v-for="user in searchResault" :key="user" :data="user" :curIdentity="curIdentity"></MemberListItem>
+    </template>
   </div>
 </template>
 
 <script>
 import MemberListItem from '../../../components/ListItem/team/MemberListItem.vue'
+import SearchIcon from '../../../components/Svg/SearchIcon.vue'
 export default {
   name: 'MemberListView',
-  components: { MemberListItem },
+  components: { MemberListItem, SearchIcon },
   data() {
     return {
+      searchIconIsHovered: false,
+      showAll: true,    // 默认展示全部数据
       //团队创建者数据
       founderData: [],
       //团队管理员数据
@@ -150,32 +164,46 @@ export default {
       )
     },
     searchUser() {
-      this.$http.get(`/api/teams/1/find/?keyword=${this.userKeyword}`).then(
-        response => {
-          this.searchResault = response.data.map((item) => ({
-            userId: item.user.id,
-            avatar: item.user.avatar,
-            username: item.user.username,
-            firstName: item.user.first_name,
-            lastName: item.user.last_name,
-            email: item.user.email,
-            identity: item.identity,
-            joinDateTime: item.join_datetime
-          }))
-        },
-        error => {
-          console.log(error.message);
-        },
-      )
+      this.userKeyword = this.userKeyword.trim()
+      // 输入内容为空但是搜索 默认展示全部
+      if (this.userKeyword.length === 0) {
+        this.showAll = true
+      } else { // 否则才搜索
+        this.$http.get(`/api/teams/1/find/?keyword=${this.userKeyword}`).then(
+          response => {
+            this.searchResault = response.data.map((item) => ({
+              userId: item.user.id,
+              avatar: item.user.avatar,
+              username: item.user.username,
+              firstName: item.user.first_name,
+              lastName: item.user.last_name,
+              email: item.user.email,
+              identity: item.identity,
+              Identity: item.identity === 'leader' ? '创建者' : (item.identity === 'admin' ? '管理员' : '成员'),
+              profile: item.profile,              // zyh 加上的
+              joinDateTime: item.join_datetime
+            }))
+            this.showAll = false
+          },
+          error => {
+            console.log(error.message);
+          },
+        )
+      }
     },
     getInviteUrl() {
       this.$http.get(`/api/teams/1/generate_invite_url/`).then(
         response => {
           this.inviteUrl = response.data.url
-          console.log(this.inviteUrl);
+          navigator.clipboard.writeText(this.inviteUrl)
+          this.$bus.emit('message', {
+            title: '链接已复制到剪贴板',
+            content: this.inviteUrl,
+            time: 5000
+          })
         },
         error => {
-          console.log(error.message);
+          console.log(error.message)
         }
       )
     }
@@ -186,6 +214,40 @@ export default {
 <style scoped>
 .member-top {
   height: 10%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.member-top input {
+  width: 300px;
+  height: 35px;
+  font-size: 18px;
+  border-radius: 10px;
+  border: 2px solid lightgrey;
+  padding: 5px 10px;
+  transition: 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+  caret-color: rgba(199,29,35, 1);
+}
+
+.member-top input:focus {
+  border: 3px solid rgba(199,29,35, 1);
+  /* outline: 1px solid rgba(199,29,35, 1); */
+}
+
+.search-icon {
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.invite-link {
+  margin-left: 20px;
+  color: rgba(199,29,35, 0.8);
+  cursor: pointer;
+}
+.invite-link:hover {
+  color: rgba(199,29,35, 1);
+  text-decoration: underline;
 }
 
 .container {

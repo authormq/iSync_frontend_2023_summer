@@ -458,9 +458,6 @@ export default {
 					identity: element.identity
 				}
 			})
-			this.items = this.members.map(element => {
-				return element.username
-			})
 			this.editor = new Editor({
 				extensions: [
 					Document,
@@ -469,7 +466,7 @@ export default {
 							class: 'mention',
 						},
 						suggestion: {
-							items: () => { return this.items },
+							items: () => { return this.members },
 							render: () => {
 								let component
 								let popup

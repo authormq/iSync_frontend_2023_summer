@@ -1,6 +1,9 @@
 <!-- 团队成员列表 -->
 <template>
   <div class="member-top">
+    <div class="back-to-all" v-if="!showAll" @click="showAll = true; userKeyword = ''">
+      返回全部
+    </div>
     <input type="text" v-model="userKeyword" @keyup.enter="searchUser"/>
     <div 
       class="search-icon" 
@@ -218,6 +221,21 @@ export default {
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  position: relative;
+}
+
+.back-to-all {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  color: rgba(199,29,35, 1);
+  cursor: pointer;
+}
+
+.back-to-all:hover {
+  text-decoration: underline;
 }
 
 .member-top input {

@@ -1,16 +1,18 @@
 <template>
-  <div>
-    <TopNav v-if="'/'!==this.$route.path" /> 
-  </div>
-  <RouterView />
+  <!-- <div> -->
+    <!-- <TopNav v-if="'/'!==this.$route.path" />  -->
+  <!-- </div> -->
+  <!-- <RouterView /> -->
   <!-- 消息组件 -->
-  <StylishMessage :show="showMessage" :title="messageTitle" :content="messageContent"/>
-  <!-- <text-editor /> -->
+  <!-- <StylishMessage :show="showMessage" :title="messageTitle" :content="messageContent"/> -->
+  <!-- <text-editor/> -->
+  <!-- <version-inspector /> -->
+  <document></document>
 </template>
 
 <script setup>
 import { ref, getCurrentInstance } from 'vue'
-
+import Document from './components/wheels/Document.vue';
 import TopNav from './components/TopNav/TopNav.vue'
 import StylishMessage from './components/Stylish/StylishMessage.vue'
 

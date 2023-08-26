@@ -1,11 +1,11 @@
 <template>
-  <!-- <div>
+  <div>
     <TopNav v-if="'/'!==this.$route.path" /> 
-  </div> -->
-  <!-- <RouterView /> -->
+  </div>
+  <RouterView />
   <!-- 消息组件 -->
   <!-- <StylishMessage :show="showMessage" :title="messageTitle" :content="messageContent"/> -->
-  <document-view></document-view>
+  <!-- <document-view></document-view> -->
 </template>
 
 <script setup>

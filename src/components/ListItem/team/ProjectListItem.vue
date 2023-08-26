@@ -12,7 +12,6 @@
         <div class="check-icon" @click="cancelRename"><CrossIcon size="15px"/></div>
         <div class="check-icon" @click="updateRename"><CheckIcon size="15px"/></div>
       </template>
-      
       <div class="project-creator">
         创建者：{{ data.creator }}
       </div>
@@ -20,20 +19,6 @@
         修改于 {{ data.latestUpdateTime }}
       </div>
     </div>
-
-    <!-- 
-      ====================================================
-      原有的代码已经注释了 
-      ====================================================      
-    -->
-    <!-- <div>
-      如果这是展示回收站的列表
-      <button @click="sendRestoreRequest">恢复</button>
-    </div>
-    <button @click="sendRenameRequest">重命名</button>
-    <input type="text" v-model="rename">
-    {{ rename }}
-    <button @click="sendDeleteRequest">删除</button> -->
   </div>
 
 <!-- 删除状态的项目卡片 -->
@@ -43,7 +28,7 @@
       <div class="project-name">
         {{ nameOnDisplay }}
         <!-- 恢复删除的接口 -->
-        <div class="restore-icon" @click="restore">
+        <div class="restore-icon" @click="sendRestoreRequest">
           <RestoreIcon />
         </div>
       </div>
@@ -64,7 +49,7 @@
       :style="{ left: x + 'px', top: y + 'px'}"
     >
       <button @click="handleRename">重命名</button>
-      <button @click="handleDelete">删除</button>
+      <button @click="sendDeleteRequest">删除</button>
     </div>
 </template>
 
@@ -113,7 +98,7 @@ export default {
   },
   methods: {
     sendRenameRequest() {
-      this.$bus.emit('renameRequest', { project: this.data, rename: this.rename})
+      this.$bus.emit('renameRequest', { project: this.data, rename: this.name})
     },
     sendDeleteRequest() {
       this.$bus.emit('deleteRequest', this.data)
@@ -126,7 +111,6 @@ export default {
       this.showContextMenu = true
       this.x = event.clientX
       this.y = event.clientY
-      // console.log('X:', event.clientX, '   Y:', event.clientY)
     },
     hideMenu() {
       if (this.showContextMenu) this.showContextMenu = false
@@ -154,29 +138,8 @@ export default {
       this.nameOnDisplay = this.name
       this.$refs.name.style.display = 'block'
       this.$refs.container.style.cursor = 'pointer'
-
-      // 接下来需要提交数据了！！！
-      // 
-      //  TODO
-      // 
-      // =====================
+      this.sendRenameRequest()
     },
-    // 删除的接口
-    handleDelete() {
-      // =====================
-      // 
-      //  TODO
-      // 
-      // =====================
-    },
-    // 恢复的接口
-    restore() {
-      // =====================
-      // 
-      //  TODO
-      // 
-      // =====================
-    }
   }
 }
 </script>

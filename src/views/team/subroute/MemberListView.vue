@@ -4,7 +4,7 @@
     <div class="back-to-all" v-if="!showAll" @click="showAll = true; userKeyword = ''">
       返回全部
     </div>
-    <input type="text" v-model="userKeyword" @keyup.enter="searchUser"/>
+    <input type="text" placeholder="团队成员账号或姓名" v-model="userKeyword" @keyup.enter="searchUser"/>
     <div 
       class="search-icon" 
       @click="searchUser" 
@@ -246,6 +246,10 @@ export default {
   padding: 5px 10px;
   transition: 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
   caret-color: rgba(199,29,35, 1);
+}
+
+.member-top input::placeholder {
+  color: lightgrey;
 }
 
 .member-top input:focus {

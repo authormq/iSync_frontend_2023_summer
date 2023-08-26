@@ -33,4 +33,8 @@ instance.proxy.$bus.on('message', (data) => {
 })
 
 </script>
-<style scoped></style>
+<style>
+:deep(.vac-rooms-container.vac-rooms-container-full)  {
+  background: yellow !important;
+}
+</style>

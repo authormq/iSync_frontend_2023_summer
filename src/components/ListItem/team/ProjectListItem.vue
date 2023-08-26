@@ -12,6 +12,8 @@
         修改于 {{ data.latestUpdateTime }}
       </div>
     </div>
+    <button @click="sendRenameRequest">重命名</button>
+    <button @click="sendDeleteRequest">删除</button>
   </div>
 </template>
 
@@ -19,6 +21,14 @@
 export default {
   name: 'ProjectListItem',
   props: ['data'],
+  methods: {
+    sendRenameRequest() {
+      this.$bus.emit('renameRequest', this.data)
+    },
+    sendDeleteRequest() {
+      this.$bus.emit('deleteRequest', this.data)
+    }
+  }
 }
 </script>
 

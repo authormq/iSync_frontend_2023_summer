@@ -37,7 +37,8 @@ export default {
         console.log(error.message);
       }
     )
-    this.$http.get(`/api/projects/list/deleted/1/`).then(response => {
+    this.$http.get(`/api/projects/list/deleted/1/`).then(
+      response => {
         this.recycleData = response.data.map((project) => ({
           id: project.id,
           name: project.name,
@@ -50,14 +51,20 @@ export default {
       },
       error => {
         console.log(error.message);
-      })
+      }
+    )
+    this.$bus.on('renameRequest', this.handleRenameProject)
+    this.$bus.on('deleteRequest', this.handleDeleteProject)
   },
   methods: {
     handleCreateProject() {
+
+    },
+    handleRenameProject(data) {
       
     },
-    handleDeleteProject(pid) {
-      this.$http.post(`/api/projects/${pid}/delete/`).then(
+    handleDeleteProject(data) {
+      this.$http.post(`/api/projects/${data.id}/delete/`).then(
         response => {
           console.log(response.data);
         }

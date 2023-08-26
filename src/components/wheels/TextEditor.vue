@@ -31,7 +31,7 @@
 			</div>
 		</bubble-menu>
 		<!-- 悬浮菜单 -->
-		<floating-menu v-if="!editor.isActive('codeBlock')" :editor="editor" class="editor-floating-menu">
+		<floating-menu :editor="editor" class="editor-floating-menu">
 			<button @click="editor.chain().focus().toggleTaskList().run()"
 				:class="{ 'is-active': editor.isActive('taskList') }">
 				{{ editor.isActive('taskList') ? '清除' : '创建' }}任务项
@@ -218,7 +218,9 @@
 		<editor-content :editor="editor" id="document-content" />
 		<div class="document-words">
 			{{ editor.storage.characterCount.words() }} 个单词
-			<div class="document-characters">{{ editor.storage.characterCount.characters() }} / {{ docLimit }} 个字符</div>
+			<div class="document-characters">{{ editor.storage.characterCount.characters() }} / {{ docLimit }} 个字符
+				{{ editor.storage.collaborationCursor.users.length }}
+			</div>
 		</div>
 
 	</div>
@@ -244,7 +246,8 @@ import CodeBlockLowLight from '@tiptap/extension-code-block-lowlight'//代码高
 import { Editor, EditorContent, BubbleMenu, FloatingMenu } from '@tiptap/vue-3'
 //协作重要插件
 import * as Y from 'yjs'
-import { HocuspocusProvider } from '@hocuspocus/provider'
+import { WebrtcProvider } from 'y-webrtc'
+// import { HocuspocusProvider } from '@hocuspocus/provider'
 import Collaboration from '@tiptap/extension-collaboration'
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
 //将文档下载到本地
@@ -258,13 +261,21 @@ export default {
 		BubbleMenu,
 		FloatingMenu
 	},
-
+	props: {
+		docId: {
+			type: Number,
+			default: 1
+		},
+		docName: {
+			type: String,
+			default: 'temp'
+		},
+	},
+	emits: ['updateDocName'],
 	data() {
 		return {
 			userName: 'tempUser',
 			userAvatar: '/src/assets/avatar.jpeg',
-			docId: 1,
-			docName: 'temp',
 			docContent: '',
 			docLimit: 100000,
 			autoSavePeriod: 10000,
@@ -391,76 +402,144 @@ export default {
 	},
 	mounted() {
 		this.yDOC = new Y.Doc()
-		this.provider = new HocuspocusProvider({
-			url: 'wss://summer.super2021.com/ws',
-			//文档的标识对应一个 yDoc 属性
-			name: this.docId,
-			document: this.yDOC,
-		})
-		this.editor = new Editor({
-			extensions: [
-				Document,
-				StarterKit.configure({
-					history: false//使用collaboration的history
-				}),
-				CharactorCount.configure({
-					limit: this.docLimit
-				}),
-				Collaboration.configure({
-					document: this.yDOC
-				}),
-				CollaborationCursor.configure({
-					provider: this.provider,
-					user: {
-						name: this.userName,
-						color: this.getRandomColor(),
-						avatar: this.userAvatar
-					}
-				}),
-				Typography,
-				Underline,
-				Color,
-				FontFamily,
-				TaskList,
-				TaskItem.configure({
-					nested: true,
-				}),
-				Text,
-				TextStyle,
-				TextAlign.configure({
-					types: ['heading', 'paragraph'],
-				}),
-				CodeBlockLowLight.configure({
-					lowlight,
-				}),
-				Placeholder.configure(
-					{
-						placeholder: ({ node }) => {
-							return '从这里开始编写文档'
+		this.provider = new WebrtcProvider(this.docId, this.yDOC)
+		// this.provider = new HocuspocusProvider({
+		// 	url: 'ws://0.0.0.0:1234',
+		// 	//文档的标识对应一个 yDoc 属性
+		// 	name: this.docId,
+		// 	document: this.yDOC,
+		// })
+		//加载保存时间最近的文件,然后初始化编辑器
+		this.$http.get(`/api/projects/file/${this.docId}/open`).then((response) => {
+			this.docContent = response.data.document_content
+			this.editor = new Editor({
+				extensions: [
+					Document,
+					StarterKit.configure({
+						history: false//使用collaboration的history
+					}),
+					CharactorCount.configure({
+						limit: this.docLimit
+					}),
+					Collaboration.configure({
+						document: this.yDOC
+					}),
+					CollaborationCursor.configure({
+						provider: this.provider,
+						user: {
+							name: this.userName,
+							color: this.getRandomColor(),
+							avatar: this.userAvatar
 						}
+					}),
+					Typography,
+					Underline,
+					Color,
+					FontFamily,
+					TaskList,
+					TaskItem.configure({
+						nested: true,
+					}),
+					Text,
+					TextStyle,
+					TextAlign.configure({
+						types: ['heading', 'paragraph'],
+					}),
+					CodeBlockLowLight.configure({
+						lowlight,
+					}),
+					Placeholder.configure(
+						{
+							placeholder: ({ node }) => {
+								return '从这里开始编写文档'
+							}
+						}
+					),
+					Highlight.configure({
+						multicolor: true
+					})
+				],
+				content: this.docContent,
+				onSelectionUpdate: () => {
+					let selected = window.getSelection()
+					if (selected.rangeCount !== 0) {
+						let range = selected.getRangeAt(0)
+						let node = range.commonAncestorContainer
+						if (node.nodeType != 1) {
+							node = node.parentNode
+						}
+						this.selectedFontSize = window.getComputedStyle(node).getPropertyValue('font-size')
+						this.selectedFontFamily = window.getComputedStyle(node).getPropertyValue('font-family')
 					}
-				),
-				Highlight.configure({
-					multicolor: true
-				})
-			],
-			content: '',
-			onSelectionUpdate: () => {
-				let selected = window.getSelection()
-				if (selected.rangeCount !== 0) {
-					let range = selected.getRangeAt(0)
-					let node = range.commonAncestorContainer
-					if (node.nodeType != 1) {
-						node = node.parentNode
+				},
+			})
+			setInterval(() => {
+				this.saveDocument('autosave')
+			}, this.autoSavePeriod)
+		}, (error) => {
+			this.editor = new Editor({
+				extensions: [
+					Document,
+					StarterKit.configure({
+						history: false//使用collaboration的history
+					}),
+					CharactorCount.configure({
+						limit: this.docLimit
+					}),
+					Collaboration.configure({
+						document: this.yDOC
+					}),
+					CollaborationCursor.configure({
+						provider: this.provider,
+						user: {
+							name: this.userName,
+							color: this.getRandomColor(),
+							avatar: this.userAvatar
+						}
+					}),
+					Typography,
+					Underline,
+					Color,
+					FontFamily,
+					TaskList,
+					TaskItem.configure({
+						nested: true,
+					}),
+					Text,
+					TextStyle,
+					TextAlign.configure({
+						types: ['heading', 'paragraph'],
+					}),
+					CodeBlockLowLight.configure({
+						lowlight,
+					}),
+					Placeholder.configure(
+						{
+							placeholder: ({ node }) => {
+								return '从这里开始编写文档'
+							}
+						}
+					),
+					Highlight.configure({
+						multicolor: true
+					})
+				],
+				content: this.docContent,
+				onSelectionUpdate: () => {
+					let selected = window.getSelection()
+					if (selected.rangeCount !== 0) {
+						let range = selected.getRangeAt(0)
+						let node = range.commonAncestorContainer
+						if (node.nodeType != 1) {
+							node = node.parentNode
+						}
+						this.selectedFontSize = window.getComputedStyle(node).getPropertyValue('font-size')
+						this.selectedFontFamily = window.getComputedStyle(node).getPropertyValue('font-family')
 					}
-					this.selectedFontSize = window.getComputedStyle(node).getPropertyValue('font-size')
-					this.selectedFontFamily = window.getComputedStyle(node).getPropertyValue('font-family')
-				}
-			}
+				},
+			})
 		})
-		setInterval(() => {
-			this.saveDocument('autosave')
-		}, this.autoSavePeriod)
+
 	},
 	beforeUnmount() {
 		this.editor.destroy()
@@ -577,7 +656,9 @@ export default {
 
 /* 编辑器内容区 */
 #document-content {
-	padding: 20px 0;
+	padding: 20px;
+	max-height: 100%;
+	overflow: auto;
 }
 
 

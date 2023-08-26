@@ -53,7 +53,6 @@ export default {
         image: '/src/assets/avatar.jpeg',
         creator: '张三哈哈哈哈hh',
         latestUpdateTime: '2023-10-14 12:06:21'
-
       },
       projectData: [{
         'projectId': 1,

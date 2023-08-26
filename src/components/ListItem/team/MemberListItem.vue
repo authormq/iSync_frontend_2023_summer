@@ -1,5 +1,5 @@
 <template>
-  <div class="member-container" @click="handleIdentityClick(data)">
+  <div class="member-container" @click="handleClick">
     <img :src="data.avatar" />
     <div class="member-info">
       <div class="member-info-left">
@@ -86,24 +86,28 @@ export default {
     }
   },
   methods: {
-    handleIdentityClick() {
+    handleClick() {
       this.$refs.popover.style.display = 'block'
-      if (this.curIdentity === 'member') {
-        alert('你无权对其他成员的身份进行修改')
-      } else if (this.curIdentity === 'leader') {
+    },
+    handleIdentityOpt() {
+      if (this.curIdentity === 'leader') {
         this.$bus.emit('leaderHandleIdentity', { data: this.data, handleIdentity: this.handleIdentity })
-      } else {
+      } else if (this.curIdentity === 'admin') {
         this.$bus.emit('adminHandleIdentity', { data: this.data, handleIdentity: this.handleIdentity })
       }
+      this.$refs.popover.style.display = 'none'
     },
     setAdminOpt() {
       this.handleIdentity.setAdmin = true
+      this.handleIdentityOpt()
     },
     cancelAdminOpt() {
       this.handleIdentity.cancelAdmin = true
+      this.handleIdentityOpt()
     },
     deleteMemberOpt() {
       this.handleIdentity.deleteMember = true
+      this.handleIdentityOpt()
     }
   }
 }

@@ -16,46 +16,52 @@
 
 <script>
 import { register } from 'vue-advanced-chat'
-// import { typeListPushGenerics } from 'yjs/dist/src/internals'
 register()
 export default {
   name: 'ChatView',
 	mounted() {
 		this.currentUserId = this.$cookies.get('user_id')
-		this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/chat/group/8/${this.currentUserId}/`)
-		this.ws.onmessage = (messageEvent) => {
-			const data = JSON.parse(messageEvent.data)
-			const message = data.message
-			this.messages = [
-				...this.messages,
-				{
-					_id: this.messages.length,
-					content: message.text_content,
-					senderId: `${message.sender.user.id}`,
-					timestamp: message.create_datetime.substring(11, 16).replace('-', ':'),
-					date: message.create_datetime.substring(5, 10).replace('-', ':')
+		this.$http.get('/api/groups/list_by_team_id/', {params: {team_id: 1}}).then((response) => {
+			this.rooms = response.data.map((group) => ({
+				roomId: group.id,
+				roomName: group.name,
+				avatar: group.avatar,
+				users: group.members.map((member) => ({
+					_id: `${member.user.id}`,
+					username: member.user.username
+				}))
+			}))
+			for (let i = 0; i < this.rooms.length; i++) {
+				this.ws[i] = new WebSocket(`ws://43.138.14.231:9000/ws/chat/group/${this.rooms[i].roomId}/${this.currentUserId}/`)
+				this.ws[i].onmessage = (messageEvent) => {
+					const data = JSON.parse(messageEvent.data)
+					const message = data.message
+					this.messages = [
+						...this.messages,
+						{
+							_id: this.messages.length,
+							content: message.text_content,
+							senderId: `${message.sender.user.id}`,
+							username: message.sender.user.username,
+							avatar: message.sender.user.avatar,
+							timestamp: message.create_datetime.substring(11, 16).replace('-', ':'),
+							date: message.create_datetime.substring(5, 10).replace('-', ':')
+						}
+					]
 				}
-			]
-		}
+			}
+		})
 	},
 	unmounted() {
-		this.ws.close()
+		for (let i = 0; i < this.ws.length; i++) {
+			this.ws[i].close()
+		}
 	},
   data() {
     return {
-			ws: null,
+			ws: [],
       currentUserId: '',
-      rooms: [
-        {
-          roomId: '1',
-          roomName: 'Room 1',
-          avatar: 'https://66.media.tumblr.com/avatar_c6a8eae4303e_512.pnj',
-          users: [
-            { _id: '1234', username: 'John Doe' },
-            { _id: '4321', username: 'John Snow' }
-          ]
-        }
-      ],
+      rooms: [],
       messages: [],
       messagesLoaded: false
     }
@@ -63,29 +69,26 @@ export default {
   methods: {
 		fetchMessages({ options = {} }) {
 			setTimeout(() => {
-				if (options.reset) {
-					this.messages = this.addMessages(true)
-				} else {
-					this.messages = [...this.addMessages(), ...this.messages]
+				// if (options.reset) {
+				// 	this.messages = this.addMessages(true)
+				// } else {
+				// 	this.messages = [...this.addMessages(), ...this.messages]
+				// 	this.messagesLoaded = true
+				// }
+				this.$http.get('/api/groups/8/messages/').then((response) => {
+					this.messages = response.data.map((message) => ({
+						_id: this.messages.length,
+						content: message.text_content,
+						senderId: `${message.sender.user.id}`,
+						username: message.sender.user.username,
+						avatar: message.sender.user.avatar,
+						seen: true,
+						timestamp: message.create_datetime.substring(11, 16).replace('-', ':'),
+						date: message.create_datetime.substring(5, 10).replace('-', ':')
+					}))
 					this.messagesLoaded = true
-				}
-			})
-		},
-
-		addMessages(reset) {
-			const messages = []
-			for (let i = 0; i < 30; i++) {
-				messages.push({
-					_id: reset ? i : this.messages.length + i,
-					content: `${reset ? '' : 'paginated'} message ${i + 1}`,
-					senderId: '4321',
-					username: 'John Doe',
-					date: '13 November',
-					timestamp: '10:20'
 				})
-			}
-
-			return messages
+			})
 		},
 
 		sendMessage(message) {
@@ -95,21 +98,6 @@ export default {
 				'mentioned_all': false
 			}))
 		},
-
-		addNewMessage() {
-			setTimeout(() => {
-				this.messages = [
-					...this.messages,
-					{
-						_id: this.messages.length,
-						content: 'NEW MESSAGE',
-						senderId: '1234',
-						timestamp: new Date().toString().substring(16, 21),
-						date: new Date().toDateString()
-					}
-				]
-			}, 2000)
-		}
 	}
 }
 </script>

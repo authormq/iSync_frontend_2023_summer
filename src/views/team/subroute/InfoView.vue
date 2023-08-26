@@ -64,73 +64,90 @@ export default {
       teamFounder: '',
       teamFoundTime: '',
       teamPopulation: '',
-      teamProjectCount: '6', //接口还没写好
-      teamIntroduction: ''
+      teamProjectCount: 0,
+      teamIntroduction: '',
+      // teamPersonActivitationData: []
+      recentFiveActivePerson: [],
+      activePersonName: [], // 仅作展示使用
+      activePersonActivation: [], // 仅作展示使用
+      recentFiveActiveProject: [],
+      activeProjectName: [], // 仅作展示使用
+      activeProjectActivation: [] // 仅作展示使用
     }
   },
   mounted() {
-    this.$http.get('/api/teams/1/').then(
+    this.$http.get(`/api/teams/1/`).then(
       (response) => {
         this.teamAvatar = response.data.avatar
         this.teamAvatarUrl = response.data.avatar
         this.teamName = response.data.name
+        this.teamProjectCount = response.data.project_num,
         this.teamFound = response.data.members.filter(item => item.identity == 'leader')
         this.teamFoundTime = response.data.create_datetime
         this.teamPopulation = response.data.members.length
         this.teamIntroduction = response.data.profile
         if (this.teamIntroduction.length === 0) this.teamIntroduction = '该团队暂无简介。'
-        //团队项目数后端未完成
       },
       (error) => {
         console.log(error)
       }
     )
-    let users = echarts.init(document.getElementById('active-users'))
-    users.setOption({
-      title: {
-        text: '近期活跃成员'
-      },
-      tooltip: {},
-      xAxis: {
-        data: ['小明', '小王', 'Tom', 'Mq', '小李']
-      },
-      yAxis: {},
-      series: [
-        {
-          name: '消息条数',
-          type: 'bar',
-          data: [300, 345, 407, 522, 1024]
+    this.$http.get(`/api/teams/1/activation/`).then(
+      response => {
+        this.recentFiveActivePerson = response.data.map((person) => ({
+          name: person.user.first_name + person.user.last_name,
+          activation: person.activation
+        }))
+        if (this.recentFiveActivePerson.length > 5) {
+          this.recentFiveActivePerson = this.recentFiveActivePerson.slice(0, 5)
         }
-      ]
-    })
-    let projects = echarts.init(document.getElementById('active-projects'))
-    projects.setOption({
-      title: {
-        text: '近期活跃项目',
-        left: 'center',
-        top: 'center'
-      },
-      series: [
-        {
-          type: 'pie',
-          data: [
+        this.activePersonName = this.recentFiveActivePerson.map(person => person.name)
+        this.activePersonActivation = this.recentFiveActivePerson.map(person => person.activation)
+        let users = echarts.init(document.getElementById('active-users'))
+        users.setOption({
+          title: {
+            text: '近期活跃成员'
+          },
+          tooltip: {},
+          xAxis: {
+            data: this.activePersonName
+          },
+          yAxis: {},
+          series: [
             {
-              value: 335,
-              name: 'iSound音乐播放平台'
-            },
-            {
-              value: 234,
-              name: '小学期项目'
-            },
-            {
-              value: 123,
-              name: '编译大作业'
+              name: '活跃值',
+              type: 'bar',
+              data: this.activePersonActivation
             }
-          ],
-          radius: ['40%', '70%']
-        }
-      ]
-    })
+          ]
+        })
+      }
+    )
+    this.$http.get(`/api/projects/1/activation/`).then(
+      response => {
+        this.recentFiveActiveProject = response.data.map((project) => ({
+          name: project.name,
+          value: project.activation
+        }))
+        // this.activeProjectName = this.recentFiveActiveProject.map(project => project.name)
+        // this.activeProjectActivation = this.recentFiveActiveProject.map(project => project.activation)
+        let projects = echarts.init(document.getElementById('active-projects'))
+        projects.setOption({
+          title: {
+            text: '近期活跃项目',
+            left: 'center',
+            top: 'center'
+          },
+          series: [
+            {
+              type: 'pie',
+              data: this.recentFiveActiveProject,
+              radius: ['40%', '70%']
+            }
+          ]
+        })
+      }
+    )
   },
   watch: {
     avatarIsHovered(newValue) {

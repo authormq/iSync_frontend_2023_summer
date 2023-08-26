@@ -21,11 +21,6 @@
         <TrashIcon />
       </div>
     </template>
-    
-    <!-- <button @click="handleCreateProject">新建</button>
-    <button>回收站</button>
-    <div v-if="false">回收站
-    </div> -->
   </div>
   <div class="container">
     <!-- 如果是展示模式 -->
@@ -72,11 +67,6 @@ export default {
       showDeleted: false, // 是否正在回收站
       searchIconIsHovered: false,
       projectKeyword: '', // 搜索关键字
-      temp: {
-        name: '一个项目',
-        creator: '梦桥园和',
-        latestUpdateTime: '2023-10-11 23:10:27'
-      }
     }
   },
   mounted() {

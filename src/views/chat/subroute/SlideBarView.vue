@@ -1,5 +1,5 @@
 <template>
-    <SlideBarItem  v-for="item in SlideBarData" :key="item" :data="item" @click="intoChat"/>
+  <SlideBarItem  v-for="item in SlideBarData" :key="item" :data="item" @click="intoChat"/>
 </template>
 
 <script>
@@ -12,20 +12,20 @@ export default {
   data() {
     return {
       SlideBarData: [{
-          'avatar': '头像',
-          'name': '发件人',
-          'message': '消息'
-        },
-        {
-          'avatar': '头像',
-          'name': '发件人',
-          'message': '消息'
-        },
-        {
-          'avatar': '头像',
-          'name': '发件人',
-          'message': '消息'
-        }
+        'avatar': '头像',
+        'name': '发件人',
+        'message': '消息'
+      },
+      {
+        'avatar': '头像',
+        'name': '发件人',
+        'message': '消息'
+      },
+      {
+        'avatar': '头像',
+        'name': '发件人',
+        'message': '消息'
+      }
       ]
     }
   },

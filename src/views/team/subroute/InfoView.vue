@@ -50,7 +50,8 @@
   </div>
     
   <div class="info-charts">
-
+    <div id="active-users"></div>
+    <div id="active-projects"></div>
   </div>
   
 </template>
@@ -59,6 +60,7 @@
 import PenIcon from '../../../components/Svg/PenIcon.vue'
 import CheckIcon from '../../../components/Svg/CheckIcon.vue'
 import CrossIcon from '../../../components/Svg/CrossIcon.vue'
+import * as echarts from 'echarts'
 export default {
   name: 'InfoView',
   components: { PenIcon, CheckIcon, CrossIcon },
@@ -67,7 +69,7 @@ export default {
       isEditing: false,                   // 是否处于编辑状态，控制按钮是否出现
       avatarIsHovered: false,
       teamAvatarUrl: '',
-      teamAatarChanged: false, //头像是否被修改过
+      teamAvatarChanged: false, //头像是否被修改过
       teamAvatar: null,
       teamName: '',
       teamFounder: '',
@@ -81,7 +83,7 @@ export default {
     this.$http.get('/api/teams/1/').then(
       (response) => {
         this.teamAvatar = response.data.avatar
-        this.teamAatarUrl = response.data.avatar
+        this.teamAvatarUrl = response.data.avatar
         this.teamName = response.data.name
         this.teamFound = response.data.members.filter(item => item.identity == 'leader')
         this.teamFoundTime = response.data.create_datetime
@@ -125,13 +127,61 @@ export default {
       }
     }
   },
+  mounted() {
+    let users = echarts.init(document.getElementById('active-users'))
+    users.setOption({
+      title: {
+        text: '近期活跃成员'
+      },
+      tooltip: {},
+      xAxis: {
+        data: ['小明', '小王', 'Tom', 'Mq', '小李']
+      },
+      yAxis: {},
+      series: [
+        {
+          name: '消息条数',
+          type: 'bar',
+          data: [300, 345, 407, 522, 1024]
+        }
+      ]
+    })
+    let projects = echarts.init(document.getElementById('active-projects'))
+    projects.setOption({
+      title: {
+        text: '近期活跃项目',
+        left: 'center',
+        top: 'center'
+      },
+      series: [
+        {
+          type: 'pie',
+          data: [
+            {
+              value: 335,
+              name: 'iSound音乐播放平台'
+            },
+            {
+              value: 234,
+              name: '小学期项目'
+            },
+            {
+              value: 123,
+              name: '编译大作业'
+            }
+          ],
+          radius: ['40%', '70%']
+        }
+      ]
+    })
+},
   methods: {
     updateTeamInfo() {
       // todo
       let data = new FormData()
       data.append('name', this.teamName)
       data.append('profile', this.teamIntroduction)
-      if (this.teamAatarChanged) {
+      if (this.teamAvatarChanged) {
         data.append('avatar', this.teamAvatar)
       }
       this.$http.put('/api/teams/1/', data).then(
@@ -280,4 +330,15 @@ input, textarea {
   border: 0;
 }
 
+.info-charts {
+  display: flex;
+  margin-top: 50px;
+}
+
+#active-users, #active-projects {
+  width: 500px;
+  height: 350px;
+  padding-top: 20px;
+  /* background-color: green; */
+}
 </style>

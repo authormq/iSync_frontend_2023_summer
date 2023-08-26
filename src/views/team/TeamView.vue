@@ -11,7 +11,6 @@
     <div>
       <RouterView ></RouterView>
     </div>
-    
   </div>
 </template>
 
@@ -39,7 +38,7 @@ ul {
 }
 
 .container>div {
-  margin-left: 30px;
+  margin-left: 10px;
   width: calc(100% - 330px);
   padding: 20px;
   /* background-color: lightgrey; */
@@ -65,7 +64,8 @@ ul {
 
 .router-link-active {
   box-sizing: border-box;
-  color: rgb(120, 120, 120);
-  border: 1px solid rgb(120, 120, 120);;
+  color: rgba(199,29,35, 1);
+  border: 1px solid rgba(199,29,35, 1);
+  box-shadow: 2px 2px  rgba(199,29,35, 1);
 }
 </style>

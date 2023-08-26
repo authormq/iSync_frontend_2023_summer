@@ -41,16 +41,7 @@ const router = createRouter({
         },
         {
           path: 'chat',
-          component: ChatView,
-          children: [
-            // 这里chat应该分为群聊和私聊两种情况
-            {
-              path: 'group',
-            },
-            {
-              path: 'personal'
-            }
-          ]
+          component: ChatView
         },
         {
           path: 'member',

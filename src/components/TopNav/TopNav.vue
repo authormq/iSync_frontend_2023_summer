@@ -6,7 +6,7 @@
     <div>
       <ul class="header-nav">
         <li @click="jumpToChatPage"><ChatIcon /></li>
-        <li v-if="hasUnreadMsg"
+        <li v-if="!hasUnreadMsg"
         @click="jumpToMailPage"><MailIcon /></li>
         <li v-else
         @click="jumpToMailUnreadPage"><MailUnreadIcon /></li>
@@ -40,6 +40,7 @@ export default {
 },
   mounted() {
     this.handleFlushUserData()
+    this.$bus.on('updateTopNavAvatar', this.updateTopNavAvatarAfterModify)
   },
   data() {
     return {
@@ -98,6 +99,9 @@ export default {
         this.avatarUrl= '/src/assets/avatar.jpeg'
       }
     },
+    updateTopNavAvatarAfterModify(avatar) {
+      this.avatarUrl = avatar
+    },
     jumpToChatPage() {
       this.$router.push('/team/1/chat')
     },
@@ -113,7 +117,7 @@ export default {
 
 <style scoped>
 .header-container {
-  width: 99.5%;
+  width: 100%;
   height: 70px;
   box-sizing: border-box;
   border-radius: 5px;
@@ -179,6 +183,7 @@ export default {
 .user-avatar-hint>span {
   font-size: 18px;
   font-weight: bold;
+  color: rgba(199,29,35, 1);
 }
 
 

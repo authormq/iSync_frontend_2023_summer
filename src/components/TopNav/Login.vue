@@ -100,6 +100,7 @@ export default {
   font-size: 30px;
   font-weight: bold;
   padding-left: 30px;
+  color: rgba(199,29,35, 1);
 }
 
 .close-icon {
@@ -124,7 +125,7 @@ export default {
   width: 80px;
   height: 40px;
   border-radius: 5px;
-  background-color: rgb(180, 180, 180);
+  background-color: rgba(199,29,35, 1);
   color: white;
   transition: all 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
   cursor: pointer;
@@ -132,17 +133,17 @@ export default {
 }
 
 .login-buttons>button:hover {
-  background-color: rgb(210, 210, 210);
+  background-color: rgba(199,29,35, 0.8);
 }
 
 .input-hint {
   font-style: 14px;
-  color: rgba(100, 149, 237, 0.9);
+  color: rgba(199,29,35, 0.8);
   cursor: pointer;
 }
 
 .input-hint:hover {
-  color: rgb(100, 149, 237);
+  color: rgba(199,29,35, 1);
   text-decoration: underline;
 }
 </style>

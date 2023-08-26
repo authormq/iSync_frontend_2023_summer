@@ -23,6 +23,7 @@ export default {
 		this.currentUserId = this.$cookies.get('user_id')
 		this.$http.get('/api/groups/list_by_team_id/', {params: {team_id: 1}}).then((response) => {
 			this.rooms = response.data.map((group) => ({
+				index: this.rooms.length,
 				roomId: group.id,
 				roomName: group.name,
 				avatar: group.avatar,
@@ -48,6 +49,12 @@ export default {
 							date: message.create_datetime.substring(5, 10).replace('-', ':')
 						}
 					]
+					for (let j = 0; j < data.mentioned_users.length; j++) {
+						if (data.mentioned_users[j]._id == this.currentUserId) {
+							alert(`${message.sender.user.username}提到了你`)
+						}
+						break
+					}
 				}
 			}
 		})
@@ -67,15 +74,11 @@ export default {
     }
   },
   methods: {
-		fetchMessages({ options = {} }) {
+		fetchMessages({ room, options }) {
+			this.messagesLoaded = false
 			setTimeout(() => {
-				// if (options.reset) {
-				// 	this.messages = this.addMessages(true)
-				// } else {
-				// 	this.messages = [...this.addMessages(), ...this.messages]
-				// 	this.messagesLoaded = true
-				// }
-				this.$http.get('/api/groups/8/messages/').then((response) => {
+				this.messages = []
+				this.$http.get(`/api/groups/${room.roomId}/messages/`).then((response) => {
 					this.messages = response.data.map((message) => ({
 						_id: this.messages.length,
 						content: message.text_content,
@@ -92,11 +95,16 @@ export default {
 		},
 
 		sendMessage(message) {
-			this.ws.send(JSON.stringify({
-				'text_content': message.content,
-				'mentioned_user_id': 1,
-				'mentioned_all': false
-			}))
+			for (let i = 0; i < this.rooms.length; i++) {
+				if (this.rooms[i].roomId == message.roomId) {
+					this.ws[i].send(JSON.stringify({
+						'text_content': message.content,
+						'mentioned_users': message.usersTag,
+						'mentioned_all': false
+					}))
+					break
+				}
+			}
 		},
 	}
 }

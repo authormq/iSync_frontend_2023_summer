@@ -40,7 +40,7 @@
   </div>
   <div id="project" class="homepage-intro project-intro">
     <StylishSlider 
-      type="single" showDots showArrow :autoplay="2000"
+      type="single" showDots :autoplay="2000"
       imgWidth="1000px" imgHeight="600px"
       dotSize="15px" dotSpacing="25px" dotDistance="-20px"
       borderRadius="15px"

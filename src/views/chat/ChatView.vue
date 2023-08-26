@@ -8,8 +8,10 @@
 			:rooms-loaded="roomsLoaded"
 			:messages="JSON.stringify(messages)"
 			:messages-loaded="messagesLoaded"
+      :custom-search-room-enabled="true"
 			@send-message="sendMessage($event.detail[0])"
 			@fetch-messages="fetchMessages($event.detail[0])"
+      @search-room="searchRoom($event.detail[0])"
 		/>
   </div>
 </template>
@@ -162,7 +164,6 @@ export default {
 		},
 
 		sendMessage(message) {
-      console.log(message)
 			for (let i = 0; i < this.rooms.length; i++) {
 				if (this.rooms[i].roomId == message.roomId) {
 					this.ws[i].send(JSON.stringify({
@@ -174,6 +175,10 @@ export default {
 				}
 			}
 		},
+
+    searchRoom(event) {
+      console.log(event)
+    }
 	}
 }
 </script>

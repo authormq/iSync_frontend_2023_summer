@@ -246,7 +246,7 @@ import CodeBlockLowLight from '@tiptap/extension-code-block-lowlight'//代码高
 import { Editor, EditorContent, BubbleMenu, FloatingMenu } from '@tiptap/vue-3'
 //协作重要插件
 import * as Y from 'yjs'
-import { WebrtcProvider } from 'y-webrtc'
+// import { WebrtcProvider } from 'y-webrtc'
 // import { HocuspocusProvider } from '@hocuspocus/provider'
 import Collaboration from '@tiptap/extension-collaboration'
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor'

@@ -12,13 +12,37 @@
         修改于 {{ data.latestUpdateTime }}
       </div>
     </div>
+    <div>
+      如果这是展示回收站的列表
+      <button @click="sendRestoreRequest">恢复</button>
+    </div>
+    <button @click="sendRenameRequest">重命名</button>
+    <input type="text" v-model="rename">
+    {{ rename }}
+    <button @click="sendDeleteRequest">删除</button>
   </div>
 </template>
 
 <script>
 export default {
   name: 'ProjectListItem',
-  props: ['data']
+  props: ['data', 'isRestore'],
+  data() {
+    return {
+      rename: ''
+    }
+  },
+  methods: {
+    sendRenameRequest() {
+      this.$bus.emit('renameRequest', { project: this.data, rename: this.rename})
+    },
+    sendDeleteRequest() {
+      this.$bus.emit('deleteRequest', this.data)
+    },
+    sendRestoreRequest() {
+      this.$bus.emit('restoreRequest', this.data)
+    }
+  }
 }
 </script>
 

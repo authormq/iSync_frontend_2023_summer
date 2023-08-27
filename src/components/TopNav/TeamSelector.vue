@@ -1,11 +1,8 @@
 <template>
   <div class="select-container">
-    <StylishSelect v-model:value="currentTeam" :options="options"/>
+    <StylishSelect v-model:value="currentTeam" :options="options" />
   </div>
-  <CreateTeamModal 
-    :show="showCreateTeamModal"
-    @close="showCreateTeamModal = false"
-  ></CreateTeamModal>
+  <CreateTeamModal :show="showCreateTeamModal" @close="showCreateTeamModal = false"></CreateTeamModal>
 </template>
 
 <script>
@@ -44,10 +41,26 @@ export default {
       response => {
         this.tmpOption = response.data.map((team) => ({
           label: team.name,
-          value: team.id, // value取为teamid
+          avatar: team.avatar,
+          value: team.id, // value 取为 teamid
           click: this.jump
         }))
         this.options = this.options.concat(this.tmpOption)
+        //寻找当前所在的团队并显示
+        if (this.$cookies.get('teamId') != undefined) {
+          console.log('######', this.options)
+          this.options.forEach((option) => {
+            // console.log(option.value, '<=>', this.$cookies.get('teamId'))
+            if (option.value == parseInt(this.$cookies.get('teamId'))) {
+              console.log('in if')
+              option.selected = true
+              this.currentTeam = {
+                label: option.label,
+                avatar: option.avatar
+              }
+            }
+          })
+        }
       },
       error => {
         console.log(error.message)
@@ -60,6 +73,7 @@ export default {
     // 上面 options 数组的第一项已经固定，后面的项应当调用接口 push 进去
     // 其中每一项的 value 可以是跳转路由，下面的 jump 方法可以接收一个参数，调用$router.push实现跳转
     jump(teamid) {
+      this.$cookies.set('teamId', teamid)
       this.$router.push(`/team/${teamid}/info`)
     },
     showModal(v) {
@@ -69,6 +83,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -72,11 +72,9 @@ export default {
 
         selectItem(index) {
             const item = this.items[index].username
-
             if (item) {
                 this.command({ id: item })
-								const file_id = 1;
-								this.$bus.emit('wssend', file_id, item.id)
+                this.$bus.emit('wssend', item.docId, item.id)
             }
         },
     },

@@ -1,5 +1,7 @@
 <template>
-  <PageListItem />
+  <div v-for="proto in protoList" :key="proto.id">
+    <PageListItem :proto="proto"/>
+  </div>
 </template>
 
 <script>
@@ -8,7 +10,8 @@ export default {
     name: 'PageListView',
     components: { 
       PageListItem 
-    }
+    },
+    props: ['protoList']
 }
 </script>
 

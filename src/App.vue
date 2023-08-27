@@ -1,11 +1,11 @@
 <template>
-  <div>
-    <TopNav v-if="'/'!==instance.proxy.$route.path" /> 
-  </div>
+  <!-- <div> -->
+  <TopNav v-if="'/' !== instance.proxy.$route.path" />
+  <!-- </div> -->
   <RouterView />
   <!-- 消息组件 -->
   <!-- 如果要展示分享链接，这一句代码就必须要加上 -->
-  <StylishMessage :show="showMessage" :title="messageTitle" :content="messageContent"/>
+  <StylishMessage :show="showMessage" :title="messageTitle" :content="messageContent" />
   <!-- <document-view></document-view> -->
   <!-- <GrapesjsView /> -->
 </template>

@@ -22,7 +22,7 @@
     <!-- 如果是展示模式 -->
     <template v-if="!showDeleted && !showSearch">
       <!-- 展示新建项目卡片 -->
-      <NewProject />
+      <NewProject @click="showModal = true"/>
       <!-- 
           用 v-for 生成卡片列表 
           【说明】ProjectListItem 有一个 type 属性，默认值为 'normal'，展示卡片
@@ -38,6 +38,7 @@
       <ProjectListItem v-for="project in searchData" :key="project" :data="project"></ProjectListItem>
     </template>
   </div>
+  <CreateProjectModal :show="showModal" @close="showModal = false"/>
 </template>
 
 <script>
@@ -45,11 +46,13 @@ import ProjectListItem from '../../../components/ListItem/team/ProjectListItem.v
 import NewProject from '../../../components/ListItem/team/NewProject.vue'
 import SearchIcon from '../../../components/Svg/SearchIcon.vue'
 import TrashIcon from '../../../components/Svg/TrashIcon.vue'
+import CreateProjectModal from '../../../components/Modal/CreatProjectModal.vue'
 export default {
   name: 'ProjectListView',
-  components: { ProjectListItem, NewProject, SearchIcon, TrashIcon },
+  components: { ProjectListItem, NewProject, SearchIcon, TrashIcon, CreateProjectModal },
   data() {
     return {
+      teamId: null,
       projectData: [],
       recycleData: [],
       searchData: [],     // 记得补充 search 的接口
@@ -57,10 +60,12 @@ export default {
       showSearch: false,
       searchIconIsHovered: false,
       projectKeyword: '', // 搜索关键字
+      showModal: false
     }
   },
   mounted() {
-    this.$http.get(`/api/projects/list/1/`).then(
+    this.teamId = this.$route.params.teamId
+    this.$http.get(`/api/projects/list/${this.teamId}/`).then(
       response => {
         this.projectData = response.data.map((project) => ({
           id: project.id,
@@ -76,7 +81,7 @@ export default {
         console.log(error.message)
       }
     )
-    this.$http.get(`/api/projects/list/deleted/1/`).then(
+    this.$http.get(`/api/projects/list/deleted/${this.teamId}/`).then(
       response => {
         this.recycleData = response.data.map((project) => ({
           id: project.id,
@@ -132,7 +137,7 @@ export default {
       )
     },
     handleSearchProject() {
-      this.$http.get(`/api/projects/1/search/?keyword=${this.projectKeyword}`).then(
+      this.$http.get(`/api/projects/${this.teamId}/search/?keyword=${this.projectKeyword}`).then(
         response => {
           this.searchData = response.data.map((project) => ({
             id: project.id,

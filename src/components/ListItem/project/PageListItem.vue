@@ -1,43 +1,36 @@
 <template>
-  <!-- 默认状态的文档卡片 -->
-  <div class="page-container">
-    <img src="src/assets/avatar.jpeg">
-    <div class="page-info">
-      <div class="page-name">
-        页面名
+  <div>
+    <div class="page-container">
+      <div>这里放一个文件图标</div>
+      <div class="page-info">
+        <div class="page-name">
+          {{ proto.name }}
+        </div>
       </div>
-      <button @click="sendDeleteRequest">删除</button>
     </div>
+    <button @click="sendDeleteProtoRequest">删除</button>
+    <br>
+    <input type="text" v-model="rename">
+    {{ rename }}
+    <button @click="sendRenameProtoRequest">重命名</button>
   </div>
-<!-- 删除状态的项目卡片 -->
-<div class="page-container">
-  <img src="src/assets/avatar.jpeg">
-  <div class="page-info">
-    <div class="page-name">
-      页面名    
-    </div>
-    <!-- 恢复删除的接口 -->
-    <div class="restore-icon" @click="sendRestoreRequest">
-      恢复删除按钮
-    </div>
-  </div>
-</div>
 </template>
 
 <script>
 export default {
   name: 'PageListItem',
-  Data() {
+  props: ['proto'],
+  data() {
     return {
-      name: '文件名'
+      rename: ''
     }
   },
   methods: {
-    sendDeleteRequest() {
-      alert('删除')
+    sendDeleteProtoRequest() {
+      this.$bus.emit('deleteProtoRequest', this.proto)
     },
-    sendRestoreRequest() {
-      alert('恢复删除')
+    sendRenameProtoRequest() {
+      this.$bus.emit('renameProtoRequest', { proto: this.proto, rename: this.rename })
     }
   }
 }
@@ -91,5 +84,4 @@ img {
   font-weight: bold;
   position: relative;
 }
-
 </style>

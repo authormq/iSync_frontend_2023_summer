@@ -181,6 +181,7 @@ export default {
 		},
 
 		sendMessage(message) {
+			console.log(message)
 			for (let i = 0; i < this.rooms.length; i++) {
 				if (this.rooms[i].roomId == message.roomId) {
 					this.ws[i].send(JSON.stringify({

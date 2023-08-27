@@ -6,7 +6,7 @@
   <!-- <DocumentView /> -->
   <!-- 消息组件 -->
   <!-- 如果要展示分享链接，这一句代码就必须要加上 -->
-  <StylishMessage :show="showMessage" :title="messageTitle" :content="messageContent"/>
+  <StylishMessage :show="showMessage" :title="messageTitle" :content="messageContent" />
   <!-- <document-view></document-view> -->
   <!-- <GrapesjsView /> -->
 </template>
@@ -17,6 +17,8 @@ import DocumentView from './components/DocumentWheels/DocumentView.vue';
 import TopNav from './components/TopNav/TopNav.vue'
 import StylishMessage from './components/Stylish/StylishMessage.vue'
 import GrapesjsView from './components/PrototypeWheels/GrapesjsView.vue';
+import CreateDocModal from './components/Modal/CreateDocModal.vue';
+import CreateProtoModal from './components/Modal/CreateProtoModal.vue';
 
 let showMessage = ref(false)  // 展示消息
 let messageTitle = ref('')    // 消息标题

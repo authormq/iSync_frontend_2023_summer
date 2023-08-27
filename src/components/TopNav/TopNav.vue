@@ -50,12 +50,12 @@ export default {
         const data = JSON.parse(messageEvent.data)
         for (let i = 0; i < data.mentioned_users.length; i++) {
           if (data.mentioned_users[i]._id == this.currentUserId || data.mentioned_users[i]._id == '0') {
-            // let formData = new FormData()
-            // formData.append('file', data.get('file_id'))
-            // formData.append('receiver', this.currentUserId)
-            // this.$http.post('/api/news/', formData).then(() => {
-            //   this.$bus.emit('newMessage', message)
-            // })
+            let formData = new FormData()
+            formData.append('file', data.get('file_id'))
+            formData.append('receiver', this.currentUserId)
+            this.$http.post('/api/news/', formData).then(() => {
+              this.$bus.emit('newFileMessage', data.get('file_id'))
+            })
           }
         }
       }

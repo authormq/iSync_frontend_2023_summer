@@ -50,7 +50,7 @@
     >
       <button @click="handleRename">重命名</button>
       <button @click="sendDeleteRequest">删除</button>
-    </div>
+  </div>
 </template>
 
 <script>

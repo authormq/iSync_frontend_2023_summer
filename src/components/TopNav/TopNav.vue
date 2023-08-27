@@ -39,10 +39,30 @@ export default {
     ChatIcon,
     RouterView,
     TeamSelector
-},
+  },
   mounted() {
     this.handleFlushUserData()
     this.$bus.on('updateTopNavAvatar', this.updateTopNavAvatarAfterModify)
+    if (this.$cookies.isKey('user_id') == true) {
+      const userId = this.$cookies.get('user_id')
+      this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/news/${userId}/`)
+      this.ws.onmessage = (messageEvent) => {
+        const data = JSON.parse(messageEvent.data)
+        for (let i = 0; i < data.mentioned_users.length; i++) {
+          if (data.mentioned_users[i]._id == this.currentUserId || data.mentioned_users[i]._id == '0') {
+            // let formData = new FormData()
+            // formData.append('file', data.get('file_id'))
+            // formData.append('receiver', this.currentUserId)
+            // this.$http.post('/api/news/', formData).then(() => {
+            //   this.$bus.emit('newMessage', message)
+            // })
+          }
+        }
+      }
+    }
+  },
+  unmounted() {
+    this.ws.close()
   },
   data() {
     return {
@@ -51,7 +71,8 @@ export default {
       avatarHintIsHovered: false,
       username: '',
       avatarUrl: '/src/assets/avatar.jpeg',
-      hasUnreadMsg: true
+      hasUnreadMsg: true,
+      ws: undefined
     }
   },
   methods: {

@@ -6,12 +6,13 @@
 			:current-user-id="currentUserId" :rooms="JSON.stringify(rooms)" :rooms-loaded="roomsLoaded"
 			:messages="JSON.stringify(messages)" :messages-loaded="messagesLoaded" :custom-search-room-enabled="true"
 			@send-message="sendMessage($event.detail[0])" @fetch-messages="fetchMessages($event.detail[0])"
-			@search-room="searchRoom($event.detail[0])" />
+			@search-room="searchRoom($event.detail[0])" @open-file="openFile($event.detail[0])" />
 	</div>
 </template>
 
 <script>
 import { register } from 'vue-advanced-chat'
+import { Base64 } from 'js-base64'
 // import  ChatWindow  from 'vue-advanced-chat'
 register()
 export default {
@@ -59,16 +60,6 @@ export default {
 							timestamp: message.create_datetime.substring(11, 16).replace('-', ':'),
 							date: message.create_datetime.substring(5, 10),
 							new: false,
-							replyMessage: message.reply_message == null ? null : {
-								_id: message.reply_message.id,
-								content: message.reply_message.text_content,
-								senderId: `${message.reply_message.sender.user.id}`,
-								username: message.reply_message.sender.user.username,
-								avatar: message.reply_message.sender.user.avatar,
-								timestamp: message.reply_message.create_datetime.substring(11, 16).replace('-', ':'),
-								date: message.reply_message.create_datetime.substring(5, 10),
-								new: false,
-							}
 						}
 					}
 				})
@@ -95,7 +86,13 @@ export default {
 							timestamp: message.reply_message.create_datetime.substring(11, 16).replace('-', ':'),
 							date: message.reply_message.create_datetime.substring(5, 10),
 							new: false,
-						}
+						},
+						files: message.file_content == null ? null : [{
+							name: message.file_content.name.split('message_file_')[0],
+							size: message.file_content.size,
+							url: message.file_content.url,
+							type: message.file_content.name.split('.')[1]
+						}]
 					}
 					this.messages = [
 						...this.messages,
@@ -104,20 +101,25 @@ export default {
 					// @
 					for (let j = 0; j < data.mentioned_users.length; j++) {
 						if (data.mentioned_users[j]._id == this.currentUserId || data.mentioned_users[j]._id == '0') {
-							this.$bus.emit('newMessage', message)
+							let formData = new FormData()
+							formData.append('group_message', message.id)
+							formData.append('receiver', this.currentUserId)
+							this.$http.post('/api/news/', formData).then(() => {
+								this.$bus.emit('newMessage', message)
+							})
+							break
 						}
-						break
 					}
 				}
 			}
 			this.roomsLoaded = true
 		})
 		// test
-		const style = document.createElement('style')
-		style.textContent = '.vac-chat-container { background: yellow; }'
-		this.$refs.test.shadowRoot.appendChild(style)
-		const newHTML = this.$refs.test.shadowRoot.innerHTML.replace('No room selected', '未选中')
-		this.$refs.test.shadowRoot.innerHTML = newHTML
+		// const style = document.createElement('style')
+		// 	style.textContent = '.vac-chat-container { background: yellow; }'
+		// 	this.$refs.test.shadowRoot.appendChild(style)
+		// 	const newHTML = this.$refs.test.shadowRoot.innerHTML.replace('No room selected', '未选中')
+		// 	this.$refs.test.shadowRoot.innerHTML = newHTML
 	},
 	unmounted() {
 		for (let i = 0; i < this.ws.length; i++) {
@@ -158,7 +160,13 @@ export default {
 							timestamp: message.reply_message.create_datetime.substring(11, 16).replace('-', ':'),
 							date: message.reply_message.create_datetime.substring(5, 10),
 							new: false,
-						}
+						},
+						files: message.file_content == null ? null : [{
+							name: message.file_content.name.split('message_file_')[0],
+							size: message.file_content.size,
+							url: message.file_content.url,
+							type: message.file_content.name.split('.')[1]
+						}]
 					}))
 					this.messagesLoaded = true
 				})
@@ -168,16 +176,42 @@ export default {
 		sendMessage(message) {
 			for (let i = 0; i < this.rooms.length; i++) {
 				if (this.rooms[i].roomId == message.roomId) {
-					this.ws[i].send(JSON.stringify({
-						'text_content': message.content,
-						'mentioned_users': message.usersTag,
-						'reply_message': message.replyMessage
-					}))
+					if (message.files != null) {
+						const reader = new FileReader()
+						reader.onload = (event) => {
+							this.ws[i].send(JSON.stringify({
+								'text_content': message.content,
+								'mentioned_users': message.usersTag,
+								'reply_message': message.replyMessage,
+								'file_content': event.target.result.split('base64,')[1],
+								'file_name': message.files[0].name + '.' + message.files[0].extension
+							}))
+						}
+						reader.readAsDataURL(message.files[0].blob)
+					}
+					else {
+						this.ws[i].send(JSON.stringify({
+							'text_content': message.content,
+							'mentioned_users': message.usersTag,
+							'reply_message': message.replyMessage,
+							'file_content': null,
+							'file_name': null
+						}))
+					}
 					break
 				}
 			}
 		},
 
+		openFile({ message, file }) {
+			if (file.action == 'download') {
+				const a = document.createElement('a')
+				a.style.display = 'none'
+				a.download = file.file.name
+				a.href = file.file.url
+				a.click()
+			}
+		},
 
 		searchRoom(event) {
 			console.log(event)

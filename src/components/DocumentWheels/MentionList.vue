@@ -75,6 +75,8 @@ export default {
 
             if (item) {
                 this.command({ id: item })
+								const file_id = 1;
+								this.$bus.emit('wssend', file_id, item.id)
             }
         },
     },

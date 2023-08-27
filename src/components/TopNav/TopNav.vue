@@ -44,7 +44,7 @@ export default {
     this.handleFlushUserData()
     this.$bus.on('updateTopNavAvatar', this.updateTopNavAvatarAfterModify)
     if (this.$cookies.isKey('user_id') == true) {
-      const userId = this.$cookies.get('user_id')
+      this.userId = this.$cookies.get('user_id')
       this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/news/${userId}/`)
       this.ws.onmessage = (messageEvent) => {
         const data = JSON.parse(messageEvent.data)
@@ -59,6 +59,13 @@ export default {
           }
         }
       }
+      this.$bus.on('wssend', (file_id, mentioned_user_id) => {
+        this.ws.send(JSON.stringify({
+          'file_id': file_id,
+          'sender_id': this.userId,
+          'mentioned_users': [mentioned_user_id],
+        }))
+      })
     }
   },
   unmounted() {
@@ -66,6 +73,7 @@ export default {
   },
   data() {
     return {
+      userId: '',
       avatarIsHovered: false,
       showAvatarHint: false,
       avatarHintIsHovered: false,

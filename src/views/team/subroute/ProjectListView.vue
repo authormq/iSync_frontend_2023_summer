@@ -22,7 +22,7 @@
     <!-- 如果是展示模式 -->
     <template v-if="!showDeleted && !showSearch">
       <!-- 展示新建项目卡片 -->
-      <NewProject @click="showModal = true"/>
+      <NewProject what="项目" @click="showModal = true"/>
       <!-- 
           用 v-for 生成卡片列表 
           【说明】ProjectListItem 有一个 type 属性，默认值为 'normal'，展示卡片

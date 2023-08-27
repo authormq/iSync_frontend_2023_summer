@@ -1,6 +1,6 @@
 <template>
   <div class="select-container">
-    <StylishSelect v-model:value="currentTeam" :options="options"/>
+    <StylishSelect v-model:value="currentTeam" :options="options" />
   </div>
   <CreateTeamModal :show="showCreateTeamModal" @close="showCreateTeamModal = false"></CreateTeamModal>
 </template>
@@ -61,14 +61,15 @@ export default {
               break
             }
           }
-          console.log('over!', this.options)
-          this.$bus.emit('flushData', this.options)
         }
+        // 必须放在外面
+        this.$bus.emit('flushData', this.options)
       },
       error => {
         console.log(error.message)
       }
     )
+    this.$bus.on('regetTeamListAfterCreateTeamRequest', this.handleRegetTeamListAfterCreateTeam)
   },
   methods: {
     // 这个 jump 可以换成点击切换当前团队的方法
@@ -85,6 +86,51 @@ export default {
     showModal(v) {
       this.showCreateTeamModal = true
     },
+
+    // 这段代码纯纯是为了重新刷新data而写
+    handleRegetTeamListAfterCreateTeam() {
+      this.options = [
+        {
+          label: '新建团队',
+          value: 'XXX',
+          click: this.showModal
+        }
+      ]
+      this.$http.get(`/api/teams/list_by_identity/`).then(
+        response => {
+          this.tmpOption = response.data.map((team) => ({
+            label: team.name,
+            avatar: team.avatar,
+            value: team.id, // value 取为 teamid
+            click: this.jump
+          }))
+          this.options = this.options.concat(this.tmpOption)
+          //寻找当前所在的团队并显示
+          if (this.$cookies.get('teamId') != undefined) {
+            for (let i = 0; i < this.options.length; i++) {
+              if (this.options[i].value === parseInt(this.$cookies.get('teamId'))) {
+                const newOption = {
+                  label: this.options[i].label,
+                  avatar: this.options[i].avatar,
+                  value: this.options[i].value,
+                  click: this.jump,
+                  selected: true
+                }
+                this.options.splice(i, 1, newOption)
+                break
+              }
+            }
+            console.log('over!', this.options)
+          }
+          // 必须放在外面
+          this.$bus.emit('flushData', this.options)
+        },
+        error => {
+          console.log(error.message)
+        }
+      )
+
+    }
   }
 }
 </script>

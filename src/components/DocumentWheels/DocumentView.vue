@@ -43,7 +43,7 @@ export default {
     created() {
         this.docId = this.$route.params.docId
         this.$http.get(`/api/projects/file/${this.docId}/editable/`).then(response => {
-            this.isReadOnlyIdentity = !response.data
+            this.isReadOnlyIdentity = !response.data.editable
         })
     },
     mounted() {

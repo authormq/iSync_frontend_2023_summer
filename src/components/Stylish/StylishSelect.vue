@@ -58,6 +58,18 @@ export default {
   computed: {
     
   },
+  watch: {
+    options(newValue) {
+      this.optionData = newValue.map((option) => {
+      return {
+        label: option.label,
+        value: option.value,
+        selected: option.selected ? true : false,      // 可能是 undefined
+        click: option.click
+      }
+    })
+    }
+  },
   created() {
     // 从用户传入的 options 属性，初始化 option 的 DOM 数据
     this.optionData = this.options.map((option) => {

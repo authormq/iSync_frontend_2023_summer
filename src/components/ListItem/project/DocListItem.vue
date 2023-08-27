@@ -11,11 +11,11 @@
         </div>
       </div>
     </div>
-    <button @click="sendDeleteDocRequest">删除</button>
+    <!-- <button @click="sendDeleteDocRequest">删除</button>
     <br>
     <input type="text" v-model="rename">
     {{ rename }}
-    <button @click="sendRenameDocRequest">重命名</button>
+    <button @click="sendRenameDocRequest">重命名</button> -->
   </div>
 </template>
 
@@ -42,8 +42,8 @@ export default {
 
 <style scoped>
 .doc-container {
-  min-width: 150px;
-  height: 230px;
+  min-width: 120px;
+  min-height: 230px;
   padding: 10px;
   border-radius: 10px;
   box-shadow: 0 0 5px lightgrey;
@@ -66,7 +66,8 @@ img {
 }
 
 .doc-info {
-  width: 200px;
+  min-width: 120px;
+  text-align: center;
   margin: 0 auto;
   margin-top: 10px;
 }

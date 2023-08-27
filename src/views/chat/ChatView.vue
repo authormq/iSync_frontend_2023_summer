@@ -5,6 +5,7 @@
 		<vue-advanced-chat ref="test" theme="light" :styles="JSON.stringify(style)" height="calc(100vh - 20px)"
 			:current-user-id="currentUserId" :rooms="JSON.stringify(rooms)" :rooms-loaded="roomsLoaded"
 			:messages="JSON.stringify(messages)" :messages-loaded="messagesLoaded" :custom-search-room-enabled="true"
+			:show-add-room="false"
 			@send-message="sendMessage($event.detail[0])" @fetch-messages="fetchMessages($event.detail[0])"
 			@search-room="searchRoom($event.detail[0])" @open-file="openFile($event.detail[0])" />
 	</div>
@@ -25,13 +26,18 @@ export default {
 			this.rooms = response.data.map((group) => ({
 				index: this.rooms.length,
 				roomId: group.id,
-				roomName: group.name,
-				avatar: group.avatar,
+				roomName: group.is_private ? (
+					group.members[0].user.id == this.currentUserId ? group.members[1].user.username : group.members[0].user.username
+				) : group.name,
+				avatar: group.is_private ? (
+					group.members[0].user.id == this.currentUserId ? group.members[1].user.avatar : group.members[0].user.avatar
+				) : group.avatar,
 				users: group.members.map((member) => ({
 					_id: `${member.user.id}`,
 					username: member.user.username
 				}))
 			}))
+			this.allRooms = this.rooms
 			// @all && last_message
 			for (let i = 0; i < this.rooms.length; i++) {
 				this.$http.get(`/api/groups/${this.rooms[i].roomId}/current_user_identity/`).then((response) => {
@@ -130,6 +136,7 @@ export default {
 			ws: [],
 			currentUserId: '',
 			rooms: [],
+			allRooms: [],
 			roomsLoaded: false,
 			messages: [],
 			messagesLoaded: false
@@ -213,7 +220,13 @@ export default {
 		},
 
 		searchRoom(event) {
-			console.log(event)
+			const tmpRooms = this.allRooms.filter(room => room.roomName.includes(event.value))
+			if (tmpRooms.length != 0) {
+				this.rooms = tmpRooms
+			}
+			else {
+				this.rooms = this.allRooms
+			}
 		}
 	}
 }

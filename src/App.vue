@@ -6,7 +6,7 @@
   <!-- 消息组件 -->
   <StylishMessage :show="showMessage" :title="messageTitle" :content="messageContent"/>
   <!-- <document-view></document-view> -->
-  <GrapesjsView />
+  <!-- <GrapesjsView /> -->
 </template>
 
 <script setup>

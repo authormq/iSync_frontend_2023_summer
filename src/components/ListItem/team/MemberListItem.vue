@@ -213,6 +213,7 @@ img {
 }
 
 .popover-item-title {
+  min-width: 40px;
   max-width: 80px;
   font-size: 20px;
   font-weight: bold;
@@ -220,7 +221,8 @@ img {
 }
 
 .popover-item-content {
-  max-width: 190px;
+  max-width: 240px;
+  word-break: break-all;
   color: grey;
   margin-left: 5px;
 }

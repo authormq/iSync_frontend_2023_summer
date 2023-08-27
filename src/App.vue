@@ -7,6 +7,7 @@
   <!-- <StylishMessage :show="showMessage" :title="messageTitle" :content="messageContent"/> -->
   <!-- <document-view></document-view> -->
   <GrapesjsView />
+
 </template>
 
 <script setup>

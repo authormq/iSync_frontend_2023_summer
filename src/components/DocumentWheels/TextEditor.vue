@@ -300,8 +300,8 @@
 				{{ editor.storage.collaborationCursor.users.length }}人正在编辑该文档
 			</div>
 		</div>
-
 	</div>
+
 </template>
 
 <script>
@@ -369,7 +369,6 @@ export default {
 	emits: ['update:docContent','updateVersion'],
 	data() {
 		return {
-			userName: 'tempUser',
 			userAvatar: '/src/assets/avatar.jpeg',
 			localContent: '',
 			docLimit: 100000,
@@ -633,7 +632,7 @@ export default {
 				CollaborationCursor.configure({
 					provider: this.provider,
 					user: {
-						name: this.userName,
+						name: this.$cookies.get('username'),
 						color: this.getRandomColor(),
 						avatar: this.userAvatar
 					}

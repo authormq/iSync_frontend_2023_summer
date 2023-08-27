@@ -70,7 +70,7 @@ const router = createRouter({
           // path: 'doc/:docId',
           path: 'doc',
           // component: DocEditingView
-          component: DocListView
+          component: DocListView,
         },
         {
           // path: 'page/:pageId',

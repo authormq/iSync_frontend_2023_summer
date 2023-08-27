@@ -4,6 +4,7 @@
             <button class="item" :class="{ 'is-selected': index === selectedIndex }" v-for="(item, index) in items"
                 :key="index" @click="selectItem(index)">
                 {{ item.username }}
+                <span class="identity-tag">{{ item.identity }}</span>
             </button>
         </template>
         <div class="item" v-else>
@@ -106,9 +107,24 @@ export default {
     border: 1px solid transparent;
     padding: 0.2rem 0.4rem;
 
-    
+
 }
+
 .item.is-selected {
-        border-color: #000;
-    }
+    border-color: #000;
+}
+
+.identity-tag {
+    display: flex;
+    padding: 2px 5px;
+    right: 5px;
+    vertical-align: middle;
+    font-family: Arial, Helvetica, sans-serif;
+    display: inline-block;
+    border-radius: 0.3rem;
+    color: #444;
+    background: #ccc;
+    font-weight: 700;
+    font-size: 0.8rem;
+}
 </style>

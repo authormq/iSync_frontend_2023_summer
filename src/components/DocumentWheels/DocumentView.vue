@@ -1,5 +1,6 @@
 <template>
-    <text-editor :isReadOnly="isReadOnlyIdentity" :doc-name="docName" :doc-id="docId" v-model:doc-content="docContent" @update-version="getVersionInfo">
+    <text-editor :isReadOnly="isReadOnlyIdentity" :doc-name="docName" :doc-id="docId" v-model:doc-content="docContent"
+        @update-version="getVersionInfo">
     </text-editor>
     <version-inspector @updateContent="handleUpdateContent" :doc-id="docId" :versions="versions"></version-inspector>
 </template>
@@ -8,7 +9,7 @@
 import TextEditor from './TextEditor.vue'
 import VersionInspector from './VersionInspector.vue'
 export default {
-    name:'DocumentView',
+    name: 'DocumentView',
     components: {
         TextEditor,
         VersionInspector
@@ -18,7 +19,7 @@ export default {
             docContent: '',
             docId: null,
             versions: [],
-            members:[],
+            members: [],
             docName: 'temp',
             isReadOnlyIdentity: false
         }
@@ -49,6 +50,7 @@ export default {
         //打开当前文件
         this.docId = this.$route.params.docId
         this.$http.get(`/api/projects/file/${this.docId}/open/`).then((response) => {
+            this.docName=response.headers['content-disposition'].match(/filename="([^"]+)"/)[1]
             this.docContent = response.data
         })
         //获取历史版本

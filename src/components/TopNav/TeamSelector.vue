@@ -48,11 +48,9 @@ export default {
         this.options = this.options.concat(this.tmpOption)
         //寻找当前所在的团队并显示
         if (this.$cookies.get('teamId') != undefined) {
-          console.log('######', this.options)
           this.options.forEach((option) => {
             // console.log(option.value, '<=>', this.$cookies.get('teamId'))
             if (option.value == parseInt(this.$cookies.get('teamId'))) {
-              console.log('in if')
               option.selected = true
               this.currentTeam = {
                 label: option.label,

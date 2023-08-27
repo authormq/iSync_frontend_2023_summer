@@ -1,5 +1,5 @@
 <template>
-<StylishModal :show="show" width="500px" height="400px" padding="25px">
+  <StylishModal :show="show" width="500px" height="400px" padding="25px">
     <div class="title-container">
       <div></div>
       <div class="title">创建项目</div>
@@ -15,127 +15,120 @@
       </div>
       <div>
         <div>
-          <img v-if="avatarFile !== null"
-            :src="avatarUrl"
-            @mouseover="avatarIsHovered = true"
-            @mouseleave="handleMouseLeaveAvatar"
-            @click="uploadAvatar"
-          />
+          <img v-if="avatarFile !== null" :src="avatarUrl" @mouseover="avatarIsHovered = true"
+            @mouseleave="handleMouseLeaveAvatar" @click="uploadAvatar" />
           <div class="upload-icon" v-else @click="uploadAvatar">
-            <svg t="1693055447530" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2328" width="80" height="80"><path d="M319.5 768.7h385v-385h128.3L512 62.8 191.2 383.7h128.3v385zM512 153.6l165.9 165.9h-37.6v385H383.7v-385h-37.6L512 153.6z" fill="lightgrey" p-id="2329"></path><path d="M886.2 704.5h-53.3v128.4c0 35.4-28.8 64.2-64.2 64.2H255.3c-35.4 0-64.2-28.8-64.2-64.2V704.5H127v128.3c0 70.6 57.8 128.3 128.3 128.3h513.3c70.6 0 128.3-57.8 128.3-128.3V715.3c0.1-5.9-4.8-10.8-10.7-10.8z" fill="lightgrey" p-id="2330"></path></svg>
+            <svg t="1693055447530" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2328"
+              width="80" height="80">
+              <path
+                d="M319.5 768.7h385v-385h128.3L512 62.8 191.2 383.7h128.3v385zM512 153.6l165.9 165.9h-37.6v385H383.7v-385h-37.6L512 153.6z"
+                fill="lightgrey" p-id="2329"></path>
+              <path
+                d="M886.2 704.5h-53.3v128.4c0 35.4-28.8 64.2-64.2 64.2H255.3c-35.4 0-64.2-28.8-64.2-64.2V704.5H127v128.3c0 70.6 57.8 128.3 128.3 128.3h513.3c70.6 0 128.3-57.8 128.3-128.3V715.3c0.1-5.9-4.8-10.8-10.7-10.8z"
+                fill="lightgrey" p-id="2330"></path>
+            </svg>
           </div>
-          <input 
-            type="file"
-            accept="image/*"
-            ref="fileInput"
-            @change="handleFileChange"
-          >
+          <input type="file" accept="image/*" ref="fileInput" @change="handleFileChange">
         </div>
         <div class="buttons">
           <button class="confirm" @click="createProject">确认</button>
           <button class="cancel" @click="handleClose">取消</button>
         </div>
       </div>
-      
-      
     </div>
-    </StylishModal>
-    <!-- <StylishModal :show="showCreateProjectModal">
-      <div>
-        <button @click="closeModal">X</button>
-      </div>
-      <img
-          :src="avatarUrl"
-          @mouseover="avatarIsHovered = true"
-          @mouseleave="handleMouseLeaveAvatar"
-          @click="uploadAvatar"
-          style="width: 30px;"
-        />
-      <input 
-        type="file"
-        accept="image/*"
-        ref="fileInput"
-        @change="handleFileChange"
-      >
-      <div>创建我的项目</div>
-      <div>
-        项目名称：<StylishInput type="text" v-model:value="projectName" />
-        项目简介：<StylishInput type="text" v-model:value="projectProfile"/>
-      </div>
-      <button @click="createProject">创建项目</button>
-    </StylishModal> -->
+  </StylishModal>
+</template>
   
-  </template>
-  
-  <script>
-  import StylishModal from '../Stylish/StylishModal.vue'
-  import CloseIcon from '../Svg/CloseIcon.vue'
-  export default {
-    name: 'CreateProjectModal',
-    components: {
-      StylishModal,
-      CloseIcon
-    },
-    emits: ['close'],
-    props: {
-      show: { type: Boolean, default: false }
-    },
-    data() {
-      return {
-        avatarIsHovered: false,
-        avatarFile: null,
-        avatarUrl: '',
-        avatarChanged: false,
-        projectName: '',
-        projectProfile: ''
-      }
-    },
-    methods: {
-      handleClose() {
+<script>
+import StylishModal from '../Stylish/StylishModal.vue'
+import CloseIcon from '../Svg/CloseIcon.vue'
+export default {
+  name: 'CreateProjectModal',
+  components: {
+    StylishModal,
+    CloseIcon
+  },
+  emits: ['close'],
+  props: {
+    show: { type: Boolean, default: false }
+  },
+  data() {
+    return {
+      avatarIsHovered: false,
+      avatarFile: null,
+      avatarUrl: '',
+      avatarChanged: false,
+      projectName: '',
+      projectProfile: '',
+      teamId: null
+    }
+  },
+  mounted() {
+    this.teamId = this.$route.params.teamId
+    // console.log(this.teamId);
+  },
+  methods: {
+    handleClose() {
+      this.avatarFile = null
+      this.avatarUrl = ''
+      this.teamName = ''
+      this.teamProfile = ''
+      this.projectName = '',
+        this.projectProfile = '',
         this.$emit('close')
-        this.avatarFile = null
-        this.avatarUrl = ''
-        this.teamName = ''
-        this.teamProfile = ''
-      },
-      createProject() {
-        let data = new FormData()
-        data.append('name', this.projectName)
-        data.append('profile', this.projectProfile)
-        data.append('team', 1)
-        if (this.avatarChanged) {
-          data.append('image', this.avatarFile)
-        }
-        this.$http.post('api/projects/create/', data).then((response) => {
-          alert('创建项目成功')
-          this.closeModal()
-        }, (error) => {
+    },
+    createProject() {
+      let data = new FormData()
+      data.append('name', this.projectName)
+      data.append('profile', this.projectProfile)
+      data.append('team', this.teamId)
+      if (this.avatarChanged) {
+        data.append('image', this.avatarFile)
+      }
+      this.$http.post('/api/projects/create/', data).then(
+        (response) => {
+          this.$bus.emit('message', {
+            title: '创建项目消息',
+            content: '创建项目成功，原神，启动！',
+            time: 1000
+          })
+          this.$bus.emit('regetProjectListRequest', 0)
+          this.handleClose()
+        },
+        (error) => {
           if (error.response.data.detail !== undefined) {
-            alert(error.response.data.detail)
+            this.$bus.emit('message', {
+              title: '创建项目消息',
+              content: error.response.data.detail,
+              time: 1500
+            })
           }
           else {
-            alert('创建团队失败')
+            this.$bus.emit('message', {
+              title: '创建项目消息',
+              content: '项目创建失败',
+              time: 1500
+            })
           }
         })
-      },
-      handleMouseLeaveAvatar() {
-        this.avatarIsHovered = false
-      },
-      uploadAvatar() {
-        this.$refs.fileInput.click()
-      },
-      handleFileChange(e) {
-        this.avatarChanged = true
-        this.avatarFile = e.target.files[0]
-        this.avatarUrl = URL.createObjectURL(this.avatarFile)
-      },
-    }
+    },
+    handleMouseLeaveAvatar() {
+      this.avatarIsHovered = false
+    },
+    uploadAvatar() {
+      this.$refs.fileInput.click()
+    },
+    handleFileChange(e) {
+      this.avatarChanged = true
+      this.avatarFile = e.target.files[0]
+      this.avatarUrl = URL.createObjectURL(this.avatarFile)
+    },
   }
-  </script>
+}
+</script>
   
-  <style scoped>
-
-    ::placeholder {
+<style scoped>
+::placeholder {
   color: lightgrey;
 }
 
@@ -151,7 +144,7 @@
   font-size: 30px;
   font-weight: bold;
   padding-left: 30px;
-  color: rgba(199,29,35, 1);
+  color: rgba(199, 29, 35, 1);
 }
 
 .close-icon {
@@ -170,12 +163,12 @@
   display: block;
   width: 250px;
   height: 30px;
-  border: 1px solid rgba(199,29,35, 1);
+  border: 1px solid rgba(199, 29, 35, 1);
   border-radius: 10px;
   padding: 5px 10px;
   font-size: 18px;
   transition: 0.1s cubic-bezier(0.075, 0.82, 0.165, 1);
-  caret-color: rgba(199,29,35, 1);
+  caret-color: rgba(199, 29, 35, 1);
 }
 
 .input-hint {
@@ -185,23 +178,23 @@
 }
 
 .inputs input:focus {
-  border: 3px solid rgba(199,29,35, 1);
+  border: 3px solid rgba(199, 29, 35, 1);
 }
 
 .inputs textarea {
   display: block;
   width: 250px;
   font-size: 18px;
-  border: 1px solid rgba(199,29,35, 1);
+  border: 1px solid rgba(199, 29, 35, 1);
   border-radius: 10px;
   padding: 5px 10px;
   transition: 0.1s cubic-bezier(0.075, 0.82, 0.165, 1);
-  caret-color: rgba(199,29,35, 1);
+  caret-color: rgba(199, 29, 35, 1);
 }
 
 .inputs textarea:focus-visible {
   outline: 0;
-  border: 3px solid rgba(199,29,35, 1);
+  border: 3px solid rgba(199, 29, 35, 1);
 }
 
 input[type="file"] {
@@ -232,6 +225,7 @@ img:hover {
   align-items: center;
   transition: 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
+
 .upload-icon:hover {
   transform: translate(-2px, -2px) scale(1.02);
 }
@@ -240,7 +234,8 @@ img:hover {
   margin-top: 60px;
 }
 
-.confirm, .cancel {
+.confirm,
+.cancel {
   display: block;
   width: 100px;
   height: 35px;
@@ -251,25 +246,27 @@ img:hover {
 }
 
 .confirm {
-  background: rgba(199,29,35, 1);
+  background: rgba(199, 29, 35, 1);
   color: white;
 }
+
 .confirm:hover {
-  background: rgba(199,29,35, 0.8);
+  background: rgba(199, 29, 35, 0.8);
 }
 
 .cancel {
   box-sizing: border-box;
-  border: 1px solid rgba(199,29,35, 1);
-  color: rgba(199,29,35, 1);
+  border: 1px solid rgba(199, 29, 35, 1);
+  color: rgba(199, 29, 35, 1);
   background: white;
 }
+
 .cancel:hover {
-  border: 1px solid rgba(199,29,35, 0.8);
-  color: rgba(199,29,35, 0.8);
+  border: 1px solid rgba(199, 29, 35, 0.8);
+  color: rgba(199, 29, 35, 0.8);
 }
 
 .confirm {
   margin-bottom: 20px;
 }
-  </style>
+</style>

@@ -98,7 +98,7 @@ export default {
   },
   methods: {
     sendRenameRequest() {
-      this.$bus.emit('renameRequest', { project: this.data, rename: this.name})
+      this.$bus.emit('renameRequest', { project: this.data, rename: this.name })
     },
     sendDeleteRequest() {
       this.$bus.emit('deleteRequest', this.data)

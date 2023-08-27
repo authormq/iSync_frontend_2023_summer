@@ -1,20 +1,18 @@
 <!-- 消息页面 -->
 <template>
-  <div>This is message Page</div>
-  <div>
-    <ul>
-      <li @click="showAllMsg=true">全部消息</li>
-      <li @click="showAllMsg=false">未读消息</li>
-    </ul>
-    <!-- mq: 简单的逻辑展示 -->
-    <div v-if="showAllMsg">
-      <MessageItem v-for="msg in allMessage" :key="msg" :msg="msg"></MessageItem>
-    </div>
-    <div v-else>
-      <MessageItem v-for="msg in unReadMessage" :key="msg" :msg="msg"></MessageItem>
-    </div>
-    <button @click="setAllRead">设置全部已读</button>
-    <button @click="deleteAllRead">删除全部已读</button>
+  <!-- <div>This is message Page</div> -->
+  <div class="tool-menu">
+    <button v-if="!showAllMsg" @click="showAllMsg = true">全部消息</button>
+    <button v-else @click="showAllMsg = false">未读消息</button>
+    <button @click="setAllRead">全部已读</button>
+    <button @click="deleteAllRead">删除已读</button>
+  </div>
+  <div class="container">
+    <!-- 以下用 v-for 生成 -->
+    <message-item/>
+    <message-item/>
+    <message-item/>
+    
   </div>
 </template>
 
@@ -27,29 +25,7 @@ export default {
   data() {
     return {
       showAllMsg: true,
-      allMessage: [
-        // {
-        //   timeStamp: '1',
-        //   sender: '1',
-        //   receiver: '1',
-        //   isRead: false,
-        //   content: '1'
-        // },
-        // {
-        //   timeStamp: '2',
-        //   sender: '2',
-        //   receiver: '2',
-        //   isRead: true,
-        //   content: '2'
-        // },
-        // {
-        //   timeStamp: '3',
-        //   sender: '3',
-        //   receiver: '3',
-        //   isRead: false,
-        //   content: '3'
-        // }
-      ],
+      allMessage: [],
       unReadMessage: []
     };
   },
@@ -67,19 +43,27 @@ export default {
       this.unReadMessage = this.allMessage.filter(message => message.isRead == false)
     },
     setAllRead() {
-      this.allMessage.filter(message => message.isRead == false).forEach(message => {
-        if (message.isRead == false) {
-          message.isRead = true
-        }
-      })
+      this.allMessage.filter(message => message.isRead == false).forEach(message => message.isRead = true)
+      this.unReadMessage = []
+      this.$http.post('/api/news/set_all_read/')
     },
     deleteAllRead() {
       this.allMessage = this.allMessage.filter(message => message.isRead == false)
+      this.$http.delete('/api/news/delete_all_read/')
     }
   },
   mounted() { 
-    // 这一行必须有，用来获取未读的信息
-    this.divideUnReadMessage()
+    this.$http.get('/api/news/').then((response) => {
+      this.allMessage = response.data.map((news) => ({
+        timeStamp: news.group_message.create_datetime,
+        sender: news.group_message.sender.user.username,
+        receiver: news.receiver,
+        isRead: news.is_read,
+        content: `${news.group_message.sender.user.username}提到了你`,
+      }))
+      // 这一行必须有，用来获取未读的信息
+      this.divideUnReadMessage()
+    })
     // 具体需不需要这些函数，看后期后端怎么给我返回数据
     this.$bus.on('newMessage', (message) => {
       alert(`${message.sender.user.username}提到了你`)
@@ -88,7 +72,7 @@ export default {
           sender: message.sender.user.username,
           receiver: '1',
           isRead: false,
-          content: message.text_content
+          content: `${message.sender.user.username}提到了你`
       })
     })
     this.$bus.on('sendChangeStatusSignal', this.handleReadStatus)
@@ -96,4 +80,51 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.tool-menu {
+  width: 110px;
+  height: 140px;
+  /* border: 1px solid black; */
+  position: fixed;
+  top: 15%;
+  left: 8%;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 1px 1px 3px grey;
+  padding: 5px;
+  transition: 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: space-around;
+}
+
+.tool-menu:hover {
+  box-shadow: 3px 3px 10px grey;
+  /* outline: 3px solid rgba(199, 29, 35, 1); */
+}
+
+.tool-menu button {
+  
+  width: 90px;
+  height: 30px;
+  border-radius: 5px;
+  background-color: transparent;
+  box-shadow: 1px 1px 3px grey;
+  cursor: pointer;
+  transition: 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.tool-menu button:hover {
+  transform: translate(-2px, -2px) scale(1.02);
+  color: rgba(199, 29, 35, 1);
+  outline: 1px solid rgba(199, 29, 35, 1);
+}
+
+.container {
+  width: 850px;
+  margin: 0 auto;
+  margin-top: 20px;
+}
+</style>

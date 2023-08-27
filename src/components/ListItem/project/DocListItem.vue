@@ -1,44 +1,38 @@
 <template>
-  <!-- 默认状态的文档卡片 -->
-  <div class="doc-container">
-    <img src="src/assets/avatar.jpeg">
-    <div class="doc-info">
-      <div class="doc-name">
-        文件名
+  <!-- 这是展示的文档卡片 -->
+  <div>
+    <div class="doc-container">
+      <div>这里放一个文件图标</div>
+      <div class="doc-info">
+        <div class="doc-name">
+          {{ doc.name }}
+        </div>
       </div>
-      <button @click="sendDeleteRequest">删除</button>
     </div>
+    <button @click="sendDeleteDocRequest">删除</button>
+    <br>
+    <input type="text" v-model="rename">
+    {{ rename }}
+    <button @click="sendRenameDocRequest">重命名</button>
   </div>
-<!-- 删除状态的项目卡片 -->
-<div class="doc-container">
-  <img src="src/assets/avatar.jpeg">
-  <div class="doc-info">
-    <div class="doc-name">
-      文件名    
-    </div>
-    <!-- 恢复删除的接口 -->
-    <div class="restore-icon" @click="sendRestoreRequest">
-      恢复删除按钮
-    </div>
-  </div>
-</div>
 </template>
 
 
 <script>
 export default {
   name: 'DocListItem',
-  Data() {
+  props: ['doc'],
+  data() {
     return {
-      name: '文件名'
+      rename: ''
     }
   },
   methods: {
-    sendDeleteRequest() {
-      alert('删除')
+    sendDeleteDocRequest() {
+      this.$bus.emit('deleteDocRequest', this.doc)
     },
-    sendRestoreRequest() {
-      alert('恢复删除')
+    sendRenameDocRequest() {
+      this.$bus.emit('renameDocRequest', { doc: this.doc, rename: this.rename })
     }
   }
 }
@@ -92,5 +86,4 @@ img {
   font-weight: bold;
   position: relative;
 }
-
 </style>

@@ -33,45 +33,36 @@ export default {
           label: '新建团队',
           value: 'XXX',
           click: this.showModal
-        },
-        {
-          label: '团队A',
-          value: 'a',
-          click: this.jump
-        },
-        {
-          label: '团队B',
-          value: 'b',
-          click: this.jump
-        },
-        {
-          label: '团队C',
-          value: 'c',
-          click: this.jump
-        },
-        {
-          label: '团队D',
-          value: 'd',
-          click: this.jump
-        },
-        {
-          label: '团队E',
-          value: 'e',
-          click: this.jump
-        },
+        }
       ],
+      tmpOption: [], // 请求时暂时使用的
       showCreateTeamModal: false
     }
+  },
+  mounted() {
+    this.$http.get(`/api/teams/list_by_identity/`).then(
+      response => {
+        this.tmpOption = response.data.map((team) => ({
+          label: team.name,
+          value: team.id, // value取为teamid
+          click: this.jump
+        }))
+        this.options = this.options.concat(this.tmpOption)
+      },
+      error => {
+        console.log(error.message)
+      }
+    )
   },
   methods: {
     // 这个 jump 可以换成点击切换当前团队的方法
     // 当前团队最好保存在 store 中
     // 上面 options 数组的第一项已经固定，后面的项应当调用接口 push 进去
     // 其中每一项的 value 可以是跳转路由，下面的 jump 方法可以接收一个参数，调用$router.push实现跳转
-    jump(path) {
-      // console.log(message)
+    jump(teamid) {
+      this.$router.push(`/team/${teamid}/info`)
     },
-    showModal() {
+    showModal(v) {
       this.showCreateTeamModal = true
     },
   }

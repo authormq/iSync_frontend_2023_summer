@@ -4,18 +4,22 @@
   <div class="tool-menu">
     <button v-if="!showAllMsg" @click="showAllMsg = true">全部消息</button>
     <button v-else @click="showAllMsg = false">未读消息</button>
-    <button @click="setAllRead">全部已读</button>
+    <button @click="setAllRead">设为全部已读</button>
     <button @click="deleteAllRead">删除已读</button>
   </div>
   <div class="container">
-    <!-- 以下用 v-for 生成 -->
-    <message-item/>
-    <message-item/>
-    <message-item/>
-    
+    <div v-if="showAllMsg">
+      <div v-for="msg in allMessage" :key="message">
+        <message-item :msg="msg" />
+      </div>
+    </div>
+    <div v-else>
+      <div v-for="msg in unReadMessage" :key="message">
+        <message-item :msg="msg" />
+      </div>
+    </div>
   </div>
 </template>
-
 
 <script>
 import MessageItem from '../components/ListItem/message/MessageItem.vue'
@@ -52,13 +56,14 @@ export default {
       this.$http.delete('/api/news/delete_all_read/')
     }
   },
-  mounted() { 
+  mounted() {
     this.$http.get('/api/news/').then((response) => {
       this.allMessage = response.data.map((news) => ({
         timeStamp: news.group_message.create_datetime,
         sender: news.group_message.sender.user.username,
         receiver: news.receiver,
         isRead: news.is_read,
+        teamName: news.team_name,
         content: `${news.group_message.sender.user.username}提到了你`,
       }))
       // 这一行必须有，用来获取未读的信息
@@ -68,11 +73,11 @@ export default {
     this.$bus.on('newMessage', (message) => {
       alert(`${message.sender.user.username}提到了你`)
       this.unReadMessage.push({
-          timeStamp: message.create_datetime,
-          sender: message.sender.user.username,
-          receiver: '1',
-          isRead: false,
-          content: `${message.sender.user.username}提到了你`
+        timeStamp: message.create_datetime,
+        sender: message.sender.user.username,
+        receiver: '1',
+        isRead: false,
+        content: `${message.sender.user.username}提到了你`
       })
     })
     this.$bus.on('sendChangeStatusSignal', this.handleReadStatus)
@@ -82,7 +87,7 @@ export default {
 
 <style scoped>
 .tool-menu {
-  width: 110px;
+  width: 140px;
   height: 140px;
   /* border: 1px solid black; */
   position: fixed;
@@ -106,8 +111,8 @@ export default {
 }
 
 .tool-menu button {
-  
-  width: 90px;
+
+  width: 130px;
   height: 30px;
   border-radius: 5px;
   background-color: transparent;

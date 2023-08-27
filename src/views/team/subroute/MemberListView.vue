@@ -37,6 +37,7 @@ export default {
   components: { MemberListItem, SearchIcon },
   data() {
     return {
+      teamId: null,
       searchIconIsHovered: false,
       showAll: true,    // 默认展示全部数据
       //团队创建者数据
@@ -53,7 +54,8 @@ export default {
     }
   },
   mounted() {
-    this.$http.get('/api/teams/1/').then(
+    this.teamId = this.$route.params.teamId
+    this.$http.get(`/api/teams/${this.teamId}/`).then(
       (response) => {
         this.founderData = response.data.members.filter(item => item.identity == 'leader').map((member) =>
         ({
@@ -129,7 +131,7 @@ export default {
       }
     },
     setAdmin(user) {
-      this.$http.put(`/api/teams/1/add/admin/${user.userId}/`).then(
+      this.$http.put(`/api/teams/${this.teamId}/add/admin/${user.userId}/`).then(
         response => {
           this.ordinaryData.splice(this.ordinaryData.indexOf(user), 1)
           user.identity = 'admin'
@@ -142,7 +144,7 @@ export default {
       )
     },
     cancelAdmin(user) {
-      this.$http.put(`/api/teams/1/remove/admin/${user.userId}/`).then(
+      this.$http.put(`/api/teams/${this.teamId}/remove/admin/${user.userId}/`).then(
         response => {
           this.adminData.splice(this.adminData.indexOf(user), 1)
           user.identity = 'member'
@@ -155,7 +157,7 @@ export default {
       )
     },
     deleteMember(user) {
-      this.$http.delete(`/api/teams/1/remove/member/${user.userId}/`).then(
+      this.$http.delete(`/api/teams/${this.teamId}/remove/member/${user.userId}/`).then(
         response => {
           this.ordinaryData.splice(this.ordinaryData.indexOf(user), 1)
         },
@@ -170,7 +172,7 @@ export default {
       if (this.userKeyword.length === 0) {
         this.showAll = true
       } else { // 否则才搜索
-        this.$http.get(`/api/teams/1/find/?keyword=${this.userKeyword}`).then(
+        this.$http.get(`/api/teams/${this.teamId}/find/?keyword=${this.userKeyword}`).then(
           response => {
             this.searchResault = response.data.map((item) => ({
               userId: item.user.id,
@@ -193,7 +195,7 @@ export default {
       }
     },
     getInviteUrl() {
-      this.$http.get(`/api/teams/1/generate_invite_url/`).then(
+      this.$http.get(`/api/teams/${this.teamId}/generate_invite_url/`).then(
         response => {
           this.inviteUrl = response.data.url
           navigator.clipboard.writeText(this.inviteUrl)

@@ -42,7 +42,8 @@ export default {
         name: 'test',
         creator: 'mq',
         latestChangeDate: '2023-8-1 01:01:00',
-        profile: 'hhh'
+        profile: 'hhh',
+        projectId: null
       },
       docList: [],
       protoList: []
@@ -59,7 +60,8 @@ export default {
     //     console.log(error.message)
     //   }
     // )
-    this.$http.get(`/api/projects/file/list/1/`).then(
+    this.projectId = this.$route.params.projectId
+    this.$http.get(`/api/projects/file/list/${this.projectId}/`).then(
       response => {
         this.docList = response.data.map((doc) => ({
           id: doc.id,

@@ -131,7 +131,7 @@ export default {
         data.append('avatar', this.avatarFile)
         console.log(this.avatarFile);
       }
-      this.$http.put('/api/accounts/4/', data).then(
+      this.$http.put(`/api/accounts/${this.user_id}/`, data).then(
         response => {
           if (response.status >= 200 && response.status < 300) {
             console.log(response.data)

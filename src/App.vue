@@ -1,6 +1,6 @@
 <template>
   <div>
-    <TopNav v-if="'/'!==this.$route.path" /> 
+    <TopNav v-if="'/'!==instance.proxy.$route.path" /> 
   </div>
   <RouterView />
   <!-- 消息组件 -->
@@ -8,7 +8,6 @@
   <StylishMessage :show="showMessage" :title="messageTitle" :content="messageContent"/>
   <!-- <document-view></document-view> -->
   <!-- <GrapesjsView /> -->
-
 </template>
 
 <script setup>

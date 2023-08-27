@@ -67,10 +67,10 @@ export default {
         password: this.password
       }
       this.$http.post('/api/accounts/login/', postData).then((response) => {
-        alert('登陆成功')
+        // alert('登陆成功')
         this.$emit('flushUserData')
         this.$emit('close')
-        this.$router.push('/team/all')
+        this.$router.push('/main')
       }, (error) => {
         let errStr = error.response.data.username
         if (errStr === undefined) {

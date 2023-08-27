@@ -4,8 +4,9 @@
     <!-- 暂未拥有项目的 UI 可以在拓展 -->
     <div class="no-project-hint" v-if="projectData.length === 0">暂未拥有项目</div>
     <div class="project-cards-container" v-else>
-      <div style="margin-right: 45px; margin-bottom: 30px" v-for="project in projectData" :key="project.id" @click="$router.push(`/project/${project.id}/doc`)">
-        <ProjectListItem  :data="project" ></ProjectListItem>
+      <div style="margin-right: 45px; margin-bottom: 30px" v-for="project in projectData" :key="project.id"
+        @click="jumpToProject(project.id, project.teamId)">
+        <ProjectListItem :data="project"></ProjectListItem>
       </div>
     </div>
   </div>
@@ -14,27 +15,34 @@
 <script>
 import ProjectListItem from '../components/ListItem/team/ProjectListItem.vue'
 export default {
-    name: 'FirstView',
-    components: { ProjectListItem },
-    data() {
-        return {
-            projectData: []
-        };
-    },
-    mounted() {
-        this.$http.get(`/api/projects/search/`).then(response => {
-          this.projectData = response.data.map((project) => ({
-            id: project.id,
-            name: project.name,
-            creator: project.creator,
-            team: project.team,
-            image: project.image,
-            latestUpdateTime: project.changedDate,
-          }))
-        }, error => {
-            console.log(error.message);
-        });
-    },
+  name: 'FirstView',
+  components: { ProjectListItem },
+  data() {
+    return {
+      projectData: []
+    };
+  },
+  methods: {
+    jumpToProject(id, teamId) {
+      this.$cookies.set('teamId', teamId)
+      this.$router.push(`/project/${id}/doc`)
+    }
+  },
+  mounted() {
+    this.$http.get(`/api/projects/search/`).then(response => {
+      this.projectData = response.data.map((project) => ({
+        teamId: project.teamId,
+        id: project.id,
+        name: project.name,
+        creator: project.creator,
+        team: project.team,
+        image: project.image,
+        latestUpdateTime: project.changedDate,
+      }))
+    }, error => {
+      console.log(error.message);
+    });
+  },
 }
 </script>
 <style scoped>

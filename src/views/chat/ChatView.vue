@@ -21,7 +21,7 @@ export default {
 	mounted() {
 		this.currentUserId = this.$cookies.get('user_id')
 		this.roomsLoaded = false
-		this.$http.get('/api/groups/list_by_team_id/', { params: { team_id: 1 } }).then((response) => {
+		this.$http.get('/api/groups/list_by_team_id/', { params: { team_id: this.$route.params.teamId } }).then((response) => {
 			// rooms
 			this.rooms = response.data.map((group) => ({
 				index: this.rooms.length,
@@ -126,11 +126,11 @@ export default {
 		// 	const newHTML = this.$refs.test.shadowRoot.innerHTML.replace('No room selected', '未选中')
 		// 	this.$refs.test.shadowRoot.innerHTML = newHTML
 	},
-	unmounted() {
-		for (let i = 0; i < this.ws.length; i++) {
-			this.ws[i].close()
-		}
-	},
+	// unmounted() {
+	// 	for (let i = 0; i < this.ws.length; i++) {
+	// 		this.ws[i].close()
+	// 	}
+	// },
 	data() {
 		return {
 			ws: [],
@@ -180,6 +180,7 @@ export default {
 		},
 
 		sendMessage(message) {
+			this.scrollToMessage(40)
 			for (let i = 0; i < this.rooms.length; i++) {
 				if (this.rooms[i].roomId == message.roomId) {
 					if (message.files != null) {
@@ -227,6 +228,17 @@ export default {
 			else {
 				this.rooms = this.allRooms
 			}
+		},
+
+		scrollToMessage(messageId) {
+			let i = 0
+			for (; i < this.messages.length; i++) {
+				if (this.messages[i].id == messageId) {
+					break
+				}
+			}
+			const target = document.getElementById(`\\${i + 1}`)
+			console.log(target)
 		}
 	}
 }

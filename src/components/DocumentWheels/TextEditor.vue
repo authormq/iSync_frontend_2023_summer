@@ -269,6 +269,7 @@ import Typography from '@tiptap/extension-typography'//实时渲染markdown
 import Highlight from '@tiptap/extension-highlight'//文本高亮
 import Placeholder from '@tiptap/extension-placeholder'
 import { Color } from '@tiptap/extension-color'
+import Mention from '@tiptap/extension-mention'
 import TaskItem from '@tiptap/extension-task-item'
 import TaskList from '@tiptap/extension-task-list'
 import Text from '@tiptap/extension-text'
@@ -286,6 +287,12 @@ import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
 import exportWord from 'js-export-word'
 import html2canvas from 'html2canvas'
 import JsPDF from 'jspdf'
+
+// @
+import { VueRenderer } from '@tiptap/vue-3'
+import tippy from 'tippy.js'
+import MentionList from './MentionList.vue'
+import Suggestion from '@tiptap/suggestion'
 
 export default {
 	name: 'TextEditor',
@@ -493,6 +500,65 @@ export default {
 		this.editor = new Editor({
 			extensions: [
 				Document,
+				Mention.configure({
+						HTMLAttributes: {
+							class: 'mention',
+						},
+						suggestion: {
+							items: () => { return this.members },
+							render: () => {
+								let component
+								let popup
+								return {
+
+									onStart: props => {
+										component = new VueRenderer(MentionList, {
+											props,
+											editor: props.editor,
+										})
+
+										if (!props.clientRect()) {
+											return
+										}
+
+										popup = tippy('body', {
+											getReferenceClientRect: props.clientRect,
+											appendTo: () => document.body,
+											content: component.element,
+											showOnCreate: true,
+											interactive: true,
+											trigger: 'manual',
+											placement: 'bottom-start',
+										})
+									},
+
+									onUpdate(props) {
+										component.updateProps(props)
+										if (!props.clientRect()) {
+											return
+										}
+										popup[0].setProps({
+											getReferenceClientRect: props.clientRect,
+										})
+									},
+
+									onKeyDown(props) {
+										if (props.event.key === 'Escape') {
+											popup[0].hide()
+											return true
+										}
+
+										return component.ref?.onKeyDown(props)
+									},
+
+									onExit() {
+										popup[0].destroy()
+										component.destroy()
+									},
+								}
+							}
+						}
+					}),
 				StarterKit.configure({
 					history: false//使用collaboration的history
 				}),

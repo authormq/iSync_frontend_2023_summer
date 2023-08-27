@@ -4,27 +4,11 @@
     <!-- 暂未拥有项目的 UI 可以在拓展 -->
     <div class="no-project-hint" v-if="projectData.length === 0">暂未拥有项目</div>
     <div class="project-cards-container" v-else>
-      <div style="margin-right: 45px; margin-bottom: 30px" v-for="project in projectData" :key="project.id">
-        <ProjectListItem  :data="project"></ProjectListItem>
+      <div style="margin-right: 45px; margin-bottom: 30px" v-for="project in projectData" :key="project.id" @click="$router.push(`/project/${project.id}/doc`)">
+        <ProjectListItem  :data="project" ></ProjectListItem>
       </div>
     </div>
   </div>
-  <!-- <h1 class="title-info">你的全部项目:</h1> -->
-  
-  <!-- <div class="first-show-project-container" v-for="project in projectData" :key="project.id">
-    <img :src="project.image">
-    <div class="project-info">
-      <div class="project-name">
-        {{ project.name }}
-      </div>
-      <div class="project-name">
-        所属团队：{{ project.team}}
-      </div>
-      <div class="project-time">
-        {{ project.changedDate }}
-      </div>
-    </div>
-  </div> -->
 </template>
 
 <script>

@@ -2,31 +2,20 @@
   <StylishModal :show="show" width="600px" height="150px" padding="25px">
     <div class="title-container">
       <div></div>
-      <div class="title">创建文档</div>
+      <div class="title">创建原型</div>
       <div class="close-icon" @click="handleClose">
         <CloseIcon size="30" />
       </div>
     </div>
     <div class="content-container">
       <div class="inputs">
-        <input type="text" placeholder="文档名称" v-model="name">
-        是否公开文档&nbsp;
+        <input type="text" placeholder="原型名称" v-model="name">
       </div>
       <div class="confirm">
         <button @click="commitCreate">确认</button>
       </div>
     </div>
   </StylishModal>
-  <!-- <div>
-    <input type="text" placeholder="输入原型设计名称" v-model="name">
-    {{ name }}
-    <br>
-    <div>
-      <button @click="commitCreate">确认</button>
-      <button @click="cancelCreate">取消</button>
-    </div>
-    <hr>
-  </div> -->
 </template>
 <script>
 import StylishModal from '../Stylish/StylishModal.vue'
@@ -51,9 +40,6 @@ export default {
       protoId: 0 // 如果创建成功，所返回的 protoId
     }
   },
-  // mounted() {
-  //   this.$bus.emit('sendNewProtoId', this.protoId)
-  // },
   methods: {
     commitCreate() {
       let formData = new FormData()

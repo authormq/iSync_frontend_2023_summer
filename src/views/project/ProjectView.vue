@@ -29,15 +29,6 @@
         <NewProject v-if="$route.fullPath.indexOf('doc') !== -1" @click="showDocModal = true"/>
         <NewProject v-else @click="showPageModal = true" />
         <RouterView :key="$route.fullPath"></RouterView>
-        <!-- <PageListView :protoList="protoList" :projectId="projectId"></PageListView> -->
-        <!-- <PageListView :protoList="protoList"></PageListView>
-        <PageListView :protoList="protoList"></PageListView>
-        <PageListView :protoList="protoList"></PageListView>
-        <DocListView :docList="docList"></DocListView>
-        <DocListView :docList="docList"></DocListView>
-        <DocListView :docList="docList"></DocListView>
-        <DocListView :docList="docList"></DocListView>
-        <DocListView :docList="docList"></DocListView> -->
       </div>
     </div>
   </div>
@@ -57,7 +48,7 @@ export default {
   data() {
     return {
       curProject: {},
-      docList: [],
+      
       protoList: [],
       projectId: '',
       showDocModal: false,

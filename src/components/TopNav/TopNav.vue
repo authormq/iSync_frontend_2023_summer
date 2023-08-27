@@ -5,7 +5,7 @@
     </div>
     <div>
       <ul class="header-nav">
-        <li @click="jumpToChatPage"><ChatIcon /></li>
+        <!-- <li @click="jumpToChatPage"><ChatIcon /></li> -->
         <li v-if="!hasUnreadMsg"
         @click="jumpToMailPage"><MailIcon /></li>
         <li v-else

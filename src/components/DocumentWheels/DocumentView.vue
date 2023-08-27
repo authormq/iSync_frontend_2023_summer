@@ -1,5 +1,5 @@
 <template>
-    <text-editor :doc-name="docName" :doc-id="docId" v-model:doc-content="docContent" @update-version="getVersionInfo">
+    <text-editor :isReadOnly="isReadOnlyIdentity" :doc-name="docName" :doc-id="docId" v-model:doc-content="docContent" @update-version="getVersionInfo">
     </text-editor>
     <version-inspector @updateContent="handleUpdateContent" :doc-id="docId" :versions="versions"></version-inspector>
 </template>
@@ -16,10 +16,11 @@ export default {
     data() {
         return {
             docContent: '',
-            docId: 1,
+            docId: null,
             versions: [],
             members:[],
-            docName: 'temp'
+            docName: 'temp',
+            isReadOnlyIdentity: false
         }
     },
     methods: {
@@ -38,15 +39,21 @@ export default {
             console.log(this.docContent)
         },
     },
+    created() {
+        this.docId = this.$route.params.docId
+        this.$http.get(`/api/projects/file/${this.docId}/editable/`).then(response => {
+            this.isReadOnlyIdentity = !response.data
+        })
+    },
     mounted() {
         //打开当前文件
+        this.docId = this.$route.params.docId
         this.$http.get(`/api/projects/file/${this.docId}/open/`).then((response) => {
             this.docContent = response.data
         })
         //获取历史版本
         this.getVersionInfo()
         //获取当前团队所有用户
-
     }
 }
 </script>

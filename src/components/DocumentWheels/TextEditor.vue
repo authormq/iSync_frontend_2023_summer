@@ -58,7 +58,7 @@
 			</button>
 		</floating-menu>
 		<!-- 顶部工具栏 -->
-		<div class="editor-bar">
+		<div class="editor-bar" v-show="!isReadOnly">
 			<div class="saves">
 				<!-- 保存为PDF -->
 				<button @click="exportAsPDF">
@@ -361,6 +361,9 @@ export default {
 		},
 		docContent: {
 			type: String,
+		},
+		isReadOnly: {
+			type: Boolean
 		}
 	},
 	emits: ['update:docContent','updateVersion'],

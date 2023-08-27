@@ -1,10 +1,40 @@
 <!-- 项目详情页 -->
 <template>
-  <div class="outer-container">
+  <div class="container">
+    <ul>
+      <li><router-link class="link" :to="`/project/${$route.params.projectId}/doc`">项目文档</router-link></li>
+      <li><router-link class="link" :to="`/project/${$route.params.projectId}/page`">项目原型</router-link></li>
+    </ul>
+    <div class="right-part">
+      <div class="project-info">
+        <!-- <img :src="curProject.image"> -->
+        <img src="/src/assets/head.jpeg" alt="">
+        <div class="info-container">
+          <div class="title-time">
+            <h2>{{ curProject.name }}</h2>
+            <span>上次修改于{{ curProject.changedDate }}</span>
+          </div>
+          <div class="creator">
+            创建者：{{ curProject.creator }}
+          </div>
+          <div class="profile">
+            <div>
+              项目简介：</div><div>{{ curProject.profile }}
+              </div>
+          </div>
+        </div>
+      </div>
+      <div class="presentation">
+        <!-- <RouterView :key="$route.fullPath"></RouterView> -->
+        <DocListView :docList="docList"></DocListView>
+      </div>
+    </div>
+  </div>
+  <!-- <div class="outer-container">
     <h1>这是项目的详情页面</h1>
-    <!-- 项目基本信息展示 -->
+    项目基本信息展示
     <div>
-      <!-- 项目封面 -->
+      项目封面
       <img :src="curProject.image">
       <div>
         {{ curProject.name }}
@@ -14,14 +44,14 @@
       </div>
     </div>
     <hr>
-    <!-- 这是项目的文件展示区 -->
+    这是项目的文件展示区
     <button>新建文档</button>
     <CreateDocModal :projectId="curProject.id"></CreateDocModal>
     <hr>
     <button>新建原型设计</button>
     <CreateProtoModal :projectId="curProject.id"></CreateProtoModal>
     <br>
-    <!-- 文档信息展示 -->
+    文档信息展示
     <div>
       文档：
       <DocListView :docList="docList"></DocListView>
@@ -30,7 +60,7 @@
       原型设计：
       <PageListView :protoList="protoList"></PageListView>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -133,4 +163,109 @@ export default {
   },
 }
 </script>
-<style scoped></style>
+<style scoped>
+.container {
+  display: flex;
+  height: calc(100vh - 90px);
+  margin-top: 10px;
+  justify-content: space-between;
+}
+
+ul {
+  width: 250px;
+  height: 100%;
+  flex: none;
+  /* background-color: lightgray; */
+  border-radius: 10px;
+  box-shadow: 3px 3px 3px lightgrey;
+  overflow: hidden;
+}
+
+.container>div {
+  margin-left: 10px;
+  width: calc(100% - 330px);
+  padding: 20px;
+  /* background-color: lightgrey; */
+}
+
+.link {
+  display: block;
+  width: 200px;
+  height: 50px;
+  text-align: center;
+  line-height: 50px;
+  font-size: 18px;
+  margin: 0 auto;
+  margin-top: 20px;
+  border-radius: 5px;
+  color: grey;
+  box-shadow: 1px 1px 5px grey;
+}
+
+.link:hover {
+  color: rgb(100, 100, 100);
+}
+
+.router-link-active {
+  box-sizing: border-box;
+  color: rgba(199,29,35, 1);
+  border: 1px solid rgba(199,29,35, 1);
+  box-shadow: 2px 2px  rgba(199,29,35, 1);
+}
+
+.right-part {
+  margin-left: 50px;
+}
+
+.project-info {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.project-info img {
+  width: 250px;
+  height: 250px;
+  border-radius: 10px;
+}
+
+.info-container {
+  margin-left: 50px;
+}
+
+.title-time h2 {
+  display: inline-block;
+  font-size: 40px;
+  font-weight: bold;
+  color: rgba(199,29,35, 1);
+}
+
+.title-time span {
+  font-size: 18px;
+  color: grey;
+  margin-left: 10px;
+}
+
+.creator {
+  margin-top: 10px;
+  font-size: 20px;
+  color: rgba(199,29,35, 1)
+}
+
+.profile {
+  display: flex;
+  max-width: 800px;
+}
+
+.profile>div:first-child {
+  font-size: 20px;
+  min-width: 100px;
+  color: rgba(199,29,35, 1);
+}
+.profile>div:last-child {
+  color: grey;  
+}
+
+.presentation {
+  display: flex;
+}
+</style>

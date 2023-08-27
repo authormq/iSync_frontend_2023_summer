@@ -66,11 +66,14 @@ const router = createRouter({
       component: ProjectView,
       children: [
         {
-          path: 'doc/:docId',
-          component: DocEditingView
+          // path: 'doc/:docId',
+          path: 'doc',
+          // component: DocEditingView
+          component: DocListView
         },
         {
-          path: 'page/:pageId',
+          // path: 'page/:pageId',
+          path: 'page',
           component: PageListView
         }
       ]

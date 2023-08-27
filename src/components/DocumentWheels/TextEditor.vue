@@ -451,11 +451,16 @@ export default {
 		})
 		//查询团队成员,然后初始化编辑器
 		this.$http.get(`/api/teams/1/`).then((response) => {
+			let identityMap = {
+				'leader': '团队创建者',
+				'admin': '团队管理员',
+				'member':'团队成员'
+			}
 			this.members = response.data.members.map(element => {
 				return {
 					id: element.user.id,
 					username: element.user.username,
-					identity: element.identity
+					identity: identityMap[element.identity]
 				}
 			})
 			this.editor = new Editor({

@@ -81,10 +81,12 @@
 </template>
 
 <script>
+
 export default {
   name: 'UserView',
   data() {
     return {
+      user_id: '',
       nickname: '',
       first_name: '',
       last_name: '',
@@ -97,7 +99,8 @@ export default {
     }
   },
   mounted() {
-    this.$http.get('/api/accounts/4/').then(
+    this.user_id = this.$cookies.get('user_id')
+    this.$http.get(`/api/accounts/${this.user_id}/`).then(
       (response) => {
         this.nickname = response.data.username
         this.first_name = response.data.first_name
@@ -128,7 +131,7 @@ export default {
         data.append('avatar', this.avatarFile)
         console.log(this.avatarFile);
       }
-      this.$http.put('/api/accounts/4/', data).then(
+      this.$http.put(`/api/accounts/${this.user_id}/`, data).then(
         response => {
           if (response.status >= 200 && response.status < 300) {
             console.log(response.data)

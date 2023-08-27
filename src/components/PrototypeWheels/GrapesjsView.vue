@@ -111,7 +111,7 @@ export default {
 					}
 				},
 				showOffsets: 1,
-				noticeOnUnload: 0,
+		  				noticeOnUnload: 0,
 				formElement: true,
 				// storageManager: {
 				// 	type: 'remote',
@@ -213,8 +213,8 @@ export default {
 			})
 		}
 	}
-}
-</script>
+}</script>
+
 <style scoped>
 #gjs {
 	margin: 0 auto;

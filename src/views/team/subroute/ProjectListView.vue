@@ -50,6 +50,7 @@ export default {
   components: { ProjectListItem, NewProject, SearchIcon, TrashIcon },
   data() {
     return {
+      teamId: null,
       projectData: [],
       recycleData: [],
       searchData: [],     // 记得补充 search 的接口
@@ -60,7 +61,8 @@ export default {
     }
   },
   mounted() {
-    this.$http.get(`/api/projects/list/1/`).then(
+    this.teamId = this.$route.params.teamId
+    this.$http.get(`/api/projects/list/${this.teamId}/`).then(
       response => {
         this.projectData = response.data.map((project) => ({
           id: project.id,
@@ -76,7 +78,7 @@ export default {
         console.log(error.message)
       }
     )
-    this.$http.get(`/api/projects/list/deleted/1/`).then(
+    this.$http.get(`/api/projects/list/deleted/${this.teamId}/`).then(
       response => {
         this.recycleData = response.data.map((project) => ({
           id: project.id,
@@ -132,7 +134,7 @@ export default {
       )
     },
     handleSearchProject() {
-      this.$http.get(`/api/projects/1/search/?keyword=${this.projectKeyword}`).then(
+      this.$http.get(`/api/projects/${this.teamId}/search/?keyword=${this.projectKeyword}`).then(
         response => {
           this.searchData = response.data.map((project) => ({
             id: project.id,

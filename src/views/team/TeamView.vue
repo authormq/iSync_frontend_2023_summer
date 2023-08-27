@@ -4,10 +4,10 @@
   <!-- <hr> -->
   <div class="container">
     <ul>
-      <li><router-link class="link" to="/team/1/info">团队信息</router-link></li>
-      <li><router-link class="link" to="/team/1/member">团队成员</router-link></li>
-      <li><router-link class="link" to="/team/1/project">团队项目</router-link></li>
-      <li><router-link class="link" to="/team/1/chat">团队群聊</router-link></li>
+      <li><router-link class="link" :to="`/team/${teamId}/info`">团队信息</router-link></li>
+      <li><router-link class="link" :to="`/team/${teamId}/member`">团队成员</router-link></li>
+      <li><router-link class="link" :to="`/team/${teamId}/project`">团队项目</router-link></li>
+      <li><router-link class="link" :to="`/team/${teamId}/chat`">团队群聊</router-link></li>
     </ul>
     <div>
       <RouterView ></RouterView>
@@ -19,6 +19,14 @@
 // import FirstView from '../FirstView.vue';
 export default {
     name: 'TeamView',
+    data() {
+      return {
+        teamId: null
+      }
+    },
+    mounted() {
+      this.teamId = this.$route.params.teamId
+    }
     // components: { FirstView }
 }
 </script>

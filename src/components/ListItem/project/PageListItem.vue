@@ -1,14 +1,18 @@
 <template>
-  <!-- 默认状态的文档卡片 -->
-  <div class="page-container">
-    <div>这里放一个文件图标</div>
-    <div class="page-info">
-      <div class="page-name">
-        <!-- {{ proto.name }} -->
-        hhh
+  <div>
+    <div class="page-container">
+      <div>这里放一个文件图标</div>
+      <div class="page-info">
+        <div class="page-name">
+          {{ proto.name }}
+        </div>
       </div>
-      <button>删除</button>
     </div>
+    <button @click="sendDeleteProtoRequest">删除</button>
+    <br>
+    <input type="text" v-model="rename">
+    {{ rename }}
+    <button @click="sendRenameProtoRequest">重命名</button>
   </div>
 </template>
 
@@ -16,6 +20,19 @@
 export default {
   name: 'PageListItem',
   props: ['proto'],
+  data() {
+    return {
+      rename: ''
+    }
+  },
+  methods: {
+    sendDeleteProtoRequest() {
+      this.$bus.emit('deleteProtoRequest', this.proto)
+    },
+    sendRenameProtoRequest() {
+      this.$bus.emit('renameProtoRequest', { proto: this.proto, rename: this.rename })
+    }
+  }
 }
 </script>
 
@@ -67,5 +84,4 @@ img {
   font-weight: bold;
   position: relative;
 }
-
 </style>

@@ -31,13 +31,24 @@ export default {
 		let topPanel = document.querySelector('.gjs-pn-panel.gjs-pn-devices-c.gjs-one-bg.gjs-two-color .gjs-pn-buttons')
 		let sizeSetter = document.querySelector('#size-setter')
 		topPanel.appendChild(sizeSetter)
-		this.ws = new WebSocket('ws:43.138.13.231:9000/ws/page/1/')
+		this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/page/2/`)
+		this.ws.onmessage = () => {
+			this.editor.load()
+		}
+		this.editor.on('storage:store', () => {
+			this.ws.send(JSON.stringify({}))
+			console.log(1)
+		})
 		//设置默认大小
+	},
+	unmounted() {
+		this.ws.close()
 	},
 	data() {
 		return {
 			ws: '',
 			pageId: 1,
+			projectID: 1,
 			pageName: 'page1',
 			canvasHeight: '1000',
 			canvasWidth: '1000',
@@ -114,6 +125,7 @@ export default {
 					}
 				},
 				showOffsets: 1,
+				autosave: false,
 				noticeOnUnload: 0,
 				formElement: true,
 				// storageManager: {
@@ -166,7 +178,27 @@ export default {
 					},
 				},
 
-				styleManager: []
+				styleManager: [],
+				storageManager: {
+					type: 'remote',
+					stepsBeforeSave: 1,
+					autosave: false,
+					// autoload: false,
+					options: {
+						remote: {
+							urlLoad: `http://localhost:3000/projects/${this.projectID}`,
+							urlStore: `http://localhost:3000/projects/${this.projectID}`,
+							// The `remote` storage uses the POST method when stores data but
+							// the json-server API requires PATCH.
+							fetchOptions: opts => (opts.method === 'POST' ?  { method: 'PATCH' } : {}),
+							// As the API stores projects in this format `{id: 1, data: projectData }`,
+							// we have to properly update the body before the store and extract the
+							// project data from the response result.
+							onStore: data => ({ id: this.projectID, data }),
+							onLoad: result => result.data,
+						}
+					},
+				}
 				// blockManager: true
 				// blockManager: {
 				// 	appendTo: '#blocks',

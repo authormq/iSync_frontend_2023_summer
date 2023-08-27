@@ -17,8 +17,6 @@ import DocumentView from './components/DocumentWheels/DocumentView.vue';
 import TopNav from './components/TopNav/TopNav.vue'
 import StylishMessage from './components/Stylish/StylishMessage.vue'
 import GrapesjsView from './components/PrototypeWheels/GrapesjsView.vue';
-import CreateDocModal from './components/Modal/CreateDocModal.vue';
-import CreateProtoModal from './components/Modal/CreateProtoModal.vue';
 
 let showMessage = ref(false)  // 展示消息
 let messageTitle = ref('')    // 消息标题

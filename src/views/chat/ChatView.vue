@@ -71,22 +71,6 @@ export default {
 							timestamp: message.create_datetime.substring(11, 16).replace('-', ':'),
 							date: message.create_datetime.substring(5, 10),
 							new: false,
-              replyMessage: message.reply_message == null ? null : {
-                _id: message.reply_message.id,
-                content: message.reply_message.text_content,
-                senderId: `${message.reply_message.sender.user.id}`,
-                username: message.reply_message.sender.user.username,
-                avatar: message.reply_message.sender.user.avatar,
-                timestamp: message.reply_message.create_datetime.substring(11, 16).replace('-', ':'),
-                date: message.reply_message.create_datetime.substring(5, 10),
-                new: false,
-              },
-							files: message.file_content == null ? null : [{
-								name: message.file_content.name.split('message_file_')[0],
-								size: message.file_content.size,
-								url: message.file_content.url,
-								type: message.file_content.name.split('.')[1]
-							}]
 						}
 					}
 				})

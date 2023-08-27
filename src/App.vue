@@ -2,12 +2,12 @@
   <!-- <div> -->
     <!-- <TopNav v-if="'/'!==this.$route.path" />  -->
   <!-- </div> -->
-  <!-- <RouterView /> -->
+  <RouterView />
   <!-- 消息组件 -->
   <!-- <StylishMessage :show="showMessage" :title="messageTitle" :content="messageContent"/> -->
   <!-- <text-editor/> -->
   <!-- <version-inspector /> -->
-  <document></document>
+  <!-- <document></document> -->
 </template>
 
 <script setup>

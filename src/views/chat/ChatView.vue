@@ -1,7 +1,11 @@
 <!-- 聊天详情页 -->
 <template>
   <div>
-    <vue-advanced-chat
+    <!-- <vue-advanced-chat -->
+			<vue-advanced-chat
+			ref="test"
+			theme="light"
+			:styles="JSON.stringify(style)"
 			height="calc(100vh - 20px)"
 			:current-user-id="currentUserId"
 			:rooms="JSON.stringify(rooms)"
@@ -18,9 +22,11 @@
 
 <script>
 import { register } from 'vue-advanced-chat'
+// import  ChatWindow  from 'vue-advanced-chat'
 register()
 export default {
   name: 'ChatView',
+	// components: { ChatWindow },
 	mounted() {
 		this.currentUserId = this.$cookies.get('user_id')
 		this.roomsLoaded = false
@@ -121,6 +127,12 @@ export default {
 			}
 			this.roomsLoaded = true
 		})
+		// test
+		const style = document.createElement('style')
+			style.textContent = '.vac-chat-container { background: yellow; }'
+			this.$refs.test.shadowRoot.appendChild(style)
+			const newHTML = this.$refs.test.shadowRoot.innerHTML.replace('No room selected', '未选中')
+			this.$refs.test.shadowRoot.innerHTML = newHTML
 	},
 	unmounted() {
 		for (let i = 0; i < this.ws.length; i++) {

@@ -4,13 +4,13 @@
   </div>
   <RouterView />
   <!-- 消息组件 -->
-  <StylishMessage :show="showMessage" :title="messageTitle" :content="messageContent"/>
-  <!-- <text-editor /> -->
+  <!-- <StylishMessage :show="showMessage" :title="messageTitle" :content="messageContent"/> -->
+  <!-- <document-view></document-view> -->
 </template>
 
 <script setup>
 import { ref, getCurrentInstance } from 'vue'
-
+import DocumentView from './components/DocumentWheels/DocumentView.vue';
 import TopNav from './components/TopNav/TopNav.vue'
 import StylishMessage from './components/Stylish/StylishMessage.vue'
 
@@ -33,4 +33,8 @@ instance.proxy.$bus.on('message', (data) => {
 })
 
 </script>
-<style scoped></style>
+<style>
+:deep(.vac-rooms-container.vac-rooms-container-full) {
+  background: yellow !important;
+}
+</style>

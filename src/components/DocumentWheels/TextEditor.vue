@@ -222,9 +222,10 @@
 			</button>
 			<button @click="exportAsPDF">保存为PDF</button>
 			<button @click="exportAsWord">保存为Word</button>
-			<button @click="saveDocument">保存到云端</button>
+			<button @click="saveDocument('manualsave')">保存到云端</button>
 		</div>
-		<editor-content :editor="editor" id="document-content" />
+		<editor-content :editor="editor" id="document-content" v-model="localContent"
+			@update="$emit('update:docContent', editor.storage.content)" />
 		<div id="hidden-area"></div>
 		<div class="document-words">
 			{{ editor.storage.characterCount.words() }} 个单词
@@ -246,6 +247,7 @@ import Typography from '@tiptap/extension-typography'//实时渲染markdown
 import Highlight from '@tiptap/extension-highlight'//文本高亮
 import Placeholder from '@tiptap/extension-placeholder'
 import { Color } from '@tiptap/extension-color'
+import Mention from '@tiptap/extension-mention'
 import TaskItem from '@tiptap/extension-task-item'
 import TaskList from '@tiptap/extension-task-list'
 import Text from '@tiptap/extension-text'
@@ -256,14 +258,19 @@ import CodeBlockLowLight from '@tiptap/extension-code-block-lowlight'//代码高
 import { Editor, EditorContent, BubbleMenu, FloatingMenu } from '@tiptap/vue-3'
 //协作重要插件
 import * as Y from 'yjs'
-import { WebrtcProvider } from 'y-webrtc'
-// import { HocuspocusProvider } from '@hocuspocus/provider'
+import { HocuspocusProvider } from '@hocuspocus/provider'
 import Collaboration from '@tiptap/extension-collaboration'
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
 //将文档下载到本地
 import exportWord from 'js-export-word'
 import html2canvas from 'html2canvas'
 import JsPDF from 'jspdf'
+//@相关引入
+import { VueRenderer } from '@tiptap/vue-3'
+import tippy from 'tippy.js'
+import MentionList from './MentionList.vue'
+import Suggestion from '@tiptap/suggestion'
+
 export default {
 	name: 'TextEditor',
 	components: {
@@ -280,21 +287,26 @@ export default {
 			type: String,
 			default: 'temp'
 		},
+		docContent: {
+			type: String,
+		}
 	},
-	emits: ['updateDocName'],
+	emits: ['update:docContent', 'updateVersion'],
 	data() {
 		return {
 			userName: 'tempUser',
 			userAvatar: '/src/assets/avatar.jpeg',
-			docContent: '',
+			members: [],//存储成员信息
+			items: [],//存储成员用户名
+			localContent: '',
 			docLimit: 100000,
 			autoSavePeriod: 10000,
 			editable: false,
 			fullScreen: false,
 			editor: undefined,
-			provider: undefined,
 			selectedFontFamily: 'sans-serif',
 			selectedFontSize: '',
+			provider: undefined,
 			fontOptions: [
 				{ value: 'consolas', label: 'consolas' },
 				{ value: 'monospace', label: 'monospace' },
@@ -309,7 +321,14 @@ export default {
 				{ value: 'serif', label: 'serif' },
 				{ value: 'monospace', label: 'monospace' },
 				{ value: 'cursive', label: 'cursive' },
-				{ value: 'Times New Roman', label: 'Times New Roman' }
+				{ value: 'Times New Roman', label: 'Times New Roman' },
+				{ value: '宋体', label: '宋体' },
+				{ value: '黑体', label: '黑体' },
+				{ value: '微软雅黑', label: '微软雅黑' },
+				{ value: '等线', label: '等线' },
+				{ value: '华文中宋', label: '华文中宋' },
+				{ value: '楷体', label: '楷体' },
+				{ value: '仿宋', label: '仿宋' },
 			],
 		}
 	},
@@ -324,6 +343,7 @@ export default {
 			}
 			return color;
 		},
+
 		//更改字体
 		changeFont() {
 			this.editor.chain().focus().setFontFamily(this.selectedFontFamily || 'unset').run()
@@ -374,7 +394,7 @@ export default {
 			}).then(() => {
 				original.style.display = 'block'//恢复显示
 				document.querySelector('#hidden-area').removeChild(page)
-				alert('成功保存为PDF')
+				console.log('成功保存为PDF')
 			})
 		},
 		exportAsWord() {
@@ -396,40 +416,110 @@ export default {
 				this.fullScreen = false
 			}
 		},
-		saveDocument(mode = undefined) {
+		saveDocument(mode) {
 			let formData = new FormData()
-			console.log(this.editor.getHTML());
-			formData.append('document_content', this.editor.getHTML())
-			this.$http.post(`/api/projects/file/${this.docId}/`, formData).then(() => {
-				if (mode !== undefined) {
-					alert('自动保存成功')
-				}
-				else {
-					alert('保存成功')
-				}
-			})
+			formData.append('source', this.editor.getHTML())
+			if (mode === 'manualsave') {
+				this.$http.post(`/api/projects/file/${this.docId}/store/`, formData).then(() => {
+					console.log('保存成功')
+					this.$emit('updateVersion')
+				})
+			} else {
+				this.$http.post(`/api/projects/file/${this.docId}/autostore/`, formData).then(() => {
+					console.log('自动保存成功')
+				})
+			}
 		}
 	},
 	watch: {
 		editable() {
 			this.editor.setEditable(this.editable)
 		},
+		docContent() {
+			if (this.editor !== undefined) {
+				this.editor.commands.setContent(this.docContent)
+			}
+		}
 	},
 	mounted() {
-		this.yDOC = new Y.Doc()
-		this.provider = new WebrtcProvider(this.docId, this.yDOC)
-		// this.provider = new HocuspocusProvider({
-		// 	url: 'ws://0.0.0.0:1234',
-		// 	//文档的标识对应一个 yDoc 属性
-		// 	name: this.docId,
-		// 	document: this.yDOC,
-		// })
-		//加载保存时间最近的文件,然后初始化编辑器
-		this.$http.get(`/api/projects/file/${this.docId}/open`).then((response) => {
-			this.docContent = response.data.document_content
+		const yDOC = new Y.Doc()//协作文档载体
+		this.provider = new HocuspocusProvider({//用户端
+			url: 'ws://43.138.14.231:1234',
+			//文档的标识对应一个 yDoc 属性
+			name: String(this.docId),
+			document: yDOC,
+		})
+		//查询团队成员,然后初始化编辑器
+		this.$http.get(`/api/teams/1/`).then((response) => {
+			this.members = response.data.members.map(element => {
+				return {
+					id: element.user.id,
+					username: element.user.username,
+					identity: element.identity
+				}
+			})
 			this.editor = new Editor({
 				extensions: [
 					Document,
+					Mention.configure({
+						HTMLAttributes: {
+							class: 'mention',
+						},
+						suggestion: {
+							items: () => { return this.members },
+							render: () => {
+								let component
+								let popup
+								return {
+
+									onStart: props => {
+										component = new VueRenderer(MentionList, {
+											props,
+											editor: props.editor,
+										})
+
+										if (!props.clientRect()) {
+											return
+										}
+
+										popup = tippy('body', {
+											getReferenceClientRect: props.clientRect,
+											appendTo: () => document.body,
+											content: component.element,
+											showOnCreate: true,
+											interactive: true,
+											trigger: 'manual',
+											placement: 'bottom-start',
+										})
+									},
+
+									onUpdate(props) {
+										component.updateProps(props)
+										if (!props.clientRect()) {
+											return
+										}
+										popup[0].setProps({
+											getReferenceClientRect: props.clientRect,
+										})
+									},
+
+									onKeyDown(props) {
+										if (props.event.key === 'Escape') {
+											popup[0].hide()
+											return true
+										}
+
+										return component.ref?.onKeyDown(props)
+									},
+
+									onExit() {
+										popup[0].destroy()
+										component.destroy()
+									},
+								}
+							}
+						}
+					}),
 					StarterKit.configure({
 						history: false//使用collaboration的history
 					}),
@@ -437,7 +527,7 @@ export default {
 						limit: this.docLimit
 					}),
 					Collaboration.configure({
-						document: this.yDOC
+						document: yDOC
 					}),
 					CollaborationCursor.configure({
 						provider: this.provider,
@@ -474,7 +564,7 @@ export default {
 						multicolor: true
 					})
 				],
-				content: this.docContent,
+				content: '',
 				editable: this.editable,
 				onSelectionUpdate: () => {
 					let selected = window.getSelection()
@@ -489,81 +579,30 @@ export default {
 					}
 				},
 			})
+			//设置自动保存
 			setInterval(() => {
 				this.saveDocument('autosave')
 			}, this.autoSavePeriod)
-		}, (error) => {
-			this.editor = new Editor({
-				extensions: [
-					Document,
-					StarterKit.configure({
-						history: false//使用collaboration的history
-					}),
-					CharactorCount.configure({
-						limit: this.docLimit
-					}),
-					Collaboration.configure({
-						document: this.yDOC
-					}),
-					CollaborationCursor.configure({
-						provider: this.provider,
-						user: {
-							name: this.userName,
-							color: this.getRandomColor(),
-							avatar: this.userAvatar
-						}
-					}),
-					Typography,
-					Underline,
-					Color,
-					FontFamily,
-					TaskList,
-					TaskItem.configure({
-						nested: true,
-					}),
-					Text,
-					TextStyle,
-					TextAlign.configure({
-						types: ['heading', 'paragraph'],
-					}),
-					CodeBlockLowLight.configure({
-						lowlight,
-					}),
-					Placeholder.configure(
-						{
-							placeholder: ({ node }) => {
-								return '从这里开始编写文档\n支持Markdown快捷键'
-							}
-						}
-					),
-					Highlight.configure({
-						multicolor: true
-					})
-				],
-				editable: this.editable,
-				content: this.docContent,
-				onSelectionUpdate: () => {
-					let selected = window.getSelection()
-					if (selected.rangeCount !== 0) {
-						// console.log(selected.getRangeAt(0));
-						let range = selected.getRangeAt(0)
-						let node = range.commonAncestorContainer
-						if (node.nodeType != 1) {
-							node = node.parentNode
-						}
-						this.selectedFontSize = window.getComputedStyle(node).getPropertyValue('font-size')
-						this.selectedFontFamily = window.getComputedStyle(node).getPropertyValue('font-family')
-					}
-				},
-			})
 		})
 
+		//只有没有人在同时编辑的时候才加载，否则使用正在共享编辑的版本
+		//好像并不需要，后端还是能保存一段时间？
+		setTimeout(() => {
+			if (this.editor.storage.collaborationCursor.users.length === 1 && this.editor.storage.content === '<p></p>') {
+				console.log('插入保存的内容' + this.editor.storage.collaborationCursor.users.length)
+				this.editor.commands.clearContent()
+				setTimeout(() => {
+					this.editor.commands.setContent(this.docContent)
+				}, 100)
+			}
+		}, 1000)
 	},
-	beforeUnmount() {
+	unmounted() {
 		this.editor.destroy()
 		this.provider.destroy()
 	},
 }
+
 </script>
 
 <style>
@@ -823,6 +862,14 @@ export default {
 	border-left: 3px solid #888;
 }
 
+/* @样式 */
+.ProseMirror .mention {
+	border: 1px solid #000;
+	border-radius: 0.4rem;
+	padding: 0.1rem 0.3rem;
+	box-decoration-break: clone;
+}
+
 /* 代码碎片文字样式 */
 .ProseMirror code {
 	font-size: 0.9em;
@@ -848,7 +895,7 @@ export default {
 	color: inherit;
 	padding: 0;
 	background: none;
-	font-size: 0.8rem;
+	font-size: 0.9em;
 }
 
 /* 代码块样式 */
@@ -944,5 +991,6 @@ export default {
 	top: -1.4em;
 	user-select: none;
 	white-space: nowrap;
+	text-shadow: 0 0 2px #444;
 }
 </style>

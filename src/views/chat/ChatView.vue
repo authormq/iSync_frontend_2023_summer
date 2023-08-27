@@ -82,7 +82,7 @@ export default {
                 new: false,
               },
 							files: message.file_content == null ? null : [{
-								name: message.file_content.name.split('.')[0],
+								name: message.file_content.name.split('message_file_')[0],
 								size: message.file_content.size,
 								url: message.file_content.url,
 								type: message.file_content.name.split('.')[1]
@@ -115,7 +115,7 @@ export default {
               new: false,
             },
 						files: message.file_content == null ? null : [{
-							name: message.file_content.name.split('.')[0],
+							name: message.file_content.name.split('message_file_')[0],
 							size: message.file_content.size,
 							url: message.file_content.url,
 							type: message.file_content.name.split('.')[1]
@@ -189,7 +189,7 @@ export default {
               new: false,
             },
 						files: message.file_content == null ? null : [{
-							name: message.file_content.name.split('.')[0],
+							name: message.file_content.name.split('message_file_')[0],
 							size: message.file_content.size,
 							url: message.file_content.url,
 							type: message.file_content.name.split('.')[1]

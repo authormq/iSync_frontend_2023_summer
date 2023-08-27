@@ -10,6 +10,10 @@
         <div class="doc-name">
           {{ doc.name }}
         </div>
+        <div>
+          {{ doc.isPublic ? '公开' : '私有' }}
+        </div>
+        <button @click.stop="shareDocLink">分享链接</button>
       </div>
     </div>
     <!-- <button @click="sendDeleteDocRequest">删除</button>
@@ -28,7 +32,8 @@ export default {
   data() {
     return {
       rename: '',
-      showDocModal: false
+      showDocModal: false,
+      link: '',
     }
   },
   methods: {
@@ -37,6 +42,19 @@ export default {
     },
     sendRenameDocRequest() {
       this.$bus.emit('renameDocRequest', { doc: this.doc, rename: this.rename })
+    },
+    shareDocLink() {
+      // console.log(this.doc.id)
+      this.$http.get(`/api/projects/${this.doc.id}/generate_invite_url/`).then(
+        response => {
+          this.link = response.data.url // 
+          navigator.clipboard.writeText(this.link)
+          this.$bus.emit('message', { title: '分享链接已复制到剪贴板', content: this.link, time: 3000 })
+        },
+        error => {
+          console.log(error.message)
+        }
+      )
     }
   }
 }

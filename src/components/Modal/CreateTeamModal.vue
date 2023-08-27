@@ -47,7 +47,6 @@
 <script>
 import StylishModal from '../Stylish/StylishModal.vue'
 import CloseIcon from '../Svg/CloseIcon.vue'
-// import StylishInput from '../Stylish/StylishInput.vue';
 export default {
   name: 'CreateTeamModal',
   components: {
@@ -83,7 +82,7 @@ export default {
       if (this.avatarChanged) {
         data.append('avatar', this.avatarFile)
       }
-      this.$http.post('api/teams/create/', data).then((response) => {
+      this.$http.post('/api/teams/create/', data).then((response) => {
         alert('创建团队成功')
         this.closeModal()
       }, (error) => {

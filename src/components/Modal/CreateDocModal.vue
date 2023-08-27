@@ -11,8 +11,8 @@
       <div class="inputs">
         <input type="text" placeholder="文档名称" v-model="name">
         是否公开文档&nbsp;
-        <button v-if="isPublic == 0" @click="isPublic = 1">公开</button>
-        <button v-else @click="isPublic = 0">私密</button>
+        <button v-if="isPublic == 0" @click="isPublic = 1">点击公开</button>
+        <button v-else @click="isPublic = 0">点击私密</button>
       </div>
       <div class="confirm">
         <button @click="commitCreate">确认</button>
@@ -45,12 +45,10 @@ export default {
       docId: 0 // 如果创建成功，所返回的 docId
     }
   },
-  // mounted() {
-  //   this.$bus.emit('sendNewDocId', this.docId)
-  // },
   methods: {
     commitCreate() {
-      this.$http.post(`/api/projects/file/${this.projectId}/create/${this.name}/${this.isPublic}/`).then(
+      console.log(this.name, this.isPublic);
+      this.$http.post(`/api/projects/file/${this.projectId}/create/${this.name}/${this.isPublic}`).then(
         response => {
           // 创建成功，直接跳转到新页面
           this.docId = response.data.id
@@ -61,7 +59,7 @@ export default {
           this.name = ''
         },
         error => {
-          console.log(error.message)
+          console.log('@@',error.message)
         }
       )
     },

@@ -49,7 +49,6 @@ export default {
     options: { type: Array, required: true },
     multiple: { type: Boolean, default: false },
     maxcnt: { type: Number, default: 0 }
-
   },
   data() {
     return {

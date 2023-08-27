@@ -58,7 +58,7 @@
 			</button>
 		</floating-menu>
 		<!-- 顶部工具栏 -->
-		<div class="editor-bar">
+		<div class="editor-bar" v-show="!isReadOnly">
 			<div class="saves">
 				<!-- 保存为PDF -->
 				<button @click="exportAsPDF">
@@ -300,8 +300,8 @@
 				{{ editor.storage.collaborationCursor.users.length }}人正在编辑该文档
 			</div>
 		</div>
-
 	</div>
+
 </template>
 
 <script>
@@ -361,12 +361,14 @@ export default {
 		},
 		docContent: {
 			type: String,
+		},
+		isReadOnly: {
+			type: Boolean
 		}
 	},
 	emits: ['update:docContent','updateVersion'],
 	data() {
 		return {
-			userName: 'tempUser',
 			userAvatar: '/src/assets/avatar.jpeg',
 			localContent: '',
 			docLimit: 100000,
@@ -630,7 +632,7 @@ export default {
 				CollaborationCursor.configure({
 					provider: this.provider,
 					user: {
-						name: this.userName,
+						name: this.$cookies.get('username'),
 						color: this.getRandomColor(),
 						avatar: this.userAvatar
 					}

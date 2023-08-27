@@ -22,13 +22,15 @@
     <!-- 如果是展示模式 -->
     <template v-if="!showDeleted && !showSearch">
       <!-- 展示新建项目卡片 -->
-      <NewProject what="项目" @click="showModal = true"/>
+      <NewProject what="项目" @click="showModal = true" />
       <!-- 
           用 v-for 生成卡片列表 
           【说明】ProjectListItem 有一个 type 属性，默认值为 'normal'，展示卡片
           任何非 'normal' 值会使之变成带头 “恢复” icon 的被删除卡片
       -->
-      <ProjectListItem v-for="project in projectData" :key="project" :data="project"></ProjectListItem>
+      <div v-for="project in projectData" :key="project" @click="$router.push(`/project/${project.id}/doc`)">
+        <ProjectListItem :data="project"></ProjectListItem>
+      </div>
     </template>
     <!-- 如果是回收站模式 -->
     <template v-else-if="showDeleted">
@@ -38,7 +40,7 @@
       <ProjectListItem v-for="project in searchData" :key="project" :data="project"></ProjectListItem>
     </template>
   </div>
-  <CreateProjectModal :show="showModal" @close="showModal = false"/>
+  <CreateProjectModal :show="showModal" @close="showModal = false" />
 </template>
 
 <script>
@@ -105,21 +107,21 @@ export default {
   methods: {
     regetProjectList(inValue) {
       this.$http.get(`/api/projects/list/${this.teamId}/`).then(
-      response => {
-        this.projectData = response.data.map((project) => ({
-          id: project.id,
-          name: project.name,
-          creator: project.creator,
-          latestUpdateTime: project.changedDate,
-          image: project.image,
-          interfaceNum: project.interfaceNum,
-          documentsNum: project.documentsNum
-        }))
-      },
-      error => {
-        console.log(error.message)
-      }
-    )
+        response => {
+          this.projectData = response.data.map((project) => ({
+            id: project.id,
+            name: project.name,
+            creator: project.creator,
+            latestUpdateTime: project.changedDate,
+            image: project.image,
+            interfaceNum: project.interfaceNum,
+            documentsNum: project.documentsNum
+          }))
+        },
+        error => {
+          console.log(error.message)
+        }
+      )
     },
     handleRenameProject(data) {
       let renameInfo = new FormData()

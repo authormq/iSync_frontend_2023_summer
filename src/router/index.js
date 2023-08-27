@@ -13,6 +13,7 @@ import PageListView from '../views/project/subroute/PageListView.vue'
 import MessageView from '../views/MessageView.vue'
 import WebBuilder from '../views/editing/WebBuilder.vue'
 import FirstView from '../views/FirstView.vue'
+import DocumentView from '../components/DocumentWheels/DocumentView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -69,7 +70,7 @@ const router = createRouter({
           // path: 'doc/:docId',
           path: 'doc',
           // component: DocEditingView
-          component: DocListView
+          component: DocListView,
         },
         {
           // path: 'page/:pageId',
@@ -77,7 +78,15 @@ const router = createRouter({
           component: PageListView
         }
       ]
-    }
+    },
+    {
+      path: `/doc/:docId`,
+      component: DocumentView
+    },
+    // {
+    //   path: `/page/:protoId`,
+    //   component: 
+    // } 
   ]
 })
 

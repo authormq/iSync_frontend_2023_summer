@@ -1,9 +1,7 @@
 <template>
-  <!-- <NewProject what="原型" @click="showModal = true"/> -->
   <div v-for="proto in protoList" :key="proto.id">
     <PageListItem :proto="proto"/>
   </div>
-  <!-- <CreateProtoModal :show="showModal" :projectId="projectId"  @close="showModal = false"/> -->
 </template>
 
 <script>
@@ -16,11 +14,27 @@ export default {
     components: { 
       PageListItem 
     },
-    props: ['protoList', 'projectId'],
     data() {
       return {
-        showModal: false
+        showModal: false,
+        protoList: [],
+        projectId: ''
       }
+    },
+    mounted() {
+      this.projectId = this.$route.params.projectId
+      this.$http.get(`/api/projects/page/${this.projectId}/list/`).then(
+      response => {
+        this.protoList = response.data.map((proto) => ({
+          id: proto.id,
+          name: proto.name,
+          image: proto.image
+        }))
+      },
+      error => {
+        console.log(error.message)
+      }
+    )
     }
 }
 </script>

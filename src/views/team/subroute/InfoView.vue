@@ -55,6 +55,7 @@ export default {
   components: { PenIcon, CheckIcon, CrossIcon },
   data() {
     return {
+      teamId: null,
       isEditing: false,                   // 是否处于编辑状态，控制按钮是否出现
       avatarIsHovered: false,
       teamAvatarUrl: '',
@@ -76,7 +77,8 @@ export default {
     }
   },
   mounted() {
-    this.$http.get(`/api/teams/1/`).then(
+    this.teamId = this.$route.params.teamId
+    this.$http.get(`/api/teams/${this.teamId}/`).then(
       (response) => {
         this.teamAvatar = response.data.avatar
         this.teamAvatarUrl = response.data.avatar

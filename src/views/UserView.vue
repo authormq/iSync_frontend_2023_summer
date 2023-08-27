@@ -81,10 +81,12 @@
 </template>
 
 <script>
+
 export default {
   name: 'UserView',
   data() {
     return {
+      user_id: '',
       nickname: '',
       first_name: '',
       last_name: '',
@@ -97,7 +99,8 @@ export default {
     }
   },
   mounted() {
-    this.$http.get('/api/accounts/4/').then(
+    this.user_id = this.$cookies.get('user_id')
+    this.$http.get(`/api/accounts/${this.user_id}/`).then(
       (response) => {
         this.nickname = response.data.username
         this.first_name = response.data.first_name

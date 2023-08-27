@@ -1,21 +1,17 @@
 <!-- 团队项目列表 -->
 <template>
   <div class="project-top">
-    <div class="back-to-all" v-if="!showAll && !showDeleted" @click="showAll = true; projectKeyword = ''">
+    <div class="back-to-all" v-if="showSearch" @click="showSearch = false; projectKeyword = ''">
       返回全部
     </div>
     <div class="back-to-all" v-else-if="showDeleted" @click="showDeleted = false">
       返回项目列表
     </div>
     <template v-if="!showDeleted">
-      <!-- 以下有两处 search 方法调用 应改为项目搜索！ -->
-      <input type="text" placeholder="团队项目名称" v-model="projectKeyword" @keyup.enter="searchUser"/>
-      <div 
-        class="search-icon" 
-        @click="searchUser" 
-        @mouseover="searchIconIsHovered = true" @mouseleave="searchIconIsHovered = false"
-      >
-        <SearchIcon :color="searchIconIsHovered ? 'rgba(199,29,35, 1)' : 'lightgrey'"/>
+      <input type="text" placeholder="团队项目名称" v-model="projectKeyword" @keyup.enter="handleSearchProject" />
+      <div class="search-icon" @click="handleSearchProject" @mouseover="searchIconIsHovered = true"
+        @mouseleave="searchIconIsHovered = false">
+        <SearchIcon :color="searchIconIsHovered ? 'rgba(199,29,35, 1)' : 'lightgrey'" />
       </div>
       <div class="trash-icon" @click="showDeleted = true">
         <TrashIcon />
@@ -24,28 +20,22 @@
   </div>
   <div class="container">
     <!-- 如果是展示模式 -->
-    <template v-if="!showDeleted">
+    <template v-if="!showDeleted && !showSearch">
       <!-- 展示新建项目卡片 -->
       <NewProject />
-      <!-- 一个展示死数据的卡片，可以删除 -->
-      <ProjectListItem :data="temp"/>
       <!-- 
           用 v-for 生成卡片列表 
           【说明】ProjectListItem 有一个 type 属性，默认值为 'normal'，展示卡片
           任何非 'normal' 值会使之变成带头 “恢复” icon 的被删除卡片
       -->
-      <ProjectListItem v-for="project in projectData" :key="project" :data="project" :isRestore="true"></ProjectListItem>
+      <ProjectListItem v-for="project in projectData" :key="project" :data="project"></ProjectListItem>
     </template>
     <!-- 如果是回收站模式 -->
-    <template v-else>
-      <!-- 一个展示死数据的卡片，可以删除 -->
-      <ProjectListItem type="delete" :data="temp"/>
-      <!--
-           用 v-for 生成被删除卡片，给 ProjectListItem 的 type 属性指定一个非 'normal' 值，如 'delete'
-           【注意】v-for 遍历的数组，不需要自己从 projectData 中 filter。后端有一个接口提供已经 filter 好的
-           至少应该传入 id name creator lastUpdateTime 字段
-           最后一个字段的含义见 ProjectListItem 文件
-          -->
+    <template v-else-if="showDeleted">
+      <ProjectListItem v-for="project in recycleData" :key="project" type="delete" :data="project"></ProjectListItem>
+    </template>
+    <template v-else-if="showSearch">
+      <ProjectListItem v-for="project in searchData" :key="project" :data="project"></ProjectListItem>
     </template>
   </div>
 </template>
@@ -63,8 +53,8 @@ export default {
       projectData: [],
       recycleData: [],
       searchData: [],     // 记得补充 search 的接口
-      showAll: true,      // 是否展示全部项目
       showDeleted: false, // 是否正在回收站
+      showSearch: false,
       searchIconIsHovered: false,
       projectKeyword: '', // 搜索关键字
     }
@@ -140,6 +130,25 @@ export default {
           console.log(error)
         }
       )
+    },
+    handleSearchProject() {
+      this.$http.get(`/api/projects/1/search/?keyword=${this.projectKeyword}`).then(
+        response => {
+          this.searchData = response.data.map((project) => ({
+            id: project.id,
+            name: project.name,
+            creator: project.creator,
+            latestUpdateTime: project.changedDate,
+            image: project.image,
+            interfaceNum: project.interfaceNum,
+            documentsNum: project.documentsNum
+          }))
+        },
+        error => {
+          console.log(error.message)
+        },
+        this.showSearch = true
+      )
     }
   }
 }
@@ -160,7 +169,7 @@ export default {
   left: 10px;
   font-size: 20px;
   font-weight: bold;
-  color: rgba(199,29,35, 1);
+  color: rgba(199, 29, 35, 1);
   cursor: pointer;
 }
 
@@ -176,11 +185,11 @@ export default {
   border: 2px solid lightgrey;
   padding: 5px 10px;
   transition: 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
-  caret-color: rgba(199,29,35, 1);
+  caret-color: rgba(199, 29, 35, 1);
 }
 
 .project-top input:focus {
-  border: 3px solid rgba(199,29,35, 1);
+  border: 3px solid rgba(199, 29, 35, 1);
   /* outline: 1px solid rgba(199,29,35, 1); */
 }
 

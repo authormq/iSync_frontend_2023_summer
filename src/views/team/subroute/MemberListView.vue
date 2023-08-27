@@ -14,8 +14,6 @@
     </div>
     <a class="invite-link" v-if="curIdentity === 'leader' || curIdentity === 'admin'" @click="getInviteUrl">
       邀请新成员
-      <!-- <button >getInviteUrl</button> -->
-      <!-- <div>显示获得分享的链接{{ inviteUrl }}</div> -->
     </a>
   </div>
   

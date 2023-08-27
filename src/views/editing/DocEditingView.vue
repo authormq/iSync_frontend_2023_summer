@@ -1,17 +1,15 @@
 <!-- 文档编辑页面 -->
 <template>
-  <TextEditor></TextEditor>
+  <document-view></document-view>
 </template>
 
 <script>
-import TextEditor from '../../components/wheels/TextEditor.vue';
+import DocumentView from '../../components/DocumentWheels/DocumentView.vue';
 
 export default {
-    name: 'DocEditingView',
-    components: { TextEditor }
+  name: 'DocEditingView',
+  components: { DocumentView }
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

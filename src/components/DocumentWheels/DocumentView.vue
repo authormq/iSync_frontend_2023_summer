@@ -8,6 +8,7 @@
 import TextEditor from './TextEditor.vue'
 import VersionInspector from './VersionInspector.vue'
 export default {
+    name:'DocumentView',
     components: {
         TextEditor,
         VersionInspector
@@ -17,6 +18,7 @@ export default {
             docContent: '',
             docId: 1,
             versions: [],
+            members:[],
             docName: 'temp'
         }
     },
@@ -43,6 +45,8 @@ export default {
         })
         //获取历史版本
         this.getVersionInfo()
+        //获取当前团队所有用户
+
     }
 }
 </script>

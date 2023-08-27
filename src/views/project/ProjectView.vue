@@ -27,6 +27,10 @@
       <div class="presentation">
         <!-- <RouterView :key="$route.fullPath"></RouterView> -->
         <DocListView :docList="docList"></DocListView>
+        <DocListView :docList="docList"></DocListView>
+        <DocListView :docList="docList"></DocListView>
+        <DocListView :docList="docList"></DocListView>
+        <DocListView :docList="docList"></DocListView>
       </div>
     </div>
   </div>
@@ -267,5 +271,9 @@ ul {
 
 .presentation {
   display: flex;
+  margin-top: 40px;
+  width: 1150px;
+  overflow-x: auto;
+  /* background-color: aqua; */
 }
 </style>

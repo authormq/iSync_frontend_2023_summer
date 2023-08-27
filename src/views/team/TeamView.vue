@@ -24,6 +24,9 @@ export default {
         teamId: null
       }
     },
+    mounted() {
+      this.teamId = this.$route.params.teamId
+    },
     updated() {
       this.teamId = this.$route.params.teamId
     }

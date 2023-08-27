@@ -25,61 +25,43 @@
         </div>
       </div>
       <div class="presentation">
-        <!-- <RouterView :key="$route.fullPath"></RouterView> -->
+        
+        <NewProject v-if="$route.fullPath.indexOf('doc') !== -1" @click="showDocModal = true"/>
+        <NewProject v-else @click="showPageModal = true" />
+        <RouterView :key="$route.fullPath"></RouterView>
+        <!-- <PageListView :protoList="protoList" :projectId="projectId"></PageListView> -->
+        <!-- <PageListView :protoList="protoList"></PageListView>
+        <PageListView :protoList="protoList"></PageListView>
+        <PageListView :protoList="protoList"></PageListView>
         <DocListView :docList="docList"></DocListView>
         <DocListView :docList="docList"></DocListView>
         <DocListView :docList="docList"></DocListView>
         <DocListView :docList="docList"></DocListView>
-        <DocListView :docList="docList"></DocListView>
+        <DocListView :docList="docList"></DocListView> -->
       </div>
     </div>
   </div>
-  <!-- <div class="outer-container">
-    <h1>这是项目的详情页面</h1>
-    项目基本信息展示
-    <div>
-      项目封面
-      <img :src="curProject.image">
-      <div>
-        {{ curProject.name }}
-        {{ curProject.creator }}
-        {{ curProject.changedDate }}
-        {{ curProject.profile }}
-      </div>
-    </div>
-    <hr>
-    这是项目的文件展示区
-    <button>新建文档</button>
-    <CreateDocModal :projectId="curProject.id"></CreateDocModal>
-    <hr>
-    <button>新建原型设计</button>
-    <CreateProtoModal :projectId="curProject.id"></CreateProtoModal>
-    <br>
-    文档信息展示
-    <div>
-      文档：
-      <DocListView :docList="docList"></DocListView>
-    </div>
-    <div>
-      原型设计：
-      <PageListView :protoList="protoList"></PageListView>
-    </div>
-  </div> -->
+  <CreateDocModal :show="showDocModal" :projectId="projectId" @close="showDocModal = false" />
+  <CreateProtoModal :show="showPageModal" :projectId="projectId" @close="showPageModal = false" />
 </template>
 
 <script>
+import NewProject from '../../components/ListItem/team/NewProject.vue'
 import DocListView from './subroute/DocListView.vue'
 import PageListView from './subroute/PageListView.vue'
 import CreateDocModal from '../../components/Modal/CreateDocModal.vue';
 import CreateProtoModal from '../../components/Modal/CreateProtoModal.vue';
 export default {
   name: 'ProjectView',
-  components: { DocListView, PageListView, CreateDocModal, CreateProtoModal},
+  components: { DocListView, PageListView, CreateDocModal, CreateProtoModal, NewProject},
   data() {
     return {
       curProject: {},
       docList: [],
-      protoList: []
+      protoList: [],
+      projectId: '',
+      showDocModal: false,
+      showPageModal: false
     }
   },
   mounted() {

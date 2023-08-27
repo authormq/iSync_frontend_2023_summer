@@ -5,7 +5,7 @@
     </div>
     <div class="project-info">
       <div class="project-name">
-        新建项目
+        新建{{what}}
       </div>
     </div>
   </div>
@@ -15,7 +15,13 @@
 import PlusIcon from '../../Svg/PlusIcon.vue'
 export default {
   name: 'NewProject',
-  components: { PlusIcon }
+  components: { PlusIcon },
+  props: {
+    what: {
+      type: String,
+      default: ''
+    }
+  }
 }
 </script>
 

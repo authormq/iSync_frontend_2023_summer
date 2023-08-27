@@ -537,6 +537,7 @@ export default {
 			}
 			this.members = response.data.members.map(element => {
 				return {
+					docId:this.docId,
 					id: element.user.id,
 					username: element.user.username,
 					identity: identityMap[element.identity]

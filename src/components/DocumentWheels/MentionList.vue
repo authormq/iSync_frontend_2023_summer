@@ -74,9 +74,9 @@ export default {
 
         selectItem(index) {
             const item = this.items[index].username
-
             if (item) {
                 this.command({ id: item })
+                
             }
         },
     },

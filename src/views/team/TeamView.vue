@@ -1,7 +1,7 @@
 <!-- zby -->
 <template>
-  <FirstView></FirstView>
-  <div>才能看见的补偿款是得不偿失的吧肯定会随处可见还是到处都是从开始对华出口傻大黑粗是大城市的hacks城市的库存还打算开车好的时空穿梭的出的色彩都看见好吃的烤鸡翅都超级好随处可见合适的出口市场产生的基础上口红擦看好多好吃的好吃的吃还是大城市的出口和随处可见挥洒出可恨的是v和v看来还是v觉得和v的时空和v收到句话都是考虑好v的v多少v很看好v都是老客户v四大皆空v合适的v好的v好还好撒开了花v好的v都是v看见的v函数v了很多时间和v看韩剧看了就会v是快乐的机会v vs电话旅客还是v了会计核算的v类似的话v即可获得v的v话 v好看数据和v劳动局啊华盛顿和v死的恐惧和v多少</div>
+  <!-- <FirstView></FirstView> -->
+  <!-- <hr> -->
   <div class="container">
     <ul>
       <li><router-link class="link" to="/team/1/info">团队信息</router-link></li>
@@ -16,10 +16,10 @@
 </template>
 
 <script>
-import FirstView from '../FirstView.vue';
+// import FirstView from '../FirstView.vue';
 export default {
     name: 'TeamView',
-    components: { FirstView }
+    // components: { FirstView }
 }
 </script>
 

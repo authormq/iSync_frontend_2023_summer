@@ -134,7 +134,12 @@ export default {
           data.project.name = data.rename
         },
         error => {
-          console.log(error.message)
+          this.$bus.emit('message', {
+            title: '重命名',
+            content: '重命名失败，请检查',
+            time: 3000
+          })
+          // this.$bus.emit('renameFailRequest', true)
         }
       )
     },

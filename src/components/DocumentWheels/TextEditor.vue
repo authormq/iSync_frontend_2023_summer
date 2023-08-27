@@ -768,7 +768,7 @@ export default {
 		})
 		//加载保存时间最近的文件,然后初始化编辑器
 		//查询团队成员,然后初始化编辑器
-		this.$http.get(`/api/teams/${this.$cookies.get(teamId)}/`).then((response) => {
+		this.$http.get(`/api/teams/${this.$cookies.get('teamId')}/`).then((response) => {
 			let identityMap = {
 				'leader': '团队创建者',
 				'admin': '团队管理员',

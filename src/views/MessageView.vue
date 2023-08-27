@@ -2,21 +2,19 @@
 <template>
   <!-- <div>This is message Page</div> -->
   <div class="tool-menu">
-    <button v-if="!showAllMsg" @click="showAllMsg = true">全部消息</button>
-    <button v-else @click="showAllMsg = false">未读消息</button>
+    <button v-if="!showAllMsg" @click="showAllMsg = true">查看全部消息</button>
+    <button v-else @click="showAllMsg = false">查看未读消息</button>
     <button @click="setAllRead">设为全部已读</button>
-    <button @click="deleteAllRead">删除已读</button>
+    <button @click="deleteAllRead">删除全部已读</button>
   </div>
   <div class="container">
     <div v-if="showAllMsg">
-      <div v-for="msg in allMessage" :key="message">
-        <message-item :msg="msg" />
-      </div>
+      <div class="messageListTitle">全部消息</div>
+      <MessageItem v-for="msg in allMessage" :key="msg" :msg="msg" />
     </div>
     <div v-else>
-      <div v-for="msg in unReadMessage" :key="message">
-        <message-item :msg="msg" />
-      </div>
+      <div class="messageListTitle">未读消息</div>
+      <MessageItem v-for="msg in unReadMessage" :key="msg" :msg="msg" />
     </div>
   </div>
 </template>
@@ -33,8 +31,42 @@ export default {
       unReadMessage: []
     };
   },
+  mounted() {
+    this.$http.get('/api/news/').then((response) => {
+      this.allMessage = response.data.map((news) => ({
+        msgId: news.id,
+        timeStamp: news.group_message.create_datetime,
+        sender: news.group_message.sender.user.username,
+        receiver: news.receiver,
+        isRead: news.is_read,
+        teamName: news.team_name,
+        content: `${news.group_message.sender.user.username}提到了你`,
+      }))
+      // 这一行必须有，用来获取未读的信息
+      this.divideUnReadMessage()
+    })
+    // 具体需不需要这些函数，看后期后端怎么给我返回数据
+    this.$bus.on('newMessage', (message) => {
+      // alert(`${message.sender.user.username}提到了你`)
+      // this.$bus.emit('message', {
+      //   title: '消息通知',
+      //   content: `${message.sender.user.username}提到了你`,
+      //   time: 1000
+      // })
+      this.unReadMessage = this.unReadMessage.unshift({
+        timeStamp: message.create_datetime,
+        sender: message.sender.user.username,
+        receiver: '1',
+        isRead: false,
+        content: `${message.sender.user.username}提到了你`
+      })
+    })
+    this.$bus.on('sendChangeStatusSignal', this.handleReadStatus)
+    this.$bus.on('sendDeleteMessageRequest', this.handleDeleteMessage)
+  },
   methods: {
     handleReadStatus(message) {
+      this.$bus.emit('handleJudgeHasUnreadMsg', false)
       message.isRead = !message.isRead
       let messageIdx = this.unReadMessage.indexOf(message)
       if (messageIdx != -1) {
@@ -50,37 +82,22 @@ export default {
       this.allMessage.filter(message => message.isRead == false).forEach(message => message.isRead = true)
       this.unReadMessage = []
       this.$http.post('/api/news/set_all_read/')
+      this.$bus.emit('handleJudgeHasUnreadMsg', false)
     },
     deleteAllRead() {
       this.allMessage = this.allMessage.filter(message => message.isRead == false)
       this.$http.delete('/api/news/delete_all_read/')
+    },
+    handleDeleteMessage(msg) {
+      this.$http.delete(`/api/news/${msg.msgId}`).then(
+        response => {
+          this.allMessage.splice(this.allMessage.indexOf(msg), 1)
+        },
+        error => {
+          console.log(error.message)
+        }
+      )
     }
-  },
-  mounted() {
-    this.$http.get('/api/news/').then((response) => {
-      this.allMessage = response.data.map((news) => ({
-        timeStamp: news.group_message.create_datetime,
-        sender: news.group_message.sender.user.username,
-        receiver: news.receiver,
-        isRead: news.is_read,
-        teamName: news.team_name,
-        content: `${news.group_message.sender.user.username}提到了你`,
-      }))
-      // 这一行必须有，用来获取未读的信息
-      this.divideUnReadMessage()
-    })
-    // 具体需不需要这些函数，看后期后端怎么给我返回数据
-    this.$bus.on('newMessage', (message) => {
-      alert(`${message.sender.user.username}提到了你`)
-      this.unReadMessage.push({
-        timeStamp: message.create_datetime,
-        sender: message.sender.user.username,
-        receiver: '1',
-        isRead: false,
-        content: `${message.sender.user.username}提到了你`
-      })
-    })
-    this.$bus.on('sendChangeStatusSignal', this.handleReadStatus)
   }
 }
 </script>
@@ -131,5 +148,12 @@ export default {
   width: 850px;
   margin: 0 auto;
   margin-top: 20px;
+}
+
+.messageListTitle {
+  font-size: 50px;
+  font-weight: bold;
+  color: rgba(199, 29, 35, 1);
+  margin-bottom: 10px;
 }
 </style>

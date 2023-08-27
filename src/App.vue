@@ -6,6 +6,7 @@
   <!-- 消息组件 -->
   <!-- <StylishMessage :show="showMessage" :title="messageTitle" :content="messageContent"/> -->
   <!-- <document-view></document-view> -->
+  <GrapesjsView />
 </template>
 
 <script setup>
@@ -13,7 +14,7 @@ import { ref, getCurrentInstance } from 'vue'
 import DocumentView from './components/DocumentWheels/DocumentView.vue';
 import TopNav from './components/TopNav/TopNav.vue'
 import StylishMessage from './components/Stylish/StylishMessage.vue'
-import GrapesjsView from './components/wheels/GrapesjsView.vue';
+import GrapesjsView from './components/PrototypeWheels/GrapesjsView.vue';
 
 let showMessage = ref(false)  // 展示消息
 let messageTitle = ref('')    // 消息标题

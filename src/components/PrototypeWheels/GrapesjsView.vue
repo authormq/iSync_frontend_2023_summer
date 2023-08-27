@@ -6,11 +6,11 @@
   <script> 
 	import grapesjs from 'grapesjs'; // 引入 GrapesJS
 	import 'grapesjs/dist/css/grapes.min.css'; // 引入样式
-	  import 'grapesjs/dist/grapes.min.js';
+	import 'grapesjs/dist/grapes.min.js';
 	import 'grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min.css';
-	  import 'grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min.js';
-	  // import plugin from 'grapesjs-preset-webpage';
-	  import plugin from 'grapesjs-preset-newsletter';
+	import 'grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min.js';
+	// import plugin from 'grapesjs-preset-webpage';
+	import plugin from 'grapesjs-preset-newsletter';
   
 	export default {
 	name: 'GrapesEditor',
@@ -36,7 +36,7 @@
 				  container: '#gjs',
 				  height: '700px',
 				  showOffsets: 1,
-		  noticeOnUnload: 0,
+		  		  noticeOnUnload: 0,
 				  formElement: true,
 				  storageManager: {autoload: 0},
 				  plugins: [plugin],

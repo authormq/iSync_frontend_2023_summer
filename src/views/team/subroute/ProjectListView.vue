@@ -100,10 +100,26 @@ export default {
     this.$bus.on('renameRequest', this.handleRenameProject)
     this.$bus.on('deleteRequest', this.handleDeleteProject)
     this.$bus.on('restoreRequest', this.handleRestoreProject)
+    this.$bus.on('regetProjectListRequest', this.regetProjectList)
   },
   methods: {
-    handleCreateProject() {
-
+    regetProjectList(inValue) {
+      this.$http.get(`/api/projects/list/${this.teamId}/`).then(
+      response => {
+        this.projectData = response.data.map((project) => ({
+          id: project.id,
+          name: project.name,
+          creator: project.creator,
+          latestUpdateTime: project.changedDate,
+          image: project.image,
+          interfaceNum: project.interfaceNum,
+          documentsNum: project.documentsNum
+        }))
+      },
+      error => {
+        console.log(error.message)
+      }
+    )
     },
     handleRenameProject(data) {
       let renameInfo = new FormData()
@@ -121,7 +137,7 @@ export default {
       this.$http.post(`/api/projects/${data.id}/delete/`).then(
         response => {
           this.projectData.splice(this.projectData.indexOf(data), 1)
-          this.recycleData.push(response)
+          this.recycleData.push(data)
         }
       )
     },

@@ -2,7 +2,7 @@
 <template>
   <!-- <FirstView></FirstView> -->
   <!-- <hr> -->
-  <div class="container">
+  <div class="container" :key="$route.fullPath">
     <ul>
       <li><router-link class="link" :to="`/team/${teamId}/info`">团队信息</router-link></li>
       <li><router-link class="link" :to="`/team/${teamId}/member`">团队成员</router-link></li>
@@ -10,7 +10,7 @@
       <li><router-link class="link" :to="`/team/${teamId}/chat`">团队群聊</router-link></li>
     </ul>
     <div>
-      <RouterView :key="$route.fullPath"></RouterView>
+      <RouterView></RouterView>
     </div>
   </div>
 </template>
@@ -25,6 +25,9 @@ export default {
       }
     },
     mounted() {
+      this.teamId = this.$route.params.teamId
+    },
+    updated() {
       this.teamId = this.$route.params.teamId
     }
     // components: { FirstView }

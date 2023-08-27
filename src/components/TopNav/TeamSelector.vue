@@ -48,7 +48,6 @@ export default {
         this.options = this.options.concat(this.tmpOption)
         //寻找当前所在的团队并显示
         if (this.$cookies.get('teamId') != undefined) {
-          // console.log('######', this.options)
           for (let i = 0; i < this.options.length; i++) {
             if (this.options[i].value === parseInt(this.$cookies.get('teamId'))) {
               const newOption = {
@@ -59,21 +58,10 @@ export default {
                 selected: true
               }
               this.options.splice(i, 1, newOption)
-              // console.log(this.options)
               break
             }
           }
           console.log('over!', this.options)
-          // this.options.forEach((option) => {
-          //   if (option.value == parseInt(this.$cookies.get('teamId'))) {
-          //     console.log('in if')
-          //     option.selected = true
-          //     this.currentTeam = {
-          //       label: option.label,
-          //       avatar: option.avatar
-          //     }
-          //   }
-          // })
           this.$bus.emit('flushData', this.options)
         }
       },

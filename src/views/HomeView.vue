@@ -177,7 +177,7 @@ export default {
   width: 100%;
   height: 100vh;
   box-sizing: border-box;
-  background-image: url('/src/assets/head.jpeg');
+  background-image: url('/src/assets/head.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;

@@ -1,45 +1,21 @@
 <template>
   <!-- 默认状态的文档卡片 -->
   <div class="page-container">
-    <img src="src/assets/avatar.jpeg">
+    <div>这里放一个文件图标</div>
     <div class="page-info">
       <div class="page-name">
-        页面名
+        <!-- {{ proto.name }} -->
+        hhh
       </div>
-      <button @click="sendDeleteRequest">删除</button>
+      <button>删除</button>
     </div>
   </div>
-<!-- 删除状态的项目卡片 -->
-<div class="page-container">
-  <img src="src/assets/avatar.jpeg">
-  <div class="page-info">
-    <div class="page-name">
-      页面名    
-    </div>
-    <!-- 恢复删除的接口 -->
-    <div class="restore-icon" @click="sendRestoreRequest">
-      恢复删除按钮
-    </div>
-  </div>
-</div>
 </template>
 
 <script>
 export default {
   name: 'PageListItem',
-  Data() {
-    return {
-      name: '文件名'
-    }
-  },
-  methods: {
-    sendDeleteRequest() {
-      alert('删除')
-    },
-    sendRestoreRequest() {
-      alert('恢复删除')
-    }
-  }
+  props: ['proto'],
 }
 </script>
 

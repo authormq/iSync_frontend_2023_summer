@@ -16,8 +16,11 @@
     <hr>
     <!-- 这是项目的文件展示区 -->
     <button>新建文档</button>
-    <br>
+    <CreateDocModal :projectId="curProject.id"></CreateDocModal>
+    <hr>
     <button>新建原型设计</button>
+    <CreateProtoModal :projectId="curProject.id"></CreateProtoModal>
+    <br>
     <!-- 文档信息展示 -->
     <div>
       文档：
@@ -33,33 +36,29 @@
 <script>
 import DocListView from './subroute/DocListView.vue'
 import PageListView from './subroute/PageListView.vue'
+import CreateDocModal from '../../components/Modal/CreateDocModal.vue';
+import CreateProtoModal from '../../components/Modal/CreateProtoModal.vue';
 export default {
   name: 'ProjectView',
-  components: { DocListView, PageListView },
+  components: { DocListView, PageListView, CreateDocModal, CreateProtoModal},
   data() {
     return {
-      curProject: {
-        name: 'test',
-        creator: 'mq',
-        latestChangeDate: '2023-8-1 01:01:00',
-        profile: 'hhh',
-        projectId: null
-      },
+      curProject: {},
       docList: [],
       protoList: []
     }
   },
   mounted() {
     // 这里等后端接口写好后直接接上即可
-    // this.$http.get(``).then(
-    //   response => {
-    //     this.curProject = response.data
-    //     console.log(this.curProject)
-    //   },
-    //   error => {
-    //     console.log(error.message)
-    //   }
-    // )
+    // id: projectId
+    this.$http.get(`/api/projects/1/information/`).then(
+      response => {
+        this.curProject = response.data
+      },
+      error => {
+        console.log(error.message)
+      }
+    )
     this.projectId = this.$route.params.projectId
     this.$http.get(`/api/projects/file/list/${this.projectId}/`).then(
       response => {

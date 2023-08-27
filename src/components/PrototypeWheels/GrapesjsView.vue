@@ -20,6 +20,7 @@ import 'grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min.css';
 import 'grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min.js';
 import PresetPlugin from 'grapesjs-preset-newsletter';
 import ExportPlugin from 'grapesjs-plugin-export';//导出html和css
+import ScriptPlugin from 'grapesjs-script-editor'//js代码编辑
 import html2canvas from 'html2canvas';
 
 export default {
@@ -111,7 +112,7 @@ export default {
 					}
 				},
 				showOffsets: 1,
-		  				noticeOnUnload: 0,
+				noticeOnUnload: 0,
 				formElement: true,
 				// storageManager: {
 				// 	type: 'remote',
@@ -141,14 +142,28 @@ export default {
 					}]
 				},
 				assetManager: [],//预加载资产，图片/图标等
-				plugins: [PresetPlugin, ExportPlugin],
+				plugins: [PresetPlugin, ExportPlugin, ScriptPlugin],
 				pluginsOpts: {
 					[ExportPlugin]: {
 						addExportBtn: true,
 						btnLabel: '导出项目文件ZIP',
-						fileName: this.fileName
-					}
+						fileName: this.fileName,
+						root: {
+							css: {
+								'style.css': ed => ed.getCss(),
+							},
+							'index.html': ed => `<body>${ed.getHtml()}</body>`,
+							'index.js': ed => ed.getJs()
+						}
+					},
+					[ScriptPlugin]: {
+						starter: `//对该元素节点进行代码编辑
+						let el = this`,
+						buttonLabel: '保存',
+
+					},
 				},
+
 				styleManager: []
 				// blockManager: true
 				// blockManager: {
@@ -203,17 +218,34 @@ export default {
 			let node = document.createElement('div')
 			node.style.position = 'fixed'
 			node.style.zIndex = -1
-			node.innerHTML = this.editor.getHtml()
+			node.style.top = 0
+			node.style.left = 0
+			node.style.height = this.canvasHeight + 'px'
+			node.style.width = this.canvasWidth + 'px'
+			node.innerHTML = `<div style="{
+				height:${this.canvasHeight}px;
+				width:${this.canvasWidth}px}">
+			${this.editor.getHtml()}
+			<style>
+			img{
+				display:inline;
+			}
+			${this.editor.getCss()}  
+			</style>
+			</div>`
+			console.log(node.innerHTML)
 			document.body.appendChild(node)
 			html2canvas(node).then(canvas => {
 				let link = document.createElement('a')
 				link.download = `${this.pageName}.png`
 				link.href = canvas.toDataURL("image/png")
 				link.click()
+				document.body.removeChild(node)
 			})
 		}
 	}
-}</script>
+}
+</script>
 
 <style scoped>
 #gjs {
@@ -223,10 +255,6 @@ export default {
 	--frame-width: 1920px;
 }
 
-:deep(.gjs-frame) {
-	/* height: var(--frame-height);
-	width: var(--frame-width); */
-}
 
 :deep(.gjs-cv-canvas) {
 	overflow: auto;

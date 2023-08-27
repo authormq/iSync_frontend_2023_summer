@@ -94,7 +94,7 @@ export default {
         console.log(error)
       }
     )
-    this.$http.get(`/api/teams/1/activation/`).then(
+    this.$http.get(`/api/teams/${this.teamId}/activation/`).then(
       response => {
         this.recentFiveActivePerson = response.data.map((person) => ({
           name: person.user.first_name + person.user.last_name,
@@ -125,7 +125,7 @@ export default {
         })
       }
     )
-    this.$http.get(`/api/projects/1/activation/`).then(
+    this.$http.get(`/api/projects/${this.teamId}/activation/`).then(
       response => {
         this.recentFiveActiveProject = response.data.map((project) => ({
           name: project.name,
@@ -190,7 +190,7 @@ export default {
       if (this.teamAvatarChanged) {
         data.append('avatar', this.teamAvatar)
       }
-      this.$http.put('/api/teams/1/', data).then(
+      this.$http.put(`/api/teams/${this.teamId}/`, data).then(
         response => {
           if (response.status >= 200 && response.status < 300) {
             console.log(response.data)

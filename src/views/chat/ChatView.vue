@@ -12,7 +12,6 @@
 
 <script>
 import { register } from 'vue-advanced-chat'
-import { Base64 } from 'js-base64'
 // import  ChatWindow  from 'vue-advanced-chat'
 register()
 export default {

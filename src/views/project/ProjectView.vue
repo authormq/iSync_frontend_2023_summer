@@ -42,22 +42,26 @@ export default {
         name: 'test',
         creator: 'mq',
         latestChangeDate: '2023-8-1 01:01:00',
-        profile: 'hhh'
+        profile: 'hhh',
+        projectId: null
       },
       docList: [],
       protoList: []
     }
   },
   mounted() {
-    this.$http.get(`/api/projects/1/information/`).then(
-      response => {
-        this.curProject = response.data
-      },
-      error => {
-        console.log(error.message)
-      }
-    )
-    this.$http.get(`/api/projects/file/list/1/`).then(
+    // 这里等后端接口写好后直接接上即可
+    // this.$http.get(``).then(
+    //   response => {
+    //     this.curProject = response.data
+    //     console.log(this.curProject)
+    //   },
+    //   error => {
+    //     console.log(error.message)
+    //   }
+    // )
+    this.projectId = this.$route.params.projectId
+    this.$http.get(`/api/projects/file/list/${this.projectId}/`).then(
       response => {
         this.docList = response.data.map((doc) => ({
           id: doc.id,

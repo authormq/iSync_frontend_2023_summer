@@ -44,21 +44,28 @@ export default {
     this.handleFlushUserData()
     this.$bus.on('updateTopNavAvatar', this.updateTopNavAvatarAfterModify)
     if (this.$cookies.isKey('user_id') == true) {
-      const userId = this.$cookies.get('user_id')
-      this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/news/${userId}/`)
+      this.userId = this.$cookies.get('user_id')
+      this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/news/${this.userId}/`)
       this.ws.onmessage = (messageEvent) => {
         const data = JSON.parse(messageEvent.data)
         for (let i = 0; i < data.mentioned_users.length; i++) {
           if (data.mentioned_users[i]._id == this.currentUserId || data.mentioned_users[i]._id == '0') {
-            // let formData = new FormData()
-            // formData.append('file', data.get('file_id'))
-            // formData.append('receiver', this.currentUserId)
-            // this.$http.post('/api/news/', formData).then(() => {
-            //   this.$bus.emit('newMessage', message)
-            // })
+            let formData = new FormData()
+            formData.append('file', data.get('file_id'))
+            formData.append('receiver', this.currentUserId)
+            this.$http.post('/api/news/', formData).then(() => {
+              this.$bus.emit('newFileMessage', data.get('file_id'))
+            })
           }
         }
       }
+      this.$bus.on('wssend', (file_id, mentioned_user_id) => {
+        this.ws.send(JSON.stringify({
+          'file_id': file_id,
+          'sender_id': this.userId,
+          'mentioned_users': [mentioned_user_id],
+        }))
+      })
     }
   },
   unmounted() {
@@ -66,6 +73,7 @@ export default {
   },
   data() {
     return {
+      userId: '',
       avatarIsHovered: false,
       showAvatarHint: false,
       avatarHintIsHovered: false,

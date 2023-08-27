@@ -40,7 +40,7 @@ const router = createRouter({
       component: TeamView
     },
     {
-      path: `/team/1`,
+      path: `/team/:teamId`,
       component: TeamView,
       children: [
         {
@@ -62,15 +62,15 @@ const router = createRouter({
       ]
     },
     {
-      path: `/project/1`,
+      path: `/project/:projectId`,
       component: ProjectView,
       children: [
         {
-          path: 'doc',
+          path: 'doc/:docId',
           component: DocEditingView
         },
         {
-          path: 'page',
+          path: 'page/:pageId',
           component: PageListView
         }
       ]

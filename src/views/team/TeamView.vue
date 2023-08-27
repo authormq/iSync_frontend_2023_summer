@@ -10,7 +10,7 @@
       <li><router-link class="link" :to="`/team/${teamId}/chat`">团队群聊</router-link></li>
     </ul>
     <div>
-      <RouterView ></RouterView>
+      <RouterView :key="$route.fullPath"></RouterView>
     </div>
   </div>
 </template>

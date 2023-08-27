@@ -1,6 +1,6 @@
 <template>
   <div class="select-container">
-    <StylishSelect v-model:value="currentTeam" :options="options" />
+    <StylishSelect v-model:value="currentTeam" :options="options"/>
   </div>
   <CreateTeamModal :show="showCreateTeamModal" @close="showCreateTeamModal = false"></CreateTeamModal>
 </template>
@@ -48,16 +48,21 @@ export default {
         this.options = this.options.concat(this.tmpOption)
         //寻找当前所在的团队并显示
         if (this.$cookies.get('teamId') != undefined) {
-          this.options.forEach((option) => {
-            // console.log(option.value, '<=>', this.$cookies.get('teamId'))
-            if (option.value == parseInt(this.$cookies.get('teamId'))) {
-              option.selected = true
-              this.currentTeam = {
-                label: option.label,
-                avatar: option.avatar
+          for (let i = 0; i < this.options.length; i++) {
+            if (this.options[i].value === parseInt(this.$cookies.get('teamId'))) {
+              const newOption = {
+                label: this.options[i].label,
+                avatar: this.options[i].avatar,
+                value: this.options[i].value,
+                click: this.jump,
+                selected: true
               }
+              this.options.splice(i, 1, newOption)
+              break
             }
-          })
+          }
+          console.log('over!', this.options)
+          this.$bus.emit('flushData', this.options)
         }
       },
       error => {
@@ -73,6 +78,9 @@ export default {
     jump(teamid) {
       this.$cookies.set('teamId', teamid)
       this.$router.push(`/team/${teamid}/info`)
+      // this.$router.go(0)
+      // console.log('调用了')
+      // location.reload()
     },
     showModal(v) {
       this.showCreateTeamModal = true

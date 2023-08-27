@@ -45,7 +45,7 @@ export default {
     this.$bus.on('updateTopNavAvatar', this.updateTopNavAvatarAfterModify)
     if (this.$cookies.isKey('user_id') == true) {
       this.userId = this.$cookies.get('user_id')
-      this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/news/${userId}/`)
+      this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/news/${this.userId}/`)
       this.ws.onmessage = (messageEvent) => {
         const data = JSON.parse(messageEvent.data)
         for (let i = 0; i < data.mentioned_users.length; i++) {

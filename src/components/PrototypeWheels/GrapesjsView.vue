@@ -30,10 +30,12 @@ export default {
 		let topPanel = document.querySelector('.gjs-pn-panel.gjs-pn-devices-c.gjs-one-bg.gjs-two-color .gjs-pn-buttons')
 		let sizeSetter = document.querySelector('#size-setter')
 		topPanel.appendChild(sizeSetter)
+		this.ws = new WebSocket('ws:43.138.13.231:9000/ws/page/1/')
 		//设置默认大小
 	},
 	data() {
 		return {
+			ws: '',
 			pageId: 1,
 			pageName: 'page1',
 			canvasHeight: '1000',

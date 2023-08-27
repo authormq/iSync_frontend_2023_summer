@@ -63,16 +63,21 @@ export default {
 
   },
   watch: {
-    options(newValue) {
-      this.optionData = newValue.map((option) => {
-        return {
-          label: option.label,
-          value: option.value,
-          selected: option.selected ? true : false,      // 可能是 undefined
-          click: option.click
-        }
-      })
-    }
+    // options: {
+    //   deep: true,
+    //   immediate: true,
+    //   handler(newValue) {
+    //     this.optionData = newValue.map((option) => {
+    //     return {
+    //       label: option.label,
+    //       value: option.value,
+    //       selected: option.selected ? true : false,      // 可能是 undefined
+    //       click: option.click
+    //     }
+    //     })
+    //   }
+    // }
+      
   },
   created() {
     // 从用户传入的 options 属性，初始化 option 的 DOM 数据
@@ -107,22 +112,56 @@ export default {
       this.$emit('update:value', this.selectedData.map(data => data.value))
     } else {
       // 如果是单选
-      for (let i = 0; i < this.optionData.length; i++) {
-        if (this.optionData[i].selected) {
-          // 找到那个被默认选中的，加入已选中数组
-          this.selectedData.push({ value: this.optionData[i].value, label: this.optionData[i].label })
-          // 即刻修改 value 值（因为用户可能设置了一些 `selected: true`，但传入的 value 并未与之对应）
-          this.$emit('update:value', this.optionData[i].value)
-          // 对于后续的 option 仍设置了 `selected: true` 的，统一改成 false
-          for (let j = i + 1; j < this.optionData.length; j++) {
-            this.optionData[j].selected = false
-          }
-          break
-        }
-      }
+      
+      // for (let i = 0; i < this.optionData.length; i++) {
+      //   if (this.optionData[i].selected) {
+          
+      //     console.log('hello')
+      //     // 找到那个被默认选中的，加入已选中数组
+      //     this.selectedData.push({ value: this.optionData[i].value, label: this.optionData[i].label })
+      //     // 即刻修改 value 值（因为用户可能设置了一些 `selected: true`，但传入的 value 并未与之对应）
+      //     this.$emit('update:value', this.optionData[i].value)
+      //     // 对于后续的 option 仍设置了 `selected: true` 的，统一改成 false
+      //     for (let j = i + 1; j < this.optionData.length; j++) {
+      //       this.optionData[j].selected = false
+      //     }
+      //     break
+      //   }
+      // }
     }
   },
   mounted() {
+    this.$bus.on('flushData', (arg) => {
+      this.$nextTick(() => {
+        this.optionData = this.options.map((option) => {
+        return {
+          label: option.label,
+          value: option.value,
+          selected: option.selected ? true : false,      // 可能是 undefined
+          click: option.click
+        }
+      })
+        for (let i = 0; i < this.optionData.length; i++) {
+          if (this.optionData[i].selected) {
+            console.log('hello')
+            // 找到那个被默认选中的，加入已选中数组
+            this.selectedData.push({ value: this.optionData[i].value, label: this.optionData[i].label })
+            // 即刻修改 value 值（因为用户可能设置了一些 `selected: true`，但传入的 value 并未与之对应）
+            this.$emit('update:value', this.optionData[i].value)
+            // 对于后续的 option 仍设置了 `selected: true` 的，统一改成 false
+            for (let j = i + 1; j < this.optionData.length; j++) {
+              this.optionData[j].selected = false
+            }
+            break
+          }
+        }
+      })
+      
+      // this.$nextTick(() => {
+      //   console.log('next', this.options)
+      // })
+    })
+    
     document.addEventListener('click', () => {
       if (this.leaveDropdown) {
         this.leaveDropdown = false
@@ -172,7 +211,7 @@ export default {
         }
         // 更新 value 值
         this.$emit('update:value', this.selectedData.map(data => data.value))
-      } else {
+      } else if (this.optionData[index].label !== '新建团队') {
         // 如果是单选
         for (let i = 0; i < this.optionData.length; i++) {
           // 在 DOM 数据中找到之前被选中的（如果有的话），将其改为未选中【仍应使用数组方法】

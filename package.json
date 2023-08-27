@@ -38,6 +38,7 @@
     "grapesjs-plugin-export": "^1.0.12",
     "grapesjs-preset-newsletter": "^1.0.2",
     "grapesjs-preset-webpage": "^1.0.3",
+    "grapesjs-script-editor": "^1.0.3",
     "html2canvas": "^1.4.1",
     "js-base64": "^3.7.5",
     "js-export-word": "^1.0.5",

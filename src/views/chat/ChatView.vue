@@ -108,9 +108,14 @@ export default {
           // @
 					for (let j = 0; j < data.mentioned_users.length; j++) {
 						if (data.mentioned_users[j]._id == this.currentUserId || data.mentioned_users[j]._id == '0') {
-							this.$bus.emit('newMessage', message)
+							let formData = new FormData()
+							formData.append('group_message', message.id)
+							formData.append('receiver', this.currentUserId)
+							this.$http.post('/api/news/', formData).then(() => {
+								this.$bus.emit('newMessage', message)
+							})
+							break
 						}
-						break
 					}
 				}
 			}

@@ -27,29 +27,7 @@ export default {
   data() {
     return {
       showAllMsg: true,
-      allMessage: [
-        // {
-        //   timeStamp: '1',
-        //   sender: '1',
-        //   receiver: '1',
-        //   isRead: false,
-        //   content: '1'
-        // },
-        // {
-        //   timeStamp: '2',
-        //   sender: '2',
-        //   receiver: '2',
-        //   isRead: true,
-        //   content: '2'
-        // },
-        // {
-        //   timeStamp: '3',
-        //   sender: '3',
-        //   receiver: '3',
-        //   isRead: false,
-        //   content: '3'
-        // }
-      ],
+      allMessage: [],
       unReadMessage: []
     };
   },
@@ -67,19 +45,27 @@ export default {
       this.unReadMessage = this.allMessage.filter(message => message.isRead == false)
     },
     setAllRead() {
-      this.allMessage.filter(message => message.isRead == false).forEach(message => {
-        if (message.isRead == false) {
-          message.isRead = true
-        }
-      })
+      this.allMessage.filter(message => message.isRead == false).forEach(message => message.isRead = true)
+      this.unReadMessage = []
+      this.$http.post('/api/news/set_all_read/')
     },
     deleteAllRead() {
       this.allMessage = this.allMessage.filter(message => message.isRead == false)
+      this.$http.delete('/api/news/delete_all_read/')
     }
   },
   mounted() { 
-    // 这一行必须有，用来获取未读的信息
-    this.divideUnReadMessage()
+    this.$http.get('/api/news/').then((response) => {
+      this.allMessage = response.data.map((news) => ({
+        timeStamp: news.group_message.create_datetime,
+        sender: news.group_message.sender.user.username,
+        receiver: news.receiver,
+        isRead: news.is_read,
+        content: `${news.group_message.sender.user.username}提到了你`,
+      }))
+      // 这一行必须有，用来获取未读的信息
+      this.divideUnReadMessage()
+    })
     // 具体需不需要这些函数，看后期后端怎么给我返回数据
     this.$bus.on('newMessage', (message) => {
       alert(`${message.sender.user.username}提到了你`)
@@ -88,7 +74,7 @@ export default {
           sender: message.sender.user.username,
           receiver: '1',
           isRead: false,
-          content: message.text_content
+          content: `${message.sender.user.username}提到了你`
       })
     })
     this.$bus.on('sendChangeStatusSignal', this.handleReadStatus)

@@ -62,8 +62,9 @@ export default {
             }
           }
           console.log('over!', this.options)
-          this.$bus.emit('flushData', this.options)
         }
+        // 必须放在外面
+        this.$bus.emit('flushData', this.options)
       },
       error => {
         console.log(error.message)

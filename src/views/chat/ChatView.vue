@@ -203,10 +203,9 @@ export default {
 		sendMessage(message) {
 			for (let i = 0; i < this.rooms.length; i++) {
 				if (this.rooms[i].roomId == message.roomId) {
-					if (message.files.length > 0) {
+					if (message.files != null) {
 						const reader = new FileReader()
 						reader.onload = (event) => {
-							console.log(event.target.result)
 							this.ws[i].send(JSON.stringify({
 								'text_content': message.content,
 								'mentioned_users': message.usersTag,

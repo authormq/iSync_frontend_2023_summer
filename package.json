@@ -43,6 +43,7 @@
     "jspdf": "^2.5.1",
     "lowlight": "^2.9.0",
     "mitt": "^3.0.1",
+    "naive-ui": "^2.34.4",
     "socket.io-client": "^4.7.2",
     "sockjs-client": "^1.6.1",
     "stompjs": "^2.3.3",

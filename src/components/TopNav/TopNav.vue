@@ -145,7 +145,7 @@ export default {
           this.avatarUrl = response.data.avatar
           this.username = response.data.username
         }, (error) => {
-          alert(error.response.data)
+          alert(error)
         })
       }
       else {

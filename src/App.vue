@@ -2,8 +2,8 @@
   <!-- <div> -->
   <TopNav v-if="'/' !== instance.proxy.$route.path" />
   <!-- </div> -->
-  <!-- <RouterView /> -->
-  <DocumentView />
+  <RouterView />
+  <!-- <DocumentView /> -->
   <!-- 消息组件 -->
   <!-- 如果要展示分享链接，这一句代码就必须要加上 -->
   <StylishMessage :show="showMessage" :title="messageTitle" :content="messageContent" />
@@ -13,10 +13,12 @@
 
 <script setup>
 import { ref, getCurrentInstance } from 'vue'
-import DocumentView from './components/DocumentWheels/DocumentView.vue';
+import DocumentView from './components/DocumentWheels/DocumentView.vue'
 import TopNav from './components/TopNav/TopNav.vue'
 import StylishMessage from './components/Stylish/StylishMessage.vue'
-import GrapesjsView from './components/PrototypeWheels/GrapesjsView.vue';
+import GrapesjsView from './components/PrototypeWheels/GrapesjsView.vue'
+import { useStore } from 'vuex'
+
 
 let showMessage = ref(false)  // 展示消息
 let messageTitle = ref('')    // 消息标题
@@ -34,6 +36,14 @@ instance.proxy.$bus.on('message', (data) => {
     messageContent.value = ''
   }, data.time)
 })
+
+const store = useStore()
+store.commit('setIsLoggedIn', getCurrentInstance().proxy.$cookies.get('user_id') ? true :false)
+
+  // const { setIsLoggedIn } = mapMutations(['setIsLoggedIn'])
+  // console.log(getCurrentInstance().proxy.$cookies.get('user_id') ? true :false)
+  // setIsLoggedIn(getCurrentInstance().proxy.$cookies.get('user_id') ? true :false)
+
 
 </script>
 <style>

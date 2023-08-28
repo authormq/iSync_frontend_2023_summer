@@ -28,7 +28,7 @@
           p-id="2363"></path>
       </svg>
     </div>
-    <div class="stylish-select-dropdown" v-if="showDropdown" @mouseenter="leaveDropdown = false"
+    <div class="stylish-select-dropdown" v-show="showDropdown" @mouseenter="leaveDropdown = false" ref="dropdown"
       @mouseleave="leaveDropdown = true">
       <div class="stylish-select-dropdown-item" v-for="(option, index) in optionData" :key="index"
         @click="handleSelect(index); option.click(option.value)" @mousedown="handleMouseDown(index)"
@@ -159,6 +159,21 @@ export default {
       // this.$nextTick(() => {
       //   console.log('next', this.options)
       // })
+    })
+
+    this.$bus.on('manualSet', (val) => {
+      let i = 0;
+      for (; i < this.optionData.length; i++) {
+        if (this.optionData[i].value === val) {
+          break
+        }
+      }
+      this.$refs.dropdown.children[i].dispatchEvent(
+        new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+        view: window
+      }))
     })
     
     document.addEventListener('click', () => {

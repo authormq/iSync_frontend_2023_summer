@@ -11,7 +11,7 @@
       <StylishInput type="text" v-model:value="username" placeholder="用户名" spacing="30px" clearable autofocus/>
       <StylishInput type="password" v-model:value="password" placeholder="密码" spacing="35px" clearable>
         <template #hint>
-          <span class="input-hint" @click="changeToFindPassword">找回密码</span>
+          <!-- <span class="input-hint" @click="changeToFindPassword">找回密码</span> -->
         </template>
       </StylishInput>
     </div>
@@ -26,6 +26,7 @@
 import StylishModal from '../Stylish/StylishModal.vue'
 import StylishInput from '../Stylish/StylishInput.vue'
 import CloseIcon from '../Svg/CloseIcon.vue'
+import { mapMutations } from 'vuex'
 export default {
   name: 'Login',
   components: { StylishModal, StylishInput, CloseIcon },
@@ -40,6 +41,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['setIsLoggedIn']),
     handleClose() {
       this.$emit('close')
     },
@@ -68,9 +70,13 @@ export default {
       }
       this.$http.post('/api/accounts/login/', postData).then((response) => {
         // alert('登陆成功')
-        this.$emit('flushUserData')
+        // console.log(response.data)
+        // this.$cookies.set('user_id', )
+        // this.$emit('flushUserData')
+        this.setIsLoggedIn(true)
         this.$emit('close')
         this.$router.push('/main')
+        console.log('cookie', this.$cookies.get('user_id'))
       }, (error) => {
         let errStr = error.response.data.username
         if (errStr === undefined) {

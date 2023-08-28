@@ -32,6 +32,7 @@ import MailUnreadIcon from '../Svg/MailUnreadIcon.vue'
 import ChatIcon from '../Svg/ChatIcon.vue'
 import { RouterView, routeLocationKey } from 'vue-router'
 import TeamSelector from './TeamSelector.vue'
+import { mapMutations } from 'vuex'
 export default {
   name: 'TopNav',
   components: {
@@ -95,6 +96,7 @@ export default {
     this.ws.close()
   },
   methods: {
+    ...mapMutations(['setIsLoggedIn']),
     handleJudgeHasUnreadMsg(hasUnread) {
       if (hasUnread) {
         this.hasUnreadMsg = true
@@ -120,9 +122,12 @@ export default {
     },
     logout() {
       this.$http.get('/api/accounts/logout/').then((response) => {
-        alert('登出成功')
+        // alert('登出成功')
         this.handleFlushUserData()
         this.$router.push('/')
+        this.setIsLoggedIn(false)
+        this.$cookies.remove('teamId')
+        this.$cookies.remove('user_id')
       }, (error) => {
         alert(error.response.data)
       })

@@ -1413,13 +1413,13 @@ export default {
 	border: 3px solid rgba(199, 29, 35, 1);
 }
 
-ul,
-ul li {
+.ProseMirror ul,
+.ProseMirror ul li {
 	list-style-type: circle;
 }
 
-ol,
-ol li {
+.ProseMirror ol,
+.ProseMirror ol li {
 	list-style-type: decimal;
 }
 

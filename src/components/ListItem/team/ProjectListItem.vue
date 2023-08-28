@@ -9,7 +9,7 @@
       <!-- 如果处于 renaming 状态，显示输入框、确认、取消按钮 -->
       <template v-if="renaming">
         <input type="text" ref="nameInput" v-model="name">
-        <div class="check-icon" @click="cancelRename"><CrossIcon size="15px"/></div>
+        <div class="check-icon" @click.stop="cancelRename"><CrossIcon size="15px"/></div>
         <div class="check-icon" @click="updateRename"><CheckIcon size="15px"/></div>
       </template>
       <div class="project-creator">
@@ -48,8 +48,8 @@
       v-if="type ==='normal' && showContextMenu && !renaming"
       :style="{ left: x + 'px', top: y + 'px'}"
     >
-      <button @click="handleRename">重命名</button>
-      <button @click="sendDeleteRequest">删除</button>
+      <button @click.stop="handleRename">重命名</button>
+      <button @click.stop="sendDeleteRequest">删除</button>
   </div>
 </template>
 
@@ -85,7 +85,8 @@ export default {
       
       ========================= */
       nameOnDisplay: this.data.name, // 展示的名字
-      name: this.data.name // 绑定 input 的数据
+      name: this.data.name, // 绑定 input 的数据
+      tempName: ''
     }
   },
   mounted() {
@@ -95,6 +96,7 @@ export default {
         this.$refs.deleted.style.cursor = 'default'
       })
     }
+    // this.$bus.on('renameFailRequest', this.handleRenameFailDisplay)
   },
   methods: {
     sendRenameRequest() {
@@ -135,11 +137,17 @@ export default {
     // 提交重命名的 UI 响应和 接口（未写）
     updateRename() {
       this.renaming = false
-      this.nameOnDisplay = this.name
       this.$refs.name.style.display = 'block'
       this.$refs.container.style.cursor = 'pointer'
+      // this.tempName = this.nameOnDisplay
+      this.nameOnDisplay = this.name
       this.sendRenameRequest()
     },
+    // handleRenameFailDisplay(value) {
+    //   if (value) {
+    //     this.nameOnDisplay = this.tempName
+    //   }
+    // }
   }
 }
 </script>

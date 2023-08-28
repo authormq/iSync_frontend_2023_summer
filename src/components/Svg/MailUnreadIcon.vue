@@ -13,7 +13,7 @@ export default {
 }
 </script>
 
-<style scope>
+<style scoped>
 .mail-box {
   position: relative;
 }

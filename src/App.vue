@@ -1,6 +1,6 @@
 <template>
   <!-- <div> -->
-    <TopNav v-if="'/'!==instance.proxy.$route.path" /> 
+  <TopNav v-if="'/' !== instance.proxy.$route.path" />
   <!-- </div> -->
   <RouterView />
   <!-- <DocumentView /> -->
@@ -21,7 +21,6 @@ import GrapesjsView from './components/PrototypeWheels/GrapesjsView.vue';
 let showMessage = ref(false)  // 展示消息
 let messageTitle = ref('')    // 消息标题
 let messageContent = ref('')  // 消息内容
-
 
 const instance = getCurrentInstance() // 获取 'vm'
 // 绑定全局事件

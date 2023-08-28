@@ -28,7 +28,7 @@
           【说明】ProjectListItem 有一个 type 属性，默认值为 'normal'，展示卡片
           任何非 'normal' 值会使之变成带头 “恢复” icon 的被删除卡片
       -->
-      <div v-for="project in projectData" :key="project" @click="$router.push(`/project/${project.id}/doc`)">
+      <div v-for="project in projectData" :key="project" @click="jumpToProject(project.id, project.teamId)">
         <ProjectListItem :data="project"></ProjectListItem>
       </div>
     </template>
@@ -70,6 +70,7 @@ export default {
     this.$http.get(`/api/projects/list/${this.teamId}/`).then(
       response => {
         this.projectData = response.data.map((project) => ({
+          teamId: project.teamId,
           id: project.id,
           name: project.name,
           creator: project.creator,
@@ -86,6 +87,7 @@ export default {
     this.$http.get(`/api/projects/list/deleted/${this.teamId}/`).then(
       response => {
         this.recycleData = response.data.map((project) => ({
+          teamId: project.teamId,
           id: project.id,
           name: project.name,
           creator: project.creator,
@@ -109,6 +111,7 @@ export default {
       this.$http.get(`/api/projects/list/${this.teamId}/`).then(
         response => {
           this.projectData = response.data.map((project) => ({
+            teamId:project.teamId,
             id: project.id,
             name: project.name,
             creator: project.creator,
@@ -131,7 +134,12 @@ export default {
           data.project.name = data.rename
         },
         error => {
-          console.log(error.message)
+          this.$bus.emit('message', {
+            title: '重命名',
+            content: '重命名失败，请检查',
+            time: 3000
+          })
+          // this.$bus.emit('renameFailRequest', true)
         }
       )
     },
@@ -158,6 +166,7 @@ export default {
       this.$http.get(`/api/projects/${this.teamId}/search/?keyword=${this.projectKeyword}`).then(
         response => {
           this.searchData = response.data.map((project) => ({
+            teamId:project.teamId,
             id: project.id,
             name: project.name,
             creator: project.creator,
@@ -172,6 +181,10 @@ export default {
         },
         this.showSearch = true
       )
+    },
+    jumpToProject(id, teamId) {
+      this.$cookies.set('teamId',teamId)
+      this.$router.push(`/project/${id}/doc`)
     }
   }
 }

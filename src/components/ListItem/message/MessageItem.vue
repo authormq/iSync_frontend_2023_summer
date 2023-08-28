@@ -15,9 +15,13 @@
       </div>
       <div class="top-right">
         <!-- 未读时，设置为已读 -->
-        <MailIcon size="30" v-if="false" @click="handleChangeStatus"/>
+        <div v-if="!msg.isRead" @click="this.handleChangeStatus">
+          <MailIcon size="30" />
+        </div>
         <!-- 已读时，删除 -->
-        <TrashIcon size="30" v-else @click="handleDeleteMessage"/>
+        <div v-else @click="this.handleDeleteMessage">
+          <TrashIcon size="30" />
+        </div>
       </div>
     </div>
     <div class="bottom">
@@ -36,7 +40,6 @@ export default {
   name: 'MessageItem',
   props: ['msg'],
   components: { MailIcon, TrashIcon },
-  emits: ['sendChangeStatusSignal'],
   methods: {
     // 这个函数需要检查正确性
     handleChangeStatus() {
@@ -81,6 +84,7 @@ export default {
   color: rgba(199, 29, 35, 1);
   display: inline-block;
 }
+
 .from span {
   vertical-align: bottom;
   display: inline-block;
@@ -110,11 +114,13 @@ export default {
   align-items: center;
   margin-left: 10px;
 }
+
 .state-read {
   box-sizing: border-box;
   border: 1px solid rgba(199, 29, 35, 1);
   color: rgba(199, 29, 35, 1);
 }
+
 .state-unread {
   background: rgba(199, 29, 35, 1);
   color: white;
@@ -127,5 +133,4 @@ export default {
 
 .bottom {
   padding: 5px;
-}
-</style>
+}</style>

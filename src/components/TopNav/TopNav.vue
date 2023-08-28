@@ -64,13 +64,15 @@ export default {
       this.ws.onmessage = (messageEvent) => {
         const data = JSON.parse(messageEvent.data)
         for (let i = 0; i < data.mentioned_users.length; i++) {
-          if (data.mentioned_users[i]._id == this.currentUserId || data.mentioned_users[i]._id == '0') {
+          if (data.mentioned_users[i] == this.userId || data.mentioned_users[i] == '0') {
             let formData = new FormData()
-            formData.append('file', data.get('file_id'))
-            formData.append('receiver', this.currentUserId)
+            formData.append('file', data.file_id)
+            formData.append('receiver', this.userId)
+            formData.append('sender', data.sender.id)
             this.$http.post('/api/news/', formData).then(() => {
-              this.$bus.emit('newFileMessage', data.get('file_id'))
+              this.$bus.emit('newFileMessage', data.file_id)
             })
+            break
           }
         }
       }
@@ -82,11 +84,11 @@ export default {
         this.unreadMsg = this.allMessage.filter(message => message.isRead == false)
         if (this.unreadMsg.length != 0) { this.hasUnreadMsg = true }
       })
-      this.$bus.on('wssend', (file_id, mentioned_user_id) => {
+      this.$bus.on('wssend', (data) => {
         this.ws.send(JSON.stringify({
-          'file_id': file_id,
+          'file_id': data.docId,
           'sender_id': this.userId,
-          'mentioned_users': [mentioned_user_id],
+          'mentioned_users': [`${data.id}`],
         }))
       })
     }

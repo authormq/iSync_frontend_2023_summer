@@ -3,7 +3,7 @@
     <!-- banner-left -->
     <div>
       <WebIcon />
-      <h1 class="web-title">XXX项目管理系统</h1>
+      <h1 class="web-title">iSync项目管理系统</h1>
     </div>
     <!-- banner-right -->
     <div>

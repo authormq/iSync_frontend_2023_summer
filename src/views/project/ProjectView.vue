@@ -9,7 +9,7 @@
     <div class="right-part">
       <div class="project-info">
         <!-- <img :src="curProject.image"> -->
-        <img src="/src/assets/head.jpeg" alt="">
+        <img :src="curProject.image" alt="">
         <div class="info-container">
           <div class="title-time">
             <h2>{{ curProject.name }}</h2>

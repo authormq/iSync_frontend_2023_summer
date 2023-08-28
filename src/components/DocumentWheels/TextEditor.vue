@@ -1,7 +1,7 @@
 <!-- 文本编辑器 -->
 <template>
 	<div id="editor-wrapper" v-if="editor&&provider">
-		{{ provider.status }}
+		<!-- {{ provider.status }} -->
 		<div class="mask"></div>
 		<!-- 气泡菜单 除了样式不要乱改 -->
 		<bubble-menu :editor="editor" class="editor-bubble-menu">

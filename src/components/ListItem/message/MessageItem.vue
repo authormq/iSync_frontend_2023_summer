@@ -7,7 +7,7 @@
         <div class="from">来自 <span>{{ msg.sender }}</span> 的消息</div>
         <!-- 消息时间 -->
         <!-- 换成 msg.timeStamp -->
-        <div class="time">{{ msg.timeStamp }}</div>
+        <div class="time">{{ showDate }}</div>
         <!-- 消息状态 -->
         <!-- 下面的 v-if 要修改 -->
         <div class="state state-read" v-if="msg.isRead">已读</div>
@@ -15,11 +15,11 @@
       </div>
       <div class="top-right">
         <!-- 未读时，设置为已读 -->
-        <div v-if="!msg.isRead" @click="this.handleChangeStatus">
+        <div v-if="!msg.isRead" @click="handleChangeStatus">
           <MailIcon size="30" />
         </div>
         <!-- 已读时，删除 -->
-        <div v-else @click="this.handleDeleteMessage">
+        <div v-else @click="handleDeleteMessage">
           <TrashIcon size="30" />
         </div>
       </div>
@@ -28,7 +28,7 @@
       {{ msg.content }}
     </div>
     <div>
-      来自团队：{{ msg.teamName }} 的群聊
+      {{showFrom}}
     </div>
   </div>
 </template>
@@ -50,6 +50,19 @@ export default {
       this.$bus.emit('sendDeleteMessageRequest', this.msg)
     }
   },
+  computed: {
+    showDate() {
+      return this.msg.timeStamp
+    },
+    showFrom() {
+      console.log(this.msg);
+      if (this.msg.isGroup) {
+        return '来自群聊: ' + this.msg.teamName
+      } else {
+        return '来自团队: ' + this.msg.teamName + ' 的项目文档: ' + this.msg.fileName
+      }
+    }
+  }
 }
 </script>
 
@@ -133,4 +146,5 @@ export default {
 
 .bottom {
   padding: 5px;
-}</style>
+}
+</style>

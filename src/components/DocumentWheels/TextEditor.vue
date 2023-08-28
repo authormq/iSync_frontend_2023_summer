@@ -1,6 +1,7 @@
 <!-- 文本编辑器 -->
 <template>
-	<div id="editor-wrapper" v-if="editor">
+	<div id="editor-wrapper" v-if="editor&&provider">
+		{{ provider.status }}
 		<div class="mask"></div>
 		<!-- 气泡菜单 除了样式不要乱改 -->
 		<bubble-menu :editor="editor" class="editor-bubble-menu">
@@ -517,8 +518,9 @@
 
 		</div>
 		<div class="document-title">{{ docName }}</div>
-		<editor-content :editor="editor" id="document-content" v-model="localContent"
-			@update="$emit('update:docContent', editor.storage.content)" />
+		<!-- <editor-content :editor="editor" id="document-content" v-model="localContent"
+			@update="$emit('update:docContent', editor.storage.content)" /> -->
+		<editor-content :editor="editor" id="document-content" />
 		<div id="hidden-area"></div>
 		<div class="document-words">
 			{{ editor.storage.characterCount.words() }} 个单词
@@ -577,8 +579,8 @@ export default {
 	},
 	props: {
 		docId: {
-			type: Number,
-			default: 1
+			type: String,
+			default: '1'
 		},
 		docName: {
 			type: String,
@@ -595,7 +597,7 @@ export default {
 	data() {
 		return {
 			userAvatar: '/src/assets/avatar.jpeg',
-			localContent: '',
+			// localContent: '',
 			docLimit: 100000,
 			autoSavePeriod: 10000,
 			editable: false,
@@ -889,7 +891,7 @@ export default {
 					multicolor: true
 				})
 			],
-			content: '',
+			// content: '',
 			editable: this.editable,
 			onSelectionUpdate: () => {
 				let selected = window.getSelection()
@@ -909,6 +911,12 @@ export default {
 			this.saveDocument('autosave')
 		}, this.autoSavePeriod)
 		this.editor.commands.clearContent()
+		//当provider连接上时的设置
+		this.provider.on('status', event => {
+			if (event.status === 'connected') {
+				this.editor.commands.clearContent()
+			}
+		})
 		//只有没有人在同时编辑的时候才加载，否则使用正在共享编辑的版本
 		//好像并不需要，后端还是能保存一段时间？
 		// setTimeout(() => {
@@ -926,8 +934,7 @@ export default {
 		})
 	},
 	beforeUnmount() {
-		this.editor.destroy()
-		this.provider.destroy()
+
 	},
 }
 

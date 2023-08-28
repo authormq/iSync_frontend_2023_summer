@@ -2,7 +2,7 @@
 <template>
 	<div>
 		<!-- <vue-advanced-chat -->
-		<vue-advanced-chat ref="test" theme="light" :styles="JSON.stringify(style)" height="calc(100vh - 110px)"
+		<vue-advanced-chat ref="test" theme="light" height="calc(100vh - 110px)"
 			:current-user-id="currentUserId" :rooms="JSON.stringify(rooms)" :rooms-loaded="roomsLoaded"
 			:messages="JSON.stringify(messages)" :messages-loaded="messagesLoaded" :custom-search-room-enabled="true"
 			:show-add-room="false"

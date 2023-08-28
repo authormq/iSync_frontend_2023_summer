@@ -1098,15 +1098,18 @@ export default {
 
 /* 文档字数和单词统计 */
 .document-words {
-	position: sticky;
+	position: fixed;
 	bottom: 0;
-	left: 0;
+	left: 10px;
 }
 
 .document-characters {
-	position: sticky;
+	display: inline-block;
+	padding-left: 10px;
+	border-left: 1px solid rgba(199,29,35, 1);
+	/* position: sticky;
 	bottom: 0;
-	left: 0;
+	left: 0; */
 }
 
 /* 文档标题 */
@@ -1417,13 +1420,13 @@ export default {
 	border: 3px solid rgba(199, 29, 35, 1);
 }
 
-ul,
-ul li {
+.ProseMirror ul,
+.ProseMirror ul li {
 	list-style-type: circle;
 }
 
-ol,
-ol li {
+.ProseMirror ol,
+.ProseMirror ol li {
 	list-style-type: decimal;
 }
 

@@ -19,7 +19,7 @@ export default {
     DocListItem, NewProject, CreateDocModal
   },
   // props: ['docList'],
-  props: ['projectId'],
+  // props: ['projectId'],
   data() {
     return {
       showModal: false,

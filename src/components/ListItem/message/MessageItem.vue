@@ -40,7 +40,6 @@ export default {
   name: 'MessageItem',
   props: ['msg'],
   components: { MailIcon, TrashIcon },
-  emits: ['sendChangeStatusSignal'],
   methods: {
     // 这个函数需要检查正确性
     handleChangeStatus() {

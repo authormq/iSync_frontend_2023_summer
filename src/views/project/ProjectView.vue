@@ -1,10 +1,10 @@
 <!-- 项目详情页 -->
 <template>
-  <div class="container">
+  <div class="container" :key="$route.fullPath">
     <ul>
       <li><router-link class="link" :to="`/project/${$route.params.projectId}/doc`">项目文档</router-link></li>
       <li><router-link class="link" :to="`/project/${$route.params.projectId}/page`">项目原型</router-link></li>
-      <li class="link" @click="$router.push(`/teams/${curProject.teamId}/info`)">返回团队</li>
+      <li class="link" @click="$router.push(`/team/${curProject.teamId}/info`)">返回团队</li>
     </ul>
     <div class="right-part">
       <div class="project-info">

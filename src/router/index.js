@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+
 import HomeView from '../views/HomeView.vue'
 import UserView from '../views/UserView.vue'
 import TeamView from '../views/team/TeamView.vue'
@@ -14,6 +15,9 @@ import MessageView from '../views/MessageView.vue'
 import WebBuilder from '../views/editing/WebBuilder.vue'
 import FirstView from '../views/FirstView.vue'
 import DocumentView from '../components/DocumentWheels/DocumentView.vue'
+import GrapesjsView from '../components/PrototypeWheels/GrapesjsView.vue'
+
+import store from '../store'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -83,11 +87,21 @@ const router = createRouter({
       path: `/doc/:docId`,
       component: DocumentView
     },
-    // {
-    //   path: `/page/:protoId`,
-    //   component: 
-    // } 
+    {
+      path: `/page/:protoId`,
+      component: GrapesjsView
+    } 
   ]
+})
+
+router.beforeEach((to, from, next) => {
+  const isLoggedIn = store.state.isLoggedIn
+  if (!isLoggedIn && to.path !== '/') {
+    console.log('not log', isLoggedIn)
+    next('/')
+  } else {
+    next()
+  }
 })
 
 export default router

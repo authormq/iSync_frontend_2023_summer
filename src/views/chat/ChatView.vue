@@ -109,6 +109,7 @@ export default {
 							let formData = new FormData()
 							formData.append('group_message', message.id)
 							formData.append('receiver', this.currentUserId)
+							formData.append('sender', parseInt(message.sender.user.id))
 							this.$http.post('/api/news/', formData).then(() => {
 								this.$bus.emit('newMessage', message)
 							})

@@ -70,7 +70,6 @@ export default {
             this.$http.post('/api/news/', formData).then(() => {
               this.$bus.emit('newFileMessage', data.get('file_id'))
             })
-            this.$bus.emit('judgeHasUnreadMsg', true)
           }
         }
       }

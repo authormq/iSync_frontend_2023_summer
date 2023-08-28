@@ -32,19 +32,24 @@ export default {
     };
   },
   mounted() {
-    this.$http.get('/api/news/').then((response) => {
-      this.allMessage = response.data.map((news) => ({
-        msgId: news.id,
-        timeStamp: news.group_message.create_datetime,
-        sender: news.group_message.sender.user.username,
-        receiver: news.receiver,
-        isRead: news.is_read,
-        teamName: news.team_name,
-        content: `${news.group_message.sender.user.username}提到了你`,
-      }))
-      // 这一行必须有，用来获取未读的信息
-      this.divideUnReadMessage()
-    })
+    this.$http.get('/api/news/').then(
+      (response) => {
+        this.allMessage = response.data.map((news) => ({
+          msgId: news.id,
+          timeStamp: news.group_message.create_datetime,
+          sender: news.group_message.sender.user.username,
+          receiver: news.receiver,
+          isRead: news.is_read,
+          teamName: news.team_name,
+          content: `${news.group_message.sender.user.username}提到了你`,
+        }))
+        // 这一行必须有，用来获取未读的信息
+        for (let i = 0; i < this.allMessage.length; i++) {
+          if (!this.allMessage[i].isRead) this.unReadMessage.push(this.allMessage[i])
+        }
+        console.log('@@@', this.allMessage);
+        console.log('###', this.unReadMessage)
+      })
     // 具体需不需要这些函数，看后期后端怎么给我返回数据
     this.$bus.on('newMessage', (message) => {
       // alert(`${message.sender.user.username}提到了你`)
@@ -53,30 +58,48 @@ export default {
       //   content: `${message.sender.user.username}提到了你`,
       //   time: 1000
       // })
-      this.unReadMessage = this.unReadMessage.unshift({
+      this.unReadMessage.unshift({
         timeStamp: message.create_datetime,
         sender: message.sender.user.username,
-        receiver: '1',
+        receiver: this.receiver,
         isRead: false,
         content: `${message.sender.user.username}提到了你`
       })
+      this.$bus.emit('judgeHasUnreadMsg', true)
     })
     this.$bus.on('sendChangeStatusSignal', this.handleReadStatus)
     this.$bus.on('sendDeleteMessageRequest', this.handleDeleteMessage)
   },
   methods: {
     handleReadStatus(message) {
-      this.$bus.emit('handleJudgeHasUnreadMsg', false)
-      message.isRead = !message.isRead
-      let messageIdx = this.unReadMessage.indexOf(message)
-      if (messageIdx != -1) {
-        this.unReadMessage.splice(messageIdx, 1)
-      } else {
-        this.unReadMessage.unshift(message)
-      }
+      console.log(this.unReadMessage);
+      this.$http.patch(`/api/news/${message.msgId}/`).then(
+        response => {
+          console.log(this.unReadMessage);
+          message.isRead = !message.isRead
+          let messageIdx = this.unReadMessage.indexOf(message)
+          console.log('111', this.unReadMessage);
+          if (messageIdx != -1) {
+            this.unReadMessage.splice(messageIdx, 1)
+            console.log('222', this.unReadMessage);
+          } else {
+            this.unReadMessage.unshift(message)
+          }
+          if (this.unReadMessage.length > 0) {
+            this.$bus.emit('judgeHasUnreadMsg', true)
+          } else {
+            this.$bus.emit('judgeHasUnreadMsg', false)
+          }
+        },
+        error => {
+          console.log(error.message)
+        }
+      )
     },
     divideUnReadMessage() {
-      this.unReadMessage = this.allMessage.filter(message => message.isRead == false)
+      for (let i = 0; i < this.allMessage.length; i++) {
+        if (!this.allMessage[i].isRead) this.unReadMessage.push(this.allMessage[i])
+      }
     },
     setAllRead() {
       this.allMessage.filter(message => message.isRead == false).forEach(message => message.isRead = true)

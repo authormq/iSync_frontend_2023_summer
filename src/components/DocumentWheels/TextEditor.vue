@@ -189,6 +189,9 @@
 					</svg>
 				</button>
 
+				<!--  -->
+				<slot name="showHistoryButton"></slot>
+
 				<!-- 行内代码 -->
 				<button @click="editor.chain().focus().toggleCode().run()"
 					:disabled="!editor.can().chain().focus().toggleCode().run()"
@@ -520,7 +523,11 @@
 		<div class="document-title">{{ docName }}</div>
 		<!-- <editor-content :editor="editor" id="document-content" v-model="localContent"
 			@update="$emit('update:docContent', editor.storage.content)" /> -->
-		<editor-content :editor="editor" id="document-content" />
+			<div class="flex">
+				<editor-content :editor="editor" id="document-content" />
+				<slot v-if="showHistoryVersion" name="version"></slot>
+			</div>
+		
 		<div id="hidden-area"></div>
 		<div class="document-words">
 			{{ editor.storage.characterCount.words() }} 个单词
@@ -578,6 +585,10 @@ export default {
 		NColorPicker
 	},
 	props: {
+		showHistoryVersion: {
+			type: Boolean,
+			default: false,
+		},
 		docId: {
 			type: String,
 			default: '1'
@@ -949,10 +960,11 @@ export default {
 /* 最外层盒子 */
 #editor-wrapper {
 	position: relative;
-	margin: 0 10px;
+	/* margin: 0 10px; */
 	background: rgb(240, 240, 240);
+	width: 100%;
 	/* width: 80%; */
-	margin: 0 auto;
+	/* margin: 0 auto; */
 }
 
 
@@ -1122,16 +1134,17 @@ export default {
 
 /* 编辑器内容区 */
 #document-content {
-	padding: 20px;
+	/* padding: 20px; */
 	overflow: auto;
 }
 
 
 .ProseMirror {
 	min-height: 700px;
-	width: 60%;
+	/* width: 60%; */
+	min-width: 700px;
 	caret-color: rgba(199, 29, 35, 1);
-	margin: 0 auto;
+	/* margin: 0 auto; */
 	padding: 100px;
 	border: 1px solid lightgrey;
 	box-sizing: border-box;
@@ -1434,5 +1447,20 @@ export default {
 	display: flex;
 	width: 1200px;
 	overflow-x: scroll;
+}
+
+.temp-container ul {
+	max-height: 70px;
+	overflow-y: auto;
+	color: yellow
+}
+
+.flex {
+	display: flex;
+	justify-content: space-evenly;
+	width: 100%
+}
+.flex div {
+	flex: none;
 }
 </style>

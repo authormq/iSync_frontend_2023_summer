@@ -1,14 +1,7 @@
 <template>
+    
     <div id="inspector-wrapper">
-        <button @click="showHistoryVersion = !showHistoryVersion">点击按钮</button>
-        <ul v-if="showHistoryVersion">
-            <li v-for="data in versions" :key="data.versionId">
-                <button @click="showVersionContent(data.versionId)">
-                    版本编号：{{ data.versionId }} 保存时间：{{ data.saveTime }}</button>
-            </li>
-        </ul>
-        <button v-if="currentVersionId !== undefined" @click="coverDocument">以该版本替换当前文档</button>
-        <editor-content :editor="inspector"></editor-content>
+        <editor-content v-if="showHistoryVersion" :editor="inspector"></editor-content>
     </div>
 </template>
 
@@ -36,40 +29,41 @@ export default {
     },
     data() {
         return {
-            showHistoryVersion: false,
-            currentVersionId: undefined,
             currentContent: '有一些东西',
             //以下需要对接口
             inspector: undefined
         }
     },
-    methods: {
-        //展示选择的信息
-        showVersionContent(versionId) {
-            this.currentVersionId = versionId
-            this.$http.get(`/api/projects/file/${this.docId}/version/show/${versionId}`).then((response) => {
-                this.currentContent = response.data
-                this.inspector.commands.setContent(response.data)
-            })
+    props:{
+        showHistoryVersion:{
+            default:false
         },
-        //覆盖版本，要求向上emit
-        coverDocument() {
-            this.$http.post(`/api/projects/file/${this.docId}/version/${this.currentVersionId}/`).then(() => {
-                this.$emit('updateContent', this.currentContent)
-            })
+        content:{
+            default:''
         }
+    },
+    methods: {
+        // //展示选择的信息
+        // showVersionContent(versionId) {
+        //     this.currentVersionId = versionId
+        //     this.$http.get(`/api/projects/file/${this.docId}/version/show/${versionId}`).then((response) => {
+        //         this.currentContent = response.data
+        //         this.inspector.commands.setContent(response.data)
+        //     })
+        // },
+        //覆盖版本，要求向上emit
+        // coverDocument() {
+        //     this.$http.post(`/api/projects/file/${this.docId}/version/${this.currentVersionId}/`).then(() => {
+        //         this.$emit('updateContent', this.currentContent)
+        //     })
+        // }
 
     },
-    props: {
-        docId: {
-            type: Number,
-        },
-        versions: {
-            type: Object,
-            default: []
+    watch:{
+        content(value){
+            this.inspector.commands.setContent(value)
         }
     },
-    emits: ['updateContent'],
     mounted() {
         this.inspector = new Editor({
             extensions: [
@@ -117,4 +111,15 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped>
+/* #inspector-wrapper {
+    position: relative;
+} */
+btn {
+    align-self: flex-end;
+    /* position: fixed;
+    top: 100px;
+    left: 100px; */
+}
+
+</style>

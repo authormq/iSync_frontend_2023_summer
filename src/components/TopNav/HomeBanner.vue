@@ -83,7 +83,7 @@ export default {
 }
 
 .web-title {
-  font-size: 30px;
+  font-size: 35px;
   font-weight: bold;
   color: #c71d23;
 }

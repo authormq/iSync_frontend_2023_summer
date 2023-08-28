@@ -162,18 +162,21 @@ export default {
     })
 
     this.$bus.on('manualSet', (val) => {
-      let i = 0;
-      for (; i < this.optionData.length; i++) {
-        if (this.optionData[i].value === val) {
-          break
+      this.$nextTick(() => {
+        let i = 0;
+        for (; i < this.optionData.length; i++) {
+          if (this.optionData[i].value === val) {
+            break
+          }
         }
-      }
-      this.$refs.dropdown.children[i].dispatchEvent(
-        new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-        view: window
-      }))
+        console.log('options', this.$refs.dropdown)
+        this.$refs.dropdown.children[i].dispatchEvent(
+          new MouseEvent('click', {
+          bubbles: true,
+          cancelable: true,
+          view: window
+        }))
+      })
     })
     
     document.addEventListener('click', () => {

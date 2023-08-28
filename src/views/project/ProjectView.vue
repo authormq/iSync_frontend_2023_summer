@@ -4,6 +4,7 @@
     <ul>
       <li><router-link class="link" :to="`/project/${$route.params.projectId}/doc`">项目文档</router-link></li>
       <li><router-link class="link" :to="`/project/${$route.params.projectId}/page`">项目原型</router-link></li>
+      <li class="link" @click="$router.push(`/teams/${curProject.teamId}/info`)">返回团队</li>
     </ul>
     <div class="right-part">
       <div class="project-info">
@@ -28,16 +29,7 @@
         
         <NewProject v-if="$route.fullPath.indexOf('doc') !== -1" @click="showDocModal = true"/>
         <NewProject v-else @click="showPageModal = true" />
-        <RouterView ></RouterView>
-        <!-- <PageListView :protoList="protoList" :projectId="projectId"></PageListView> -->
-        <!-- <PageListView :protoList="protoList"></PageListView>
-        <PageListView :protoList="protoList"></PageListView>
-        <PageListView :protoList="protoList"></PageListView>
-        <DocListView :docList="docList"></DocListView>
-        <DocListView :docList="docList"></DocListView>
-        <DocListView :docList="docList"></DocListView>
-        <DocListView :docList="docList"></DocListView>
-        <DocListView :docList="docList"></DocListView> -->
+        <RouterView :key="$route.fullPath"></RouterView>
       </div>
     </div>
   </div>
@@ -57,7 +49,6 @@ export default {
   data() {
     return {
       curProject: {},
-      docList: [],
       protoList: [],
       projectId: '',
       showDocModal: false,
@@ -67,7 +58,8 @@ export default {
   mounted() {
     // 这里等后端接口写好后直接接上即可
     // id: projectId
-    this.$http.get(`/api/projects/1/information/`).then(
+    this.projectId = this.$route.params.projectId
+    this.$http.get(`/api/projects/${this.projectId}/information/`).then(
       response => {
         this.curProject = response.data
       },
@@ -75,7 +67,6 @@ export default {
         console.log(error.message)
       }
     )
-    this.projectId = this.$route.params.projectId
     this.$http.get(`/api/projects/file/list/${this.projectId}/`).then(
       response => {
         this.docList = response.data.map((doc) => ({
@@ -87,7 +78,7 @@ export default {
         console.log(error.message)
       }
     )
-    this.$http.get(`/api/projects/page/1/list/`).then(
+    this.$http.get(`/api/projects/page/${this.projectId}/list/`).then(
       response => {
         this.protoList = response.data.map((proto) => ({
           id: proto.id,

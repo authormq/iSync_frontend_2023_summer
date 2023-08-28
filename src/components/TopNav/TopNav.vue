@@ -1,15 +1,16 @@
 <template>
   <div class="header-container">
     <div>
-      <TeamSelector/>
+      <TeamSelector />
     </div>
     <div>
       <ul class="header-nav">
-        <li @click="jumpToChatPage"><ChatIcon /></li>
-        <li v-if="!hasUnreadMsg"
-        @click="jumpToMailPage"><MailIcon /></li>
-        <li v-else
-        @click="jumpToMailUnreadPage"><MailUnreadIcon /></li>
+        <li v-if="!hasUnreadMsg" @click="jumpToMailPage">
+          <MailIcon />
+        </li>
+        <li v-else @click="jumpToMailUnreadPage">
+          <MailUnreadIcon />
+        </li>
       </ul>
       <div class="user-avatar-container">
         <img class="user-avatar" :src="avatarUrl" @mouseover="avatarIsHovered = true; showAvatarHint = true"
@@ -40,9 +41,22 @@ export default {
     RouterView,
     TeamSelector
   },
+  data() {
+    return {
+      userId: '',
+      avatarIsHovered: false,
+      showAvatarHint: false,
+      avatarHintIsHovered: false,
+      username: '',
+      avatarUrl: '/src/assets/avatar.jpeg',
+      hasUnreadMsg: false,
+      ws: undefined
+    }
+  },
   mounted() {
     this.handleFlushUserData()
     this.$bus.on('updateTopNavAvatar', this.updateTopNavAvatarAfterModify)
+    this.$bus.on('judgeHasUnreadMsg', this.handleJudgeHasUnreadMsg)
     if (this.$cookies.isKey('user_id') == true) {
       this.userId = this.$cookies.get('user_id')
       this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/news/${this.userId}/`)
@@ -56,9 +70,18 @@ export default {
             this.$http.post('/api/news/', formData).then(() => {
               this.$bus.emit('newFileMessage', data.get('file_id'))
             })
+            this.$bus.emit('judgeHasUnreadMsg', true)
           }
         }
       }
+      this.$http.get('/api/news/').then((response) => {
+        this.allMessage = response.data.map((news) => ({
+          isRead: news.is_read,
+        }))
+        // 这一行必须有，用来获取未读的信息
+        this.unreadMsg = this.allMessage.filter(message => message.isRead == false)
+        if (this.unreadMsg.length != 0) { this.hasUnreadMsg = true }
+      })
       this.$bus.on('wssend', (file_id, mentioned_user_id) => {
         this.ws.send(JSON.stringify({
           'file_id': file_id,
@@ -71,19 +94,14 @@ export default {
   unmounted() {
     this.ws.close()
   },
-  data() {
-    return {
-      userId: '',
-      avatarIsHovered: false,
-      showAvatarHint: false,
-      avatarHintIsHovered: false,
-      username: '',
-      avatarUrl: '/src/assets/avatar.jpeg',
-      hasUnreadMsg: true,
-      ws: undefined
-    }
-  },
   methods: {
+    handleJudgeHasUnreadMsg(hasUnread) {
+      if (hasUnread) {
+        this.hasUnreadMsg = true
+      } else {
+        this.hasUnreadMsg = false
+      }
+    },
     handleMouseLeaveAvatar() {
       this.avatarIsHovered = false
       setTimeout(() => {
@@ -114,7 +132,7 @@ export default {
         this.$router.push('/user')
       }
       else {
-        this.showLoginModal=true
+        this.showLoginModal = true
       }
     },
     handleFlushUserData() {
@@ -127,7 +145,7 @@ export default {
         })
       }
       else {
-        this.avatarUrl= '/src/assets/avatar.jpeg'
+        this.avatarUrl = '/src/assets/avatar.jpeg'
       }
     },
     updateTopNavAvatarAfterModify(avatar) {
@@ -158,7 +176,7 @@ export default {
   padding: 10px 20px;
   position: relative;
   z-index: 100;
-  
+
   box-shadow: 2px 2px 3px lightgrey;
 }
 
@@ -211,10 +229,11 @@ export default {
   text-align: center;
   overflow: hidden;
 }
+
 .user-avatar-hint>span {
   font-size: 18px;
   font-weight: bold;
-  color: rgba(199,29,35, 1);
+  color: rgba(199, 29, 35, 1);
 }
 
 

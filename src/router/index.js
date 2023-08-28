@@ -14,6 +14,7 @@ import MessageView from '../views/MessageView.vue'
 import WebBuilder from '../views/editing/WebBuilder.vue'
 import FirstView from '../views/FirstView.vue'
 import DocumentView from '../components/DocumentWheels/DocumentView.vue'
+import GrapesjsView from '../components/PrototypeWheels/GrapesjsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -83,10 +84,10 @@ const router = createRouter({
       path: `/doc/:docId`,
       component: DocumentView
     },
-    // {
-    //   path: `/page/:protoId`,
-    //   component: 
-    // } 
+    {
+      path: `/page/:protoId`,
+      component: GrapesjsView
+    } 
   ]
 })
 

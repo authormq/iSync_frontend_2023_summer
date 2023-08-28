@@ -27,10 +27,10 @@
     :show="showRegisterModal"
     @close="showRegisterModal = false"
   />
-  <FindPassword
+  <!-- <FindPassword
     :show="showFindPasswordModal"
     @close="showFindPasswordModal = false"
-  />
+  /> -->
 </template>
 
 <script>

@@ -164,6 +164,12 @@ export default {
       ]
     }
   },
+  created() {
+    if (this.$cookies.isKey('user_id')) {
+      // this.$router.go(-1)
+      this.$router.push('/main')
+    }
+  },
   methods: {
     showLogin() {
       this.$bus.emit('showLogin')

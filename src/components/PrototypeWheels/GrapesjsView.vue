@@ -26,6 +26,7 @@ import html2canvas from 'html2canvas';
 export default {
 	name: 'GrapesEditor',
 	mounted() {
+		this.pageId = this.$route.params.protoId
 		this.initEditor();
 		this.addBlock();
 		let topPanel = document.querySelector('.gjs-pn-panel.gjs-pn-devices-c.gjs-one-bg.gjs-two-color .gjs-pn-buttons')
@@ -46,8 +47,7 @@ export default {
 	data() {
 		return {
 			ws: '',
-			pageId: 1,
-			projectID: 1,
+			pageId: null,
 			pageName: 'page1',
 			canvasHeight: '1000',
 			canvasWidth: '1000',
@@ -123,6 +123,7 @@ export default {
 						zh, en
 					}
 				},
+				height: 'calc(100vh - 70px)',
 				showOffsets: 1,
 				autosave: false,
 				noticeOnUnload: 0,
@@ -185,8 +186,8 @@ export default {
 					// autoload: false,
 					options: {
 						remote: {
-							urlLoad: `http://localhost:3000/projects/${this.projectID}`,
-							urlStore: `http://localhost:3000/projects/${this.projectID}`,
+							urlLoad: `http://localhost:3000/projects/${this.pageId}`,
+							urlStore: `http://localhost:3000/projects/${this.pageId}`,
 							// The `remote` storage uses the POST method when stores data but
 							// the json-server API requires PATCH.
 							fetchOptions: opts => (opts.method === 'POST' ?  { method: 'PATCH' } : {}),
@@ -195,7 +196,7 @@ export default {
 							// project data from the response result.
 							onStore: data => {
 								this.ws.send(JSON.stringify(data))
-								return { id: this.projectID, data }
+								return { id: this.pageId, data }
 							},
 							onLoad: result => result.data,
 						}

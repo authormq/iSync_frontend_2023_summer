@@ -72,10 +72,11 @@ export default {
         },
 
         selectItem(index) {
-            const item = this.items[index].username
+            const item = this.items[index]
             if (item) {
-                this.command({ id: item })
-                this.$bus.emit('wssend', item.docId, item.id)
+                this.command({ id: item.username })
+                console.log(item)
+                this.$bus.emit('wssend', {docId: item.docId, id: item.id})
             }
         },
     },

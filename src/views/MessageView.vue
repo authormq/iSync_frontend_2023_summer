@@ -36,12 +36,12 @@ export default {
       (response) => {
         this.allMessage = response.data.map((news) => ({
           msgId: news.id,
-          timeStamp: news.group_message.create_datetime,
-          sender: news.group_message.sender.user.username,
+          timeStamp: news.group_message == null ? news.create_datetime : news.group_message,
+          sender: news.group_message == null ? news.sender.username : news.group_message.sender.user.username,
           receiver: news.receiver,
           isRead: news.is_read,
           teamName: news.team_name,
-          content: `${news.group_message.sender.user.username}提到了你`,
+          content: news.group_message == null ? `${news.sender.username}提到了你` : `${news.group_message.sender.user.username}提到了你`,
         }))
         // 这一行必须有，用来获取未读的信息
         for (let i = 0; i < this.allMessage.length; i++) {

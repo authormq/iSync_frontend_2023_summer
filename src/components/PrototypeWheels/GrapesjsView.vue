@@ -32,13 +32,12 @@ export default {
 		let sizeSetter = document.querySelector('#size-setter')
 		topPanel.appendChild(sizeSetter)
 		this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/page/2/`)
-		this.ws.onmessage = () => {
-			this.editor.load()
-		}
-		this.editor.on('storage:store', () => {
-			this.ws.send(JSON.stringify({}))
-			console.log(1)
-		})
+		// this.ws.onmessage = (message) => {
+		// 	const data = JSON.parse(message.data).data
+		// 	if (JSON.stringify(this.editor.getProjectData()) !== JSON.stringify(data)) {
+		// 		this.editor.loadProjectData(data)
+		// 	}
+		// }
 		//设置默认大小
 	},
 	unmounted() {
@@ -182,7 +181,7 @@ export default {
 				storageManager: {
 					type: 'remote',
 					stepsBeforeSave: 1,
-					autosave: false,
+					autosave: true,
 					// autoload: false,
 					options: {
 						remote: {
@@ -194,7 +193,10 @@ export default {
 							// As the API stores projects in this format `{id: 1, data: projectData }`,
 							// we have to properly update the body before the store and extract the
 							// project data from the response result.
-							onStore: data => ({ id: this.projectID, data }),
+							onStore: data => {
+								this.ws.send(JSON.stringify(data))
+								return { id: this.projectID, data }
+							},
 							onLoad: result => result.data,
 						}
 					},

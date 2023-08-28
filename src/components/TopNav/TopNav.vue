@@ -125,12 +125,12 @@ export default {
       this.$http.get('/api/accounts/logout/').then((response) => {
         // alert('登出成功')
         this.handleFlushUserData()
-        this.$router.push('/')
         this.setIsLoggedIn(false)
         this.$cookies.remove('teamId')
         this.$cookies.remove('user_id')
+        this.$router.push('/')
       }, (error) => {
-        alert(error.response.data)
+        alert(error)
       })
     },
     handleClickAvatar() {

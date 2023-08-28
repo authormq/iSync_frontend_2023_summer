@@ -8,7 +8,7 @@
   <!-- 如果要展示分享链接，这一句代码就必须要加上 -->
   <StylishMessage :show="showMessage" :title="messageTitle" :content="messageContent" />
   <!-- <document-view></document-view> -->
-  <GrapesjsView />
+  <!-- <GrapesjsView /> -->
 </template>
 
 <script setup>

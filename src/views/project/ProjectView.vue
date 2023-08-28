@@ -1,6 +1,6 @@
 <!-- 项目详情页 -->
 <template>
-  <div class="container">
+  <div class="container" :key="$route.fullPath">
     <ul>
       <li><router-link class="link" :to="`/project/${$route.params.projectId}/doc`">项目文档</router-link></li>
       <li><router-link class="link" :to="`/project/${$route.params.projectId}/page`">项目原型</router-link></li>
@@ -28,7 +28,7 @@
         
         <NewProject v-if="$route.fullPath.indexOf('doc') !== -1" @click="showDocModal = true"/>
         <NewProject v-else @click="showPageModal = true" />
-        <RouterView :key="$route.fullPath"></RouterView>
+        <RouterView ></RouterView>
         <!-- <PageListView :protoList="protoList" :projectId="projectId"></PageListView> -->
         <!-- <PageListView :protoList="protoList"></PageListView>
         <PageListView :protoList="protoList"></PageListView>

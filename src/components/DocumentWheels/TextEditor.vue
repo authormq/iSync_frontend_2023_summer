@@ -862,15 +862,18 @@ export default {
 
 /* 文档字数和单词统计 */
 .document-words {
-	position: sticky;
+	position: fixed;
 	bottom: 0;
-	left: 0;
+	left: 10px;
 }
 
 .document-characters {
-	position: sticky;
+	display: inline-block;
+	padding-left: 10px;
+	border-left: 1px solid rgba(199,29,35, 1);
+	/* position: sticky;
 	bottom: 0;
-	left: 0;
+	left: 0; */
 }
 
 /* 编辑器内容区 */

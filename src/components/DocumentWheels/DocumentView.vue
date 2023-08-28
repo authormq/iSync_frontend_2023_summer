@@ -1,7 +1,7 @@
 <template>
     <text-editor :doc-name="docName" :doc-id="docId" v-model:doc-content="docContent" @update-version="getVersionInfo">
     </text-editor>
-    <version-inspector @updateContent="handleUpdateContent" :doc-id="docId" :versions="versions"></version-inspector>
+    <!-- <version-inspector @updateContent="handleUpdateContent" :doc-id="docId" :versions="versions"></version-inspector> -->
 </template>
 
 <script>

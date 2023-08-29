@@ -54,7 +54,8 @@ ul {
 .container>div {
   margin-left: 10px;
   width: calc(100% - 330px);
-  padding: 20px;
+  padding: 0;
+  padding-left: 20px;
   /* background-color: lightgrey; */
 }
 

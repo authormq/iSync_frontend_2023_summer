@@ -242,7 +242,6 @@ export default {
 		document.addEventListener('click', () => {
 			const doc = this.$refs.chat.shadowRoot
 			const list = doc.querySelector('.vac-menu-list')
-			console.log('chi: ', list.children)
 			if (list) {
 				if (list.children.length === 2) {
 					list.children[0].children[0].innerHTML = '引用'

@@ -123,8 +123,10 @@ export default {
             })
             // 鼠标松开的响应
             document.addEventListener('mouseup', () => {
-                this.isDragging = false
-                this.$refs.draggable.style.cursor = 'grab'
+                if (this.showHistoryVersion) {
+                    this.isDragging = false
+                    this.$refs.draggable.style.cursor = 'grab'
+                }  
             })
             // 鼠标点击的响应（点击区不在拖动面板内，隐藏面板）
             document.addEventListener('click', (e) => {

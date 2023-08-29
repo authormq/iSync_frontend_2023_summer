@@ -1,7 +1,7 @@
 <template>
   <!-- <div> -->
     <!-- 处于首页、文档编辑页时不显示 -->
-  <TopNav v-if="(!'/' === instance.proxy.$route.path && instance.proxy.$route.path.indexOf('/doc/') !== -1)" />
+  <TopNav v-if="!('/' === instance.proxy.$route.path || instance.proxy.$route.path.indexOf('/doc/') !== -1)" />
   <!-- </div> -->
   <RouterView />
   <!-- <DocumentView /> -->

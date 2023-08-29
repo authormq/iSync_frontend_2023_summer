@@ -214,7 +214,8 @@ export default {
 				width: 30px; !important;
 				background: transparent !important;
 			}
-
+			
+			/* 点击消息弹出菜单 */
 			.vac-menu-options {
 				box-shadow: 3px 3px 10px grey !important;
 				color: rgba(199,29,35, 1) !important;
@@ -222,6 +223,10 @@ export default {
 				font-weight: bold !important;
 			}
 
+			/* 搜索框右边的加号 */
+			.vac-add-icon {
+				display: none !important;
+			}
 		`
 		
 		

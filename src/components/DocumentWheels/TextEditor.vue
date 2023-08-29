@@ -1,6 +1,6 @@
 <!-- 文本编辑器 -->
 <template>
-	<div id="editor-wrapper" v-if="editor&&provider">
+	<div id="editor-wrapper" v-if="editor && provider">
 		<!-- {{ provider.status }} -->
 		<div class="mask"></div>
 		<!-- 气泡菜单 除了样式不要乱改 -->
@@ -649,12 +649,12 @@
 		<div class="document-title">{{ docName }}</div>
 		<!-- <editor-content :editor="editor" id="document-content" v-model="localContent"
 			@update="$emit('update:docContent', editor.storage.content)" /> -->
-			<div class="flex">
-				<editor-content :editor="editor" id="document-content" />
-				<slot v-if="showHistoryVersion" name="version"></slot>
-			</div>
-		
-		<div id="hidden-area"></div>
+		<div class="flex">
+			<editor-content :editor="editor" id="document-content" />
+			<slot v-if="showHistoryVersion" name="version"></slot>
+		</div>
+
+		<div id="hidden-area" class="flex"></div>
 		<div class="document-words">
 			{{ editor.storage.characterCount.words() }} 个单词，
 			{{ editor.storage.characterCount.characters() }} / {{ docLimit }} 个字符，
@@ -803,7 +803,6 @@ export default {
 		exportAsPDF() {
 			let original = document.querySelector('#document-content')
 			let page = original.cloneNode(true)//需要对原样式进行一些修改，因此深拷贝
-
 			//修改样式和显示内容
 			page.querySelectorAll('.ProseMirror').forEach(element => {
 				element.style.backgroundColor = 'white';
@@ -813,7 +812,6 @@ export default {
 			});
 			original.style.display = 'none'//隐藏显示
 			document.querySelector('#hidden-area').appendChild(page)
-
 			const docName = this.docName
 			let abs = 0
 			let innerWidth = document.documentElement.clientWidth || document.body.clientWidth // 获得当前可视窗口的宽度（不包含滚动条）
@@ -1710,6 +1708,7 @@ export default {
 	justify-content: space-evenly;
 	width: 100%
 }
+
 .flex div {
 	flex: none;
 }

@@ -8,8 +8,8 @@
     </ul>
     <div class="right-part">
       <div class="project-info">
-        <!-- <img :src="curProject.image"> -->
-        <img src="/src/assets/head.jpeg" alt="">
+        <img :src="curProject.image">
+        <!-- <img src="/src/assets/head.jpeg" alt=""> -->
         <div class="info-container">
           <div class="title-time">
             <h2>{{ curProject.name }}</h2>
@@ -177,6 +177,7 @@ ul {
   border-radius: 5px;
   color: grey;
   box-shadow: 1px 1px 5px grey;
+  cursor: pointer;
 }
 
 .link:hover {

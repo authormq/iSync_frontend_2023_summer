@@ -36,11 +36,13 @@ export default {
       (response) => {
         this.allMessage = response.data.map((news) => ({
           msgId: news.id,
-          timeStamp: news.group_message == null ? news.create_datetime : news.group_message,
+          isGroup: news.group_message == null ? false : true,
+          timeStamp: news.group_message == null ? news.create_datetime : news.group_message.create_datetime,
           sender: news.group_message == null ? news.sender.username : news.group_message.sender.user.username,
           receiver: news.receiver,
           isRead: news.is_read,
           teamName: news.team_name,
+          fileName: news.file_name,
           content: news.group_message == null ? `${news.sender.username}提到了你` : `${news.group_message.sender.user.username}提到了你`,
         }))
         // 这一行必须有，用来获取未读的信息
@@ -72,19 +74,12 @@ export default {
   },
   methods: {
     handleReadStatus(message) {
-      console.log(this.unReadMessage);
-      this.$http.patch(`/api/news/${message.msgId}/`).then(
+      let formData = new FormData()
+      formData.append('is_read', true)
+      this.$http.patch(`/api/news/${message.msgId}/`, formData).then(
         response => {
-          console.log(this.unReadMessage);
           message.isRead = !message.isRead
-          let messageIdx = this.unReadMessage.indexOf(message)
-          console.log('111', this.unReadMessage);
-          if (messageIdx != -1) {
-            this.unReadMessage.splice(messageIdx, 1)
-            console.log('222', this.unReadMessage);
-          } else {
-            this.unReadMessage.unshift(message)
-          }
+          this.unReadMessage.splice(this.unReadMessage.indexOf(message), 1)
           if (this.unReadMessage.length > 0) {
             this.$bus.emit('judgeHasUnreadMsg', true)
           } else {

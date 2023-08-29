@@ -69,6 +69,7 @@ export default {
     this.teamId = this.$route.params.teamId
     this.$http.get(`/api/projects/list/${this.teamId}/`).then(
       response => {
+        console.log(response.data);
         this.projectData = response.data.map((project) => ({
           teamId: project.teamId,
           id: project.id,
@@ -183,7 +184,7 @@ export default {
       )
     },
     jumpToProject(id, teamId) {
-      this.$cookies.set('teamId',teamId)
+      this.$cookies.set('teamId', this.teamId)
       this.$router.push(`/project/${id}/doc`)
     }
   }

@@ -3,7 +3,7 @@
     <!-- banner-left -->
     <div>
       <WebIcon />
-      <h1 class="web-title">XXX项目管理系统</h1>
+      <h1 class="web-title">iSync项目管理系统</h1>
     </div>
     <!-- banner-right -->
     <div>
@@ -83,7 +83,7 @@ export default {
 }
 
 .web-title {
-  font-size: 30px;
+  font-size: 35px;
   font-weight: bold;
   color: #c71d23;
 }

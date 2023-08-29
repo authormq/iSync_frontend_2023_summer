@@ -2,7 +2,7 @@
 <template>
 	<div>
 		<!-- <vue-advanced-chat -->
-		<vue-advanced-chat ref="test" theme="light" :styles="JSON.stringify(style)" height="calc(100vh - 110px)"
+		<vue-advanced-chat ref="chat" theme="light" height="calc(100vh - 90px)" :styles="JSON.stringify(styles)"
 			:current-user-id="currentUserId" :rooms="JSON.stringify(rooms)" :rooms-loaded="roomsLoaded"
 			:messages="JSON.stringify(messages)" :messages-loaded="messagesLoaded" :custom-search-room-enabled="true"
 			@send-message="sendMessage($event.detail[0])" @fetch-messages="fetchMessages($event.detail[0])"
@@ -125,6 +125,7 @@ export default {
 							let formData = new FormData()
 							formData.append('group_message', message.id)
 							formData.append('receiver', this.currentUserId)
+							formData.append('sender', parseInt(message.sender.user.id))
 							this.$http.post('/api/news/', formData).then(() => {
 								this.$bus.emit('newMessage', message)
 							})
@@ -136,12 +137,74 @@ export default {
 			this.roomsLoaded = true
 		})
 		// test
-		// const style = document.createElement('style')
-		// 	style.textContent = '.vac-chat-container { background: yellow; }'
-		// 	this.$refs.test.shadowRoot.appendChild(style)
-		// 	const newHTML = this.$refs.test.shadowRoot.innerHTML.replace('No room selected', '未选中')
-		// 	this.$refs.test.shadowRoot.innerHTML = newHTML
+		const style = document.createElement('style')
+		style.textContent = `
+			/* 鼠标悬浮于消息时的操作选项 */
+			.vac-options-container {
+				display: none !important;
+			}
+
+			/* 左上角搜索框 */
+			.vac-box-search input {
+				caret-color: rgba(199,29,35, 1) !important;
+			}
+			.vac-box-search input::placeholder {
+				color: rgba(0,0,0,0) !important;
+			}
+
+			/* 列表房间名称 */
+			.vac-room-name.vac-text-ellipsis {
+				color: rgba(199,29,35, 1) !important;
+			}
+
+			/* 聊天室日期显示 */
+			.vac-card-info.vac-card-date {
+				background: rgba(199,29,35, 0.1) !important;
+			}
+
+			/* 聊天室顶部 聊天开始时间 */
+			.vac-text-started {
+				display: none !important;
+			}
+
+			/* “新消息”提示 */ 
+			.vac-line-new {
+				display: none !important;
+			}
+
+			/* 设置聊天室顶部 padding */
+			.vac-messages-container {
+				padding-top: 20px !important;
+			}
+
+			/* 发消息的 textarea */
+			.vac-box-footer.vac-box-footer-border textarea {
+				caret-color: rgba(199,29,35, 1) !important;
+			}
+			.vac-box-footer.vac-box-footer-border textarea::placeholder {
+				color: rgba(0,0,0,0) !important;
+			}
+
+			/* @ 别人的消息颜色 */
+			.vac-text-tag {
+				color: rgba(199,29,35, 1) !important;
+				font-weight: bold !important;
+			}
+		`
+		
+		
+		
+		this.$refs.chat.shadowRoot.appendChild(style)
+		// const newHTML = this.$refs.chat.shadowRoot.innerHTML.replace('placeholder="Search"', 'placeholder="检索"')
+		// console.log(newHTML)
+		// setTimeout(() => {
+		// 	console.log('index: ', this.$refs.chat.shadowRoot.innerHTML.indexOf('Conversation started on: 08-28'))
+		// }, 1000)
+		// console.log('index: ', this.$refs.chat.shadowRoot.innerHTML.indexOf('Conversation started on: 08-28'))
 	},
+	// updated() {
+	// 	console.log('index: ', this.$refs.chat.shadowRoot.innerHTML.indexOf('Conversation'))
+	// },
 	// unmounted() {
 	// 	for (let i = 0; i < this.ws.length; i++) {
 	// 		this.ws[i].close()
@@ -157,19 +220,49 @@ export default {
 			roomsLoaded: false,
 			messages: [],
 			messagesLoaded: false,
-			style: {
-				room: {
-					backgroundCounterBadge: 'rgba(199, 29, 35, 1)',
+			styles: {
+				sidemenu: {
+					backgroundActive: 'rgba(199,29,35, 0.2)'
+				},
+				message: {
+					background: '#fff',
+					backgroundMe: 'rgba(199,29,35, 0.2)',
 				},
 				icons: {
-					add: 'rgba(199, 29, 35, 1)',
-					toggle: 'rgba(199, 29, 35, 1)',
-					dropdownScroll: 'rgba(199, 29, 35, 1)',
-					microphone: 'rgba(199, 29, 35, 1)',
-					emoji: 'rgba(199, 29, 35, 1)',
-					paperclip: 'rgba(199, 29, 35, 1)',
-					send: 'rgba(199, 29, 35, 1)',
-				}
+					search: 'rgba(199,29,35, 1)',
+					add: '#1976d2',
+					toggle: 'rgba(199,29,35, 1)',
+					menu: '#0a0a0a',
+					close: 'rgba(199,29,35, 1)',
+					closeImage: 'rgba(199,29,35, 1)',
+					file: 'rgba(199,29,35, 1)',
+					paperclip: 'rgba(199,29,35, 1)',
+					closeOutline: 'rgba(199,29,35, 1)',
+					closePreview: 'rgba(199,29,35, 1)',
+					send: 'rgba(199,29,35, 1)',
+					sendDisabled: '#9ca6af',
+					emoji: 'rgba(199,29,35, 1)',
+					emojiReaction: 'rgba(0, 0, 0, 0.3)',
+					document: 'rgba(199,29,35, 1)',
+					pencil: '#9e9e9e',
+					checkmark: '#9e9e9e',
+					checkmarkSeen: '#0696c7',
+					eye: '#fff',
+					dropdownMessage: '#fff',
+					dropdownMessageBackground: 'rgba(0, 0, 0, 0.25)',
+					dropdownRoom: '#9e9e9e',
+					dropdownScroll: '#0a0a0a',
+					microphone: 'rgba(199,29,35, 1)',
+					audioPlay: '#455247',
+					audioPause: '#455247',
+					audioCancel: '#eb4034',
+					audioConfirm: '#1ba65b'
+				},
+				header: {
+					background: '#fff',
+					colorRoomName: 'rgba(199,29,35, 1)',
+					colorRoomInfo: '#9ca6af'
+				},
 			}
 		}
 	},

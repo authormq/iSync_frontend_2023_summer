@@ -116,9 +116,8 @@ export default {
 							this.rooms[i].lastMessage
 						]
 					}
-					const tmpRooms = this.rooms.filter(room => room.roomId != this.rooms[i].roomId)
-					this.rooms = [this.rooms[i], ...tmpRooms]
-					this.allRooms = this.rooms
+					// const tmpRooms = this.rooms.filter(room => room.roomId != this.rooms[i].roomId)
+					// this.rooms = [this.rooms[i], ...tmpRooms]
 					// @
 					for (let j = 0; j < data.mentioned_users.length; j++) {
 						if (data.mentioned_users[j]._id == this.currentUserId || data.mentioned_users[j]._id == '0') {

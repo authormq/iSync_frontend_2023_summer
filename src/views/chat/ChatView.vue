@@ -125,7 +125,11 @@ export default {
 		style.textContent = `
 			/* 鼠标悬浮于消息时的操作选项 */
 			.vac-options-container {
-				display: none !important;
+				/*display: none !important;*/
+			}
+
+			.vac-format-message-wrapper {
+				padding-right: 40px !important;
 			}
 
 			/* 左上角搜索框 */
@@ -174,6 +178,35 @@ export default {
 				color: rgba(199,29,35, 1) !important;
 				font-weight: bold !important;
 			}
+
+			/* 编辑自己的消息、致使输入框有 outline */
+			.vac-textarea-outline {
+				border: 0 !important;
+				box-shadow: none !important;
+				outline: 3px solid rgba(199,29,35, 1) !important;
+			}
+
+			/* 选中消息时的 emoji（没效果） */
+			.vac-emoji-reaction {
+				display: none !important;
+			}
+
+			/* 选中消息的小 icon 及其容器 */
+			.vac-options-container {
+				width: 30px !important;
+			}
+			.vac-blur-container {
+				width: 30px; !important;
+				background: transparent !important;
+			}
+
+			.vac-menu-options {
+				box-shadow: 3px 3px 10px grey !important;
+				color: rgba(199,29,35, 1) !important;
+				font-size: 16px !important;
+				font-weight: bold !important;
+			}
+
 		`
 		
 		
@@ -185,10 +218,29 @@ export default {
 		// 	console.log('index: ', this.$refs.chat.shadowRoot.innerHTML.indexOf('Conversation started on: 08-28'))
 		// }, 1000)
 		// console.log('index: ', this.$refs.chat.shadowRoot.innerHTML.indexOf('Conversation started on: 08-28'))
+
+		document.addEventListener('click', () => {
+			const doc = this.$refs.chat.shadowRoot
+			const list = doc.querySelector('.vac-menu-list')
+			console.log('chi: ', list.children)
+			if (list) {
+				if (list.children.length === 2) {
+					list.children[0].children[0].innerHTML = '引用'
+					list.children[1].style.display = 'none'
+				} else if (list.children.length === 4) {
+					list.children[0].children[0].innerHTML = '引用'
+					list.children[1].children[0].innerHTML = '编辑'
+					list.children[2].style.display = 'none'
+					list.children[3].style.display = 'none'
+				}
+			}
+		})
 	},
-	// updated() {
-	// 	console.log('index: ', this.$refs.chat.shadowRoot.innerHTML.indexOf('Conversation'))
-	// },
+	updated() {
+		
+		
+		
+	},
 	// unmounted() {
 	// 	for (let i = 0; i < this.ws.length; i++) {
 	// 		this.ws[i].close()

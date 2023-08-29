@@ -26,8 +26,8 @@ export default {
     jumpToProject(id, teamId) {
       // console.log('teAm: ', teamId)
       this.$cookies.set('teamId', teamId)
-      this.$bus.emit('manualSet', teamId)
       this.$router.push(`/project/${id}/doc`)
+      this.$bus.emit('manualSet', teamId)
     }
   },
   mounted() {

@@ -44,6 +44,10 @@ app.directive('tooltip', {
       tooltip.style.top = `${e.clientY - el.getBoundingClientRect().top }px`
       tooltip.style.display = 'block'
     })
+    el.addEventListener('click', () => {
+      el.style.zIndex = 'inherit'
+      tooltip.style.display = 'none'
+    })
     el.addEventListener('mouseleave', () => {
       el.style.zIndex = 'inherit'
       tooltip.style.display = 'none'

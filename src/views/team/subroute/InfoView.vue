@@ -97,7 +97,7 @@ export default {
     this.$http.get(`/api/teams/${this.teamId}/activation/`).then(
       response => {
         this.recentFiveActivePerson = response.data.map((person) => ({
-          name: person.user.first_name + person.user.last_name,
+          name: person.user.last_name + person.user.first_name,
           activation: person.activation
         }))
         if (this.recentFiveActivePerson.length > 5) {

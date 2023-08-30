@@ -439,6 +439,7 @@ export default {
 				a.download = file.file.name
 				a.href = file.file.url
 				a.click()
+				a.remove()
 			}
 		},
 

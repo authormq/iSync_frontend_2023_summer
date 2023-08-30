@@ -4,7 +4,13 @@
             @update-version="getVersionInfo" :showHistoryVersion="showHistoryVersion">
             <template #showHistoryButton>
                 <button class="btn" @click="change" v-tooltip="'历史记录'">
-                    <svg t="1693229044900" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="27713" width="40" height="40"><path d="M512 144C310.4 144 144 310.4 144 512S310.4 880 512 880 880 713.6 880 512 713.6 144 512 144z m0 672c-166.4 0-304-137.6-304-304s137.6-304 304-304 304 137.6 304 304-137.6 304-304 304z" fill="#707070" p-id="27714"></path><path d="M528 275.2h-32v252.8H768v-32h-240z" fill="#707070" p-id="27715"></path></svg>
+                    <svg t="1693229044900" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                        xmlns="http://www.w3.org/2000/svg" p-id="27713" width="40" height="40">
+                        <path
+                            d="M512 144C310.4 144 144 310.4 144 512S310.4 880 512 880 880 713.6 880 512 713.6 144 512 144z m0 672c-166.4 0-304-137.6-304-304s137.6-304 304-304 304 137.6 304 304-137.6 304-304 304z"
+                            fill="#707070" p-id="27714"></path>
+                        <path d="M528 275.2h-32v252.8H768v-32h-240z" fill="#707070" p-id="27715"></path>
+                    </svg>
                 </button>
                 <ul v-show="showHistoryVersion" class="his-list" ref="draggable">
                     <li v-show="currentVersionId !== undefined"><button @click="coverDocument">替换</button></li>
@@ -16,9 +22,10 @@
                 <!-- <button class="change-btn" v-if="currentVersionId !== undefined" @click="coverDocument">以该版本替换当前文档</button> -->
             </template>
             <template #version>
-                <version-inspector :content="currentVersionContent" :showHistoryVersion="showHistoryVersion"></version-inspector>
+                <version-inspector :content="currentVersionContent"
+                    :showHistoryVersion="showHistoryVersion"></version-inspector>
             </template>
-            
+
         </text-editor>
         <!-- <version-inspector @updateContent="handleUpdateContent" :doc-id="docId" :versions="versions"></version-inspector> -->
     </div>
@@ -35,15 +42,15 @@ export default {
     },
     data() {
         return {
-            showHistoryVersion:false,
-            currentVersionId:undefined,
+            showHistoryVersion: false,
+            currentVersionId: undefined,
             docContent: '',
             docId: null,
             versions: [],
             members: [],
             docName: 'temp',
             isReadOnlyIdentity: false,
-            currentVersionContent:'',
+            currentVersionContent: '',
             isDragging: false,
             offsetX: 0,
             offsetY: 0
@@ -65,7 +72,7 @@ export default {
         //覆盖版本
         coverDocument() {
             this.$http.post(`/api/projects/file/${this.docId}/version/${this.currentVersionId}/`).then(() => {
-                this.currentVersionContent
+                console.log(this.currentVersionContent)
                 this.handleUpdateContent(this.currentVersionContent)
                 this.showHistoryVersion = false
             })
@@ -95,7 +102,7 @@ export default {
         //打开当前文件
         this.docId = this.$route.params.docId
         this.$http.get(`/api/projects/file/${this.docId}/open/`).then((response) => {
-            this.docName=response.headers['content-disposition'].match(/filename="([^"]+)"/)[1]
+            this.docName = response.headers['content-disposition'].match(/filename="([^"]+)"/)[1]
             this.docContent = response.data
         })
         //获取历史版本
@@ -114,7 +121,7 @@ export default {
             })
             // 鼠标拖动的响应（前提：摁下鼠标）
             document.addEventListener('mousemove', (e) => {
-                if (!this.isDragging) return 
+                if (!this.isDragging) return
                 const newX = e.clientX - this.offsetX
                 const newY = e.clientY - this.offsetY
                 const div = this.$refs.draggable
@@ -126,7 +133,7 @@ export default {
                 if (this.showHistoryVersion) {
                     this.isDragging = false
                     this.$refs.draggable.style.cursor = 'grab'
-                }  
+                }
             })
             // 鼠标点击的响应（点击区不在拖动面板内，隐藏面板）
             document.addEventListener('click', (e) => {
@@ -141,11 +148,11 @@ export default {
                         this.showHistoryVersion = false
                     }
                 }
-                
+
 
             })
         })
-        
+
     }
 }
 </script>
@@ -154,7 +161,6 @@ export default {
 .flex-container {
     display: flex;
 }
-
 .change-btn {
     min-width: 100px;
 }
@@ -166,22 +172,25 @@ export default {
     width: 200px;
     padding: 20px;
     border-radius: 10px;
-    background-color: rgb(240,240,240);
+    background-color: rgb(240, 240, 240);
     box-shadow: -1px 1px 10px grey;
 }
+
 .his-list li button {
     margin: 0;
     width: 100%;
     margin-bottom: 15px;
 }
+
 .his-list li:first-child button {
     height: 45px;
     padding-top: 5px;
     padding-bottom: 5px;
-    color: rgba(199,29,35, 1);
+    color: rgba(199, 29, 35, 1);
     font-size: 20px;
     font-weight: bold;
 }
+
 .his-list li:last-child button {
     margin-bottom: 0;
 }

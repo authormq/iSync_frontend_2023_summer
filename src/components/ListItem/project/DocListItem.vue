@@ -19,13 +19,14 @@
         <div>
           {{ doc.isPublic ? '公开' : '私有' }}
         </div>
+        <button @click.stop="sendChangeDocIdentityRequest">修改文档权限</button>&nbsp;
         <button @click.stop="shareDocLink">分享链接</button>&nbsp;
         <button @click.stop="sendDeleteDocRequest">删除</button>
         <!-- 暂缺少重命名功能 -->
-        <!-- <br>
-        <input type="text" v-model="rename">
-        {{ rename }}
-        <button @click="sendRenameDocRequest">重命名</button> -->
+        <br>
+        <!-- <input type="text" v-model="rename">
+        {{ rename }} -->
+        <button @click.stop="sendRenameDocRequest">重命名, 这里缺少一个输入框</button>
       </div>
     </div>
   </div>
@@ -38,7 +39,7 @@ export default {
   props: ['doc'],
   data() {
     return {
-      rename: '',
+      rename: 'ceshiRename',
       showDocModal: false,
       link: '',
     }
@@ -49,6 +50,9 @@ export default {
     },
     sendRenameDocRequest() {
       this.$bus.emit('renameDocRequest', { doc: this.doc, rename: this.rename })
+    },
+    sendChangeDocIdentityRequest() {
+      this.$bus.emit('changeDocIdentityRequest', this.doc)
     },
     shareDocLink() {
       this.$http.get(`/api/projects/${this.doc.id}/generate_invite_url/`).then(

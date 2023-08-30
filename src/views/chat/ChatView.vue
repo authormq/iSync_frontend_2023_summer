@@ -224,7 +224,7 @@ export default {
 
 			/* 搜索框右边的加号 */
 			.vac-add-icon {
-				display: none !important;
+				// display: none !important;
 			}
 
 			/* 新消息的提醒颜色*/

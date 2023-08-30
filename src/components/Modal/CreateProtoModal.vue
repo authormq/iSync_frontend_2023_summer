@@ -19,13 +19,14 @@
   </StylishModal>
 </template>
 <script>
+import { Buttons } from 'grapesjs'
 import StylishModal from '../Stylish/StylishModal.vue'
 import CloseIcon from '../Svg/CloseIcon.vue'
 export default {
   name: 'CreateProtoModal',
   props: {
     projectId: {
-      type: String
+      type: Number
     },
     show: {
       type: Boolean,
@@ -50,21 +51,18 @@ export default {
       formData.append('profile', this.profile)
       this.$http.post(`/api/projects/page/create/`, formData).then(
         response => {
-          // 创建成功，直接跳转到新页面
           this.protoId = response.data.id
-          // 下面需要根据实际情况跳转
-          
-          // 清空
-          this.name = ''
-          this.profile = ''
+          let newProto = {
+            id: response.data.id,
+            name: this.name,
+          }
+          this.$bus.emit('reloadProtoListAfterCreateSucceed', newProto)
+          this.handleClose()
         },
         error => {
           console.log(error.message)
         }
       )
-    },
-    cancelCreate() {
-      this.name = ''
     },
     handleClose() {
       this.$emit('close')

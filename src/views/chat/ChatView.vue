@@ -224,7 +224,7 @@ export default {
 
 			/* 搜索框右边的加号 */
 			.vac-add-icon {
-				display: none !important;
+				// display: none !important;
 			}
 
 			/* 新消息的提醒颜色*/
@@ -342,6 +342,12 @@ export default {
 			const offset = options.reset ? 0 : this.messages.length
 			if (options.reset) {
 				this.messagesLoaded = false
+				for (let i = 0; i < this.rooms.length; i++) {
+					if (this.rooms[i].roomId == room.roomId) {
+						this.rooms[i].unreadCount = 0
+						break
+					}
+				}
 			}
 			this.$http.get(`/api/groups/${room.roomId}/messages/?limit=30&offset=${offset}`).then((response) => {
 				if (response.data.results.length == 0) {
@@ -381,12 +387,6 @@ export default {
 					this.messages = [...messages, ...this.messages]
 				}
 			})
-			for (let i = 0; i < this.rooms.length; i++) {
-				if (this.rooms[i].roomId == room.roomId) {
-					this.rooms[i].unreadCount = 0
-					break
-				}
-			}
 		},
 
 		sendMessage(message) {

@@ -2,6 +2,7 @@
 <template>
   <!-- <div>This is message Page</div> -->
   <div class="tool-menu">
+    <button @click="$router.go(-1)">返回</button>
     <button v-if="!showAllMsg" @click="showAllMsg = true">查看全部消息</button>
     <button v-else @click="showAllMsg = false">查看未读消息</button>
     <button @click="setAllRead">设为全部已读</button>
@@ -41,7 +42,9 @@ export default {
           sender: news.group_message == null ? news.sender.username : news.group_message.sender.user.username,
           receiver: news.receiver,
           isRead: news.is_read,
+          teamId: news.team_id,
           teamName: news.team_name,
+          fileId: news.file_id,
           fileName: news.file_name,
           content: news.group_message == null ? `${news.sender.username}提到了你` : `${news.group_message.sender.user.username}提到了你`,
         }))
@@ -54,7 +57,6 @@ export default {
       })
     // 具体需不需要这些函数，看后期后端怎么给我返回数据
     this.$bus.on('newMessage', (message) => {
-      // alert(`${message.sender.user.username}提到了你`)
       // this.$bus.emit('message', {
       //   title: '消息通知',
       //   content: `${message.sender.user.username}提到了你`,

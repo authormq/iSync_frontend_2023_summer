@@ -64,7 +64,11 @@ export default {
           this.docList[this.docList.indexOf(docRenameData.doc)].name = docRenameData.rename
         },
         error => {
-          console.log(error.message)
+          this.$bus.emit('message', {
+            title: error.response.data.detail,
+            content: '',
+            time: 2000
+          })
         }
       )
     },

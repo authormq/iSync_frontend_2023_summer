@@ -13,16 +13,19 @@
  				<div>hahaha{{ message.content }}</div>
 			</div> -->
 		</vue-advanced-chat>
+		<CreateGroupRoom :show="showCreateRoomModal" @close="showCreateRoomModal = false"></CreateGroupRoom>
 	</div>
 </template>
 
 <script>
 import { register } from 'vue-advanced-chat'
+import CreateGroupRoom from '../../components/Modal/CreateGroupRoom.vue'
 // import  ChatWindow  from 'vue-advanced-chat'
 register()
 export default {
 	name: 'ChatView',
 	// components: { ChatWindow },
+	components: {CreateGroupRoom},
 	mounted() {
 		this.currentUserId = this.$cookies.get('user_id')
 		this.roomsLoaded = false
@@ -42,7 +45,7 @@ export default {
 					_id: `${member.user.id}`,
 					username: member.user.username
 				})),
-				lastMessage: group.lastMessage == null ? null : {
+				lastMessage: group.lastMessage.id == null ? null : {
 					_id: group.lastMessage.id,
 					content: group.lastMessage.text_content,
 					senderId: `${group.lastMessage.sender.user.id}`,
@@ -263,6 +266,7 @@ export default {
 	// },
 	data() {
 		return {
+			showCreateRoomModal: false,
 			ws: [],
 			currentUserId: '',
 			currentRoomId: '',
@@ -465,7 +469,7 @@ export default {
 		},
 
 		addRoom() {
-			alert('addRoom')
+			this.showCreateRoomModal = true
 		},
 
 		messageSelectionActionHandler({ roomId, action, message }) {

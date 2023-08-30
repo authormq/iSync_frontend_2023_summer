@@ -2,16 +2,24 @@
   <StylishModal :show="show" width="500px" height="400px" padding="25px">
     <div class="title-container">
       <div></div>
-      <div class="title">创建团队</div>
+      <div class="title">创建群聊</div>
       <div class="close-icon" @click="handleClose">
         <CloseIcon size="30" />
       </div>
     </div>
     <div class="team-modal-container">
       <div class="inputs">
-        <input type="text" placeholder="团队名称" autofocus v-model="teamName">
-        <div class="input-hint">给团队起个好听的名字</div>
-        <textarea cols="30" rows="8" v-model="teamProfile" placeholder="团队简介"></textarea>
+        <input type="text" placeholder="群聊名称" autofocus v-model="name">
+        <div class="input-hint">给群聊起个好听的名字</div>
+        <div class="selectMembers">
+          <div v-for="member in memberList" :key="member.id">
+            <div class="selectItem" :class="{ selectItemColor: member.isSelect }" @click="handleClickMember(member)">
+              <img class="selectAvatar" :src="member.avatar" />
+              <span class="selectUsername">{{ member.username }}</span>
+              <span class="selectRealname">({{ member.realname }})</span>
+            </div>
+          </div>
+        </div>
       </div>
       <div>
         <div>
@@ -31,22 +39,21 @@
           <input type="file" accept="image/*" ref="fileInput" @change="handleFileChange">
         </div>
         <div class="buttons">
-          <button class="confirm" @click="createTeam">确认</button>
+          <button class="confirm" @click="createGroupConfirm">确认</button>
           <button class="cancel" @click="handleClose">取消</button>
         </div>
       </div>
     </div>
   </StylishModal>
 </template>
-
 <script>
-import StylishModal from '../Stylish/StylishModal.vue'
-import CloseIcon from '../Svg/CloseIcon.vue'
+import StylishModal from '../Stylish/StylishModal.vue';
+import StylishSelect from '../Stylish/StylishSelect.vue';
 export default {
-  name: 'CreateTeamModal',
+  name: 'CreateGroupRoom',
   components: {
     StylishModal,
-    CloseIcon
+    StylishSelect
   },
   emits: ['close'],
   props: {
@@ -54,56 +61,42 @@ export default {
   },
   data() {
     return {
-      avatarIsHovered: false,
-      avatarFile: null,
+      name: '',
+      members: [],
       avatarUrl: '',
-      avatarChanged: false,
-      teamName: '',
-      teamProfile: ''
+      avatarFile: null,
+      teamId: '',
+      memberList: [],
+      selectList: [],
     }
   },
-  methods: {
-    handleClose() {
-      this.$emit('close')
-      this.avatarFile = null
-      this.avatarUrl = ''
-      this.teamName = ''
-      this.teamProfile = ''
-      this.teamName = ''
-      this.teamProfile = ''
-    },
-    createTeam() {
-      let data = new FormData()
-      data.append('name', this.teamName)
-      data.append('profile', this.teamProfile)
-      if (this.avatarChanged) {
-        data.append('avatar', this.avatarFile)
+  mounted() {
+    this.teamId = this.$route.params.teamId
+    this.$http.get(`/api/teams/${this.teamId}/`).then(
+      response => {
+        this.memberList = response.data.members.map((member) => ({
+          id: member.user.id,
+          username: member.user.username,
+          realname: member.user.last_name + member.user.first_name,
+          avatar: member.user.avatar,
+          isSelect: false
+        }))
+        this.memberList = this.memberList.filter(member => member.id != this.$cookies.get('user_id'))
+      },
+      error => {
+        console.log(error.message)
       }
-      this.$http.post('/api/teams/create/', data).then((response) => {
-        console.log(response.data)
-        this.$bus.emit('message', {
-          title: '创建团队成功',
-          content: '',
-          time: 1000
-        })
-        this.$bus.emit('regetTeamListAfterCreateTeamRequest', 0)
-        this.handleClose()
-      }, (error) => {
-        if (error.response.data.errors !== undefined) {
-          this.$bus.emit('message', {
-            title: '创建团队消息',
-            content: error.response.data.errors,
-            time: 1500
-          })
-        }
-        else {
-          this.$bus.emit('message', {
-            title: '创建团队消息',
-            content: '创建团队失败',
-            time: 1500
-          })
-        }
-      })
+    )
+  },
+  methods: {
+    handleClickMember(member) {
+      if (!member.isSelect) {
+        member.isSelect = true
+        this.selectList.push(member.id)
+      } else {
+        member.isSelect = false
+        this.selectList.splice(this.selectList.indexOf(member.id), 1)
+      }
     },
     handleMouseLeaveAvatar() {
       this.avatarIsHovered = false
@@ -116,13 +109,67 @@ export default {
       this.avatarFile = e.target.files[0]
       this.avatarUrl = URL.createObjectURL(this.avatarFile)
     },
+    handleClose() {
+      this.$emit('close')
+      this.name = ''
+      this.selectList = []
+      this.memberList = []
+      this.teamId = ''
+    },
+    createGroupConfirm() {
+      let formData = new FormData()
+      formData.append('name', this.name)
+      formData.append('avatar', this.avatarFile)
+      formData.append('team', this.teamId)
+      formData.append('users', this.selectList.join(' '))
+      this.$http.post('/api/groups/create/', formData).then(
+        response => {
+          console.log(response.data);
+          this.handleClose()
+        },
+        error => {
+          console.log(error.message);
+        }
+      )
+    }
   }
 }
 </script>
-
 <style scoped>
 ::placeholder {
   color: lightgrey;
+}
+
+.selectItem {
+  margin-bottom: 7px;
+  display: flex;
+  cursor: pointer;
+  border-radius: 50px;
+}
+
+.selectItemColor {
+  background-color: rgba(199, 29, 35, 0.8);
+}
+
+.selectAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.selectUsername {
+  font-size: 16px;
+  margin-top: 8px;
+  margin-left: 5px;
+  font-weight: bold;
+}
+
+.selectRealname {
+  font-size: 10px;
+  margin-top: 13px;
+  margin-left: 5px;
+  font-weight: bold;
+  color: grey;
 }
 
 .title-container {
@@ -261,5 +308,18 @@ img:hover {
 
 .confirm {
   margin-bottom: 20px;
+}
+
+.selectMembers {
+  display: block;
+  width: 250px;
+  height: 180px;
+  font-size: 18px;
+  border: 1px solid rgba(199, 29, 35, 1);
+  border-radius: 10px;
+  padding: 5px 10px;
+  transition: 0.1s cubic-bezier(0.075, 0.82, 0.165, 1);
+  caret-color: rgba(199, 29, 35, 1);
+  overflow: auto;
 }
 </style>

@@ -31,7 +31,6 @@ import Tabs from 'grapesjs-tabs';
 import Tooltip from 'grapesjs-tooltip';
 import CodePlugin from 'grapesjs-custom-code';
 import Type from 'grapesjs-typed';
-import LorySlider from 'grapesjs-lory-slider';
 // import PresetPlugin from 'grapesjs-preset-newsletter';
 import ExportPlugin from 'grapesjs-plugin-export'; //导出html和css
 import ScriptPlugin from 'grapesjs-script-editor'; //js代码编辑
@@ -187,8 +186,7 @@ export default {
 					Countdown,
 					gjsForms, 
 					Type,
-					ScriptPlugin,
-					// LorySlider,
+					ScriptPlugin
 				],
 				pluginsOpts: {
 					[ExportPlugin]: {

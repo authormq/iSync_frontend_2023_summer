@@ -117,8 +117,8 @@ export default {
 					}
 					this.roomsLoaded = false
 					for (let j = 0; j < this.rooms.length; j++) {
-						if (this.rooms[j].index < this.rooms[i].index) {
-							this.rooms[j].index++
+						if (this.rooms[j].index > this.rooms[i].index) {
+							this.rooms[j].index--
 						}
 					}
 					this.rooms[i].index = 0

@@ -88,8 +88,8 @@ export default {
       this.$http.post('/api/projects/create/', data).then(
         (response) => {
           this.$bus.emit('message', {
-            title: '创建项目消息',
-            content: '创建项目成功，原神，启动！',
+            title: '创建成功',
+            content: '',
             time: 1000
           })
           this.$bus.emit('regetProjectListRequest', 0)
@@ -98,15 +98,15 @@ export default {
         (error) => {
           if (error.response.data.detail !== undefined) {
             this.$bus.emit('message', {
-              title: '创建项目消息',
+              title: '创建项目',
               content: error.response.data.detail,
               time: 1500
             })
           }
           else {
             this.$bus.emit('message', {
-              title: '创建项目消息',
-              content: '项目创建失败',
+              title: '创建失败',
+              content: '',
               time: 1500
             })
           }

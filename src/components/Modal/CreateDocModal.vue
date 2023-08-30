@@ -14,6 +14,9 @@
         <button v-if="isPublic == 0" @click="isPublic = 1">私密</button>
         <button v-else @click="isPublic = 0">公开</button>
       </div>
+      <div class="introduction">
+        <input type="text" placeholder="文档简介" v-model="profile">
+      </div>
     </div>
     <div class="model-title">文档模板</div>
     <div class="model-container">
@@ -41,10 +44,9 @@ import StylishModal from '../Stylish/StylishModal.vue'
 import CloseIcon from '../Svg/CloseIcon.vue'
 export default {
   name: 'CreateDocModal',
-  // props: ['projectId', 'show'],
   props: {
     projectId: {
-      type: String
+      type: Number
     },
     show: {
       type: Boolean,
@@ -52,12 +54,13 @@ export default {
     }
   },
   emits: ['close'],
+  props: ['projectId'],
   components: { StylishModal, CloseIcon },
   data() {
     return {
-      // show: false,
       name: '',
-      isPublic: 0,
+      isPublic: false,
+      profile: '',
       models: [
         {
           isSelected: true,
@@ -113,16 +116,20 @@ export default {
   },
   methods: {
     commitCreate() {
-      console.log(this.name, this.isPublic);
-      this.$http.post(`/api/projects/file/${this.projectId}/create/${this.name}/${this.isPublic}`).then(
+      let formData = new FormData()
+      formData.append('project', this.projectId)
+      formData.append('name', this.name)
+      formData.append('isPublic', this.isPublic)
+      formData.append('profile', this.profile)
+      this.$http.post(`/api/projects/file/create/`, formData).then(
         response => {
-          // 创建成功，直接跳转到新页面
-          this.docId = response.data.id
-          // 下面需要根据实际情况跳转
-
-          // 清空
-          this.isPublic = 0
-          this.name = ''
+          let newDoc = {
+            id: response.data.id,
+            name: this.name,
+            isPublic: this.isPublic
+          }
+          this.$bus.emit('reloadDocListAfterCreateSucceed', newDoc)
+          this.handleClose()
         },
         error => {
           console.log('@@', error.message)
@@ -135,14 +142,12 @@ export default {
       })
       this.models[index].isSelected = true
     },
-    cancelCreate() {
-      this.isPublic = 0
-      this.name = ''
-    },
     handleClose() {
-      this.$emit('close')
-      this.isPublic = 0
+      this.isPublic = false
       this.name = ''
+      this.profile = ''
+      this.$emit('close')
+
     }
   }
 }

@@ -53,15 +53,18 @@ export default {
     },
     login() {
       if (this.username.length < 1 || this.username.length > 150) {
-        alert('用户名长度不符合要求')
+        this.$bus.emit('message', { title: '用户名长度不符合要求', content: '', time: 1500 })
+        // alert('用户名长度不符合要求')
         return
       }
       if (/^[\w]+$/.test(this.username) === false) {
-        alert('用户名格式不符合要求')
+        this.$bus.emit('message', { title: '用户名格式不符合要求', content: '', time: 1500 })
+        // alert('用户名格式不符合要求')
         return
       }
       if (this.password.length < 8 || this.password.length > 20) {
-        alert('密码长度不符合要求')
+        this.$bus.emit('message', { title: '密码长度不符合要求', content: '', time: 1500 })
+        // alert('密码长度不符合要求')
         return
       }
       let postData = {
@@ -86,7 +89,8 @@ export default {
           alert(errStr)
         }
         else {
-          alert('登录失败')
+          this.$bus.emit('message', { title: '登录失败', content: '', time: 1500 })
+          // alert('登录失败')
         }
       })
     }

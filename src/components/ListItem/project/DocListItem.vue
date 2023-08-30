@@ -2,9 +2,15 @@
   <!-- 这是展示的文档卡片 -->
   <div>
     <div class="doc-container">
-      <div class="doc-image" >
-        <svg t="1693141765365" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2289" width="150" height="150"><path d="M543.68 288.64h320v64h-320zM320 512h384v64H320z" fill="rgba(199, 29, 35, 1)" p-id="2290"></path><path d="M543.04 107.2h64v245.44h-64zM320 672h384v64H320z" fill="rgba(199, 29, 35, 1)
-        " p-id="2291"></path><path d="M608 128l192 192v576H224V128z m45.12-45.12L634.56 64H160v896h704V288" fill="rgba(199, 29, 35, 1)" p-id="2292"></path></svg>
+      <div class="doc-image">
+        <svg t="1693141765365" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+          p-id="2289" width="150" height="150">
+          <path d="M543.68 288.64h320v64h-320zM320 512h384v64H320z" fill="rgba(199, 29, 35, 1)" p-id="2290"></path>
+          <path d="M543.04 107.2h64v245.44h-64zM320 672h384v64H320z" fill="rgba(199, 29, 35, 1)
+        " p-id="2291"></path>
+          <path d="M608 128l192 192v576H224V128z m45.12-45.12L634.56 64H160v896h704V288" fill="rgba(199, 29, 35, 1)"
+            p-id="2292"></path>
+        </svg>
       </div>
       <div class="doc-info">
         <div class="doc-name">
@@ -13,14 +19,15 @@
         <div>
           {{ doc.isPublic ? '公开' : '私有' }}
         </div>
-        <button @click.stop="shareDocLink">分享链接</button>
+        <button @click.stop="shareDocLink">分享链接</button>&nbsp;
+        <button @click.stop="sendDeleteDocRequest">删除</button>
+        <!-- 暂缺少重命名功能 -->
+        <!-- <br>
+        <input type="text" v-model="rename">
+        {{ rename }}
+        <button @click="sendRenameDocRequest">重命名</button> -->
       </div>
     </div>
-    <!-- <button @click="sendDeleteDocRequest">删除</button>
-    <br>
-    <input type="text" v-model="rename">
-    {{ rename }}
-    <button @click="sendRenameDocRequest">重命名</button> -->
   </div>
 </template>
 
@@ -44,7 +51,6 @@ export default {
       this.$bus.emit('renameDocRequest', { doc: this.doc, rename: this.rename })
     },
     shareDocLink() {
-      // console.log(this.doc.id)
       this.$http.get(`/api/projects/${this.doc.id}/generate_invite_url/`).then(
         response => {
           this.link = response.data.url // 
@@ -116,5 +122,4 @@ img {
   justify-content: center;
   align-items: center;
   margin: 0 auto
-}
-</style>
+}</style>

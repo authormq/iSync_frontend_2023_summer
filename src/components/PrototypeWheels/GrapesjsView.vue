@@ -222,7 +222,7 @@ export default {
 							urlStore: `http://localhost:3000/projects/1`,
 							// The `remote` storage uses the POST method when stores data but
 							// the json-server API requires PATCH.
-							fetchOptions: opts => (opts.method === 'POST' ?  { method: 'PATCH' } : {}),
+							fetchOptions: opts => (opts.method === 'POST' ? { method: 'PATCH' } : {}),
 							// As the API stores projects in this format `{id: 1, data: projectData }`,
 							// we have to properly update the body before the store and extract the
 							// project data from the response result.
@@ -323,10 +323,11 @@ export default {
 			document.body.appendChild(node)
 			html2canvas(node).then(canvas => {
 				let link = document.createElement('a')
+				link.style.display = 'none'
 				link.download = `${this.pageName}.png`
 				link.href = canvas.toDataURL("image/png")
 				link.click()
-				document.body.removeChild(node)
+				link.remove()
 			})
 		},
 		shareLink() {

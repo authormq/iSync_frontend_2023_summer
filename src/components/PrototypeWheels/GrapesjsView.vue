@@ -328,6 +328,9 @@ export default {
 				link.click()
 				document.body.removeChild(node)
 			})
+		},
+		shareLink() {
+			
 		}
 	}
 }

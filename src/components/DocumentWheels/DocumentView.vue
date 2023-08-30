@@ -3,14 +3,17 @@
         <text-editor :isReadOnly="isReadOnlyIdentity" :doc-name="docName" :doc-id="docId" v-model:doc-content="docContent"
             @update-version="getVersionInfo" :showHistoryVersion="showHistoryVersion">
             <template #showHistoryButton>
-                <button class="btn" @click="showHistoryVersion = !showHistoryVersion">历史版本</button>
-                <ul v-if="showHistoryVersion">
+                <button class="btn" @click="change" v-tooltip="'历史记录'">
+                    <svg t="1693229044900" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="27713" width="40" height="40"><path d="M512 144C310.4 144 144 310.4 144 512S310.4 880 512 880 880 713.6 880 512 713.6 144 512 144z m0 672c-166.4 0-304-137.6-304-304s137.6-304 304-304 304 137.6 304 304-137.6 304-304 304z" fill="#707070" p-id="27714"></path><path d="M528 275.2h-32v252.8H768v-32h-240z" fill="#707070" p-id="27715"></path></svg>
+                </button>
+                <ul v-show="showHistoryVersion" class="his-list" ref="draggable">
+                    <li v-show="currentVersionId !== undefined"><button @click="coverDocument">替换</button></li>
                     <li v-for="data in versions" :key="data.versionId">
                         <button @click="showVersionContent(data.versionId)">
                             版本编号：{{ data.versionId }} 保存时间：{{ data.saveTime }}</button>
                     </li>
                 </ul>
-                <button class="change-btn" v-if="currentVersionId !== undefined" @click="coverDocument">以该版本替换当前文档</button>
+                <!-- <button class="change-btn" v-if="currentVersionId !== undefined" @click="coverDocument">以该版本替换当前文档</button> -->
             </template>
             <template #version>
                 <version-inspector :content="currentVersionContent" :showHistoryVersion="showHistoryVersion"></version-inspector>
@@ -40,10 +43,18 @@ export default {
             members: [],
             docName: 'temp',
             isReadOnlyIdentity: false,
-            currentVersionContent:''
+            currentVersionContent:'',
+            isDragging: false,
+            offsetX: 0,
+            offsetY: 0
         }
     },
     methods: {
+        change() {
+            setTimeout(() => {
+                this.showHistoryVersion = true
+            }, 1);
+        },
         //展示选择的信息
         showVersionContent(versionId) {
             this.currentVersionId = versionId
@@ -56,6 +67,7 @@ export default {
             this.$http.post(`/api/projects/file/${this.docId}/version/${this.currentVersionId}/`).then(() => {
                 this.currentVersionContent
                 this.handleUpdateContent(this.currentVersionContent)
+                this.showHistoryVersion = false
             })
         },
         getVersionInfo() {
@@ -89,6 +101,51 @@ export default {
         //获取历史版本
         this.getVersionInfo()
         //获取当前团队所有用户
+
+        // 设置历史记录面板的拖拽响应
+        this.$nextTick(() => {
+            // 摁下鼠标的响应
+            this.$refs.draggable.addEventListener('mousedown', (e) => {
+                const div = this.$refs.draggable
+                this.isDragging = true
+                this.offsetX = e.clientX - div.getBoundingClientRect().left
+                this.offsetY = e.clientY - div.getBoundingClientRect().top
+                div.style.cursor = 'grabbing'
+            })
+            // 鼠标拖动的响应（前提：摁下鼠标）
+            document.addEventListener('mousemove', (e) => {
+                if (!this.isDragging) return 
+                const newX = e.clientX - this.offsetX
+                const newY = e.clientY - this.offsetY
+                const div = this.$refs.draggable
+                div.style.left = `${newX}px`
+                div.style.top = `${newY}px`
+            })
+            // 鼠标松开的响应
+            document.addEventListener('mouseup', () => {
+                if (this.showHistoryVersion) {
+                    this.isDragging = false
+                    this.$refs.draggable.style.cursor = 'grab'
+                }  
+            })
+            // 鼠标点击的响应（点击区不在拖动面板内，隐藏面板）
+            document.addEventListener('click', (e) => {
+                if (this.showHistoryVersion) {
+                    const range = this.$refs.draggable.getBoundingClientRect()
+                    if (!(
+                        e.clientX >= range.left &&
+                        e.clientX <= range.right &&
+                        e.clientY >= range.top &&
+                        e.clientY <= range.bottom
+                    )) {
+                        this.showHistoryVersion = false
+                    }
+                }
+                
+
+            })
+        })
+        
     }
 }
 </script>
@@ -97,26 +154,35 @@ export default {
 .flex-container {
     display: flex;
 }
-.btn {
-    min-width: 60px;
-}
-
-.flex-container ul {
-    /* display: block; */
-    height: 50px;
-    overflow: visible;
-    /* height: 70px;
-    width: 200px; */
-    /* overflow-y: auto; */
-}
-
-
 
 .change-btn {
     min-width: 100px;
 }
 
-ul li button {
-    min-width: 200px;
+.his-list {
+    position: fixed;
+    right: 0;
+    top: 20%;
+    width: 200px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: rgb(240,240,240);
+    box-shadow: -1px 1px 10px grey;
+}
+.his-list li button {
+    margin: 0;
+    width: 100%;
+    margin-bottom: 15px;
+}
+.his-list li:first-child button {
+    height: 45px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    color: rgba(199,29,35, 1);
+    font-size: 20px;
+    font-weight: bold;
+}
+.his-list li:last-child button {
+    margin-bottom: 0;
 }
 </style>

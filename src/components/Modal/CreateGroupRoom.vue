@@ -9,7 +9,7 @@
     </div>
     <div class="team-modal-container">
       <div class="inputs">
-        <input type="text" placeholder="群聊名称" autofocus v-model="teamName">
+        <input type="text" placeholder="群聊名称" autofocus v-model="name">
         <div class="input-hint">给群聊起个好听的名字</div>
         <div class="selectMembers">
           <div v-for="member in memberList" :key="member.id">
@@ -20,7 +20,6 @@
             </div>
           </div>
         </div>
-        <!-- <textarea cols="30" rows="8" v-model="teamProfile" placeholder="团队简介"></textarea> -->
       </div>
       <div>
         <div>
@@ -69,12 +68,11 @@ export default {
       teamId: '',
       memberList: [],
       selectList: [],
-      show: true
     }
   },
   mounted() {
     this.teamId = this.$route.params.teamId
-    this.$http.get(`/api/teams/18/`).then(
+    this.$http.get(`/api/teams/${this.teamId}/`).then(
       response => {
         this.memberList = response.data.members.map((member) => ({
           id: member.user.id,
@@ -83,6 +81,7 @@ export default {
           avatar: member.user.avatar,
           isSelect: false
         }))
+        this.memberList = this.memberList.filter(member => member.id != this.$cookies.get('user_id'))
       },
       error => {
         console.log(error.message)
@@ -98,8 +97,6 @@ export default {
         member.isSelect = false
         this.selectList.splice(this.selectList.indexOf(member.id), 1)
       }
-      console.log(this.memberList)
-      console.log(this.selectList);
     },
     handleMouseLeaveAvatar() {
       this.avatarIsHovered = false
@@ -114,13 +111,29 @@ export default {
     },
     handleClose() {
       this.$emit('close')
-      this.avatarFile = null
-      this.avatarUrl = ''
-      this.teamName = ''
-      this.teamProfile = ''
-      this.teamName = ''
-      this.teamProfile = ''
+      this.name = ''
+      this.selectList = []
+      this.memberList = []
+      this.teamId = ''
     },
+    createGroupConfirm() {
+      let formData = new FormData()
+      formData.append('name', this.name)
+      formData.append('avatar', this.avatarFile)
+      formData.append('team', this.teamId)
+      for (let users of this.selectList) {
+        formData.append('users', users)
+      }
+      this.$http.post('/api/groups/create/', formData).then(
+        response => {
+          console.log(response.data);
+          this.handleClose()
+        },
+        error => {
+          console.log(error.message);
+        }
+      )
+    }
   }
 }
 </script>
@@ -152,6 +165,7 @@ export default {
   margin-left: 5px;
   font-weight: bold;
 }
+
 .selectRealname {
   font-size: 10px;
   margin-top: 13px;

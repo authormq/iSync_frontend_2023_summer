@@ -1,7 +1,7 @@
 <template>
-  <div class="guide-mask" ref="mask"></div>
+  <div class="guide-mask" ref="mask" :class="{'gradually-bright': shouldHide}"></div>
   <button @click="cnt++" v-if="cnt < 17">下一步</button>
-  <button @click="hide" v-else-if="cnt === 17">完成</button>
+  <button @click="hide" v-else-if="cnt === 17" :class="{'gradually-hide': shouldHide}">完成</button>
   <div class="guide-cover-container  " v-if="cnt === -1">
     <h2 class="cover-title">
       跟随教程，探索如何更高效地合作
@@ -137,7 +137,7 @@
     <div class="large-img large-img-10"></div>
     <h3 class="large-text"><em>新建</em>原型设计，用<em>模板</em>快速搓个好看的网页</h3>
   </div>
-  <div class="guide-cover-container animate__animated animate__fadeIn" v-if="cnt === 17" >
+  <div class="guide-cover-container animate__fadeIn" v-if="cnt === 17" :class="{'gradually-hide': shouldHide}">
     <div class="large-img large-img-11"></div>
     <h3 class="large-text">支持导出<em>图片</em>和<em>原生三件套</em>，<em>云端协同编辑</em>也不赖</h3>
     <h3 class="large-text"><em>分享预览链接</em>，让别人看看自己团队的大作</h3>
@@ -150,7 +150,8 @@ export default {
   name: 'Guide',
   data() {
     return {
-      cnt: -1
+      cnt: -1,
+      shouldHide: false // 应用在最后一个元素身上
     }
   },
   watch: {
@@ -171,8 +172,11 @@ export default {
   },
   methods: {
     hide() {
-      this.cnt++
-      this.$refs.mask.style.display = 'none'
+      this.shouldHide = true
+      setTimeout(() => {
+        this.cnt++
+        this.$refs.mask.style.display = 'none'
+      }, 3000);
     }
   }
 
@@ -453,12 +457,36 @@ button {
   color: rgba(199, 29, 35, 1);
 }
 
-
-
-
-
 button:hover {
   background-color: rgba(199, 29, 35, 0.8);
   transform: translate(-2px, -2px) scale(1.05);
+}
+
+@keyframes hide {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2);
+  }
+}
+
+@keyframes bright {
+  from {
+    background: rgba(0, 0, 0, 0.8);
+  }
+  to {
+    background: transparent;
+  }
+}
+
+.gradually-hide {
+  animation: hide 3s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.gradually-bright {
+  animation: bright 3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 </style>

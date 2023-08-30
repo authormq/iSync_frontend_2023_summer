@@ -188,8 +188,8 @@ export default {
 }
 
 .his-list {
-    overflow-y: scroll;
-    max-height:80%;
+    overflow-y: auto;
+    max-height: 450px;
     position: fixed;
     right: 0;
     top: 20%;

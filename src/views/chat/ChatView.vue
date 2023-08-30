@@ -13,7 +13,7 @@
  				<div>hahaha{{ message.content }}</div>
 			</div> -->
 		</vue-advanced-chat>
-		<!-- <CreateGroupRoom :show="showCreateRoomModal" @close="showCreateRoomModal = false"></CreateGroupRoom> -->
+		<CreateGroupRoom :show="showCreateRoomModal" @close="showCreateRoomModal = false"></CreateGroupRoom>
 	</div>
 </template>
 
@@ -45,7 +45,7 @@ export default {
 					_id: `${member.user.id}`,
 					username: member.user.username
 				})),
-				lastMessage: group.lastMessage == null ? null : {
+				lastMessage: group.lastMessage.id == null ? null : {
 					_id: group.lastMessage.id,
 					content: group.lastMessage.text_content,
 					senderId: `${group.lastMessage.sender.user.id}`,
@@ -469,6 +469,7 @@ export default {
 		},
 
 		addRoom() {
+			console.log(this.showCreateRoomModal);f
 			this.showCreateRoomModal = true
 		},
 

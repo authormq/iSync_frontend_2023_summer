@@ -32,6 +32,7 @@
     "@tiptap/starter-kit": "^2.1.7",
     "@tiptap/suggestion": "^2.1.7",
     "@tiptap/vue-3": "^2.1.7",
+    "animate.css": "^4.1.1",
     "axios": "^1.4.0",
     "echarts": "^5.4.3",
     "grapesjs": "^0.21.4",

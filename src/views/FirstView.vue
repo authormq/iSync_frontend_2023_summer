@@ -1,4 +1,5 @@
 <template>
+  <Guide />
   <div class="first-view">
     <div class="all-projects">全部项目</div>
     <!-- 暂未拥有项目的 UI 可以在拓展 -->
@@ -14,9 +15,10 @@
 
 <script>
 import ProjectListItem from '../components/ListItem/team/ProjectListItem.vue'
+import Guide from '../components/Guide/Guide.vue'
 export default {
   name: 'FirstView',
-  components: { ProjectListItem },
+  components: { ProjectListItem, Guide },
   data() {
     return {
       projectData: []

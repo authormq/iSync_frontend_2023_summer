@@ -5,8 +5,10 @@
 		<vue-advanced-chat ref="chat" theme="light" height="calc(100vh - 90px)" :styles="JSON.stringify(styles)"
 			:current-user-id="currentUserId" :rooms="JSON.stringify(rooms)" :rooms-loaded="roomsLoaded"
 			:messages="JSON.stringify(messages)" :messages-loaded="messagesLoaded" :custom-search-room-enabled="true"
+			:room-info-enabled="true" :message-selection-actions="JSON.stringify(messageSelectionActions)"
 			@send-message="sendMessage($event.detail[0])" @fetch-messages="fetchMessages($event.detail[0])"
-			@search-room="searchRoom($event.detail[0])" @open-file="openFile($event.detail[0])">
+			@search-room="searchRoom($event.detail[0])" @open-file="openFile($event.detail[0])" @add-room="addRoom"
+			@message-selection-action-handler="messageSelectionActionHandler($event.detail[0])">
 			<!-- <div v-for="(message, index) in messages" :slot="'message_' + message._id" :key="index">
  				<div>hahaha{{ message.content }}</div>
 			</div> -->
@@ -254,11 +256,11 @@ export default {
 	beforeUnmount() {
 		document.removeEventListener('click', this.changeStyle)
 	},
-	unmounted() {
-		for (let i = 0; i < this.ws.length; i++) {
-			this.ws[i].close()
-		}
-	},
+	// unmounted() {
+	// 	for (let i = 0; i < this.ws.length; i++) {
+	// 		this.ws[i].close()
+	// 	}
+	// },
 	data() {
 		return {
 			ws: [],
@@ -269,6 +271,16 @@ export default {
 			roomsLoaded: false,
 			messages: [],
 			messagesLoaded: false,
+			messageSelectionActions: [
+				{
+					name: 'forwardItemByItem',
+					title: '逐条转发'
+				},
+				{
+					name: 'forwardCombined',
+					title: '合并转发'
+				}
+			],
 			styles: {
 				sidemenu: {
 					backgroundActive: 'rgba(199,29,35, 0.2)'
@@ -279,7 +291,7 @@ export default {
 				},
 				icons: {
 					search: 'rgba(199,29,35, 1)',
-					add: '#1976d2',
+					add: 'rgba(199,29,35, 1)',
 					toggle: 'rgba(199,29,35, 1)',
 					menu: '#0a0a0a',
 					close: 'rgba(199,29,35, 1)',
@@ -337,6 +349,7 @@ export default {
 				}
 			}
 		},
+
 		fetchMessages({ room, options = {} }) {
 			this.currentRoomId = room.roomId
 			const offset = options.reset ? 0 : this.messages.length
@@ -448,6 +461,22 @@ export default {
 			}
 			const target = document.getElementById(`\\${i + 1}`)
 			console.log(target)
+		},
+
+		addRoom() {
+			alert('addRoom')
+		},
+
+		messageSelectionActionHandler({ roomId, action, message }) {
+			console.log(message)
+			switch (action.name) {
+				case 'forwardItemByItem':
+					alert('forwardItemByItem')
+					break
+				case 'forwardCombined':
+					alert('forwardCombined')
+					break
+			}
 		}
 	}
 }

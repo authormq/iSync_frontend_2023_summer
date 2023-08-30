@@ -11,6 +11,7 @@
   <StylishMessage :show="showMessage" :title="messageTitle" :content="messageContent" />
   <!-- <document-view></document-view> -->
   <!-- <GrapesjsView /> -->
+  <!-- <CreateGroupRoom></CreateGroupRoom> -->
 </template>
 
 <script setup>
@@ -19,6 +20,7 @@ import DocumentView from './components/DocumentWheels/DocumentView.vue'
 import TopNav from './components/TopNav/TopNav.vue'
 import StylishMessage from './components/Stylish/StylishMessage.vue'
 import GrapesjsView from './components/PrototypeWheels/GrapesjsView.vue'
+import CreateGroupRoom from './components/Modal/CreateGroupRoom.vue'
 import { useStore } from 'vuex'
 
 

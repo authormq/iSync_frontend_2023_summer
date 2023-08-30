@@ -83,7 +83,7 @@ export default {
 						avatar: message.sender.user.avatar,
 						timestamp: message.create_datetime.substring(11, 16),
 						date: message.create_datetime.substring(5, 10),
-						new: true,
+						new: false,
 						replyMessage: message.reply_message == null ? null : {
 							_id: message.reply_message.id,
 							content: message.reply_message.text_content,
@@ -101,25 +101,22 @@ export default {
 							type: message.file_content.name.split('.')[1]
 						}]
 					}
-					console.log(this.currentRoomId)
-					console.log(this.rooms[i].roomId)
 					if (this.currentRoomId != this.rooms[i].roomId) {
 						this.rooms[i].unreadCount++
 					}
 					else {
+						this.$http.post(`/api/groups/${this.currentRoomId}/messages/read_all/`)
 						this.messages = [
 							...this.messages,
 							this.rooms[i].lastMessage
 						]
 					}
-					this.roomsLoaded = false
 					for (let j = 0; j < this.rooms.length; j++) {
 						if (this.rooms[j].index > this.rooms[i].index) {
 							this.rooms[j].index--
 						}
 					}
 					this.rooms[i].index = 0
-					this.roomsLoaded = true
 					// @
 					for (let j = 0; j < data.mentioned_users.length; j++) {
 						if (data.mentioned_users[j]._id == this.currentUserId || data.mentioned_users[j]._id == '0') {
@@ -257,11 +254,11 @@ export default {
 	beforeUnmount() {
 		document.removeEventListener('click', this.changeStyle)
 	},
-	// unmounted() {
-	// 	for (let i = 0; i < this.ws.length; i++) {
-	// 		this.ws[i].close()
-	// 	}
-	// },
+	unmounted() {
+		for (let i = 0; i < this.ws.length; i++) {
+			this.ws[i].close()
+		}
+	},
 	data() {
 		return {
 			ws: [],
@@ -373,7 +370,12 @@ export default {
 						}]
 					}))
 					this.messagesLoaded = true
-					room.unreadCount = 0
+					for (let i = 0; i < this.rooms.length; i++) {
+						if (this.rooms[i].roomId == room.roomId) {
+							this.rooms[i].unreadCount = 0
+							break
+						}
+					}
 				})
 			})
 		},

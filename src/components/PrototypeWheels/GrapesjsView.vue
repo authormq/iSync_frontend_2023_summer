@@ -329,6 +329,9 @@ export default {
 				link.click()
 				link.remove()
 			})
+		},
+		shareLink() {
+			
 		}
 	}
 }

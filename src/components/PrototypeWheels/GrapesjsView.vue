@@ -365,7 +365,7 @@ export default {
 }
 
 :deep(.gjs-four-color-h:hover) {
-	color: lightgray;
+	color: #ddd;
 }
 
 :deep(.gjs-four-color) {
@@ -417,9 +417,81 @@ export default {
 }
 :deep(.gjs-pn-btn:hover) {
 	background:rgb(199,29,35);
-	color:#eee;
+	color:#ddd;
 }
 
+:deep(.cm-s-hopscotch.CodeMirror) {
+	background-color: white;
+	color: black;
+}
+:deep(.cm-s-hopscotch .CodeMirror-gutters) {
+    background: #eee;
+    border-right: 0px;
+}
+:deep(.gjs-cm-editor#gjs-cm-css #gjs-cm-title) {
+    color: #804f7b;
+}
+
+:deep(.CodeMirror) {
+    font-family: consolas;
+    height: 300px;
+    color: black;
+    direction: ltr;
+}
+
+:deep(.gjs-layer-name) {
+    padding: 8px 0;
+    display: inline-block;
+    box-sizing: content-box;
+    overflow: hidden;
+    white-space: nowrap;
+    margin: 0 30px 0 15px;
+    max-width: 170px;
+}
+
+:deep(.gjs-layer-vis) {
+    left: 0;
+    top: 0;
+    padding: 7px 10px 7px 10px;
+    position: absolute;
+    box-sizing: content-box;
+    cursor: pointer;
+    width: 20px;
+    z-index: 1;
+}
+
+:deep(.gjs-layer-caret) {
+    width: 20px;
+    padding: 2px;
+    cursor: pointer;
+    position: absolute;
+    box-sizing: content-box;
+    left: -13px;
+    top: 0;
+    transform: rotate(90deg);
+    opacity: .7;
+    filter: alpha(opacity=70);
+}
+:deep(.gjs-select option, .gjs-field-select option, .gjs-clm-select option, .gjs-sm-select option, .gjs-fields option, .gjs-sm-unit option) {
+    background-color: #ddd;
+    color: rgba(199, 29, 35, 1);
+}
+:deep(.gjs-color-warn) {
+    color: rgba(199, 29, 35, 1);
+    fill: rgba(199, 29, 35, 1);
+}
+:deep(.gjs-select option, .gjs-field-select option, .gjs-clm-select option, .gjs-sm-select option, .gjs-fields option, .gjs-sm-unit option) {
+    background-color: #ddd;
+    color: rgba(199, 29, 35, 1);
+}
+/* :deep(.gjs-pn-panel) {
+    display: inline-block;
+    position: absolute;
+    box-sizing: border-box;
+    text-align: center;
+    padding: 5px;
+    z-index: 3;
+} */
 #size-setter{
 	height:30px;
 	display:inline-block;
@@ -459,7 +531,7 @@ export default {
 }
 #size-setter button:hover{
 	background: #c71d23;
-	color:#eee;
+	color:#ddd;
 	border:#c71d23 2px solid;
 }
 

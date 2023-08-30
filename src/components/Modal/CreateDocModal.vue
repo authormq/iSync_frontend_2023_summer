@@ -1,5 +1,5 @@
 <template>
-  <StylishModal :show="show" width="700px" height="150px" padding="25px">
+  <StylishModal :show="show" width="900px" height="700px" padding="25px">
     <div class="title-container">
       <div></div>
       <div class="title">创建文档</div>
@@ -10,13 +10,29 @@
     <div class="content-container">
       <div class="inputs">
         <input type="text" placeholder="文档名称" v-model="name">
-        是否公开文档&nbsp;
-        <button v-if="isPublic == 0" @click="isPublic = 1">点击公开</button>
-        <button v-else @click="isPublic = 0">点击私密</button>
+        <span>文档权限</span>
+        <button v-if="isPublic == 0" @click="isPublic = 1">私密</button>
+        <button v-else @click="isPublic = 0">公开</button>
       </div>
-      <div class="confirm">
-        <button @click="commitCreate">确认</button>
-      </div>
+    </div>
+    <div class="model-title">文档模板</div>
+    <div class="model-container">
+      <ul>
+        <li v-for="(model, index) in models" :key="index" style="display: inline-block;">
+          <button class="model-select-button"
+            :style="{ 'background': model.isSelected ? 'rgba(199, 29, 35, 1)' : 'transparent' }"
+            @click="handleModelSelect(index)">
+            <img class="model-img" :src="model.imgSrc">
+            <span class="model-type" :style="{ 'color': model.isSelected ? 'white' : 'rgba(199, 29, 35, 1)' }">
+              {{ model.name }}
+            </span>
+          </button>
+        </li>
+      </ul>
+    </div>
+    <div class="bottom-box">
+      <button class="cancel" @click="handleClose">取消</button>
+      <button class="confirm" @click="commitCreate">创建</button>
     </div>
   </StylishModal>
 </template>
@@ -42,6 +58,56 @@ export default {
       // show: false,
       name: '',
       isPublic: 0,
+      models: [
+        {
+          isSelected: true,
+          imgSrc: "/src/assets/avatar.jpeg",
+          type: 'empty',
+          name: '空文档'
+        },
+        {
+          isSelected: false,
+          imgSrc: "/src/assets/avatar.jpeg",
+          type: '',
+          name: '项目计划'
+        },
+        {
+          isSelected: false,
+          imgSrc: "/src/assets/avatar.jpeg",
+          type: 'empty',
+          name: '会议纪要'
+        },
+        {
+          isSelected: false,
+          imgSrc: "/src/assets/avatar.jpeg",
+          type: 'empty',
+          name: '管理'
+        },
+        {
+          isSelected: false,
+          imgSrc: "/src/assets/avatar.jpeg",
+          type: 'empty',
+          name: '工作周报'
+        },
+        {
+          isSelected: false,
+          imgSrc: "/src/assets/avatar.jpeg",
+          type: 'empty',
+          name: '研究报告'
+        },
+        {
+          isSelected: false,
+          imgSrc: "/src/assets/avatar.jpeg",
+          type: 'empty',
+          name: '规格手册'
+        },
+        {
+          isSelected: false,
+          imgSrc: "/src/assets/avatar.jpeg",
+          type: 'empty',
+          name: '设计手册'
+        },
+      ],
       docId: 0 // 如果创建成功，所返回的 docId
     }
   },
@@ -59,9 +125,15 @@ export default {
           this.name = ''
         },
         error => {
-          console.log('@@',error.message)
+          console.log('@@', error.message)
         }
       )
+    },
+    handleModelSelect(index) {
+      this.models.forEach((model) => {
+        model.isSelected = false
+      })
+      this.models[index].isSelected = true
     },
     cancelCreate() {
       this.isPublic = 0
@@ -92,7 +164,7 @@ export default {
   font-size: 30px;
   font-weight: bold;
   padding-left: 30px;
-  color: rgba(199,29,35, 1);
+  color: rgba(199, 29, 35, 1);
 }
 
 .close-icon {
@@ -103,64 +175,144 @@ export default {
 .content-container {
   display: flex;
   justify-content: space-between;
-  margin: 0 50px;
+  margin: 0 60px;
 }
 
 input {
+  box-sizing: border-box;
   display: inline-block;
   width: 200px;
-  height: 30px;
-  border: 1px solid rgba(199,29,35, 1);
+  height: 35px;
+  border: 1px solid rgba(199, 29, 35, 1);
   border-radius: 10px;
   padding: 5px 10px;
   font-size: 18px;
   transition: 0.1s cubic-bezier(0.075, 0.82, 0.165, 1);
-  caret-color: rgba(199,29,35, 1);
+  caret-color: rgba(199, 29, 35, 1);
 }
 
 input:focus {
-  border: 3px solid rgba(199,29,35, 1);
+  border: 3px solid rgba(199, 29, 35, 1);
 }
 
 .inputs {
   display: inline-block;
+  margin-left: 50px;
+}
+
+.inputs span {
+  color: rgba(199, 29, 35, 1);
+  font-weight: 700;
+  margin-left: 220px;
+  font-size: 18px;
 }
 
 .inputs button {
-  width: 80px;
-  height: 35px;
+  padding: 0 15px;
+  margin-left: 50px;
+  height: 30px;
   font-size: 18px;
   border-radius: 5px;
   cursor: pointer;
   transition: 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
   box-sizing: border-box;
-  border: 1px solid rgba(199,29,35, 1);
-  color: rgba(199,29,35, 1);
+  border: 1px solid rgba(199, 29, 35, 1);
+  color: rgba(199, 29, 35, 1);
   background: white;
 }
 
 .inputs button:hover {
-  border: 1px solid rgba(199,29,35, 0.8);
-  color: rgba(199,29,35, 0.8);
+  border: 1px solid rgba(199, 29, 35, 0.8);
+  color: rgba(199, 29, 35, 0.8);
 }
 
-.confirm {
-  display: inline-block;
+
+.model-title {
+  font-size: 25px;
+  font-weight: bold;
+  margin: 15px 0 5px 65px;
+  color: rgba(199, 29, 35, 1);
 }
 
-.confirm button {
-  display: inline-block;
-  width: 80px;
+.model-container {
+  display: flex;
+  margin: 0 50px;
+}
+
+
+.model-select-button {
+  text-align: center;
+  margin: 15px;
+  padding: 0 0 10px 0;
+  border-radius: 20px;
+  border: 2px solid rgba(199, 29, 35, 1);
+  transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.model-select-button:hover {
+  border: 2px solid rgba(199, 29, 35, 0.5);
+  cursor: pointer;
+}
+
+.model-img {
+  width: 150px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+
+.model-type {
+  color: rgba(199, 29, 35, 1);
+  font-weight: 700;
+}
+
+.bottom-box {
+  display: flex;
+  padding: 10px 80px 30px 80px;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+
+
+.confirm,
+.cancel {
+  display: block;
+  width: 100px;
   height: 35px;
   font-size: 18px;
   border-radius: 5px;
   cursor: pointer;
-  transition: 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
-  background: rgba(199,29,35, 1);
-  color: white;
+  transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
-.confirm button:hover {
-  background: rgba(199,29,35, 0.8);
+
+
+.cancel {
+  box-sizing: border-box;
+  border: 2px solid rgba(199, 29, 35, 1);
+  color: rgba(199, 29, 35, 1);
+  background: white;
+}
+
+.cancel:hover {
+  border: 2px solid rgba(199, 29, 35, 0.5);
+  color: rgba(199, 29, 35, 0.5);
+}
+
+
+.confirm {
+  background: rgba(199, 29, 35, 1);
+  color: white;
+  display: inline-block;
+  width: 100px;
+  height: 35px;
+  font-size: 18px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.confirm:hover {
+  background: rgba(199, 29, 35, 0.8);
 }
 </style>

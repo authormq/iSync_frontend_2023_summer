@@ -4,7 +4,7 @@
             <button class="item" :class="{ 'is-selected': index === selectedIndex }" v-for="(item, index) in items"
                 :key="index" @click="selectItem(index)">
                 {{ item.username }}
-                <span class="identity-tag">{{ item.identity }}</span>
+                <span class="identity-tag" :class="identityClass[item.identity]">{{ item.identity }}</span>
             </button>
         </template>
         <div class="item" v-else>
@@ -30,6 +30,11 @@ export default {
     data() {
         return {
             selectedIndex: 0,
+            identityClass: {
+                '团队创建者': 'leader',
+                '团队管理员': 'admin',
+                '团队成员': 'member'
+            }
         }
     },
 
@@ -76,14 +81,14 @@ export default {
             if (item) {
                 this.command({ id: item.username })
                 console.log(item)
-                this.$bus.emit('wssend', {docId: item.docId, id: item.id})
+                this.$bus.emit('wssend', { docId: item.docId, id: item.id })
             }
         },
     },
 }
 </script>
 
-<style lang="css">
+<style scoped lang="css">
 .items {
     padding: 0.2rem;
     position: relative;
@@ -115,7 +120,7 @@ export default {
     border-color: #000;
 }
 
-.identity-tag {
+.identity-tag{
     display: flex;
     padding: 2px 5px;
     right: 5px;
@@ -123,9 +128,23 @@ export default {
     font-family: Arial, Helvetica, sans-serif;
     display: inline-block;
     border-radius: 0.3rem;
-    color: #444;
-    background: #ccc;
+
     font-weight: 700;
     font-size: 0.8rem;
+}
+
+.identity-tag.leader {
+    background: rgb(139, 20, 25);
+    color: #ddd
+}
+
+.identity-tag.admin {
+    background: rgb(199, 29, 35);
+    color: #ddd
+}
+
+.identity-tag.member{
+    color: #444;
+    background: #ddd;
 }
 </style>

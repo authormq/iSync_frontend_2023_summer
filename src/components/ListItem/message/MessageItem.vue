@@ -24,11 +24,11 @@
         </div>
       </div>
     </div>
-    <div class="bottom">
+    <div class="bottom" @click="jump">
       {{ msg.content }}
     </div>
     <div>
-      {{showFrom}}
+      {{ showFrom }}
     </div>
   </div>
 </template>
@@ -48,6 +48,15 @@ export default {
     // 这个函数待补充
     handleDeleteMessage() {
       this.$bus.emit('sendDeleteMessageRequest', this.msg)
+    },
+
+    jump() {
+      if (this.msg.teamId != null) {
+        this.$router.push(`/team/${this.msg.teamId}/chat`)
+      }
+      else {
+        this.$router.push(`/doc/${this.msg.fileId}`)
+      }
     }
   },
   computed: {
@@ -55,7 +64,6 @@ export default {
       return this.msg.timeStamp
     },
     showFrom() {
-      console.log(this.msg);
       if (this.msg.isGroup) {
         return '来自群聊: ' + this.msg.teamName
       } else {

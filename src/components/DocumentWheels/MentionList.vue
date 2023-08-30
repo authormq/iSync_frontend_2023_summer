@@ -1,8 +1,9 @@
 <template>
     <div class="items">
         <template v-if="items.length">
-            <button class="item" :class="{ 'is-selected': index === selectedIndex }" v-for="(item, index) in items"
-                :key="index" @click="selectItem(index)">
+            <button class="item" :class="{ 'is-selected': index === selectedIndex }"
+                v-for="(item, index) in items.sort((a, b) => compareItem(a, b))" :key="item.index"
+                @click="selectItem(index)">
                 {{ item.username }}
                 <span class="identity-tag" :class="identityClass[item.identity]">{{ item.identity }}</span>
             </button>
@@ -45,6 +46,10 @@ export default {
     },
 
     methods: {
+        compareItem(a, b) {
+            let pair = { '团队创建者': 666, '团队管理员': 66, '团队成员': 6 }
+            return pair[a.identity] < pair[b.identity]
+        },
         onKeyDown({ event }) {
             if (event.key === 'ArrowUp') {
                 this.upHandler()
@@ -120,7 +125,7 @@ export default {
     border-color: #000;
 }
 
-.identity-tag{
+.identity-tag {
     display: flex;
     padding: 2px 5px;
     right: 5px;
@@ -143,7 +148,7 @@ export default {
     color: #ddd
 }
 
-.identity-tag.member{
+.identity-tag.member {
     color: #444;
     background: #ddd;
 }

@@ -1,5 +1,5 @@
 <template>
-    
+    <!-- <div>{{ inspector?inspector.getHTML():'' }}</div> -->
     <div id="inspector-wrapper">
         <editor-content v-if="showHistoryVersion" :editor="inspector"></editor-content>
     </div>
@@ -112,9 +112,9 @@ export default {
 </script>
 
 <style scoped>
-/* #inspector-wrapper {
-    position: relative;
-} */
+#inspector-wrapper {
+   width:700px;
+}
 btn {
     align-self: flex-end;
     /* position: fixed;

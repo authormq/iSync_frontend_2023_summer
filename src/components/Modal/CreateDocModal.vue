@@ -1,5 +1,5 @@
 <template>
-  <StylishModal :show="show" width="900px" height="700px" padding="25px">
+  <StylishModal :show="show" width="950px" height="700px" padding="25px">
     <div class="title-container">
       <div></div>
       <div class="title">创建文档</div>
@@ -14,9 +14,9 @@
         <button v-if="isPublic == 0" @click="isPublic = 1">私密</button>
         <button v-else @click="isPublic = 0">公开</button>
       </div>
-      <div class="introduction">
-        <input type="text" placeholder="文档简介" v-model="profile">
-      </div>
+    </div>
+    <div class="introduction">
+      <input type="text" placeholder="文档简介" v-model="profile">
     </div>
     <div class="model-title">文档模板</div>
     <div class="model-container">
@@ -71,43 +71,43 @@ export default {
         {
           isSelected: false,
           imgSrc: "/src/assets/avatar.jpeg",
-          type: '',
+          type: 'project_plan',
           name: '项目计划'
         },
         {
           isSelected: false,
           imgSrc: "/src/assets/avatar.jpeg",
-          type: 'empty',
+          type: 'meeting_minutes',
           name: '会议纪要'
         },
         {
           isSelected: false,
           imgSrc: "/src/assets/avatar.jpeg",
-          type: 'empty',
+          type: 'management',
           name: '管理'
         },
         {
           isSelected: false,
           imgSrc: "/src/assets/avatar.jpeg",
-          type: 'empty',
+          type: 'weekly_report',
           name: '工作周报'
         },
         {
           isSelected: false,
           imgSrc: "/src/assets/avatar.jpeg",
-          type: 'empty',
+          type: 'research_report',
           name: '研究报告'
         },
         {
           isSelected: false,
           imgSrc: "/src/assets/avatar.jpeg",
-          type: 'empty',
+          type: 'specification_manual',
           name: '规格手册'
         },
         {
           isSelected: false,
           imgSrc: "/src/assets/avatar.jpeg",
-          type: 'empty',
+          type: 'design_manual',
           name: '设计手册'
         },
       ],
@@ -117,17 +117,27 @@ export default {
   methods: {
     commitCreate() {
       let formData = new FormData()
+      let docType = 'empty'
       formData.append('project', this.projectId)
       formData.append('name', this.name)
       formData.append('isPublic', this.isPublic)
       formData.append('profile', this.profile)
+      this.models.forEach((model) => {
+        if (model.isSelected === true) {
+          docType = model.type
+          formData.append('type', model.type)
+        }
+      })
+      console.log(formData);
       this.$http.post(`/api/projects/file/create/`, formData).then(
         response => {
           let newDoc = {
             id: response.data.id,
             name: this.name,
-            isPublic: this.isPublic
+            isPublic: this.isPublic,
+            type: docType,
           }
+          alert('111')
           this.$bus.emit('reloadDocListAfterCreateSucceed', newDoc)
           this.handleClose()
         },
@@ -183,7 +193,7 @@ export default {
   margin: 0 60px;
 }
 
-input {
+.inputs input {
   box-sizing: border-box;
   display: inline-block;
   width: 200px;
@@ -231,6 +241,23 @@ input:focus {
   color: rgba(199, 29, 35, 0.8);
 }
 
+.introduction {
+  text-align: center;
+}
+
+.introduction input {
+  width: 80%;
+  padding: 0 15px;
+  margin: 20px 50px;
+  height: 30px;
+  font-size: 18px;
+  border-radius: 5px;
+  transition: 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+  box-sizing: border-box;
+  border: 1px solid rgba(199, 29, 35, 1);
+  color: rgba(199, 29, 35, 1);
+  background: white;
+}
 
 .model-title {
   font-size: 25px;
@@ -241,14 +268,14 @@ input:focus {
 
 .model-container {
   display: flex;
-  margin: 0 50px;
+  margin: 0 60px;
 }
 
 
 .model-select-button {
   text-align: center;
-  margin: 15px;
-  padding: 0 0 10px 0;
+  margin: 10px 30px;
+  padding: 0 0 5px 0;
   border-radius: 20px;
   border: 2px solid rgba(199, 29, 35, 1);
   transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
@@ -260,9 +287,9 @@ input:focus {
 }
 
 .model-img {
-  width: 150px;
+  width: 130px;
   border-radius: 20px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .model-type {

@@ -18,6 +18,9 @@
       <div class="project-time">
         修改于 {{ data.latestUpdateTime }}
       </div>
+      <div class="project-time">
+        创建于 {{ data.createTime }}
+      </div>
     </div>
   </div>
 
@@ -49,6 +52,7 @@
       :style="{ left: x + 'px', top: y + 'px'}"
     >
       <button @click.stop="handleRename">重命名</button>
+      <button @click.stop="handleCopy">拷贝</button>
       <button @click.stop="sendDeleteRequest">删除</button>
   </div>
 </template>
@@ -107,6 +111,9 @@ export default {
     },
     sendRestoreRequest() {
       this.$bus.emit('restoreRequest', this.data)
+    },
+    handleCopy() {
+      this.$bus.emit('copyProject', this.data.id)
     },
     // 控制右键弹出菜单
     handleClick(event) {
@@ -174,7 +181,7 @@ img {
   display: block;
   margin: 0 auto;
   width: 200px;
-  height: 150px;
+  height: 130px;
 }
 
 .project-info {
@@ -212,7 +219,7 @@ img {
 
 .menu {
   width: 80px;
-  height: 90px;
+  /* height: 90px; */
   padding: 10px;
   background: white;
   /* border: 2px solid rgba(199, 29, 35, 1); */
@@ -237,7 +244,8 @@ img {
   color: white;
 }
 
-.menu button:first-child {
+.menu button:nth-child(2) {
+  margin-top: 10px;
   margin-bottom: 10px;
 }
 

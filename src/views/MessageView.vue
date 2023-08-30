@@ -41,7 +41,9 @@ export default {
           sender: news.group_message == null ? news.sender.username : news.group_message.sender.user.username,
           receiver: news.receiver,
           isRead: news.is_read,
+          teamId: news.team_id,
           teamName: news.team_name,
+          fileId: news.file_id,
           fileName: news.file_name,
           content: news.group_message == null ? `${news.sender.username}提到了你` : `${news.group_message.sender.user.username}提到了你`,
         }))

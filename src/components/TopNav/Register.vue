@@ -69,35 +69,43 @@ export default {
     register() {
       //首先进行检查
       if (this.username.length < 1 || this.username.length > 150) {//用户名长度检测
-        alert('用户名长度不符合要求')
+        this.$bus.emit('message', { title: '用户名长度不符合要求', content: '', time: 1500 })
+        // alert('用户名长度不符合要求')
         return
       }
       if (/^[\w]+$/.test(this.username) === false) {
-        alert('用户名格式不符合要求')
+        this.$bus.emit('message', { title: '用户名格式不符合要求', content: '', time: 1500 })
+        // alert('用户名格式不符合要求')
         return
       }
       if (this.lastname.length < 1 || this.lastname.length > 150) {
-        alert('姓氏长度不符合要求')
+        this.$bus.emit('message', { title: '姓氏长度不符合要求', content: '', time: 1500 })
+        // alert('姓氏长度不符合要求')
         return
       }
       if (this.firstname.length < 1 || this.firstname.length > 150) {
-        alert('名字长度不符合要求')
+        this.$bus.emit('message', { title: '名字长度不符合要求', content: '', time: 1500 })
+        // alert('名字长度不符合要求')
         return
       }
       if (this.password.length < 8 || this.password.length > 20) {
-        alert('密码长度不符合要求')
+        this.$bus.emit('message', { title: '密码长度不符合要求', content: '', time: 1500 })
+        // alert('密码长度不符合要求')
         return
       }
       if (this.password !== this.confirmedPassword) {
-        alert('两次输入密码不一致')
+        this.$bus.emit('message', { title: '两次输入密码不一致', content: '', time: 1500 })
+        // alert('两次输入密码不一致')
         return
       }
       if (this.email.length < 1 || this.email.length >= 150) {
-        alert('邮箱长度不符合要求')
+        this.$bus.emit('message', { title: '邮箱长度不符合要求', content: '', time: 1500 })
+        // alert('邮箱长度不符合要求')
         return
       }
       if (/^\w{3,}(\.\w+)*@[A-z0-9]+(\.[A-z]{2,5}){1,2}$/.test(this.email) === false) {
-        alert('邮箱格式不符合要求')
+        this.$bus.emit('message', { title: '邮箱格式不符合要求', content: '', time: 1500 })
+        // alert('邮箱格式不符合要求')
         return
       }
       let postData = {
@@ -109,14 +117,16 @@ export default {
         email: this.email
       }
       this.$http.post('/api/accounts/register/', postData).then((response) => {
-        alert('注册成功,请前往邮箱验证后方可登录')
+        this.$bus.emit('message', { title: '注册成功，前往邮箱验证后方可登录', content: '', time: 1500 })
+        // alert('注册成功,请前往邮箱验证后方可登录')
         this.handleClose()
       }, (error) => {
         if (error.response.data.errors !== undefined) {
           alert(error.response.data.errors)
         }
         else {
-          alert('注册失败')
+          this.$bus.emit('message', { title: '注册成功，前往邮箱验证后方可登录', content: '', time: 1500 })
+          // alert('注册失败')
         }
       })
       return

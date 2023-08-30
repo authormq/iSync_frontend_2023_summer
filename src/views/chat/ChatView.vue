@@ -227,6 +227,17 @@ export default {
 			.vac-add-icon {
 				display: none !important;
 			}
+
+			/* 新消息的提醒颜色*/
+			.vac-badge-counter.vac-room-badge {
+				background: rgba(199,29,35, 1) !important;
+			}
+
+			/* 左侧列表的消息 */
+			.vac-text-ellipsis {
+				font-weight: 500 !important;
+				color: #67717a !important;
+			}
 		`
 		
 		

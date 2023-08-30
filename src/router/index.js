@@ -16,6 +16,7 @@ import WebBuilder from '../views/editing/WebBuilder.vue'
 import FirstView from '../views/FirstView.vue'
 import DocumentView from '../components/DocumentWheels/DocumentView.vue'
 import GrapesjsView from '../components/PrototypeWheels/GrapesjsView.vue'
+import TeamInviteConfirm from '../views/TeamInviteConfirm.vue'
 
 import store from '../store'
 
@@ -71,13 +72,10 @@ const router = createRouter({
       component: ProjectView,
       children: [
         {
-          // path: 'doc/:docId',
           path: 'doc',
-          // component: DocEditingView
           component: DocListView,
         },
         {
-          // path: 'page/:pageId',
           path: 'page',
           component: PageListView
         }
@@ -90,7 +88,11 @@ const router = createRouter({
     {
       path: `/page/:protoId`,
       component: GrapesjsView
-    } 
+    },
+    {
+      path: '/team/:teamId/invite/confirm',
+      component: TeamInviteConfirm
+    }
   ]
 })
 

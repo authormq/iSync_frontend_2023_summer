@@ -282,7 +282,15 @@
 				</button>
 				<!-- 插入图片 -->
 				<input ref="imgInput" style="display:none;" type="file" accept="image" @input="insertImage">
-				<button @click="$refs.imgInput.click">插入图片</button>
+				<button @click="$refs.imgInput.click"><svg t="1693388870875" class="icon" viewBox="0 0 1024 1024"
+						version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6452" width="20" height="20">
+						<path
+							d="M967.111111 56.888889H56.888889a56.888889 56.888889 0 0 0-56.888889 56.888889v796.444444a56.888889 56.888889 0 0 0 56.888889 56.888889h910.222222a56.888889 56.888889 0 0 0 56.888889-56.888889V113.777778a56.888889 56.888889 0 0 0-56.888889-56.888889z m-56.888889 768a28.444444 28.444444 0 0 1-28.444444 28.444444H421.091556l318.691555-318.691555L910.222222 705.080889V824.888889z m0-278.414222l-123.448889-123.448889a56.263111 56.263111 0 0 0-47.331555-24.746667 55.921778 55.921778 0 0 0-46.478222 23.779556l-431.331556 431.331555H142.279111a28.444444 28.444444 0 0 1-28.444444-28.444444v-625.777778a28.444444 28.444444 0 0 1 28.444444-28.444444H881.777778a28.444444 28.444444 0 0 1 28.444444 28.444444v347.363556z"
+							fill="" p-id="6453"></path>
+						<path
+							d="M341.333333 284.444444a113.777778 113.777778 0 1 0-0.056889 227.498667A113.777778 113.777778 0 0 0 341.333333 284.444444z"
+							fill="" p-id="6454"></path>
+					</svg></button>
 			</div>
 			<!-- 字体、颜色、样式设置 -->
 			<div class="font">
@@ -410,10 +418,10 @@
 						:class="{ 'is-active': editor.isActive({ textAlign: 'justify' }) }" v-tooltip="'两端对齐'">
 						<svg t="1693060195477" class="icon" viewBox="0 0 1024 1024" version="1.1"
 							xmlns="http://www.w3.org/2000/svg" p-id="7241" width="20" height="20">
-							<path d="M0 93.090909h1024v93.137455H0z" fill="#231815" p-id="7242"></path>
-							<path d="M0 332.334545h1024v93.09091H0z" fill="#231815" p-id="7243"></path>
-							<path d="M0 810.821818h1024v93.090909H0z" fill="#231815" p-id="7244"></path>
-							<path d="M0 571.578182h1024v93.090909H0z" fill="#231815" p-id="7245"></path>
+							<path d="M0 93.090909h1024v93.137455H0z" p-id="7242"></path>
+							<path d="M0 332.334545h1024v93.09091H0z" p-id="7243"></path>
+							<path d="M0 810.821818h1024v93.090909H0z" p-id="7244"></path>
+							<path d="M0 571.578182h1024v93.090909H0z" p-id="7245"></path>
 						</svg>
 					</button>
 					<!-- 有序列表 -->
@@ -484,7 +492,7 @@
 							xmlns="http://www.w3.org/2000/svg" p-id="14588" width="20" height="20">
 							<path
 								d="M320 320L256 256 0 512.64 256 768l64-64-192-192 192-192zM768 256l-64 64 192 192-192 192 64 64 256-255.36L768 256zM353.28 896h96l224-768h-96l-224 768z"
-								fill="#262626" p-id="14589"></path>
+								p-id="14589"></path>
 						</svg>
 					</button>
 					<!-- 代码块 -->
@@ -924,21 +932,27 @@ export default {
 			}
 		},
 		saveDocument(mode) {
-			let formData = new FormData()
+			// let formData = new FormData()
 			let blob = new Blob([this.editor.getHTML()], { type: 'text/html' })
 			const reader = new FileReader()
 			reader.onload = (event) => {
 				const dataUrl = event.target.result
-				formData.append('source', dataUrl.split('base64,')[1])
+				// formData.append('source', dataUrl.split('base64,')[1])
 				if (mode === 'manualsave') {
-					this.$http.post(`/api/projects/file/${this.docId}/store/`, formData).then(() => {
-						console.log('保存成功')
-						this.$emit('updateVersion')
-					})
+					this.$http.post(`/api/projects/file/${this.docId}/store/`, JSON.stringify
+						({
+							source: dataUrl.split('base64,')[1]
+						}), { headers: { 'Content-Type': 'application/json', } }).then(() => {
+							console.log('保存成功')
+							this.$emit('updateVersion')
+						})
 				} else {
-					this.$http.post(`/api/projects/file/${this.docId}/autostore/`, formData).then(() => {
-						console.log('自动保存成功')
-					})
+					this.$http.post(`/api/projects/file/${this.docId}/autostore/`, JSON.stringify
+						({
+							source: dataUrl.split('base64,')[1]
+						}), { headers: { 'Content-Type': 'application/json', } }).then(() => {
+							console.log('自动保存成功')
+						})
 				}
 			}
 			reader.readAsDataURL(blob)
@@ -964,6 +978,12 @@ export default {
 			//文档的标识对应一个 yDoc 属性
 			name: String(this.docId),
 			document: yDOC,
+			onConnect: () => {
+				setTimeout(() => {//异步执行，需要等到users加载完全
+					this.editor.commands.setContent(this.docContent)
+				}, 100)
+			},
+			forceSyncInterval: 10,
 		})
 		//加载保存时间最近的文件,然后初始化编辑器
 		//查询团队成员,然后初始化编辑器
@@ -1118,12 +1138,7 @@ export default {
 		this.editor.commands.clearContent()
 		//当provider连接上时的设置
 		this.provider.on('status', event => {
-			if (event.status === 'connected') {
-				setTimeout(() => {//异步执行，需要等到users加载完全
-					this.editor.commands.setContent(this.docContent)
-				}, 100)
 
-			}
 		})
 
 		//只有没有人在同时编辑的时候才加载，否则使用正在共享编辑的版本
@@ -1430,10 +1445,12 @@ export default {
 
 /* 加粗等按钮为激活状态时的样式 */
 .editor-bar button.is-active {
-	background: #616161;
+	background: rgb(199, 29, 35);
 	color: #ddd;
+	fill: #ddd;
 	font-weight: 700;
 }
+
 
 .editor-bar button[disabled="true"] {
 	opacity: 0.5;
@@ -1932,7 +1949,7 @@ export default {
 	}
 
 	100% {
-		transform: rotate(100deg);
+		transform: rotate(360deg);
 	}
 }
 

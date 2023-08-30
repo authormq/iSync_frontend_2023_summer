@@ -1,4 +1,26 @@
 <template>
+    <div v-if="!isLoaded" class="mask" :style="{
+        'position': 'fixed',
+        'left': '0',
+        'top': '0',
+        'width': '100%',
+        'height': '100%',
+        'background': 'rgba(200,200,200,0.5)'
+    }">
+        <div :style="{
+            'display': 'inline-block',
+            'vertical-align': 'middle',
+            'margin':'0 auto'
+        }">
+            <div :style="{
+                'width': '10px',
+                'aspect-ratio': '1',
+                'borderRadius': '10px',
+                'border': '3px dotted #777',
+                'animation': 'rotate 1s infinite linear'
+            }"></div><span>正在加载内容...</span>
+        </div>
+    </div>
     <div class="flex-container">
         <text-editor :isReadOnly="isReadOnlyIdentity" :doc-name="docName" :doc-id="docId" v-model:doc-content="docContent"
             @update-version="getVersionInfo" :showHistoryVersion="showHistoryVersion">
@@ -42,6 +64,7 @@ export default {
     },
     data() {
         return {
+            isLoaded: false,//等待后端返回全部文档内容
             showHistoryVersion: false,
             currentVersionId: undefined,
             docContent: '',
@@ -104,6 +127,7 @@ export default {
         this.$http.get(`/api/projects/file/${this.docId}/open/`).then((response) => {
             this.docName = response.headers['content-disposition'].match(/filename="([^"]+)"/)[1]
             this.docContent = response.data
+            this.isLoaded = true
         })
         //获取历史版本
         this.getVersionInfo()
@@ -148,11 +172,8 @@ export default {
                         this.showHistoryVersion = false
                     }
                 }
-
-
             })
         })
-
     }
 }
 </script>
@@ -161,11 +182,14 @@ export default {
 .flex-container {
     display: flex;
 }
+
 .change-btn {
     min-width: 100px;
 }
 
 .his-list {
+    overflow-y: scroll;
+    max-height:80%;
     position: fixed;
     right: 0;
     top: 20%;
@@ -193,5 +217,16 @@ export default {
 
 .his-list li:last-child button {
     margin-bottom: 0;
+}
+
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 </style>

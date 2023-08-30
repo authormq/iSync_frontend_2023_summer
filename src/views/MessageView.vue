@@ -105,6 +105,7 @@ export default {
     deleteAllRead() {
       this.allMessage = this.allMessage.filter(message => message.isRead == false)
       this.$http.delete('/api/news/delete_all_read/')
+      this.$bus.emit('judgeHasUnreadMsg', false)
     },
     handleDeleteMessage(msg) {
       this.$http.delete(`/api/news/${msg.msgId}`).then(

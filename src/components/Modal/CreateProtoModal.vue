@@ -45,6 +45,7 @@ export default {
       let formData = new FormData()
       formData.append('project', this.projectId)
       formData.append('name', this.name)
+      // formData.append('profile', )
       this.$http.post(`/api/projects/page/create/`, formData).then(
         response => {
           // 创建成功，直接跳转到新页面

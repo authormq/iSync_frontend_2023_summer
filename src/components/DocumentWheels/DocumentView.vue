@@ -1,10 +1,38 @@
 <template>
+    <div v-if="!isLoaded" class="mask" :style="{
+        'position': 'fixed',
+        'left': '0',
+        'top': '0',
+        'width': '100%',
+        'height': '100%',
+        'background': 'rgba(200,200,200,0.5)'
+    }">
+        <div :style="{
+            'display': 'inline-block',
+            'vertical-align': 'middle',
+            'margin':'0 auto'
+        }">
+            <div :style="{
+                'width': '10px',
+                'aspect-ratio': '1',
+                'borderRadius': '10px',
+                'border': '3px dotted #777',
+                'animation': 'rotate 1s infinite linear'
+            }"></div><span>正在加载内容...</span>
+        </div>
+    </div>
     <div class="flex-container">
         <text-editor :isReadOnly="isReadOnlyIdentity" :doc-name="docName" :doc-id="docId" v-model:doc-content="docContent"
             @update-version="getVersionInfo" :showHistoryVersion="showHistoryVersion">
             <template #showHistoryButton>
                 <button class="btn" @click="change" v-tooltip="'历史记录'">
-                    <svg t="1693229044900" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="27713" width="40" height="40"><path d="M512 144C310.4 144 144 310.4 144 512S310.4 880 512 880 880 713.6 880 512 713.6 144 512 144z m0 672c-166.4 0-304-137.6-304-304s137.6-304 304-304 304 137.6 304 304-137.6 304-304 304z" fill="#707070" p-id="27714"></path><path d="M528 275.2h-32v252.8H768v-32h-240z" fill="#707070" p-id="27715"></path></svg>
+                    <svg t="1693229044900" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                        xmlns="http://www.w3.org/2000/svg" p-id="27713" width="40" height="40">
+                        <path
+                            d="M512 144C310.4 144 144 310.4 144 512S310.4 880 512 880 880 713.6 880 512 713.6 144 512 144z m0 672c-166.4 0-304-137.6-304-304s137.6-304 304-304 304 137.6 304 304-137.6 304-304 304z"
+                            fill="#707070" p-id="27714"></path>
+                        <path d="M528 275.2h-32v252.8H768v-32h-240z" fill="#707070" p-id="27715"></path>
+                    </svg>
                 </button>
                 <ul v-show="showHistoryVersion" class="his-list" ref="draggable">
                     <li v-show="currentVersionId !== undefined"><button @click="coverDocument">替换</button></li>
@@ -16,9 +44,10 @@
                 <!-- <button class="change-btn" v-if="currentVersionId !== undefined" @click="coverDocument">以该版本替换当前文档</button> -->
             </template>
             <template #version>
-                <version-inspector :content="currentVersionContent" :showHistoryVersion="showHistoryVersion"></version-inspector>
+                <version-inspector :content="currentVersionContent"
+                    :showHistoryVersion="showHistoryVersion"></version-inspector>
             </template>
-            
+
         </text-editor>
         <!-- <version-inspector @updateContent="handleUpdateContent" :doc-id="docId" :versions="versions"></version-inspector> -->
     </div>
@@ -35,15 +64,16 @@ export default {
     },
     data() {
         return {
-            showHistoryVersion:false,
-            currentVersionId:undefined,
+            isLoaded: false,//等待后端返回全部文档内容
+            showHistoryVersion: false,
+            currentVersionId: undefined,
             docContent: '',
             docId: null,
             versions: [],
             members: [],
             docName: 'temp',
             isReadOnlyIdentity: false,
-            currentVersionContent:'',
+            currentVersionContent: '',
             isDragging: false,
             offsetX: 0,
             offsetY: 0
@@ -65,7 +95,7 @@ export default {
         //覆盖版本
         coverDocument() {
             this.$http.post(`/api/projects/file/${this.docId}/version/${this.currentVersionId}/`).then(() => {
-                this.currentVersionContent
+                console.log(this.currentVersionContent)
                 this.handleUpdateContent(this.currentVersionContent)
                 this.showHistoryVersion = false
             })
@@ -95,8 +125,9 @@ export default {
         //打开当前文件
         this.docId = this.$route.params.docId
         this.$http.get(`/api/projects/file/${this.docId}/open/`).then((response) => {
-            this.docName=response.headers['content-disposition'].match(/filename="([^"]+)"/)[1]
+            this.docName = response.headers['content-disposition'].match(/filename="([^"]+)"/)[1]
             this.docContent = response.data
+            this.isLoaded = true
         })
         //获取历史版本
         this.getVersionInfo()
@@ -114,7 +145,7 @@ export default {
             })
             // 鼠标拖动的响应（前提：摁下鼠标）
             document.addEventListener('mousemove', (e) => {
-                if (!this.isDragging) return 
+                if (!this.isDragging) return
                 const newX = e.clientX - this.offsetX
                 const newY = e.clientY - this.offsetY
                 const div = this.$refs.draggable
@@ -126,7 +157,7 @@ export default {
                 if (this.showHistoryVersion) {
                     this.isDragging = false
                     this.$refs.draggable.style.cursor = 'grab'
-                }  
+                }
             })
             // 鼠标点击的响应（点击区不在拖动面板内，隐藏面板）
             document.addEventListener('click', (e) => {
@@ -141,11 +172,8 @@ export default {
                         this.showHistoryVersion = false
                     }
                 }
-                
-
             })
         })
-        
     }
 }
 </script>
@@ -160,29 +188,45 @@ export default {
 }
 
 .his-list {
+    overflow-y: scroll;
+    max-height:80%;
     position: fixed;
     right: 0;
     top: 20%;
     width: 200px;
     padding: 20px;
     border-radius: 10px;
-    background-color: rgb(240,240,240);
+    background-color: rgb(240, 240, 240);
     box-shadow: -1px 1px 10px grey;
 }
+
 .his-list li button {
     margin: 0;
     width: 100%;
     margin-bottom: 15px;
 }
+
 .his-list li:first-child button {
     height: 45px;
     padding-top: 5px;
     padding-bottom: 5px;
-    color: rgba(199,29,35, 1);
+    color: rgba(199, 29, 35, 1);
     font-size: 20px;
     font-weight: bold;
 }
+
 .his-list li:last-child button {
     margin-bottom: 0;
+}
+
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 </style>

@@ -1,8 +1,12 @@
 <template>
 	<span id="size-setter">
-		<span>画布宽度 <input type="number" v-model="canvasWidth"> px</span>
-		<span>画布高度 <input type="number" v-model="canvasHeight"> px</span>
+		<span>
+			<svg t="1693312903898"  class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2576" width="25" height="25"><path d="M819.198 910.218 204.799 910.218c-50.267 0-91.022-40.75-91.022-91.02L113.777 204.822c0-50.29 40.755-91.045 91.022-91.045l614.398 0c50.27 0 91.02 40.755 91.02 91.045l0 614.376C910.218 869.468 869.468 910.218 819.198 910.218zM841.953 227.554c0-25.122-20.385-45.51-45.51-45.51L227.554 182.044c-25.122 0-45.51 20.387-45.51 45.51l0 568.889c0 25.125 20.387 45.535 45.51 45.535l568.889 0c25.125 0 45.51-20.39 45.51-45.535L841.953 227.554zM603.268 400.952l-57.14-57.115 0 335.802 55.505-55.5c13.335-13.31 34.93-13.335 48.265 0 13.33 13.335 13.33 34.95 0 48.29l-105.77 105.765c-1.615 3.415-3.525 6.78-6.37 9.625-7.1 7.08-16.475 10.1-25.76 9.67-9.262 0.46-18.66-2.59-25.76-9.69-2.842-2.85-4.8-6.15-6.347-9.58l-105.79-105.79c-13.335-13.34-13.335-34.955 0-48.29 13.332-13.31 34.927-13.335 48.262 0l55.502 55.5L477.865 343.837l-57.117 57.115c-13.335 13.357-34.952 13.335-48.287 0s-13.335-34.93 0-48.265l115.395-115.37c13.332-13.335 34.927-13.357 48.262 0l115.395 115.37c13.335 13.335 13.335 34.952 0 48.265C638.198 414.286 616.583 414.286 603.268 400.952z" fill="#c71d23" p-id="2577"></path></svg>
+			<input type="number" v-model="canvasWidth"> px</span>
+		<span><svg t="1693314788367" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3702" width="25" height="25"><path d="M113.777 819.198 113.777 204.8c0-50.267 40.75-91.022 91.02-91.022l614.376 0c50.29 0 91.045 40.755 91.045 91.022l0 614.398c0 50.27-40.755 91.02-91.045 91.02L204.797 910.218C154.527 910.218 113.777 869.468 113.777 819.198zM796.438 841.953c25.125 0 45.51-20.385 45.51-45.51L841.948 227.554c0-25.122-20.385-45.51-45.505-45.51L227.552 182.044c-25.125 0-45.535 20.387-45.535 45.51l0 568.889c0 25.125 20.39 45.51 45.535 45.51L796.438 841.953zM623.043 603.269l57.115-57.14L344.357 546.129l55.5 55.505c13.31 13.335 13.335 34.93 0 48.265-13.335 13.33-34.95 13.33-48.29 0l-105.765-105.77c-3.415-1.615-6.78-3.525-9.625-6.37-7.08-7.1-10.1-16.475-9.67-25.76-0.46-9.262 2.59-18.66 9.69-25.76 2.85-2.842 6.15-4.8 9.58-6.348l105.79-105.79c13.34-13.335 34.955-13.335 48.29 0 13.31 13.332 13.335 34.927 0 48.262l-55.5 55.502 335.802 0-57.115-57.117c-13.355-13.335-13.335-34.952 0-48.287s34.93-13.335 48.265 0l115.37 115.395c13.335 13.332 13.36 34.927 0 48.262l-115.37 115.395c-13.335 13.335-34.95 13.335-48.265 0C609.708 638.198 609.708 616.583 623.043 603.269z" fill="#c71d23" p-id="3703"></path></svg>
+			 <input type="number" v-model="canvasHeight"> px</span>
 		<button @click="exportAsImage">导出为图片</button>
+		<button class="sharebutton" @click="shareLink">生成预览链接</button>
 		<!-- <button @click="editor.runCommand('export-image')">导出</button> -->
 	</span>
 	<div id="gjs"></div>
@@ -18,9 +22,18 @@ import 'grapesjs/dist/css/grapes.min.css'; // 引入样式
 import 'grapesjs/dist/grapes.min.js';
 import 'grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min.css';
 import 'grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min.js';
-import PresetPlugin from 'grapesjs-preset-newsletter';
-import ExportPlugin from 'grapesjs-plugin-export';//导出html和css
-import ScriptPlugin from 'grapesjs-script-editor'//js代码编辑
+import Plugin from 'grapesjs-blocks-basic'; //basic-blocks
+import BasicPlugin from 'grapesjs-preset-webpage'; //basic-blocks
+import gjsForms from 'grapesjs-plugin-forms'; //form-blocks
+import Navbar from 'grapesjs-navbar'; //extra-navbar
+import Countdown from 'grapesjs-component-countdown'; //倒计时
+import Tabs from 'grapesjs-tabs';
+import Tooltip from 'grapesjs-tooltip';
+import CodePlugin from 'grapesjs-custom-code';
+import Type from 'grapesjs-typed';
+// import PresetPlugin from 'grapesjs-preset-newsletter';
+import ExportPlugin from 'grapesjs-plugin-export'; //导出html和css
+import ScriptPlugin from 'grapesjs-script-editor'; //js代码编辑
 import html2canvas from 'html2canvas';
 
 export default {
@@ -80,6 +93,9 @@ export default {
 				this.editor.Devices.remove(this.currentDevice)//把原来的设备删了
 				this.currentDevice = this.editor.Devices.get(newName)//变成新设备
 			}
+			setTimeout(()=>{
+					this.editor.store()
+				},100)
 		},
 		canvasWidth(value) {
 			if (value >= 10000) {
@@ -102,6 +118,9 @@ export default {
 				this.editor.Devices.select(newName)//选择该设备
 				this.editor.Devices.remove(this.currentDevice)//把原来的设备删了
 				this.currentDevice = this.editor.Devices.get(newName)//变成新设备
+				setTimeout(()=>{
+					this.editor.store()
+				},100)
 			}
 		}
 	},
@@ -156,7 +175,19 @@ export default {
 					}]
 				},
 				assetManager: [],//预加载资产，图片/图标等
-				plugins: [PresetPlugin, ExportPlugin, ScriptPlugin],
+				plugins: [
+					Plugin, 
+					BasicPlugin, 
+					ExportPlugin, 
+					Navbar,
+					Tabs,
+					Tooltip,
+					CodePlugin,
+					Countdown,
+					gjsForms, 
+					Type,
+					ScriptPlugin
+				],
 				pluginsOpts: {
 					[ExportPlugin]: {
 						addExportBtn: true,
@@ -176,29 +207,56 @@ export default {
 						buttonLabel: '保存',
 
 					},
+					[Type]:{
+						block:{
+							category:'Extra'
+						}
+					},
+					[Tabs]:{
+						tabsBlock:{
+							category:'Extra'
+						}
+					}
 				},
-
 				styleManager: [],
 				storageManager: {
 					type: 'remote',
 					stepsBeforeSave: 1,
 					autosave: true,
-					// autoload: false,
+					autoload: true,
 					options: {
 						remote: {
-							urlLoad: `http://localhost:3000/projects/${this.pageId}`,
-							urlStore: `http://localhost:3000/projects/${this.pageId}`,
+							// urlLoad: `http://localhost:3000/projects/${this.pageId}`,
+							// urlStore: `http://localhost:3000/projects/${this.pageId}`,
+							urlLoad: `http://localhost:3000/projects/1`,
+							urlStore: `http://localhost:3000/projects/1`,
 							// The `remote` storage uses the POST method when stores data but
 							// the json-server API requires PATCH.
-							fetchOptions: opts => (opts.method === 'POST' ?  { method: 'PATCH' } : {}),
+							fetchOptions: opts => (opts.method === 'POST' ? { method: 'PATCH' } : {}),
 							// As the API stores projects in this format `{id: 1, data: projectData }`,
 							// we have to properly update the body before the store and extract the
 							// project data from the response result.
 							onStore: data => {
+								data['size']={
+									height:this.canvasHeight,
+									width:this.canvasWidth
+								}
 								this.ws.send(JSON.stringify(data))
-								return { id: this.pageId, data }
+								return { id: this.pageId, 
+									data,
+									//存储画布宽高
+									size:{
+										height:this.canvasHeight,
+										width:this.canvasWidth
+									} 
+								}
 							},
-							onLoad: result => result.data,
+							onLoad: result => {
+								this.canvasHeight=result.size.height
+								this.canvasWidth=result.size.width
+								return result.data
+							}
+
 						}
 					},
 				}
@@ -246,6 +304,8 @@ export default {
 				this.editor.BlockManager.add('testBlock', {
 					id: 'block',
 					label: 'Block',
+					category: 'Basic',
+					media:'<svg t="1693317219863" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1506" width="100%" height="100%"><path d="M960 392.078222a98.602667 98.602667 0 0 1-98.588444 98.588445H148.366222A98.602667 98.602667 0 0 1 49.777778 392.078222V148.366222A98.602667 98.602667 0 0 1 148.366222 49.777778h713.059556a98.602667 98.602667 0 0 1 98.588444 98.588444v243.712z m-56.888889-243.712A41.699556 41.699556 0 0 0 861.411556 106.666667H148.366222A41.699556 41.699556 0 0 0 106.666667 148.366222v243.726222a41.699556 41.699556 0 0 0 41.699555 41.699556h713.059556a41.699556 41.699556 0 0 0 41.699555-41.699556V148.366222z" fill="#c71d23" p-id="1507"></path><path d="M163.555556 277.333333a14.222222 14.222222 0 0 1-14.222223-14.222222v-25.628444c0-36.352 17.720889-73.927111 56.32-73.927111h94.776889a14.222222 14.222222 0 1 1 0 28.444444H205.653333c-20.792889 0-27.875556 23.125333-27.875555 45.482667V263.111111a14.222222 14.222222 0 0 1-14.222222 14.222222zM152.092444 326.115556c-3.697778 0-7.409778-1.564444-10.097777-4.124445-2.702222-2.688-4.124444-6.4-4.124445-10.097778s1.422222-7.395556 4.124445-10.097777c5.404444-5.404444 14.791111-5.262222 20.053333 0 2.688 2.702222 4.266667 6.4 4.266667 10.097777s-1.564444 7.409778-4.124445 9.955556c-2.844444 2.688-6.4 4.266667-10.097778 4.266667zM661.333333 875.633778a98.602667 98.602667 0 0 1-98.588444 98.588444H148.366222A98.602667 98.602667 0 0 1 49.777778 875.633778V631.921778a98.602667 98.602667 0 0 1 98.588444-98.588445h414.392889a98.602667 98.602667 0 0 1 98.588445 98.588445v243.712z m-56.888889-243.712a41.699556 41.699556 0 0 0-41.699555-41.699556H148.366222A41.699556 41.699556 0 0 0 106.666667 631.921778v243.726222a41.699556 41.699556 0 0 0 41.699555 41.699556h414.392889a41.699556 41.699556 0 0 0 41.699556-41.699556V631.921778z" fill="#c71d23" p-id="1508"></path><path d="M974.222222 875.633778a98.602667 98.602667 0 0 1-98.588444 98.588444h-73.059556a98.602667 98.602667 0 0 1-98.588444-98.588444V631.921778a98.602667 98.602667 0 0 1 98.588444-98.588445h73.059556a98.602667 98.602667 0 0 1 98.588444 98.588445v243.712z m-56.888889-243.712a41.699556 41.699556 0 0 0-41.699555-41.699556h-73.059556a41.699556 41.699556 0 0 0-41.699555 41.699556v243.726222a41.699556 41.699556 0 0 0 41.699555 41.699556h73.059556a41.699556 41.699556 0 0 0 41.699555-41.699556V631.921778z" fill="#c71d23" p-id="1509"></path></svg>',
 					attributes: { class: 'gjs-fonts gjs-f-b1', title: 'hello' },
 					content: `<div style="text-align:center"><span>Hello World</span></div>`
 				})
@@ -274,11 +334,15 @@ export default {
 			document.body.appendChild(node)
 			html2canvas(node).then(canvas => {
 				let link = document.createElement('a')
+				link.style.display = 'none'
 				link.download = `${this.pageName}.png`
 				link.href = canvas.toDataURL("image/png")
 				link.click()
-				document.body.removeChild(node)
+				link.remove()
 			})
+		},
+		shareLink() {
+			
 		}
 	}
 }
@@ -292,16 +356,115 @@ export default {
 	--frame-width: 1920px;
 }
 
+:deep(.gjs-one-bg) {
+	background-color: white;
+}
+
+:deep(.gjs-two-color) {
+	color: rgba(199,29,35, 1);
+}
+
+:deep(.gjs-four-color-h:hover) {
+	color: lightgray;
+}
+
+:deep(.gjs-four-color) {
+	color: darkred;
+}
+
+/* 被选中边框颜色，未改成功 */
+:deep(.gjs-selected) {
+	outline-color: #c71d23;
+	outline-style: solid;
+	outline-offset: -2px;
+}
+
+:deep(.gjs-pn-views-container) {
+	width: 20%;
+}
+
+:deep(.gjs-pn-options) {
+	right: 20%;
+}
+
+:deep(.gjs-pn-views) {
+	width: 20%;
+}
+
+:deep(.gjs-three-bg) {
+	background-color: rgba(199,29,35, 1);
+	color: gray;
+}
+
+:deep(.gjs-pn-commands) {
+	display: none;
+}
 
 :deep(.gjs-cv-canvas) {
 	overflow: auto;
 }
-
-:deep(.gjs-pn-btn:nth-child(3)) {
+/* :deep(.gjs-pn-devices-c .gjs-pn-btn) {
 	display: none;
 }
-
-:deep(.gjs-pn-btn:nth-child(2)) {
+:deep(.gjs-pn-devices-c .gjs-pn-btn:nth-child(3)) {
 	display: none;
 }
+:deep(.gjs-pn-devices-c .gjs-pn-btn:nth-child(2)) {
+	display: none;
+} */
+:deep(.gjs-pn-btn){
+	transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s ;
+}
+:deep(.gjs-pn-btn:hover) {
+	background:rgb(199,29,35);
+	color:#eee;
+}
+
+#size-setter{
+	height:30px;
+	display:inline-block;
+}
+
+#size-setter svg{
+	vertical-align:middle;
+	margin-right: 20px;
+	cursor:default;
+}
+
+#size-setter input{
+	vertical-align:middle;
+	padding-left:10px ;
+	width:50px;
+	border:#c71d23 2px solid;
+	color:#c71d23;
+	border-radius: 3px;
+}
+#size-setter span{
+	display: inline-block;
+	margin:0 20px;
+	font-weight: 700;
+	font-family: consolas;
+	vertical-align: top;
+}
+#size-setter button{
+	font-weight: 500;
+	cursor: pointer;
+	padding:0 10px;
+	vertical-align: bottom;
+	border:#c71d23 2px solid;
+	color:#c71d23;
+	border-radius: 5px;
+	background: none;
+	transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s;
+}
+#size-setter button:hover{
+	background: #c71d23;
+	color:#eee;
+	border:#c71d23 2px solid;
+}
+
+.sharebutton {
+	margin-left: 20px;
+}
+
 </style>

@@ -1,7 +1,6 @@
 <!-- 文本编辑器 -->
 <template>
 	<div id="editor-wrapper" v-if="editor && provider">
-		<!-- {{ provider.status }} -->
 		<div class="mask"></div>
 		<!-- 气泡菜单 除了样式不要乱改 -->
 		<bubble-menu :editor="editor" class="editor-bubble-menu">
@@ -11,45 +10,45 @@
 					<button @click="editor.chain().focus().toggleBold().run()"
 						:disabled="!editor.can().chain().focus().toggleBold().run()"
 						:class="{ 'is-active': editor.isActive('bold') }">
-							<svg t="1693120857543" class="icon" viewBox="0 0 1024 1024" version="1.1"
-								xmlns="http://www.w3.org/2000/svg" p-id="10125" width="15" height="15">
-								<path
-									d="M385.692278 918.576916 390.80771 919.307658C421.012953 920.769221 443.423035 921.499963 458.03843 921.499963 545.73119 921.499963 609.551045 905.545019 649.499963 873.63458 689.448881 841.724219 709.423104 790.449073 709.423104 719.807724 709.423104 655.986846 690.66689 608.365568 653.153831 576.942316 615.640852 545.519065 559.372209 529.807675 484.346171 529.807675 462.422961 529.807675 444.153935 530.051308 429.538462 530.538496 414.922988 531.025605 400.307751 531.756426 385.692278 532.730801L385.692278 918.576916ZM386.423099 445.769255C390.320522 446.256443 395.192241 446.621775 401.038494 446.865408 406.884667 447.108962 415.410176 447.23074 426.615414 447.23074 504.5645 447.23074 561.929295 431.51935 598.711532 400.096177 635.49377 368.672926 653.884652 319.590085 653.884652 252.846159 653.884652 194.384345 636.833477 151.025822 602.730732 122.76925 568.628066 94.512679 516.256768 80.38463 445.615419 80.38463 433.922993 80.38463 415.410412 81.358927 390.076889 83.307678L385.692278 83.307678 386.423099 445.769255ZM78.769231 0 528.192276 0C638.295434 0 721.115136 19.608812 776.653824 58.82691 832.192591 98.045086 859.961502 156.62781 859.961502 234.576896 859.961502 293.525898 841.936108 342.852372 805.884613 382.557657 769.833118 422.26302 716.731156 451.371717 646.576916 469.884613 732.320926 471.346176 799.063828 493.268992 846.80767 535.653849 894.551513 578.038705 918.423079 636.499653 918.423079 711.038425 918.423079 805.551734 886.026004 878.018954 821.23075 928.442289 756.435574 978.865625 663.141612 1004.076898 541.346186 1004.076898L78.769231 1004.076898 78.769231 931.000005 167.19234 922.961526 191.307697 899.576911 191.307697 101.57694 167.19234 80.38463 78.769231 73.076894 78.769231 0Z"
-									fill="#000000" p-id="10126"></path>
-							</svg>
+						<svg t="1693120857543" class="icon" viewBox="0 0 1024 1024" version="1.1"
+							xmlns="http://www.w3.org/2000/svg" p-id="10125" width="15" height="15">
+							<path
+								d="M385.692278 918.576916 390.80771 919.307658C421.012953 920.769221 443.423035 921.499963 458.03843 921.499963 545.73119 921.499963 609.551045 905.545019 649.499963 873.63458 689.448881 841.724219 709.423104 790.449073 709.423104 719.807724 709.423104 655.986846 690.66689 608.365568 653.153831 576.942316 615.640852 545.519065 559.372209 529.807675 484.346171 529.807675 462.422961 529.807675 444.153935 530.051308 429.538462 530.538496 414.922988 531.025605 400.307751 531.756426 385.692278 532.730801L385.692278 918.576916ZM386.423099 445.769255C390.320522 446.256443 395.192241 446.621775 401.038494 446.865408 406.884667 447.108962 415.410176 447.23074 426.615414 447.23074 504.5645 447.23074 561.929295 431.51935 598.711532 400.096177 635.49377 368.672926 653.884652 319.590085 653.884652 252.846159 653.884652 194.384345 636.833477 151.025822 602.730732 122.76925 568.628066 94.512679 516.256768 80.38463 445.615419 80.38463 433.922993 80.38463 415.410412 81.358927 390.076889 83.307678L385.692278 83.307678 386.423099 445.769255ZM78.769231 0 528.192276 0C638.295434 0 721.115136 19.608812 776.653824 58.82691 832.192591 98.045086 859.961502 156.62781 859.961502 234.576896 859.961502 293.525898 841.936108 342.852372 805.884613 382.557657 769.833118 422.26302 716.731156 451.371717 646.576916 469.884613 732.320926 471.346176 799.063828 493.268992 846.80767 535.653849 894.551513 578.038705 918.423079 636.499653 918.423079 711.038425 918.423079 805.551734 886.026004 878.018954 821.23075 928.442289 756.435574 978.865625 663.141612 1004.076898 541.346186 1004.076898L78.769231 1004.076898 78.769231 931.000005 167.19234 922.961526 191.307697 899.576911 191.307697 101.57694 167.19234 80.38463 78.769231 73.076894 78.769231 0Z"
+								fill="#000000" p-id="10126"></path>
+						</svg>
 					</button>
 					<!-- 斜体 -->
 					<button @click="editor.chain().focus().toggleItalic().run()"
 						:disabled="!editor.can().chain().focus().toggleItalic().run()"
 						:class="{ 'is-active': editor.isActive('italic') }">
-							<svg t="1693059386616" class="icon" viewBox="0 0 1024 1024" version="1.1"
-								xmlns="http://www.w3.org/2000/svg" p-id="2334" width="15" height="15">
-								<path
-									d="M760.198095 97.52381v73.142857h-127.804952l-189.464381 707.047619h146.627048v73.142857H243.809524v-73.142857h123.392l189.44-707.047619H414.47619V97.52381h345.721905z"
-									p-id="2335"></path>
-							</svg>
+						<svg t="1693059386616" class="icon" viewBox="0 0 1024 1024" version="1.1"
+							xmlns="http://www.w3.org/2000/svg" p-id="2334" width="15" height="15">
+							<path
+								d="M760.198095 97.52381v73.142857h-127.804952l-189.464381 707.047619h146.627048v73.142857H243.809524v-73.142857h123.392l189.44-707.047619H414.47619V97.52381h345.721905z"
+								p-id="2335"></path>
+						</svg>
 					</button>
 					<!-- 删除线 -->
 					<button @click="editor.chain().focus().toggleStrike().run()"
 						:disabled="!editor.can().chain().focus().toggleStrike().run()"
 						:class="{ 'is-active': editor.isActive('strike') }">
-							<svg t="1693059874309" class="icon" viewBox="0 0 1024 1024" version="1.1"
-								xmlns="http://www.w3.org/2000/svg" p-id="3819" width="15" height="15">
-								<path
-									d="M756.037818 539.624727c61.998545 40.634182 93.486545 96.977455 93.486546 169.053091 0 71.493818-30.487273 128.954182-90.274909 171.194182-57.437091 39.796364-133.632 59.764364-228.584728 59.764364-96.116364 0-172.334545-22.272-227.421091-65.629091-63.301818-50.408727-98.443636-126.650182-105.495272-227.421091h70.330181c8.215273 78.498909 35.165091 137.146182 82.059637 175.825454 42.193455 34.001455 102.004364 51.595636 179.362909 51.595637 73.844364 0 133.632-15.290182 179.339636-43.426909 44.544-29.253818 68.002909-69.12 68.002909-118.365091 0-57.437091-29.323636-101.981091-85.597091-133.632-18.338909-10.705455-50.641455-23.901091-97.256727-38.958546H221.090909a34.909091 34.909091 0 0 1 0-69.818182h145.105455c-22.853818-8.448-39.959273-15.965091-51.2-22.528-64.512-36.328727-96.162909-89.088-96.162909-157.044363 0-72.680727 29.323636-127.790545 90.298181-166.469818C363.008 87.412364 433.338182 69.818182 517.748364 69.818182c91.461818 0 164.119273 22.272 218.018909 66.816 55.109818 44.544 86.760727 110.173091 93.789091 196.957091h-71.517091c-9.355636-65.629091-33.978182-114.874182-73.844364-148.875637-39.866182-34.001455-96.116364-50.408727-168.797091-50.408727-68.002909 0-120.738909 11.729455-159.418182 35.141818-44.544 25.832727-65.629091 65.675636-65.629091 118.411637 0 46.917818 25.762909 83.223273 78.49891 111.36 24.669091 11.729455 78.545455 30.510545 160.628363 53.922909 20.014545 5.725091 38.772364 11.264 56.32 16.663272H826.181818a34.909091 34.909091 0 0 1 0 69.818182h-70.144z"
-									p-id="3820"></path>
-							</svg>
+						<svg t="1693059874309" class="icon" viewBox="0 0 1024 1024" version="1.1"
+							xmlns="http://www.w3.org/2000/svg" p-id="3819" width="15" height="15">
+							<path
+								d="M756.037818 539.624727c61.998545 40.634182 93.486545 96.977455 93.486546 169.053091 0 71.493818-30.487273 128.954182-90.274909 171.194182-57.437091 39.796364-133.632 59.764364-228.584728 59.764364-96.116364 0-172.334545-22.272-227.421091-65.629091-63.301818-50.408727-98.443636-126.650182-105.495272-227.421091h70.330181c8.215273 78.498909 35.165091 137.146182 82.059637 175.825454 42.193455 34.001455 102.004364 51.595636 179.362909 51.595637 73.844364 0 133.632-15.290182 179.339636-43.426909 44.544-29.253818 68.002909-69.12 68.002909-118.365091 0-57.437091-29.323636-101.981091-85.597091-133.632-18.338909-10.705455-50.641455-23.901091-97.256727-38.958546H221.090909a34.909091 34.909091 0 0 1 0-69.818182h145.105455c-22.853818-8.448-39.959273-15.965091-51.2-22.528-64.512-36.328727-96.162909-89.088-96.162909-157.044363 0-72.680727 29.323636-127.790545 90.298181-166.469818C363.008 87.412364 433.338182 69.818182 517.748364 69.818182c91.461818 0 164.119273 22.272 218.018909 66.816 55.109818 44.544 86.760727 110.173091 93.789091 196.957091h-71.517091c-9.355636-65.629091-33.978182-114.874182-73.844364-148.875637-39.866182-34.001455-96.116364-50.408727-168.797091-50.408727-68.002909 0-120.738909 11.729455-159.418182 35.141818-44.544 25.832727-65.629091 65.675636-65.629091 118.411637 0 46.917818 25.762909 83.223273 78.49891 111.36 24.669091 11.729455 78.545455 30.510545 160.628363 53.922909 20.014545 5.725091 38.772364 11.264 56.32 16.663272H826.181818a34.909091 34.909091 0 0 1 0 69.818182h-70.144z"
+								p-id="3820"></path>
+						</svg>
 					</button>
 					<!-- 下划线 -->
 					<button @click="editor.chain().focus().toggleUnderline().run()"
 						:disabled="!editor.can().chain().focus().toggleUnderline().run()"
 						:class="{ 'is-active': editor.isActive('underline') }">
-							<svg t="1693059944194" class="icon" viewBox="0 0 1024 1024" version="1.1"
-								xmlns="http://www.w3.org/2000/svg" p-id="4797" width="15" height="15">
-								<path
-									d="M360.423619 85.333333v73.142857H280.380952v319.561143c0 118.662095 99.718095 215.942095 224.889905 219.331048l6.729143 0.097524c128.292571 0 231.619048-98.645333 231.619048-219.428572V158.47619H658.285714v-73.142857h238.518857v73.142857H816.761905v319.561143c0 159.50019-132.705524 288.597333-297.155048 292.473905l-7.606857 0.097524c-167.936 0-304.761905-130.608762-304.761905-292.571429V158.47619H121.904762v-73.142857h238.518857zM170.666667 902.095238h685.007238v-73.142857H170.666667v73.142857z"
-									p-id="4798"></path>
-							</svg>
+						<svg t="1693059944194" class="icon" viewBox="0 0 1024 1024" version="1.1"
+							xmlns="http://www.w3.org/2000/svg" p-id="4797" width="15" height="15">
+							<path
+								d="M360.423619 85.333333v73.142857H280.380952v319.561143c0 118.662095 99.718095 215.942095 224.889905 219.331048l6.729143 0.097524c128.292571 0 231.619048-98.645333 231.619048-219.428572V158.47619H658.285714v-73.142857h238.518857v73.142857H816.761905v319.561143c0 159.50019-132.705524 288.597333-297.155048 292.473905l-7.606857 0.097524c-167.936 0-304.761905-130.608762-304.761905-292.571429V158.47619H121.904762v-73.142857h238.518857zM170.666667 902.095238h685.007238v-73.142857H170.666667v73.142857z"
+								p-id="4798"></path>
+						</svg>
 					</button>
 					<!-- 字体 -->
 					<select v-model="selectedFontFamily" @change="changeFont"
@@ -153,7 +152,8 @@
 						</svg>
 					</button> -->
 					<!-- 清除标记 -->
-					<button @click="editor.chain().focus().unsetAllMarks().run(); editor.chain().focus().clearNodes().run()">
+					<button
+						@click="editor.chain().focus().unsetAllMarks().run(); editor.chain().focus().clearNodes().run()">
 						<svg t="1693060935327" class="icon" viewBox="0 0 1024 1024" version="1.1"
 							xmlns="http://www.w3.org/2000/svg" p-id="15726" width="20" height="20">
 							<path
@@ -162,7 +162,7 @@
 						</svg>
 					</button>
 				</div>
-				
+
 			</div>
 		</bubble-menu>
 		<!-- 悬浮菜单 -->
@@ -170,38 +170,38 @@
 			<!-- h1 -->
 			<button @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
 				:class="{ 'is-active': editor.isActive('heading', { level: 1 }) }">
-					<svg t="1693061041243" class="icon" viewBox="0 0 1024 1024" version="1.1"
-						xmlns="http://www.w3.org/2000/svg" p-id="1321" width="20" height="20">
-						<path
-							d="M584.9 445.3V142.6h86.5v735h-86.5V531.7H152.5v345.9H66.1v-735h86.5v302.6l432.3 0.1zM843.7 877.6v-0.3h-79.8V826h79.8V558.6c-22.5 23.4-49.9 40.4-79.8 49.3v-59.1c17.2-5.2 33.8-12.9 49.1-23 16.2-10.6 30.9-23.7 43.9-38.9h39.9V826h61.7v51.3h-61.7v0.3h-53.1z"
-							p-id="1322"></path>
-					</svg>
+				<svg t="1693061041243" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+					p-id="1321" width="20" height="20">
+					<path
+						d="M584.9 445.3V142.6h86.5v735h-86.5V531.7H152.5v345.9H66.1v-735h86.5v302.6l432.3 0.1zM843.7 877.6v-0.3h-79.8V826h79.8V558.6c-22.5 23.4-49.9 40.4-79.8 49.3v-59.1c17.2-5.2 33.8-12.9 49.1-23 16.2-10.6 30.9-23.7 43.9-38.9h39.9V826h61.7v51.3h-61.7v0.3h-53.1z"
+						p-id="1322"></path>
+				</svg>
 			</button>
 			<!-- h2 -->
 			<button @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
 				:class="{ 'is-active': editor.isActive('heading', { level: 2 }) }">
-					<svg t="1693061118323" class="icon" viewBox="0 0 1024 1024" version="1.1"
-						xmlns="http://www.w3.org/2000/svg" p-id="1479" width="20" height="20">
-						<path
-							d="M88 448h400V172c0-24.3 19.7-44 44-44s44 19.7 44 44v680c0 24.3-19.7 44-44 44s-44-19.7-44-44V536H88v316c0 24.3-19.7 44-44 44S0 876.3 0 852V172c0-24.3 19.7-44 44-44s44 19.7 44 44v276z m935.282 448H680c0.479-41.591 10.533-77.923 30.163-108.997 19.63-31.074 46.44-58.084 80.434-81.031 16.279-11.952 33.275-23.544 50.99-34.779 17.714-11.234 33.993-23.305 48.835-36.213 14.842-12.907 27.05-26.89 36.626-41.95 9.576-15.058 14.603-32.388 15.081-51.988 0-9.083-1.077-18.764-3.231-29.042-2.155-10.278-6.344-19.84-12.568-28.683-6.224-8.845-14.842-16.254-25.854-22.23-11.012-5.976-25.375-8.964-43.09-8.964-16.278 0-29.803 3.227-40.576 9.68-10.772 6.455-19.39 15.299-25.854 26.533-6.463 11.235-11.251 24.5-14.363 39.798-3.112 15.298-4.908 31.791-5.386 49.48h-81.87c0-27.728 3.71-53.423 11.13-77.087 7.422-23.664 18.553-44.101 33.395-61.311 14.842-17.21 32.916-30.715 54.222-40.516 21.305-9.8 46.081-14.7 74.33-14.7 30.641 0 56.255 5.02 76.843 15.059 20.587 10.04 37.224 22.707 49.912 38.005 12.688 15.298 21.665 31.91 26.931 49.838 5.267 17.927 7.9 35.018 7.9 51.272 0 20.078-3.112 38.244-9.336 54.498-6.224 16.254-14.603 31.193-25.136 44.818-10.533 13.625-22.502 26.174-35.908 37.647a538.302 538.302 0 0 0-41.653 32.27 1122.27 1122.27 0 0 0-43.09 28.683c-14.364 9.083-27.65 18.166-39.858 27.249-12.209 9.083-22.862 18.525-31.958 28.325-9.097 9.8-15.321 20.198-18.673 31.193h244.894V896z"
-							p-id="1480"></path>
-					</svg>
+				<svg t="1693061118323" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+					p-id="1479" width="20" height="20">
+					<path
+						d="M88 448h400V172c0-24.3 19.7-44 44-44s44 19.7 44 44v680c0 24.3-19.7 44-44 44s-44-19.7-44-44V536H88v316c0 24.3-19.7 44-44 44S0 876.3 0 852V172c0-24.3 19.7-44 44-44s44 19.7 44 44v276z m935.282 448H680c0.479-41.591 10.533-77.923 30.163-108.997 19.63-31.074 46.44-58.084 80.434-81.031 16.279-11.952 33.275-23.544 50.99-34.779 17.714-11.234 33.993-23.305 48.835-36.213 14.842-12.907 27.05-26.89 36.626-41.95 9.576-15.058 14.603-32.388 15.081-51.988 0-9.083-1.077-18.764-3.231-29.042-2.155-10.278-6.344-19.84-12.568-28.683-6.224-8.845-14.842-16.254-25.854-22.23-11.012-5.976-25.375-8.964-43.09-8.964-16.278 0-29.803 3.227-40.576 9.68-10.772 6.455-19.39 15.299-25.854 26.533-6.463 11.235-11.251 24.5-14.363 39.798-3.112 15.298-4.908 31.791-5.386 49.48h-81.87c0-27.728 3.71-53.423 11.13-77.087 7.422-23.664 18.553-44.101 33.395-61.311 14.842-17.21 32.916-30.715 54.222-40.516 21.305-9.8 46.081-14.7 74.33-14.7 30.641 0 56.255 5.02 76.843 15.059 20.587 10.04 37.224 22.707 49.912 38.005 12.688 15.298 21.665 31.91 26.931 49.838 5.267 17.927 7.9 35.018 7.9 51.272 0 20.078-3.112 38.244-9.336 54.498-6.224 16.254-14.603 31.193-25.136 44.818-10.533 13.625-22.502 26.174-35.908 37.647a538.302 538.302 0 0 0-41.653 32.27 1122.27 1122.27 0 0 0-43.09 28.683c-14.364 9.083-27.65 18.166-39.858 27.249-12.209 9.083-22.862 18.525-31.958 28.325-9.097 9.8-15.321 20.198-18.673 31.193h244.894V896z"
+						p-id="1480"></path>
+				</svg>
 			</button>
 			<!-- h3 -->
 			<button @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
 				:class="{ 'is-active': editor.isActive('heading', { level: 3 }) }">
-					<svg t="1693061135842" class="icon" viewBox="0 0 1024 1024" version="1.1"
-						xmlns="http://www.w3.org/2000/svg" p-id="1633" width="20" height="20">
-						<path
-							d="M88 448h400V172c0-24.3 19.7-44 44-44s44 19.7 44 44v680c0 24.3-19.7 44-44 44s-44-19.7-44-44V536H88v316c0 24.3-19.7 44-44 44S0 876.3 0 852V172c0-24.3 19.7-44 44-44s44 19.7 44 44v276zM815.551 597.802c13.128 0.47 26.257-0.469 39.385-2.813 13.129-2.344 24.85-6.447 35.165-12.308 10.316-5.86 18.638-13.948 24.968-24.263 6.33-10.315 9.494-22.975 9.494-37.978 0-21.1-7.15-37.978-21.45-50.638-14.301-12.66-32.704-18.989-55.21-18.989-14.066 0-26.257 2.813-36.572 8.44-10.315 5.626-18.872 13.245-25.67 22.857-6.799 9.612-11.84 20.395-15.121 32.352-3.283 11.956-4.69 24.263-4.22 36.923h-80.177c0.938-23.913 5.392-46.066 13.363-66.462 7.97-20.396 18.872-38.095 32.703-53.099 13.832-15.004 30.594-26.725 50.287-35.165C802.188 388.22 824.459 384 849.31 384c19.223 0 38.095 2.813 56.616 8.44 18.52 5.626 35.165 13.831 49.934 24.615 14.77 10.784 26.609 24.498 35.517 41.143 8.909 16.645 13.363 35.75 13.363 57.318 0 24.85-5.626 46.535-16.88 65.055-11.252 18.52-28.835 32-52.747 40.44v1.407c28.132 5.626 50.052 19.575 65.759 41.846 15.707 22.27 23.56 49.348 23.56 81.23 0 23.444-4.688 44.425-14.065 62.946-9.378 18.52-22.037 34.227-37.979 47.12-15.942 12.894-34.462 22.858-55.561 29.89-21.1 7.034-43.37 10.55-66.814 10.55-28.601 0-53.568-4.103-74.902-12.308-21.334-8.205-39.15-19.81-53.451-34.813-14.3-15.004-25.202-33.055-32.704-54.154-7.502-21.099-11.487-44.542-11.956-70.33h80.177c-0.938 30.008 6.447 54.975 22.154 74.902s39.268 29.89 70.682 29.89c26.726 0 49.114-7.62 67.166-22.857 18.051-15.239 27.077-36.923 27.077-65.055 0-19.224-3.751-34.462-11.253-45.715-7.502-11.252-17.348-19.81-29.539-25.67-12.19-5.86-25.905-9.494-41.143-10.901-15.239-1.407-30.828-1.875-46.77-1.407v-59.78z"
-							p-id="1634"></path>
-					</svg>
+				<svg t="1693061135842" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+					p-id="1633" width="20" height="20">
+					<path
+						d="M88 448h400V172c0-24.3 19.7-44 44-44s44 19.7 44 44v680c0 24.3-19.7 44-44 44s-44-19.7-44-44V536H88v316c0 24.3-19.7 44-44 44S0 876.3 0 852V172c0-24.3 19.7-44 44-44s44 19.7 44 44v276zM815.551 597.802c13.128 0.47 26.257-0.469 39.385-2.813 13.129-2.344 24.85-6.447 35.165-12.308 10.316-5.86 18.638-13.948 24.968-24.263 6.33-10.315 9.494-22.975 9.494-37.978 0-21.1-7.15-37.978-21.45-50.638-14.301-12.66-32.704-18.989-55.21-18.989-14.066 0-26.257 2.813-36.572 8.44-10.315 5.626-18.872 13.245-25.67 22.857-6.799 9.612-11.84 20.395-15.121 32.352-3.283 11.956-4.69 24.263-4.22 36.923h-80.177c0.938-23.913 5.392-46.066 13.363-66.462 7.97-20.396 18.872-38.095 32.703-53.099 13.832-15.004 30.594-26.725 50.287-35.165C802.188 388.22 824.459 384 849.31 384c19.223 0 38.095 2.813 56.616 8.44 18.52 5.626 35.165 13.831 49.934 24.615 14.77 10.784 26.609 24.498 35.517 41.143 8.909 16.645 13.363 35.75 13.363 57.318 0 24.85-5.626 46.535-16.88 65.055-11.252 18.52-28.835 32-52.747 40.44v1.407c28.132 5.626 50.052 19.575 65.759 41.846 15.707 22.27 23.56 49.348 23.56 81.23 0 23.444-4.688 44.425-14.065 62.946-9.378 18.52-22.037 34.227-37.979 47.12-15.942 12.894-34.462 22.858-55.561 29.89-21.1 7.034-43.37 10.55-66.814 10.55-28.601 0-53.568-4.103-74.902-12.308-21.334-8.205-39.15-19.81-53.451-34.813-14.3-15.004-25.202-33.055-32.704-54.154-7.502-21.099-11.487-44.542-11.956-70.33h80.177c-0.938 30.008 6.447 54.975 22.154 74.902s39.268 29.89 70.682 29.89c26.726 0 49.114-7.62 67.166-22.857 18.051-15.239 27.077-36.923 27.077-65.055 0-19.224-3.751-34.462-11.253-45.715-7.502-11.252-17.348-19.81-29.539-25.67-12.19-5.86-25.905-9.494-41.143-10.901-15.239-1.407-30.828-1.875-46.77-1.407v-59.78z"
+						p-id="1634"></path>
+				</svg>
 			</button>
 			<!-- 代码块 -->
 			<button @click="editor.chain().focus().toggleCodeBlock().run()"
 				:class="{ 'is-active': editor.isActive('codeBlock') }">
-				<svg t="1693060851190" class="icon" viewBox="0 0 1024 1024" version="1.1"
-					xmlns="http://www.w3.org/2000/svg" p-id="14739" width="20" height="20">
+				<svg t="1693060851190" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+					p-id="14739" width="20" height="20">
 					<path
 						d="M213.344 192v213.344c0 32-66.144 64-85.344 64v85.344c19.2 0 85.344 32 85.344 64v213.344A105.6 105.6 0 0 0 320 938.688h85.344v-85.344H320c-12.8 0-21.344-8.544-21.344-21.344v-213.344c0-44.8-27.744-81.056-59.744-106.656 34.144-25.6 59.744-61.856 59.744-106.656V192c0-12.8 8.544-21.344 21.344-21.344h85.344V85.312H320a105.6 105.6 0 0 0-106.656 106.656zM810.656 405.344V192A105.6 105.6 0 0 0 704 85.344h-85.344v85.344H704c12.8 0 21.344 8.544 21.344 21.344v213.344c0 44.8 27.744 81.056 59.744 106.656-34.144 25.6-59.744 61.856-59.744 106.656v213.344c0 12.8-8.544 21.344-21.344 21.344h-85.344v85.344H704a105.6 105.6 0 0 0 106.656-106.656v-213.344c0-32 66.144-64 85.344-64v-85.344c-19.2 0-85.344-32-85.344-64z"
 						p-id="14740"></path>
@@ -210,8 +210,8 @@
 			<!-- 块引用 -->
 			<button @click="editor.chain().focus().toggleBlockquote().run()"
 				:class="{ 'is-active': editor.isActive('blockquote') }">
-				<svg t="1693117443196" class="icon" viewBox="0 0 1024 1024" version="1.1"
-					xmlns="http://www.w3.org/2000/svg" p-id="9796" width="20" height="20">
+				<svg t="1693117443196" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+					p-id="9796" width="20" height="20">
 					<path
 						d="M235.710908 565.365418c3.442402-99.843986 20.061918-175.8521 49.92097-228.089835 29.827329-52.206012 76.305897-91.50097 139.435703-117.916597L349.324502 98.858542c-104.442724 47.073108-180.749644 116.493178-228.948389 208.29193C83.631234 376.007723 65.290517 487.336274 65.290517 641.107473l0 284.032962 332.234777 0L397.525294 565.365418 235.710908 565.365418zM769.351787 565.365418c3.442402-99.843986 20.061918-175.8521 49.92097-228.089835 29.827329-52.206012 76.305897-91.50097 139.435703-117.916597L882.965381 98.858542c-104.442724 47.073108-180.749644 116.493178-228.948389 208.29193-36.744879 68.857251-55.085596 180.185802-55.085596 333.957001l0 284.032962 332.234777 0L931.166173 565.365418 769.351787 565.365418z"
 						p-id="9797"></path>
@@ -224,7 +224,12 @@
 			<div class="saves">
 				<!-- 返回按钮 -->
 				<button @click="$router.go(-1)" v-tooltip="'返回'">
-				<svg t="1693232415241" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6251" width="50" height="50"><path d="M395.21518 513.604544l323.135538-312.373427c19.052938-18.416442 19.052938-48.273447 0-66.660212-19.053961-18.416442-49.910737-18.416442-68.964698 0L291.75176 480.290811c-19.052938 18.416442-19.052938 48.273447 0 66.660212l357.633237 345.688183c9.525957 9.207709 22.01234 13.796214 34.497699 13.796214 12.485359 0 24.971741-4.588505 34.466999-13.82896 19.052938-18.416442 19.052938-48.242747 0-66.660212L395.21518 513.604544z" fill="#272636" p-id="6252"></path></svg>
+					<svg t="1693232415241" class="icon" viewBox="0 0 1024 1024" version="1.1"
+						xmlns="http://www.w3.org/2000/svg" p-id="6251" width="50" height="50">
+						<path
+							d="M395.21518 513.604544l323.135538-312.373427c19.052938-18.416442 19.052938-48.273447 0-66.660212-19.053961-18.416442-49.910737-18.416442-68.964698 0L291.75176 480.290811c-19.052938 18.416442-19.052938 48.273447 0 66.660212l357.633237 345.688183c9.525957 9.207709 22.01234 13.796214 34.497699 13.796214 12.485359 0 24.971741-4.588505 34.466999-13.82896 19.052938-18.416442 19.052938-48.242747 0-66.660212L395.21518 513.604544z"
+							fill="#272636" p-id="6252"></path>
+					</svg>
 				</button>
 				<!-- 保存为PDF -->
 				<button @click="exportAsPDF" v-tooltip="'保存为PDF'">
@@ -250,6 +255,19 @@
 							p-id="8599"></path>
 					</svg>
 				</button>
+				<!-- 保存为markdown -->
+				<button @click="exportAsMarkdown" v-tooltip="'保存为Markdown'">
+					<svg t="1693374839969" class="icon" viewBox="0 0 1024 1024" version="1.1"
+						xmlns="http://www.w3.org/2000/svg" p-id="4954" width="50" height="50">
+						<path
+							d="M854.6 288.6L639.4 73.4c-6-6-14.1-9.4-22.6-9.4H192c-17.7 0-32 14.3-32 32v832c0 17.7 14.3 32 32 32h640c17.7 0 32-14.3 32-32V311.3c0-8.5-3.4-16.7-9.4-22.7zM790.2 326H602V137.8L790.2 326z m1.8 562H232V136h302v216c0 23.2 18.8 42 42 42h216v494z"
+							p-id="4955" fill="#0e932e" data-spm-anchor-id="a313x.search_index.0.i8.3d143a81L2zEZF"
+							class="selected"></path>
+						<path
+							d="M429 481.2c-1.9-4.4-6.2-7.2-11-7.2h-35c-6.6 0-12 5.4-12 12v272c0 6.6 5.4 12 12 12h27.1c6.6 0 12-5.4 12-12V582.1l66.8 150.2c1.9 4.3 6.2 7.1 11 7.1H524c4.7 0 9-2.8 11-7.1l66.8-150.6V758c0 6.6 5.4 12 12 12H641c6.6 0 12-5.4 12-12V486c0-6.6-5.4-12-12-12h-34.7c-4.8 0-9.1 2.8-11 7.2l-83.1 191-83.2-191z"
+							p-id="4956" fill="#0e932e" data-spm-anchor-id="a313x.search_index.0.i2.3d143a81L2zEZF"
+							class="selected"></path>
+					</svg></button>
 				<!-- 云端保存 -->
 				<button @click="saveDocument('manualsave')" v-tooltip="'保存'">
 					<svg t="1693118573501" class="icon" viewBox="0 0 1024 1024" version="1.1"
@@ -262,6 +280,17 @@
 							p-id="8972"></path>
 					</svg>
 				</button>
+				<!-- 插入图片 -->
+				<input ref="imgInput" style="display:none;" type="file" accept="image" @input="insertImage">
+				<button @click="$refs.imgInput.click"><svg t="1693388870875" class="icon" viewBox="0 0 1024 1024"
+						version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6452" width="20" height="20">
+						<path
+							d="M967.111111 56.888889H56.888889a56.888889 56.888889 0 0 0-56.888889 56.888889v796.444444a56.888889 56.888889 0 0 0 56.888889 56.888889h910.222222a56.888889 56.888889 0 0 0 56.888889-56.888889V113.777778a56.888889 56.888889 0 0 0-56.888889-56.888889z m-56.888889 768a28.444444 28.444444 0 0 1-28.444444 28.444444H421.091556l318.691555-318.691555L910.222222 705.080889V824.888889z m0-278.414222l-123.448889-123.448889a56.263111 56.263111 0 0 0-47.331555-24.746667 55.921778 55.921778 0 0 0-46.478222 23.779556l-431.331556 431.331555H142.279111a28.444444 28.444444 0 0 1-28.444444-28.444444v-625.777778a28.444444 28.444444 0 0 1 28.444444-28.444444H881.777778a28.444444 28.444444 0 0 1 28.444444 28.444444v347.363556z"
+							fill="" p-id="6453"></path>
+						<path
+							d="M341.333333 284.444444a113.777778 113.777778 0 1 0-0.056889 227.498667A113.777778 113.777778 0 0 0 341.333333 284.444444z"
+							fill="" p-id="6454"></path>
+					</svg></button>
 			</div>
 			<!-- 字体、颜色、样式设置 -->
 			<div class="font">
@@ -389,10 +418,10 @@
 						:class="{ 'is-active': editor.isActive({ textAlign: 'justify' }) }" v-tooltip="'两端对齐'">
 						<svg t="1693060195477" class="icon" viewBox="0 0 1024 1024" version="1.1"
 							xmlns="http://www.w3.org/2000/svg" p-id="7241" width="20" height="20">
-							<path d="M0 93.090909h1024v93.137455H0z" fill="#231815" p-id="7242"></path>
-							<path d="M0 332.334545h1024v93.09091H0z" fill="#231815" p-id="7243"></path>
-							<path d="M0 810.821818h1024v93.090909H0z" fill="#231815" p-id="7244"></path>
-							<path d="M0 571.578182h1024v93.090909H0z" fill="#231815" p-id="7245"></path>
+							<path d="M0 93.090909h1024v93.137455H0z" p-id="7242"></path>
+							<path d="M0 332.334545h1024v93.09091H0z" p-id="7243"></path>
+							<path d="M0 810.821818h1024v93.090909H0z" p-id="7244"></path>
+							<path d="M0 571.578182h1024v93.090909H0z" p-id="7245"></path>
 						</svg>
 					</button>
 					<!-- 有序列表 -->
@@ -463,7 +492,7 @@
 							xmlns="http://www.w3.org/2000/svg" p-id="14588" width="20" height="20">
 							<path
 								d="M320 320L256 256 0 512.64 256 768l64-64-192-192 192-192zM768 256l-64 64 192 192-192 192 64 64 256-255.36L768 256zM353.28 896h96l224-768h-96l-224 768z"
-								fill="#262626" p-id="14589"></path>
+								p-id="14589"></path>
 						</svg>
 					</button>
 					<!-- 代码块 -->
@@ -505,7 +534,8 @@
 						</svg>
 					</button>
 					<!-- 清除标记 -->
-					<button @click="editor.chain().focus().unsetAllMarks().run(); editor.chain().focus().clearNodes().run()" v-tooltip="'清除样式'">
+					<button @click="editor.chain().focus().unsetAllMarks().run(); editor.chain().focus().clearNodes().run()"
+						v-tooltip="'清除样式'">
 						<svg t="1693060935327" class="icon" viewBox="0 0 1024 1024" version="1.1"
 							xmlns="http://www.w3.org/2000/svg" p-id="15726" width="20" height="20">
 							<path
@@ -518,7 +548,8 @@
 						清除节点
 					</button> -->
 					<!-- 撤销（undo） -->
-					<button @click="editor.chain().focus().undo().run()" :disabled="!editor.can().chain().focus().undo().run()" v-tooltip="'撤销'">
+					<button @click="editor.chain().focus().undo().run()"
+						:disabled="!editor.can().chain().focus().undo().run()" v-tooltip="'撤销'">
 						<svg t="1693117683006" class="icon" viewBox="0 0 1024 1024" version="1.1"
 							xmlns="http://www.w3.org/2000/svg" p-id="3472" width="20" height="20">
 							<path
@@ -527,7 +558,8 @@
 						</svg>
 					</button>
 					<!-- 重做（redo） -->
-					<button @click="editor.chain().focus().redo().run()" :disabled="!editor.can().chain().focus().redo().run()" v-tooltip="'重做'">
+					<button @click="editor.chain().focus().redo().run()"
+						:disabled="!editor.can().chain().focus().redo().run()" v-tooltip="'重做'">
 						<svg t="1693117714543" class="icon" viewBox="0 0 1024 1024" version="1.1"
 							xmlns="http://www.w3.org/2000/svg" p-id="3626" width="20" height="20">
 							<path
@@ -617,15 +649,15 @@
 			</div>
 
 			<div class="temp-container">
-				
 
-				
 
-				
-				
-				
 
-				
+
+
+
+
+
+
 				<!-- 普通段落 -->
 				<button style="display: none" @click="editor.chain().focus().setParagraph().run()"
 					:class="{ 'is-active': editor.isActive('paragraph') }">
@@ -636,12 +668,12 @@
 							p-id="10080"></path>
 					</svg>
 				</button>
-				
-				
-				
-				
-				
-				
+
+
+
+
+
+
 			</div>
 
 
@@ -656,9 +688,13 @@
 
 		<div id="hidden-area" class="flex"></div>
 		<div class="document-words">
-			{{ editor.storage.characterCount.words() }} 个单词，
-			{{ editor.storage.characterCount.characters() }} / {{ docLimit }} 个字符，
+			{{ editor.storage.characterCount.words() }} 个单词,
+			{{ editor.storage.characterCount.characters() }} / {{ docLimit }} 个字符 &nbsp;
 			{{ editor.storage.collaborationCursor.users.length }}人正在编辑该文档
+		</div>
+		<div class="connection-status">
+			<div :class="provider.status === 'connecting' ? 'connecting-dot' : 'connected-dot'"></div>
+			{{ provider.status === 'connecting' ? '正在连接到服务器......' : '已连接到服务器' }}
 		</div>
 	</div>
 </template>
@@ -667,12 +703,14 @@
 import StarterKit from '@tiptap/starter-kit'
 import CharactorCount from '@tiptap/extension-character-count'
 import Document from '@tiptap/extension-document'
+import Image from '@tiptap/extension-image'
 import Underline from '@tiptap/extension-underline'
 import FontFamily from '@tiptap/extension-font-family'
 import Typography from '@tiptap/extension-typography'//实时渲染markdown
 import Highlight from '@tiptap/extension-highlight'//文本高亮
 import Placeholder from '@tiptap/extension-placeholder'
 import { Color } from '@tiptap/extension-color'
+import Dropcursor from '@tiptap/extension-dropcursor'//拖拽器
 import Mention from '@tiptap/extension-mention'
 import TaskItem from '@tiptap/extension-task-item'
 import TaskList from '@tiptap/extension-task-list'
@@ -691,6 +729,7 @@ import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
 import exportWord from 'js-export-word'
 import html2canvas from 'html2canvas'
 import JsPDF from 'jspdf'
+import Turndown from 'turndown'
 
 // @
 import { VueRenderer } from '@tiptap/vue-3'
@@ -800,6 +839,17 @@ export default {
 		changeFont() {
 			this.editor.chain().focus().setFontFamily(this.selectedFontFamily || 'unset').run()
 		},
+		//插入图片
+		insertImage(event) {
+			if (this.editable) {
+				const reader = new FileReader()
+				reader.onload = (event) => {
+					const imageData = event.target.result
+					this.editor.chain().focus().setImage({ src: imageData }).run()
+				}
+				reader.readAsDataURL(event.target.files[0])
+			}
+		},
 		exportAsPDF() {
 			let original = document.querySelector('#document-content')
 			let page = original.cloneNode(true)//需要对原样式进行一些修改，因此深拷贝
@@ -855,6 +905,21 @@ export default {
 				// success() {}
 			})
 		},
+		exportAsMarkdown() {
+			const turndown = new Turndown()
+			let markdownContent = turndown.turndown(this.editor.getHTML())
+			//创建blob文件
+			const blob = new Blob([markdownContent], { type: 'text/plain' })
+			const url = URL.createObjectURL(blob)
+			const link = document.createElement('a')
+			link.style.display = 'none'
+			link.download = `${this.docName}.md`
+			link.href = url
+			link.click()
+			//清除url和链接
+			URL.revokeObjectURL(url)
+			link.remove()
+		},
 		switchFullScreen() {
 			if (document.fullscreenElement === null) {
 				document.getElementById('editor-wrapper').requestFullscreen()
@@ -867,18 +932,30 @@ export default {
 			}
 		},
 		saveDocument(mode) {
-			let formData = new FormData()
-			formData.append('source', this.editor.getHTML())
-			if (mode === 'manualsave') {
-				this.$http.post(`/api/projects/file/${this.docId}/store/`, formData).then(() => {
-					console.log('保存成功')
-					this.$emit('updateVersion')
-				})
-			} else {
-				this.$http.post(`/api/projects/file/${this.docId}/autostore/`, formData).then(() => {
-					console.log('自动保存成功')
-				})
+			// let formData = new FormData()
+			let blob = new Blob([this.editor.getHTML()], { type: 'text/html' })
+			const reader = new FileReader()
+			reader.onload = (event) => {
+				const dataUrl = event.target.result
+				// formData.append('source', dataUrl.split('base64,')[1])
+				if (mode === 'manualsave') {
+					this.$http.post(`/api/projects/file/${this.docId}/store/`, JSON.stringify
+						({
+							source: dataUrl.split('base64,')[1]
+						}), { headers: { 'Content-Type': 'application/json', } }).then(() => {
+							console.log('保存成功')
+							this.$emit('updateVersion')
+						})
+				} else {
+					this.$http.post(`/api/projects/file/${this.docId}/autostore/`, JSON.stringify
+						({
+							source: dataUrl.split('base64,')[1]
+						}), { headers: { 'Content-Type': 'application/json', } }).then(() => {
+							console.log('自动保存成功')
+						})
+				}
 			}
+			reader.readAsDataURL(blob)
 		}
 	},
 	watch: {
@@ -901,6 +978,12 @@ export default {
 			//文档的标识对应一个 yDoc 属性
 			name: String(this.docId),
 			document: yDOC,
+			onConnect: () => {
+				setTimeout(() => {//异步执行，需要等到users加载完全
+					this.editor.commands.setContent(this.docContent)
+				}, 100)
+			},
+			forceSyncInterval: 10,
 		})
 		//加载保存时间最近的文件,然后初始化编辑器
 		//查询团队成员,然后初始化编辑器
@@ -994,9 +1077,17 @@ export default {
 					provider: this.provider,
 					user: {
 						name: this.$cookies.get('username'),
+						id: this.$cookies.isKey('user_id') ? this.$cookies.get('user_id') : undefined,//过滤重复的用户
 						color: this.getRandomColor(),
 						avatar: this.userAvatar
 					}
+				}),
+				Dropcursor.configure({
+					color: '#c71d23'
+				}),
+				Image.configure({
+					inline: true,
+					allowBase64: true
 				}),
 				Typography,
 				Underline,
@@ -1047,10 +1138,9 @@ export default {
 		this.editor.commands.clearContent()
 		//当provider连接上时的设置
 		this.provider.on('status', event => {
-			if (event.status === 'connected') {
-				this.editor.commands.clearContent()
-			}
+
 		})
+
 		//只有没有人在同时编辑的时候才加载，否则使用正在共享编辑的版本
 		//好像并不需要，后端还是能保存一段时间？
 		// setTimeout(() => {
@@ -1111,7 +1201,7 @@ export default {
 .editor-bubble-menu {
 	border-radius: 5px;
 	padding: 5px;
-	background: rgb(240,240,240);
+	background: rgb(240, 240, 240);
 	box-shadow: 3px 3px 10px grey;
 	width: fit-content;
 	white-space: nowrap;
@@ -1127,6 +1217,7 @@ export default {
 .editor-bubble-menu>div>div:nth-child(2) {
 	margin-top: 5px;
 }
+
 .editor-bubble-menu>div>div:nth-child(2)>button {
 	background: 0;
 	margin-right: 7px;
@@ -1135,58 +1226,75 @@ export default {
 .editor-bubble-menu>div>div:nth-child(2)>button:hover {
 	transform: scale(1.2);
 }
+
 .editor-bubble-menu>div>div:nth-child(2)>button:nth-child(1):hover {
-	box-shadow: 1px 1px  #ffc078;
+	box-shadow: 1px 1px #ffc078;
 }
+
 .editor-bubble-menu>div>div:nth-child(2)>button:nth-child(2):hover {
-	box-shadow: 1px 1px  #8ce99a;
+	box-shadow: 1px 1px #8ce99a;
 }
+
 .editor-bubble-menu>div>div:nth-child(2)>button:nth-child(3):hover {
-	box-shadow: 1px 1px  #74c0fc;
+	box-shadow: 1px 1px #74c0fc;
 }
+
 .editor-bubble-menu>div>div:nth-child(2)>button:nth-child(4):hover {
-	box-shadow: 1px 1px  #b197fc;
+	box-shadow: 1px 1px #b197fc;
 }
+
 .editor-bubble-menu>div>div:nth-child(2)>button:nth-child(5):hover {
-	box-shadow: 1px 1px  #cd4444;
+	box-shadow: 1px 1px #cd4444;
 }
+
 .editor-bubble-menu>div>div:nth-child(2)>button:nth-child(6):hover {
-	box-shadow: 1px 1px  #ee9999;
+	box-shadow: 1px 1px #ee9999;
 }
+
 .editor-bubble-menu>div>div:nth-child(2)>button:nth-child(7):hover {
-	box-shadow: 1px 1px  #616161;
+	box-shadow: 1px 1px #616161;
 }
+
 .editor-bubble-menu>div>div:nth-child(2)>button:nth-child(8):hover {
-	box-shadow: 1px 1px  #dddddd;
+	box-shadow: 1px 1px #dddddd;
 }
+
 .editor-bubble-menu>div>div:nth-child(2)>button:nth-child(9):hover {
-	box-shadow: 1px 1px  black;
+	box-shadow: 1px 1px black;
 }
 
 .editor-bubble-menu>div>div:nth-child(2)>button:nth-child(1).is-active {
-	border: 1px solid  #ffc078;
+	border: 1px solid #ffc078;
 }
+
 .editor-bubble-menu>div>div:nth-child(2)>button:nth-child(2).is-active {
-	border: 1px solid  #8ce99a;
+	border: 1px solid #8ce99a;
 }
+
 .editor-bubble-menu>div>div:nth-child(2)>button:nth-child(3).is-active {
-	border: 1px solid  #74c0fc;
+	border: 1px solid #74c0fc;
 }
+
 .editor-bubble-menu>div>div:nth-child(2)>button:nth-child(4).is-active {
-	border: 1px solid  #b197fc;
+	border: 1px solid #b197fc;
 }
+
 .editor-bubble-menu>div>div:nth-child(2)>button:nth-child(5).is-active {
-	border: 1px solid  #cd4444;
+	border: 1px solid #cd4444;
 }
+
 .editor-bubble-menu>div>div:nth-child(2)>button:nth-child(6).is-active {
-	border: 1px solid  #ee9999;
+	border: 1px solid #ee9999;
 }
+
 .editor-bubble-menu>div>div:nth-child(2)>button:nth-child(7).is-active {
-	border: 1px solid  #616161;
+	border: 1px solid #616161;
 }
+
 .editor-bubble-menu>div>div:nth-child(2)>button:nth-child(8).is-active {
-	border: 1px solid  #dddddd;
+	border: 1px solid #dddddd;
 }
+
 /* .editor-bubble-menu>div>div:nth-child(2)>button:nth-child(9).is-active {
 	border: 1px solid  #fa8aa7;
 } */
@@ -1202,6 +1310,7 @@ export default {
 	width: fit-content;
 	white-space: nowrap;
 }
+
 .editor-floating-menu button {
 	display: inline-flex;
 	justify-content: center;
@@ -1209,10 +1318,12 @@ export default {
 	background: 0 !important;
 	transition: 0.5s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
 }
+
 .editor-floating-menu button:hover {
 	transform: scale(1.2);
 	box-shadow: 1px 1px 3px grey;
 }
+
 .editor-floating-menu button.is-active {
 	border: 1px solid grey;
 }
@@ -1242,7 +1353,7 @@ export default {
 }
 
 .editor-bubble-menu select:focus-visible {
-	outline: 2px solid rgba(199, 29, 35, 1);
+	outline: 2px solid rgb(199, 29, 35);
 }
 
 .editor-floating-menu button {
@@ -1334,10 +1445,12 @@ export default {
 
 /* 加粗等按钮为激活状态时的样式 */
 .editor-bar button.is-active {
-	background: #616161;
+	background: rgb(199, 29, 35);
 	color: #ddd;
+	fill: #ddd;
 	font-weight: 700;
 }
+
 
 .editor-bar button[disabled="true"] {
 	opacity: 0.5;
@@ -1347,6 +1460,7 @@ export default {
 .document-words {
 	/* width: 100%; */
 	/* background: rgb(220,220,220); */
+	background: rgba(255, 255, 255, 0.8);
 	border-radius: 10px;
 	position: fixed;
 	bottom: 0;
@@ -1356,6 +1470,48 @@ export default {
 	padding-right: 10px;
 	font-size: 13px;
 	box-shadow: -1px -1px 5px grey;
+}
+
+/* 连接状态显示 */
+/* 未连接状态 */
+.connecting-dot {
+	vertical-align: middle;
+	display: inline-block;
+	width: 9px;
+	margin: 0 5px 1px 0;
+	aspect-ratio: 1;
+	border-radius: 10px;
+	background: transparent;
+	border: #616161 2px dotted;
+	animation: rotate infinite 1s linear;
+}
+
+/* 已连接状态 */
+.connected-dot {
+	vertical-align: middle;
+	margin: 0 5px 1px 0;
+	display: inline-block;
+	width: 9px;
+	aspect-ratio: 1;
+	border-radius: 9px;
+	background: #15c601;
+	border: transparent 2px solid;
+	animation: shining infinite 5s linear;
+}
+
+.connection-status {
+	vertical-align: middle;
+	background: rgba(255, 255, 255, 0.8);
+	display: inline-block;
+	border-radius: 10px;
+	position: fixed;
+	bottom: 0;
+	right: 10px;
+	padding: 3px 0;
+	padding-left: 10px;
+	padding-right: 10px;
+	font-size: 13px;
+	box-shadow: 1px 1px 5px grey;
 }
 
 .document-characters {
@@ -1381,6 +1537,7 @@ export default {
 #document-content {
 	/* padding: 20px; */
 	overflow: auto;
+	width: 700px;
 }
 
 
@@ -1486,32 +1643,32 @@ export default {
 
 /* 各级标题 */
 .ProseMirror h1,
-.ProseMirror h1 span {
+.ProseMirror h1 * {
 	font-size: 45px;
 }
 
 .ProseMirror h2,
-.ProseMirror h2 span {
+.ProseMirror h2 * {
 	font-size: 37px;
 }
 
 .ProseMirror h3,
-.ProseMirror h3 span {
+.ProseMirror h3 * {
 	font-size: 30px;
 }
 
 .ProseMirror h4,
-.ProseMirror h4 span {
+.ProseMirror h4 * {
 	font-size: 25px;
 }
 
 .ProseMirror h5,
-.ProseMirror h5 span {
+.ProseMirror h5 * {
 	font-size: 20px;
 }
 
 .ProseMirror h6,
-.ProseMirror h6 span {
+.ProseMirror h6 * {
 	font-size: 18px;
 }
 
@@ -1537,7 +1694,7 @@ export default {
 .ProseMirror blockquote {
 	/* display: inline-block; */
 	margin-top: 5px;
-	margin-bottom: 5px; 
+	margin-bottom: 5px;
 	padding-left: 1rem;
 	border-left: 3px solid #888;
 }
@@ -1718,6 +1875,7 @@ export default {
 	align-items: center;
 	position: relative;
 }
+
 .edit-history button {
 	height: 70px;
 	margin-right: 5px;
@@ -1729,10 +1887,12 @@ export default {
 	margin-left: 20px;
 	margin-right: 10px;
 }
+
 .formats>div:first-child {
 	margin-top: 15px;
 	margin-bottom: 10px;
 }
+
 .formats button {
 	margin: 0;
 	margin-right: 10px;
@@ -1748,6 +1908,7 @@ export default {
 	width: 1000px;
 	display: flex;
 }
+
 .headers button {
 	margin: 0;
 	margin-top: 15px;
@@ -1757,22 +1918,55 @@ export default {
 	justify-content: center;
 	align-items: center;
 }
+
 .headers button:nth-child(1) {
 	width: 70px;
 }
+
 .headers button:nth-child(2) {
 	width: 70px;
 }
+
 .headers button:nth-child(3) {
 	width: 70px;
 }
+
 .headers button:nth-child(4) {
 	width: 70px;
 }
+
 .headers button:nth-child(5) {
 	width: 70px;
 }
+
 .headers button:nth-child(6) {
 	width: 70px;
+}
+
+@keyframes rotate {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes shining {
+	0% {
+		background: #04a019;
+		box-shadow: rgba(21, 198, 1, 0.3) 0 0 5px;
+	}
+
+	50% {
+		background: #15c601;
+		box-shadow: rgba(21, 198, 1, 1) 0 0 10px;
+	}
+
+	100% {
+		background: #04a019;
+		box-shadow: rgba(21, 198, 1, 0.3) 0 0 5px;
+	}
 }
 </style>

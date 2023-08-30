@@ -157,7 +157,6 @@ export default {
       this.name = ''
       this.profile = ''
       this.$emit('close')
-
     }
   }
 }

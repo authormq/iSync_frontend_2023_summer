@@ -35,11 +35,21 @@ export default {
 				avatar: group.is_private ? (
 					group.members[0].user.id == this.currentUserId ? group.members[1].user.avatar : group.members[0].user.avatar
 				) : group.avatar,
-				unreadCount: 0,
+				unreadCount: group.unreadCount,
 				users: group.members.map((member) => ({
 					_id: `${member.user.id}`,
 					username: member.user.username
-				}))
+				})),
+				lastMessage: group.lastMessage == null ? null : {
+					_id: group.lastMessage.id,
+					content: group.lastMessage.text_content,
+					senderId: `${group.lastMessage.sender.user.id}`,
+					username: group.lastMessage.sender.user.username,
+					avatar: group.lastMessage.sender.user.avatar,
+					timestamp: group.lastMessage.create_datetime.substring(11, 16),
+					date: group.lastMessage.create_datetime.substring(5, 10),
+					new: false,
+				}
 			}))
 			if (this.rooms.length > 0) {
 				this.currentRoomId = this.rooms[0].roomId
@@ -60,21 +70,6 @@ export default {
 						}
 					}
 				})
-				this.$http.get(`/api/groups/${this.rooms[i].roomId}/last_message/`).then((response) => {
-					if (response.data != "") {
-						const message = response.data
-						this.rooms[i].lastMessage = {
-							_id: message.id,
-							content: message.text_content,
-							senderId: `${message.sender.user.id}`,
-							username: message.sender.user.username,
-							avatar: message.sender.user.avatar,
-							timestamp: message.create_datetime.substring(11, 16),
-							date: message.create_datetime.substring(5, 10),
-							new: false,
-						}
-					}
-				})
 				// WebSocket
 				this.ws[i] = new WebSocket(`ws://43.138.14.231:9000/ws/chat/group/${this.rooms[i].roomId}/${this.currentUserId}/`)
 				this.ws[i].onmessage = (messageEvent) => {
@@ -88,7 +83,7 @@ export default {
 						avatar: message.sender.user.avatar,
 						timestamp: message.create_datetime.substring(11, 16),
 						date: message.create_datetime.substring(5, 10),
-						new: true,
+						new: false,
 						replyMessage: message.reply_message == null ? null : {
 							_id: message.reply_message.id,
 							content: message.reply_message.text_content,
@@ -110,19 +105,18 @@ export default {
 						this.rooms[i].unreadCount++
 					}
 					else {
+						this.$http.post(`/api/groups/${this.currentRoomId}/messages/read_all/`)
 						this.messages = [
 							...this.messages,
 							this.rooms[i].lastMessage
 						]
 					}
-					this.roomsLoaded = false
 					for (let j = 0; j < this.rooms.length; j++) {
 						if (this.rooms[j].index > this.rooms[i].index) {
 							this.rooms[j].index--
 						}
 					}
 					this.rooms[i].index = 0
-					this.roomsLoaded = true
 					// @
 					for (let j = 0; j < data.mentioned_users.length; j++) {
 						if (data.mentioned_users[j]._id == this.currentUserId || data.mentioned_users[j]._id == '0') {
@@ -230,7 +224,7 @@ export default {
 
 			/* 搜索框右边的加号 */
 			.vac-add-icon {
-				display: none !important;
+				// display: none !important;
 			}
 
 			/* 新消息的提醒颜色*/
@@ -260,11 +254,11 @@ export default {
 	beforeUnmount() {
 		document.removeEventListener('click', this.changeStyle)
 	},
-	// unmounted() {
-	// 	for (let i = 0; i < this.ws.length; i++) {
-	// 		this.ws[i].close()
-	// 	}
-	// },
+	unmounted() {
+		for (let i = 0; i < this.ws.length; i++) {
+			this.ws[i].close()
+		}
+	},
 	data() {
 		return {
 			ws: [],
@@ -343,41 +337,55 @@ export default {
 				}
 			}
 		},
-		fetchMessages({ room, options }) {
-			this.messagesLoaded = false
+		fetchMessages({ room, options = {} }) {
 			this.currentRoomId = room.roomId
-			setTimeout(() => {
-				this.messages = []
-				this.$http.get(`/api/groups/${room.roomId}/messages/`).then((response) => {
-					this.messages = response.data.map((message) => ({
-						_id: message.id,
-						content: message.text_content,
-						senderId: `${message.sender.user.id}`,
-						username: message.sender.user.username,
-						avatar: message.sender.user.avatar,
-						timestamp: message.create_datetime.substring(11, 16),
-						date: message.create_datetime.substring(5, 10),
-						new: false,
-						replyMessage: message.reply_message == null ? null : {
-							_id: message.reply_message.id,
-							content: message.reply_message.text_content,
-							senderId: `${message.reply_message.sender.user.id}`,
-							username: message.reply_message.sender.user.username,
-							avatar: message.reply_message.sender.user.avatar,
-							timestamp: message.reply_message.create_datetime.substring(11, 16),
-							date: message.reply_message.create_datetime.substring(5, 10),
-							new: false,
-						},
-						files: message.file_content == null ? null : [{
-							name: message.file_content.name.split('message/file/')[1],
-							size: message.file_content.size,
-							url: message.file_content.url,
-							type: message.file_content.name.split('.')[1]
-						}]
-					}))
+			const offset = options.reset ? 0 : this.messages.length
+			if (options.reset) {
+				this.messagesLoaded = false
+				for (let i = 0; i < this.rooms.length; i++) {
+					if (this.rooms[i].roomId == room.roomId) {
+						this.rooms[i].unreadCount = 0
+						break
+					}
+				}
+			}
+			this.$http.get(`/api/groups/${room.roomId}/messages/?limit=30&offset=${offset}`).then((response) => {
+				if (response.data.results.length == 0) {
 					this.messagesLoaded = true
-					room.unreadCount = 0
-				})
+					return
+				}
+				const messages = response.data.results.map((message) => ({
+					_id: message.id,
+					content: message.text_content,
+					senderId: `${message.sender.user.id}`,
+					username: message.sender.user.username,
+					avatar: message.sender.user.avatar,
+					timestamp: message.create_datetime.substring(11, 16),
+					date: message.create_datetime.substring(5, 10),
+					new: false,
+					replyMessage: message.reply_message == null ? null : {
+						_id: message.reply_message.id,
+						content: message.reply_message.text_content,
+						senderId: `${message.reply_message.sender.user.id}`,
+						username: message.reply_message.sender.user.username,
+						avatar: message.reply_message.sender.user.avatar,
+						timestamp: message.reply_message.create_datetime.substring(11, 16),
+						date: message.reply_message.create_datetime.substring(5, 10),
+						new: false,
+					},
+					files: message.file_content == null ? null : [{
+						name: message.file_content.name.split('message/file/')[1],
+						size: message.file_content.size,
+						url: message.file_content.url,
+						type: message.file_content.name.split('.')[1]
+					}]
+				})).reverse()
+				if (options.reset) {
+					this.messages = messages
+				}
+				else {
+					this.messages = [...messages, ...this.messages]
+				}
 			})
 		},
 

@@ -90,53 +90,6 @@ export default {
         console.log(error.message)
       }
     )
-    this.$bus.on('deleteDocRequest', this.handleDeleteDocRequest)
-    this.$bus.on('renameDocRequest', this.handleRenameDocRequest)
-    this.$bus.on('deleteProtoRequest', this.handleDeleteProtoRequest)
-    this.$bus.on('renameProtoRequest', this.handleRenameProtoRequest)
-  },
-  methods: {
-    handleDeleteDocRequest(doc) {
-      // id 为 doc id
-      this.$http.delete(`/api/projects/file/${doc.id}/delete/`).then(
-        response => {
-          this.docList.splice(this.docList.indexOf(doc), 1)
-        },
-        error => {
-          console.log(error.message)
-        }
-      )
-    },
-    handleRenameDocRequest(docRenameData) {
-      this.$http.post(`/api/projects/file/${docRenameData.doc.id}/rename/${docRenameData.rename}/`).then(
-        response => {
-          docRenameData.doc.name = docRenameData.rename
-        },
-        error => {
-          console.log(error.message)
-        }
-      )
-    },
-    handleDeleteProtoRequest(proto) {
-      this.$http.delete(`/api/projects/page/${proto.id}/delete/`).then(
-        response => {
-          this.protoList.splice(this.protoList.indexOf(proto), 1)
-        },
-        error => {
-          console.log(error.message)
-        }
-      )
-    },
-    handleRenameProtoRequest(protoRenameData) {
-      this.$http.post(`/api/projects/page/${protoRenameData.proto.id}/rename/${protoRenameData.rename}/`).then(
-        response => {
-          protoRenameData.proto.name = protoRenameData.rename
-        },
-        error => {
-          console.log(error.message)
-        }
-      )
-    }
   },
 }
 </script>

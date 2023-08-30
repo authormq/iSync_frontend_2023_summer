@@ -90,30 +90,6 @@ export default {
         console.log(error.message)
       }
     )
-    this.$bus.on('deleteProtoRequest', this.handleDeleteProtoRequest)
-    this.$bus.on('renameProtoRequest', this.handleRenameProtoRequest)
-  },
-  methods: {
-    handleDeleteProtoRequest(proto) {
-      this.$http.delete(`/api/projects/page/${proto.id}/delete/`).then(
-        response => {
-          this.protoList.splice(this.protoList.indexOf(proto), 1)
-        },
-        error => {
-          console.log(error.message)
-        }
-      )
-    },
-    handleRenameProtoRequest(protoRenameData) {
-      this.$http.post(`/api/projects/page/${protoRenameData.proto.id}/rename/${protoRenameData.rename}/`).then(
-        response => {
-          protoRenameData.proto.name = protoRenameData.rename
-        },
-        error => {
-          console.log(error.message)
-        }
-      )
-    }
   },
 }
 </script>

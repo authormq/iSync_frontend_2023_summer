@@ -1,5 +1,5 @@
 <template>
-  <StylishModal :show="show" width="600px" height="150px" padding="25px">
+  <StylishModal :show="show" width="600px" height="200px" padding="25px">
     <div class="title-container">
       <div></div>
       <div class="title">创建原型</div>
@@ -10,6 +10,7 @@
     <div class="content-container">
       <div class="inputs">
         <input type="text" placeholder="原型名称" v-model="name">
+        <input type="text" placeholder="原型简介" v-model="profile">
       </div>
       <div class="confirm">
         <button @click="commitCreate">确认</button>
@@ -37,7 +38,8 @@ export default {
     return {
       // show: false,
       name: '',
-      protoId: 0 // 如果创建成功，所返回的 protoId
+      protoId: 0, // 如果创建成功，所返回的 protoId
+      profile: ''
     }
   },
   methods: {
@@ -45,7 +47,7 @@ export default {
       let formData = new FormData()
       formData.append('project', this.projectId)
       formData.append('name', this.name)
-      // formData.append('profile', )
+      formData.append('profile', this.profile)
       this.$http.post(`/api/projects/page/create/`, formData).then(
         response => {
           // 创建成功，直接跳转到新页面
@@ -54,6 +56,7 @@ export default {
           
           // 清空
           this.name = ''
+          this.profile = ''
         },
         error => {
           console.log(error.message)
@@ -67,6 +70,7 @@ export default {
       this.$emit('close')
       // this.isPublic = 0
       this.name = ''
+      this.profile = ''
     }
   }
 }

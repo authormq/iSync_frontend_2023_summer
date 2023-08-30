@@ -469,7 +469,6 @@ export default {
 		},
 
 		addRoom() {
-			console.log(this.showCreateRoomModal);f
 			this.showCreateRoomModal = true
 		},
 

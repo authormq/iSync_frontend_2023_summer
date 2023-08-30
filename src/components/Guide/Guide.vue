@@ -150,7 +150,7 @@ export default {
   name: 'Guide',
   data() {
     return {
-      cnt: 16,
+      cnt: -1,
       shouldHide: false // 应用在最后一个元素身上
     }
   },

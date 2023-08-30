@@ -115,12 +115,14 @@ export default {
 							this.rooms[i].lastMessage
 						]
 					}
+					this.roomsLoaded = false
 					for (let j = 0; j < this.rooms.length; j++) {
 						if (this.rooms[j].index < this.rooms[i].index) {
 							this.rooms[j].index++
 						}
 					}
 					this.rooms[i].index = 0
+					this.roomsLoaded = true
 					// @
 					for (let j = 0; j < data.mentioned_users.length; j++) {
 						if (data.mentioned_users[j]._id == this.currentUserId || data.mentioned_users[j]._id == '0') {

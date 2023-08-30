@@ -18,8 +18,6 @@ export default {
   components: {
     DocListItem, NewProject, CreateDocModal
   },
-  // props: ['docList'],
-  // props: ['projectId'],
   data() {
     return {
       showModal: false,
@@ -41,6 +39,12 @@ export default {
         console.log(error.message)
       }
     )
+    this.$bus.on('reloadDocListAfterCreateSucceed', this.handleReloadDocList)
+  },
+  methods: {
+    handleReloadDocList(data) {
+      this.docList.unshift(data)
+    }
   }
 }
 </script>

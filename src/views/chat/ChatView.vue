@@ -35,11 +35,21 @@ export default {
 				avatar: group.is_private ? (
 					group.members[0].user.id == this.currentUserId ? group.members[1].user.avatar : group.members[0].user.avatar
 				) : group.avatar,
-				unreadCount: 0,
+				unreadCount: group.unreadCount,
 				users: group.members.map((member) => ({
 					_id: `${member.user.id}`,
 					username: member.user.username
-				}))
+				})),
+				lastMessage: group.lastMessage == null ? null : {
+					_id: group.lastMessage.id,
+					content: group.lastMessage.text_content,
+					senderId: `${group.lastMessage.sender.user.id}`,
+					username: group.lastMessage.sender.user.username,
+					avatar: group.lastMessage.sender.user.avatar,
+					timestamp: group.lastMessage.create_datetime.substring(11, 16),
+					date: group.lastMessage.create_datetime.substring(5, 10),
+					new: false,
+				}
 			}))
 			if (this.rooms.length > 0) {
 				this.currentRoomId = this.rooms[0].roomId
@@ -57,21 +67,6 @@ export default {
 								},
 								...this.rooms[i].users
 							]
-						}
-					}
-				})
-				this.$http.get(`/api/groups/${this.rooms[i].roomId}/last_message/`).then((response) => {
-					if (response.data != "") {
-						const message = response.data
-						this.rooms[i].lastMessage = {
-							_id: message.id,
-							content: message.text_content,
-							senderId: `${message.sender.user.id}`,
-							username: message.sender.user.username,
-							avatar: message.sender.user.avatar,
-							timestamp: message.create_datetime.substring(11, 16),
-							date: message.create_datetime.substring(5, 10),
-							new: false,
 						}
 					}
 				})
@@ -106,6 +101,8 @@ export default {
 							type: message.file_content.name.split('.')[1]
 						}]
 					}
+					console.log(this.currentRoomId)
+					console.log(this.rooms[i].roomId)
 					if (this.currentRoomId != this.rooms[i].roomId) {
 						this.rooms[i].unreadCount++
 					}

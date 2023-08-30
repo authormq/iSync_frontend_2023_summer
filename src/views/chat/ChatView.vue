@@ -35,11 +35,21 @@ export default {
 				avatar: group.is_private ? (
 					group.members[0].user.id == this.currentUserId ? group.members[1].user.avatar : group.members[0].user.avatar
 				) : group.avatar,
-				unreadCount: 0,
+				unreadCount: group.unreadCount,
 				users: group.members.map((member) => ({
 					_id: `${member.user.id}`,
 					username: member.user.username
-				}))
+				})),
+				lastMessage: group.lastMessage == null ? null : {
+					_id: group.lastMessage.id,
+					content: group.lastMessage.text_content,
+					senderId: `${group.lastMessage.sender.user.id}`,
+					username: group.lastMessage.sender.user.username,
+					avatar: group.lastMessage.sender.user.avatar,
+					timestamp: group.lastMessage.create_datetime.substring(11, 16),
+					date: group.lastMessage.create_datetime.substring(5, 10),
+					new: false,
+				}
 			}))
 			if (this.rooms.length > 0) {
 				this.currentRoomId = this.rooms[0].roomId
@@ -60,25 +70,9 @@ export default {
 						}
 					}
 				})
-				this.$http.get(`/api/groups/${this.rooms[i].roomId}/last_message/`).then((response) => {
-					if (response.data != "") {
-						const message = response.data
-						this.rooms[i].lastMessage = {
-							_id: message.id,
-							content: message.text_content,
-							senderId: `${message.sender.user.id}`,
-							username: message.sender.user.username,
-							avatar: message.sender.user.avatar,
-							timestamp: message.create_datetime.substring(11, 16),
-							date: message.create_datetime.substring(5, 10),
-							new: false,
-						}
-					}
-				})
 				// WebSocket
-				const index = this.rooms.length + this.rooms[i].index - 1
-				this.ws[index] = new WebSocket(`ws://43.138.14.231:9000/ws/chat/group/${this.rooms[i].roomId}/${this.currentUserId}/`)
-				this.ws[index].onmessage = (messageEvent) => {
+				this.ws[i] = new WebSocket(`ws://43.138.14.231:9000/ws/chat/group/${this.rooms[i].roomId}/${this.currentUserId}/`)
+				this.ws[i].onmessage = (messageEvent) => {
 					const data = JSON.parse(messageEvent.data)
 					const message = data.message
 					this.rooms[i].lastMessage = {
@@ -107,6 +101,8 @@ export default {
 							type: message.file_content.name.split('.')[1]
 						}]
 					}
+					console.log(this.currentRoomId)
+					console.log(this.rooms[i].roomId)
 					if (this.currentRoomId != this.rooms[i].roomId) {
 						this.rooms[i].unreadCount++
 					}
@@ -116,8 +112,14 @@ export default {
 							this.rooms[i].lastMessage
 						]
 					}
-					// const tmpRooms = this.rooms.filter(room => room.roomId != this.rooms[i].roomId)
-					// this.rooms = [this.rooms[i], ...tmpRooms]
+					this.roomsLoaded = false
+					for (let j = 0; j < this.rooms.length; j++) {
+						if (this.rooms[j].index > this.rooms[i].index) {
+							this.rooms[j].index--
+						}
+					}
+					this.rooms[i].index = 0
+					this.roomsLoaded = true
 					// @
 					for (let j = 0; j < data.mentioned_users.length; j++) {
 						if (data.mentioned_users[j]._id == this.currentUserId || data.mentioned_users[j]._id == '0') {
@@ -226,6 +228,17 @@ export default {
 			/* 搜索框右边的加号 */
 			.vac-add-icon {
 				display: none !important;
+			}
+
+			/* 新消息的提醒颜色*/
+			.vac-badge-counter.vac-room-badge {
+				background: rgba(199,29,35, 1) !important;
+			}
+
+			/* 左侧列表的消息 */
+			.vac-text-ellipsis {
+				font-weight: 500 !important;
+				color: #67717a !important;
 			}
 		`
 		
@@ -368,11 +381,10 @@ export default {
 		sendMessage(message) {
 			for (let i = 0; i < this.rooms.length; i++) {
 				if (this.rooms[i].roomId == message.roomId) {
-					const index = this.rooms.length + this.rooms[i].index - 1
 					if (message.files != null) {
 						const reader = new FileReader()
 						reader.onload = (event) => {
-							this.ws[index].send(JSON.stringify({
+							this.ws[i].send(JSON.stringify({
 								'text_content': message.content,
 								'mentioned_users': message.usersTag,
 								'reply_message': message.replyMessage,
@@ -383,7 +395,7 @@ export default {
 						reader.readAsDataURL(message.files[0].blob)
 					}
 					else {
-						this.ws[index].send(JSON.stringify({
+						this.ws[i].send(JSON.stringify({
 							'text_content': message.content,
 							'mentioned_users': message.usersTag,
 							'reply_message': message.replyMessage,

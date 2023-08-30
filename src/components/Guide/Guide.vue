@@ -2,7 +2,7 @@
   <div class="guide-mask" ref="mask"></div>
   <button @click="cnt++" v-if="cnt < 17">下一步</button>
   <button @click="hide" v-else-if="cnt === 17">完成</button>
-  <div class="guide-cover-container" v-if="cnt === -1">
+  <div class="guide-cover-container  " v-if="cnt === -1">
     <h2 class="cover-title">
       跟随教程，探索如何更高效地合作
     </h2>
@@ -98,46 +98,46 @@
     <div class="large-img large-img-1"></div>
     <h3 class="large-text">轻点团队成员卡片，<em>设置管理权限</em>容易又方便</h3>
   </div>
-  <div class="guide-cover-container animate__animated" v-if="cnt === 8">
+  <div class="guide-cover-container animate__animated animate__fadeIn" v-if="cnt === 8">
     <div class="large-img large-img-2"></div>
     <h3 class="large-text">邀请伙伴加入<em>自定义群聊</em>，在小团体里畅所欲言</h3>
   </div>
-  <div class="guide-cover-container animate__animated" v-if="cnt === 9">
+  <div class="guide-cover-container animate__animated animate__fadeIn" v-if="cnt === 9">
     <div class="large-img large-img-3"></div>
     <h3 class="large-text"><em>@群友、多选转发</em>，让大家伙听到你的声音</h3>
   </div>
-  <div class="guide-cover-container animate__animated" v-if="cnt === 10" >
+  <div class="guide-cover-container animate__animated animate__fadeIn" v-if="cnt === 10" >
     <div class="large-img large-img-4"></div>
     <h3 class="large-text">在团队里<em>新建一个项目</em>，去管理项目的<em>文档与原型</em></h3>
   </div>
-  <div class="guide-cover-container animate__animated" v-if="cnt === 11" >
+  <div class="guide-cover-container animate__animated animate__fadeIn" v-if="cnt === 11" >
     <div class="large-img large-img-5"></div>
     <h3 class="large-text"><em>右键项目卡片</em>，轻松重命名、拷贝、删除项目</h3>
     <h3 class="large-text">误删也不怕，去<em>回收站</em>就能找回来</h3>
   </div>
-  <div class="guide-cover-container animate__animated" v-if="cnt === 12" >
+  <div class="guide-cover-container animate__animated animate__fadeIn" v-if="cnt === 12" >
     <div class="large-img large-img-6"></div>
     <h3 class="large-text">项目太多？<em>搜索和排序</em>让你找得更方便</h3>
   </div>
-  <div class="guide-cover-container animate__animated" v-if="cnt === 13" >
+  <div class="guide-cover-container animate__animated animate__fadeIn" v-if="cnt === 13" >
     <div class="large-img large-img-7"></div>
     <h3 class="large-text"><em>新建</em>文档，<em>协作</em>编辑，还可以<em>分享</em>给游客</h3>
     <h3 class="large-text">创建<em>文件夹</em>管理文档，分类和整理也不难</h3>
   </div>
-  <div class="guide-cover-container animate__animated" v-if="cnt === 14" >
+  <div class="guide-cover-container animate__animated animate__fadeIn" v-if="cnt === 14" >
     <div class="large-img large-img-8"></div>
     <h3 class="large-text">多种<em>模板</em>供选择，编辑更高效；<em>@团队成员</em>，一起头脑风暴</h3>
     <h3 class="large-text">导出Word、PDF、Markdown，<em>样样都在行</em></h3>
   </div>
-  <div class="guide-cover-container animate__animated" v-if="cnt === 15" >
+  <div class="guide-cover-container animate__animated animate__fadeIn" v-if="cnt === 15" >
     <div class="large-img large-img-9"></div>
     <h3 class="large-text"><em>10秒一次自动保存</em>，还有<em>历史版本</em>供查看和回退</h3>
   </div>
-  <div class="guide-cover-container animate__animated" v-if="cnt === 16" >
+  <div class="guide-cover-container animate__animated animate__fadeIn" v-if="cnt === 16" >
     <div class="large-img large-img-10"></div>
     <h3 class="large-text"><em>新建</em>原型设计，用<em>模板</em>快速搓个好看的网页</h3>
   </div>
-  <div class="guide-cover-container animate__animated" v-if="cnt === 17" >
+  <div class="guide-cover-container animate__animated animate__fadeIn" v-if="cnt === 17" >
     <div class="large-img large-img-11"></div>
     <h3 class="large-text">支持导出<em>图片</em>和<em>原生三件套</em>，<em>云端协同编辑</em>也不赖</h3>
     <h3 class="large-text"><em>分享预览链接</em>，让别人看看自己团队的大作</h3>

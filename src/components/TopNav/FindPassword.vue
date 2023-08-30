@@ -43,9 +43,9 @@ export default {
     handleClose() {
       this.$emit('close')
     },
-    find() {
-      alert('未完成找回密码功能')
-    }
+    // find() {
+    //   alert('未完成找回密码功能')
+    // }
   }
 }
 </script>

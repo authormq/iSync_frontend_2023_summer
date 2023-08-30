@@ -239,26 +239,10 @@ export default {
 		// }, 1000)
 		// console.log('index: ', this.$refs.chat.shadowRoot.innerHTML.indexOf('Conversation started on: 08-28'))
 
-		document.addEventListener('click', () => {
-			const doc = this.$refs.chat.shadowRoot
-			const list = doc.querySelector('.vac-menu-list')
-			if (list) {
-				if (list.children.length === 2) {
-					list.children[0].children[0].innerHTML = '引用'
-					list.children[1].style.display = 'none'
-				} else if (list.children.length === 4) {
-					list.children[0].children[0].innerHTML = '引用'
-					list.children[1].children[0].innerHTML = '编辑'
-					list.children[2].style.display = 'none'
-					list.children[3].style.display = 'none'
-				}
-			}
-		})
+		document.addEventListener('click', this.changeStyle)
 	},
-	updated() {
-		
-		
-		
+	beforeUnmount() {
+		document.removeEventListener('click', this.changeStyle)
 	},
 	// unmounted() {
 	// 	for (let i = 0; i < this.ws.length; i++) {
@@ -322,6 +306,27 @@ export default {
 		}
 	},
 	methods: {
+		// 改变列表样式的回调
+		changeStyle () {
+			let doc = null
+			if (this.$refs.chat) {
+				doc = this.$refs.chat.shadowRoot
+			}
+			let list = doc.querySelector('.vac-menu-list')
+			if (list) {
+				if (list.children.length === 2) {
+					list.children[0].children[0].innerHTML = '引用'
+					list.children[1].children[0].innerHTML = '多选'
+					// list.children[1].style.display = 'none'
+				} else if (list.children.length === 4) {
+					list.children[0].children[0].innerHTML = '引用'
+					list.children[1].children[0].innerHTML = '编辑'
+					list.children[3].children[0].innerHTML = '多选'
+					list.children[2].style.display = 'none'
+					// list.children[3].style.display = 'none'
+				}
+			}
+		},
 		fetchMessages({ room, options }) {
 			this.messagesLoaded = false
 			this.currentRoomId = room.roomId

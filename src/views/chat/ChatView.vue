@@ -242,6 +242,23 @@ export default {
 				font-weight: 500 !important;
 				color: #67717a !important;
 			}
+
+			/* header 右边的 ··· */
+			.vac-room-header::before {
+				content: '···' !important;
+				position: absolute !important;
+				right: 10px !important;
+				font-size: 20px !important;
+				color: rgba(199,29,35, 1) !important;
+				cursor: pointer !important;
+			}
+
+			/* 多选时取消的位置 */
+			.vac-selection-cancel {
+				margin-right: 50px !important;
+				color: rgba(199,29,35, 1) !important;
+				font-weight: bold !important;
+			}
 		`
 		
 		
@@ -255,9 +272,16 @@ export default {
 		// console.log('index: ', this.$refs.chat.shadowRoot.innerHTML.indexOf('Conversation started on: 08-28'))
 
 		document.addEventListener('click', this.changeStyle)
+		document.addEventListener('click', this.showGroupInfo)
+
+
+		setTimeout(() => {
+			this.scrollToMessage(1)
+		}, 3000);
 	},
 	beforeUnmount() {
 		document.removeEventListener('click', this.changeStyle)
+		document.removeEventListener('click', this.showGroupInfo)
 	},
 	// unmounted() {
 	// 	for (let i = 0; i < this.ws.length; i++) {
@@ -275,6 +299,14 @@ export default {
 			roomsLoaded: false,
 			messages: [],
 			messagesLoaded: false,
+			messageActions: [
+				{
+
+				},
+				{
+
+				}
+			],
 			messageSelectionActions: [
 				{
 					name: 'forwardItemByItem',
@@ -337,23 +369,46 @@ export default {
 			let doc = null
 			if (this.$refs.chat) {
 				doc = this.$refs.chat.shadowRoot
+				let list = doc.querySelector('.vac-menu-list')
+				if (list) {
+					if (list.children.length === 2) {
+						list.children[0].children[0].innerHTML = '引用'
+						list.children[1].children[0].innerHTML = '多选'
+						// list.children[1].style.display = 'none'
+					} else if (list.children.length === 4) {
+						list.children[0].children[0].innerHTML = '引用'
+						list.children[1].children[0].innerHTML = '编辑'
+						list.children[3].children[0].innerHTML = '多选'
+						list.children[2].style.display = 'none'
+						// list.children[3].style.display = 'none'
+					}
+				}
+				setTimeout(() => {
+					let cancel = doc.querySelector('.vac-selection-cancel')
+					console.log('c:', cancel)
+					if (cancel) {
+						cancel.innerHTML = '取消'
+					}
+				}, 300);
+				
 			}
-			let list = doc.querySelector('.vac-menu-list')
-			if (list) {
-				if (list.children.length === 2) {
-					list.children[0].children[0].innerHTML = '引用'
-					list.children[1].children[0].innerHTML = '多选'
-					// list.children[1].style.display = 'none'
-				} else if (list.children.length === 4) {
-					list.children[0].children[0].innerHTML = '引用'
-					list.children[1].children[0].innerHTML = '编辑'
-					list.children[3].children[0].innerHTML = '多选'
-					list.children[2].style.display = 'none'
-					// list.children[3].style.display = 'none'
+		},
+		showGroupInfo(e) {
+			const x = e.clientX
+			const y = e.clientY
+			let doc = null
+			if (this.$refs.chat) {
+				doc = this.$refs.chat.shadowRoot
+			}
+			let header = doc.querySelector('.vac-room-header')
+			if (header) {
+				const right = header.getBoundingClientRect().right
+				const top = header.getBoundingClientRect().top
+				if (right - 50 <= x && x <= right - 10 && top + 15 <= y && y <= top + 40) {
+					// 
 				}
 			}
 		},
-
 		fetchMessages({ room, options = {} }) {
 			this.currentRoomId = room.roomId
 			const offset = options.reset ? 0 : this.messages.length
@@ -464,8 +519,26 @@ export default {
 					break
 				}
 			}
-			const target = document.getElementById(`\\${i + 1}`)
-			console.log(target)
+			i = 11
+			let doc = null
+			if (this.$refs.chat) {
+				doc = this.$refs.chat.shadowRoot
+				const container = doc.querySelector('#messages-list')
+				const msg = doc.querySelector(`#messages-list>div>div>span>div:nth-child(${i})`)
+				if (container && msg) {
+					container.style.scrollBehavior = 'smooth'
+					// msg.style.position = 'absolute'
+					// msg.style.top = 0
+					console.log('msg: ', msg.getBoundingClientRect().top)
+					console.log('con: ', container.getBoundingClientRect().top)
+					container.scrollTop = -1 * msg.getBoundingClientRect().bottom - container.getBoundingClientRect().top
+					console.log('@@@', container.scrollTop)
+					// msg 最外层 div
+					// do something
+				}
+			}
+			// const target = document.getElementById(`\\${i + 1}`)
+			// console.log(target)
 		},
 
 		addRoom() {

@@ -12,7 +12,7 @@
   <!-- <document-view></document-view> -->
   <!-- <GrapesjsView /> -->
   <!-- <CreateGroupRoom></CreateGroupRoom> -->
-  <GroupDetailModal></GroupDetailModal>
+  <!-- <GroupDetailModal></GroupDetailModal> -->
 </template>
 
 <script setup>

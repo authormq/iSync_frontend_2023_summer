@@ -235,7 +235,8 @@ export default {
 				margin: 0 !important;
 			}
 		`
-		this.$bus.on('scrollToMessage', messageId => this.fetchAllAndScroll(messageId))
+		this.$bus.on('fetchAllMessages', () => this.fetchAllMessages())
+		this.$bus.on('scrollToMessage', messageId => this.scrollToMessage(messageId))
 		
 		this.$refs.chat.shadowRoot.appendChild(style)
 		// const newHTML = this.$refs.chat.shadowRoot.innerHTML.replace('placeholder="Search"', 'placeholder="检索"')
@@ -257,6 +258,7 @@ export default {
 		for (let i = 0; i < this.ws.length; i++) {
 			this.ws[i].close()
 		}
+		this.$bus.off('fetchAllMessages')
 		this.$bus.off('scrollToMessage')
 	},
 	data() {
@@ -672,7 +674,7 @@ export default {
 			}
 		},
 
-		fetchAllAndScroll(messageId) {
+		fetchAllMessages() {
 			if (this.messagesLoaded == false) {
 				this.$http.get(`/api/groups/${this.currentRoomId}/messages/`).then((response) => {
 					this.messages = response.data.map((message) => ({
@@ -708,11 +710,7 @@ export default {
 						}]
 					})).reverse()
 					this.messagesLoaded = true
-					this.scrollToMessage(messageId)
 				})
-			}
-			else {
-				this.scrollToMessage(messageId)
 			}
 		},
 
@@ -724,15 +722,12 @@ export default {
 				}
 			}
 			i++
-			console.log(i)
 			let doc = null
 			if (this.$refs.chat) {
 				doc = this.$refs.chat.shadowRoot
 				const container = doc.querySelector('#messages-list')
 				const msg = doc.querySelector(`#messages-list>div>div>span>div:nth-child(${i})`)
 				if (container && msg) {
-					// msg.style.position = 'absolute'
-					// msg.style.top = 0
 					console.log('msg: ', msg.getBoundingClientRect().top, msg.getBoundingClientRect().bottom)
 					console.log('con: ', container.getBoundingClientRect().top, container.getBoundingClientRect().bottom)
 					console.log('@@@: ', container.scrollTop)

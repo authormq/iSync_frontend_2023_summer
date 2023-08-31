@@ -18,6 +18,10 @@
       <button @click="clickSearchRecordModal">
         查找聊天记录
       </button>
+      <button>
+        退出群聊
+        退出群聊的时候最好还是有一个确认框比较好
+      </button>
     </div>
     <SearchRecordModal :show="showSearchRecordModal" @close="showSearchRecordModal = false"></SearchRecordModal>
   </div>

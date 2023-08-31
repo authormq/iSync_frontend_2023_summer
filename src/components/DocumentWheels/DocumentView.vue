@@ -87,6 +87,7 @@ export default {
         },
         //展示选择的信息
         showVersionContent(versionId) {
+            this.currentVersionContent=''
             this.currentVersionId = versionId
             this.$http.get(`/api/projects/file/${this.docId}/version/show/${versionId}`).then((response) => {
                 this.currentVersionContent = response.data

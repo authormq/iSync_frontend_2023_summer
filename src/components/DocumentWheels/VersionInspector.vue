@@ -8,6 +8,7 @@
 <script>
 import { Editor, EditorContent } from '@tiptap/vue-3';
 import StarterKit from '@tiptap/starter-kit'
+import Image from '@tiptap/extension-image'
 import CharactorCount from '@tiptap/extension-character-count'
 import Document from '@tiptap/extension-document'
 import Underline from '@tiptap/extension-underline'
@@ -29,17 +30,16 @@ export default {
     },
     data() {
         return {
-            currentContent: '有一些东西',
             //以下需要对接口
             inspector: undefined
         }
     },
-    props:{
-        showHistoryVersion:{
-            default:false
+    props: {
+        showHistoryVersion: {
+            default: false
         },
-        content:{
-            default:''
+        content: {
+            default: ''
         }
     },
     methods: {
@@ -59,8 +59,8 @@ export default {
         // }
 
     },
-    watch:{
-        content(value){
+    watch: {
+        content(value) {
             this.inspector.commands.setContent(value)
         }
     },
@@ -73,6 +73,10 @@ export default {
                 }),
                 CharactorCount.configure({
                     limit: this.docLimit
+                }),
+                Image.configure({
+                    inline: true,
+                    allowBase64: true
                 }),
                 Typography,
                 Underline,
@@ -113,13 +117,13 @@ export default {
 
 <style scoped>
 #inspector-wrapper {
-   width:700px;
+    width: 700px;
 }
+
 btn {
     align-self: flex-end;
     /* position: fixed;
     top: 100px;
     left: 100px; */
 }
-
 </style>

@@ -244,6 +244,11 @@ export default {
 
 		document.addEventListener('click', this.changeStyle)
 		document.addEventListener('click', this.showGroupInfo)
+
+
+		setTimeout(() => {
+			this.scrollToMessage(1)
+		}, 3000);
 	},
 	beforeUnmount() {
 		document.removeEventListener('click', this.changeStyle)
@@ -636,8 +641,26 @@ export default {
 					break
 				}
 			}
-			const target = document.getElementById(`\\${i + 1}`)
-			console.log(target)
+			i = 11
+			let doc = null
+			if (this.$refs.chat) {
+				doc = this.$refs.chat.shadowRoot
+				const container = doc.querySelector('#messages-list')
+				const msg = doc.querySelector(`#messages-list>div>div>span>div:nth-child(${i})`)
+				if (container && msg) {
+					container.style.scrollBehavior = 'smooth'
+					// msg.style.position = 'absolute'
+					// msg.style.top = 0
+					console.log('msg: ', msg.getBoundingClientRect().top)
+					console.log('con: ', container.getBoundingClientRect().top)
+					container.scrollTop = -1 * msg.getBoundingClientRect().bottom - container.getBoundingClientRect().top
+					console.log('@@@', container.scrollTop)
+					// msg 最外层 div
+					// do something
+				}
+			}
+			// const target = document.getElementById(`\\${i + 1}`)
+			// console.log(target)
 		},
 
 		addRoom() {

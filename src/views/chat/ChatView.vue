@@ -259,8 +259,24 @@ export default {
 				color: rgba(199,29,35, 1) !important;
 				font-weight: bold !important;
 			}
+
+			.vac-message-box > .vac-avatar {
+				height: 35px !important;
+				width: 35px !important;
+				min-height: 35px !important;
+				min-width: 35px !important;
+				align-self: flex-start !important;
+				margin: 0 !important;
+			}
+
+			.vac-message-container {
+				min-width: 40% !important;
+			}
+
+			.vac-message-wrapper .vac-message-container-offset {
+				margin: 0 !important;
+			}
 		`
-		
 		
 		
 		this.$refs.chat.shadowRoot.appendChild(style)

@@ -137,7 +137,7 @@
     <div class="large-img large-img-10"></div>
     <h3 class="large-text"><em>新建</em>原型设计，用<em>模板</em>快速搓个好看的网页</h3>
   </div>
-  <div class="guide-cover-container animate__fadeIn" v-if="cnt === 17" :class="{'gradually-hide': shouldHide}">
+  <div class="guide-cover-container animate__animated animate__fadeIn" v-if="cnt === 17" :class="{'gradually-hide': shouldHide}">
     <div class="large-img large-img-11"></div>
     <h3 class="large-text">支持导出<em>图片</em>和<em>原生三件套</em>，<em>云端协同编辑</em>也不赖</h3>
     <h3 class="large-text"><em>分享预览链接</em>，让别人看看自己团队的大作</h3>

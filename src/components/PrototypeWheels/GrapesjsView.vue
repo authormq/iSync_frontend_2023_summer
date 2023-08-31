@@ -1,10 +1,19 @@
 <template>
 	<span id="size-setter">
-		<span>
-			<svg t="1693400825308" style="cursor: pointer;" class="icon"
-				:class="{ 'selected-device': customize, 'unselected-device': !customize }" viewBox="0 0 1024 1024"
-				version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="11286" id="mx_n_1693400825309" width="25"
-				height="25">
+		<!-- 桌面端按钮 -->
+		<span @click="switchDevice(0)"
+			:class="{ 'selected-device': Devices[0].selected, 'unselected-device': !Devices[0].selected }">
+			<svg t="1693450725716" class="icon" style="cursor: pointer;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+				p-id="1477" width="23" height="23">
+				<path
+					d="M928 140H96c-17.7 0-32 14.3-32 32v496c0 17.7 14.3 32 32 32h380v112H304c-8.8 0-16 7.2-16 16v48c0 4.4 3.6 8 8 8h432c4.4 0 8-3.6 8-8v-48c0-8.8-7.2-16-16-16H548V700h380c17.7 0 32-14.3 32-32V172c0-17.7-14.3-32-32-32z m-40 488H136V212h752v416z"
+					p-id="1478"></path>
+			</svg>
+		</span>
+		<!-- 自定义按钮 -->
+		<span @click="switchDevice(3)" :class="{ 'selected-device': customize, 'unselected-device': !customize }">
+			<svg t="1693400825308" style="cursor: pointer;" class="icon" viewBox="0 0 1024 1024" version="1.1"
+				xmlns="http://www.w3.org/2000/svg" p-id="11286" id="mx_n_1693400825309" width="23" height="23">
 				<path
 					d="M863.744 896h-224.256c-17.92 0-31.744-14.336-31.744-31.744s14.336-31.744 31.744-31.744h192.512v-640h-640v190.976c0 17.92-14.336 32.256-32.256 32.256S128 400.896 128 383.488V160.256c0-17.92 14.336-32.256 32.256-32.256h704c17.92 0 31.744 14.336 31.744 32.256v704c0 17.408-14.336 31.744-32.256 31.744z"
 					p-id="11287"></path>
@@ -13,25 +22,27 @@
 					p-id="11288"></path>
 			</svg>
 		</span>
-		<span>
+
+		<span v-if="customize" class="animate__animated animate__fadeIn">
 			<svg t="1693312903898" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
 				p-id="2576" width="25" height="25">
 				<path
 					d="M819.198 910.218 204.799 910.218c-50.267 0-91.022-40.75-91.022-91.02L113.777 204.822c0-50.29 40.755-91.045 91.022-91.045l614.398 0c50.27 0 91.02 40.755 91.02 91.045l0 614.376C910.218 869.468 869.468 910.218 819.198 910.218zM841.953 227.554c0-25.122-20.385-45.51-45.51-45.51L227.554 182.044c-25.122 0-45.51 20.387-45.51 45.51l0 568.889c0 25.125 20.387 45.535 45.51 45.535l568.889 0c25.125 0 45.51-20.39 45.51-45.535L841.953 227.554zM603.268 400.952l-57.14-57.115 0 335.802 55.505-55.5c13.335-13.31 34.93-13.335 48.265 0 13.33 13.335 13.33 34.95 0 48.29l-105.77 105.765c-1.615 3.415-3.525 6.78-6.37 9.625-7.1 7.08-16.475 10.1-25.76 9.67-9.262 0.46-18.66-2.59-25.76-9.69-2.842-2.85-4.8-6.15-6.347-9.58l-105.79-105.79c-13.335-13.34-13.335-34.955 0-48.29 13.332-13.31 34.927-13.335 48.262 0l55.502 55.5L477.865 343.837l-57.117 57.115c-13.335 13.357-34.952 13.335-48.287 0s-13.335-34.93 0-48.265l115.395-115.37c13.332-13.335 34.927-13.357 48.262 0l115.395 115.37c13.335 13.335 13.335 34.952 0 48.265C638.198 414.286 616.583 414.286 603.268 400.952z"
 					fill="#c71d23" p-id="2577"></path>
 			</svg>
-			<input type="number" v-model="canvasWidth"> px</span>
-		<span><svg t="1693314788367" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
-				p-id="3702" width="25" height="25">
+			<input type="number" v-model="canvasWidth" max="100000"> px</span>
+		<span v-if="customize" class="animate__animated animate__fadeIn"><svg t="1693314788367" class="icon "
+				viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3702" width="25" height="25">
 				<path
 					d="M113.777 819.198 113.777 204.8c0-50.267 40.75-91.022 91.02-91.022l614.376 0c50.29 0 91.045 40.755 91.045 91.022l0 614.398c0 50.27-40.755 91.02-91.045 91.02L204.797 910.218C154.527 910.218 113.777 869.468 113.777 819.198zM796.438 841.953c25.125 0 45.51-20.385 45.51-45.51L841.948 227.554c0-25.122-20.385-45.51-45.505-45.51L227.552 182.044c-25.125 0-45.535 20.387-45.535 45.51l0 568.889c0 25.125 20.39 45.51 45.535 45.51L796.438 841.953zM623.043 603.269l57.115-57.14L344.357 546.129l55.5 55.505c13.31 13.335 13.335 34.93 0 48.265-13.335 13.33-34.95 13.33-48.29 0l-105.765-105.77c-3.415-1.615-6.78-3.525-9.625-6.37-7.08-7.1-10.1-16.475-9.67-25.76-0.46-9.262 2.59-18.66 9.69-25.76 2.85-2.842 6.15-4.8 9.58-6.348l105.79-105.79c13.34-13.335 34.955-13.335 48.29 0 13.31 13.332 13.335 34.927 0 48.262l-55.5 55.502 335.802 0-57.115-57.117c-13.355-13.335-13.335-34.952 0-48.287s34.93-13.335 48.265 0l115.37 115.395c13.335 13.332 13.36 34.927 0 48.262l-115.37 115.395c-13.335 13.335-34.95 13.335-48.265 0C609.708 638.198 609.708 616.583 623.043 603.269z"
 					fill="#c71d23" p-id="3703"></path>
 			</svg>
-			<input type="number" v-model="canvasHeight"> px</span>
+			<input type="number" v-model="canvasHeight" max="100000"> px
+		</span>
 		<button @click="exportAsImage">导出为图片</button>
 		<button class="sharebutton" @click="shareLink">生成预览链接</button>
-		<!-- <button @click="editor.runCommand('export-image')">导出</button> -->
 	</span>
+	<!-- <button @click="editor.runCommand('export-image')">导出</button> -->
 	<div id="gjs"></div>
 
 	<!-- <div id="blocks"></div> -->
@@ -58,6 +69,7 @@ import Type from 'grapesjs-typed';
 import ExportPlugin from 'grapesjs-plugin-export'; //导出html和css
 import ScriptPlugin from 'grapesjs-script-editor'; //js代码编辑
 import html2canvas from 'html2canvas';
+import 'animate.css'
 
 export default {
 	name: 'GrapesEditor',
@@ -89,27 +101,28 @@ export default {
 			canvasWidth: '1000',
 			Devices: [
 				{
-					selected: false,
+					selected: true,
+					id: 'Desktop',
 					name: 'Desktop',
 					width: '1920px',
 					height: '1080px',
-					icon: ''
 				},
 				{
 					selected: false,
+					id: 'Tablet',
 					name: 'Tablet',
 					width: '2388px',
 					height: '1668px',
-					icon: ''
 				},
 				{
 					selected: false,
+					id: 'Mobile portrait',
 					name: 'Mobile portrait',
 					width: '1170px',
 					height: '2532px',
-					icon: ''
-				}],
-			customize: true,
+				},
+			],
+			customize: false,
 			editor: undefined,
 			currentDevice: undefined
 		}
@@ -117,7 +130,7 @@ export default {
 	watch: {
 		//监听画布大小改变,更新设备配置
 		canvasHeight(value) {
-			if (value >= 100000) {
+			if (value > 100000) {
 				alert('超过最大高度')
 				return
 			}
@@ -144,7 +157,7 @@ export default {
 			}, 100)
 		},
 		canvasWidth(value) {
-			if (value >= 10000) {
+			if (value > 100000) {
 				alert('超过最大宽度')
 				return
 			}
@@ -216,6 +229,7 @@ export default {
 				deviceManager: {
 					devices: [
 						{
+							id: 'Customization',
 							name: 'Customization',
 							width: this.canvasWidth + 'px',
 							height: this.canvasHeight + 'px',
@@ -385,7 +399,7 @@ export default {
 			</style>
 			</div>`
 			console.log(node.innerHTML)
-			document.body.appendChild(node)
+			document.querySelector('iframe').appendChild(node)
 			html2canvas(node).then(canvas => {
 				let link = document.createElement('a')
 				link.style.display = 'none'
@@ -393,10 +407,26 @@ export default {
 				link.href = canvas.toDataURL("image/png")
 				link.click()
 				link.remove()
+				document.querySelector('iframe').removeChild(node)
 			})
+
 		},
 		shareLink() {
 
+		},
+		switchDevice(deviceIndex) {
+			this.Devices.forEach((device) => {
+				device.selected = false
+			})
+
+			if (deviceIndex === 3) {
+				this.customize = true//设置为选中
+			}
+			else {
+				this.Devices[deviceIndex].selected = true
+				this.editor.Devices.select(this.Devices[deviceIndex].id)
+				this.customize = false
+			}
 		}
 	}
 }
@@ -458,10 +488,10 @@ export default {
 	overflow: auto;
 }
 
-/* :deep(.gjs-pn-devices-c .gjs-pn-btn) {
+:deep(.gjs-pn-devices-c .gjs-pn-btn) {
 	display: none;
 }
-:deep(.gjs-pn-devices-c .gjs-pn-btn:nth-child(3)) {
+/* :deep(.gjs-pn-devices-c .gjs-pn-btn:nth-child(3)) {
 	display: none;
 }
 :deep(.gjs-pn-devices-c .gjs-pn-btn:nth-child(2)) {
@@ -472,7 +502,7 @@ export default {
 }
 
 :deep(.gjs-pn-btn:hover) {
-	background: rgb(199, 29, 35);
+	background: #c71d23;
 	color: #eee;
 }
 
@@ -522,16 +552,15 @@ export default {
 	border: #c71d23 2px solid;
 }
 
-.selected-device {
+.selected-device svg {
 	fill: white;
 	background: #c71d23;
 }
 
-.unselected-device {
-	fill: #c71d23
+.unselected-device svg {
+	fill: #c71d23;
 }
 
 .sharebutton {
 	margin-left: 20px;
-}
-</style>
+}</style>

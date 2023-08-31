@@ -1,7 +1,36 @@
 <!-- 文本编辑器 -->
 <template>
+	<div v-if="isBusy > 0" class="mask" :style="{
+		'position': 'fixed',
+		'left': '0',
+		'top': '0',
+		'height': '100%',
+		'width': '100%',
+		'z-index': '10',
+		'background': 'rgba(200,200,200,0.5)',
+		'text-align': 'center'
+	}">
+		<div :style="{
+			'display': 'inline-block',
+			'vertical-align': 'middle',
+			'margin': '20% auto',
+			'color': 'rgb(199,29,35)',
+			'font-weight': '700',
+		}">
+			<div :style="{
+				'display': 'inline-block',
+				'width': '15px',
+				'vertical-align': 'middle',
+				'aspect-ratio': '1',
+				'margin': '0 30px',
+				'borderRadius': '15px',
+				'border': '5px dotted rgb(199,29,35)',
+				'animation': 'rotate 1s infinite linear'
+			}"></div>
+			<span style="font-size: 25px;">{{ busyTip }}...</span>
+		</div>
+	</div>
 	<div id="editor-wrapper" v-if="editor && provider">
-		<div class="mask"></div>
 		<!-- 气泡菜单 除了样式不要乱改 -->
 		<bubble-menu :editor="editor" class="editor-bubble-menu">
 			<div v-if="editor.isActive('codeBlock') === false">
@@ -217,6 +246,12 @@
 						p-id="9797"></path>
 				</svg>
 			</button>
+			<button
+				@click="editor.chain().focus().insertTable({ cols: 5, rows: 3, withHeaderRow: true, background: 'black' }).run()">
+				插入表格
+			</button>
+
+
 		</floating-menu>
 		<!-- 顶部工具栏 -->
 		<div class="editor-bar" v-show="!isReadOnly">
@@ -344,6 +379,7 @@
 					</button>
 				</div>
 			</div>
+
 			<!-- 编辑模式与查看历史 + 插入图片 -->
 			<div class="edit-history">
 				<!-- 编辑模式 -->
@@ -369,7 +405,12 @@
 				<slot name="showHistoryButton"></slot>
 				<!-- 插入图片 -->
 				<input ref="imgInput" style="display:none;" type="file" accept="image" @input="insertImage">
-				<button @click="$refs.imgInput.click"><svg t="1693404668430" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3460" width="30" height="30"><path d="M938.666667 553.92V768c0 64.8-52.533333 117.333333-117.333334 117.333333H202.666667c-64.8 0-117.333333-52.533333-117.333334-117.333333V256c0-64.8 52.533333-117.333333 117.333334-117.333333h618.666666c64.8 0 117.333333 52.533333 117.333334 117.333333v297.92z m-64-74.624V256a53.333333 53.333333 0 0 0-53.333334-53.333333H202.666667a53.333333 53.333333 0 0 0-53.333334 53.333333v344.48A290.090667 290.090667 0 0 1 192 597.333333a286.88 286.88 0 0 1 183.296 65.845334C427.029333 528.384 556.906667 437.333333 704 437.333333c65.706667 0 126.997333 16.778667 170.666667 41.962667z m0 82.24c-5.333333-8.32-21.130667-21.653333-43.648-32.917333C796.768 511.488 753.045333 501.333333 704 501.333333c-121.770667 0-229.130667 76.266667-270.432 188.693334-2.730667 7.445333-7.402667 20.32-13.994667 38.581333-7.68 21.301333-34.453333 28.106667-51.370666 13.056-16.437333-14.634667-28.554667-25.066667-36.138667-31.146667A222.890667 222.890667 0 0 0 192 661.333333c-14.464 0-28.725333 1.365333-42.666667 4.053334V768a53.333333 53.333333 0 0 0 53.333334 53.333333h618.666666a53.333333 53.333333 0 0 0 53.333334-53.333333V561.525333zM320 480a96 96 0 1 1 0-192 96 96 0 0 1 0 192z m0-64a32 32 0 1 0 0-64 32 32 0 0 0 0 64z" fill="#707070" p-id="3461"></path></svg></button>
+				<button @click="$refs.imgInput.click"><svg t="1693404668430" class="icon" viewBox="0 0 1024 1024"
+						version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3460" width="30" height="30">
+						<path
+							d="M938.666667 553.92V768c0 64.8-52.533333 117.333333-117.333334 117.333333H202.666667c-64.8 0-117.333333-52.533333-117.333334-117.333333V256c0-64.8 52.533333-117.333333 117.333334-117.333333h618.666666c64.8 0 117.333333 52.533333 117.333334 117.333333v297.92z m-64-74.624V256a53.333333 53.333333 0 0 0-53.333334-53.333333H202.666667a53.333333 53.333333 0 0 0-53.333334 53.333333v344.48A290.090667 290.090667 0 0 1 192 597.333333a286.88 286.88 0 0 1 183.296 65.845334C427.029333 528.384 556.906667 437.333333 704 437.333333c65.706667 0 126.997333 16.778667 170.666667 41.962667z m0 82.24c-5.333333-8.32-21.130667-21.653333-43.648-32.917333C796.768 511.488 753.045333 501.333333 704 501.333333c-121.770667 0-229.130667 76.266667-270.432 188.693334-2.730667 7.445333-7.402667 20.32-13.994667 38.581333-7.68 21.301333-34.453333 28.106667-51.370666 13.056-16.437333-14.634667-28.554667-25.066667-36.138667-31.146667A222.890667 222.890667 0 0 0 192 661.333333c-14.464 0-28.725333 1.365333-42.666667 4.053334V768a53.333333 53.333333 0 0 0 53.333334 53.333333h618.666666a53.333333 53.333333 0 0 0 53.333334-53.333333V561.525333zM320 480a96 96 0 1 1 0-192 96 96 0 0 1 0 192z m0-64a32 32 0 1 0 0-64 32 32 0 0 0 0 64z"
+							p-id="3461"></path>
+					</svg></button>
 			</div>
 			<!-- 各类格式调整 -->
 			<div class="formats">
@@ -641,15 +682,6 @@
 			</div>
 
 			<div class="temp-container">
-
-
-
-
-
-
-
-
-
 				<!-- 普通段落 -->
 				<button style="display: none" @click="editor.chain().focus().setParagraph().run()"
 					:class="{ 'is-active': editor.isActive('paragraph') }">
@@ -660,20 +692,64 @@
 							p-id="10080"></path>
 					</svg>
 				</button>
-
-
-
-
-
-
 			</div>
-
-
+		</div>
+		<!-- 表格设置 -->
+		<div class="table">
+			<button @click="editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()">
+				插入表格
+			</button>
+			<button @click="editor.chain().focus().addColumnBefore().run()">
+				向前插入列
+			</button>
+			<button @click="editor.chain().focus().addColumnAfter().run()">
+				向后插入列
+			</button>
+			<button @click="editor.chain().focus().deleteColumn().run()">
+				删除列
+			</button>
+			<button @click="editor.chain().focus().addRowBefore().run()">
+				向前插入行
+			</button>
+			<button @click="editor.chain().focus().addRowAfter().run()">
+				向后插入行
+			</button>
+			<button @click="editor.chain().focus().deleteRow().run()">
+				删除行
+			</button>
+			<button @click="editor.chain().focus().deleteTable().run()">
+				删除表格
+			</button>
+			<button @click="editor.chain().focus().mergeCells().run()">
+				合并单元格
+			</button>
+			<button @click="editor.chain().focus().splitCell().run()">
+				分裂单元格
+			</button>
+			<button @click="editor.chain().focus().toggleHeaderColumn().run()" :class="{ 'is-active': editor.isActive('headerColumn') }">
+				设置表头列
+			</button>
+			<button @click="editor.chain().focus().toggleHeaderRow().run()" :class="{ 'is-active': editor.isActive('headerRow') }">
+				设置表头行
+			</button>
+			<button @click="editor.chain().focus().toggleHeaderCell().run()" :class="{ 'is-active': editor.isActive('headerCell') }">
+				设置表头单元格
+			</button>
+			<button @click="editor.chain().focus().fixTables().run()">
+				修复表格
+			</button>
+			<button @click="editor.chain().focus().goToNextCell().run()">
+				下一单元格
+			</button>
+			<button @click="editor.chain().focus().goToPreviousCell().run()">
+				上一单元格
+			</button>
 		</div>
 		<div class="document-title">{{ docName }}</div>
 		<!-- <editor-content :editor="editor" id="document-content" v-model="localContent"
 			@update="$emit('update:docContent', editor.storage.content)" /> -->
 		<div class="flex">
+			<toc></toc>
 			<editor-content :editor="editor" id="document-content" />
 			<slot v-if="showHistoryVersion" name="version"></slot>
 		</div>
@@ -694,8 +770,11 @@
 <script>
 import StarterKit from '@tiptap/starter-kit'
 import CharactorCount from '@tiptap/extension-character-count'
-import Document from '@tiptap/extension-document'
 import Image from '@tiptap/extension-image'
+import Table from '@tiptap/extension-table'
+import TableCell from '@tiptap/extension-table-cell'
+import TableHeader from '@tiptap/extension-table-header'
+import TableRow from '@tiptap/extension-table-row'
 import Underline from '@tiptap/extension-underline'
 import FontFamily from '@tiptap/extension-font-family'
 import Typography from '@tiptap/extension-typography'//实时渲染markdown
@@ -706,9 +785,9 @@ import Dropcursor from '@tiptap/extension-dropcursor'//拖拽器
 import Mention from '@tiptap/extension-mention'
 import TaskItem from '@tiptap/extension-task-item'
 import TaskList from '@tiptap/extension-task-list'
-import Text from '@tiptap/extension-text'
 import TextStyle from '@tiptap/extension-text-style'
 import TextAlign from '@tiptap/extension-text-align'
+import ContentTable from './Content.js'
 import { lowlight } from 'lowlight'//代码高亮
 import CodeBlockLowLight from '@tiptap/extension-code-block-lowlight'//代码高亮
 import { Editor, EditorContent, BubbleMenu, FloatingMenu } from '@tiptap/vue-3'
@@ -768,6 +847,8 @@ export default {
 			// localContent: '',
 			docLimit: 100000,
 			autoSavePeriod: 10000,
+			isBusy: 1,//处理完某些交互事项前用户不能操作
+			busyTip: '加载中',
 			editable: false,
 			fullScreen: false,
 			editor: undefined,
@@ -835,15 +916,19 @@ export default {
 		//插入图片
 		insertImage(event) {
 			if (this.editable) {
+				this.isBusy++
 				const reader = new FileReader()
 				reader.onload = (event) => {
 					const imageData = event.target.result
 					this.editor.chain().focus().setImage({ src: imageData }).run()
+					this.isBusy--
 				}
 				reader.readAsDataURL(event.target.files[0])
 			}
 		},
 		exportAsPDF() {
+			this.busyTip = '正在导出为PDF'
+			this.isBusy++
 			let original = document.querySelector('#document-content')
 			let page = original.cloneNode(true)//需要对原样式进行一些修改，因此深拷贝
 			//修改样式和显示内容
@@ -887,18 +972,26 @@ export default {
 			}).then(() => {
 				original.style.display = 'block'//恢复显示
 				document.querySelector('#hidden-area').removeChild(page)
-				console.log('成功保存为PDF')
+				alert('成功保存为PDF')
+				this.isBusy--
+				this.busyTip = '加载中'
 			})
 		},
 		exportAsWord() {
+			this.busyTip = '正在导出为Word'
+			this.isBusy++
 			exportWord(document.querySelector('#document-content'), {
 				addStyle: true,
 				fileName: this.docName,
 				// toImg: [],
 				// success() {}
 			})
+			this.isBusy--
+			this.busyTip = '加载中'
 		},
 		exportAsMarkdown() {
+			this.busyTip = '正在导出为Markdown'
+			this.isBusy++
 			const turndown = new Turndown()
 			let markdownContent = turndown.turndown(this.editor.getHTML())
 			//创建blob文件
@@ -912,6 +1005,8 @@ export default {
 			//清除url和链接
 			URL.revokeObjectURL(url)
 			link.remove()
+			this.isBusy--
+			this.busyTip = '加载中'
 		},
 		switchFullScreen() {
 			if (document.fullscreenElement === null) {
@@ -933,17 +1028,21 @@ export default {
 			// 	const dataUrl = event.target.result
 			// 	formData.append('source', dataUrl)
 			// formData.append('source', dataUrl.split('base64,')[1])
-			if (mode === 'manualsave') {		
+			if (mode === 'manualsave') {
+				this.busyTip = '保存中'
+				this.isBusy++
 				this.$http.post(`/api/projects/file/${this.docId}/store/`, formData, {
 					headers: {
 						'Content-type': 'multipart/form-data'
 					}
 				}).then(() => {
 					console.log('保存成功')
+					this.isBusy--
+					this.busyTip = '加载中'
 					this.$emit('updateVersion')
 				})
 			} else {
-				this.$http.post(`/api/projects/file/${this.docId}/autostore/`, formData,{
+				this.$http.post(`/api/projects/file/${this.docId}/autostore/`, formData, {
 					headers: {
 						'Content-type': 'multipart/form-data'
 					}
@@ -979,6 +1078,7 @@ export default {
 			onConnect: () => {
 				setTimeout(() => {//异步执行，需要等到users加载完全
 					this.editor.commands.setContent(this.docContent)
+					this.isBusy--//释放最初的isBusy
 				}, 100)
 			},
 			forceSyncInterval: 10,
@@ -1002,7 +1102,7 @@ export default {
 		})
 		this.editor = new Editor({
 			extensions: [
-				Document,
+				ContentTable,
 				Mention.configure({
 					HTMLAttributes: {
 						class: 'mention',
@@ -1083,6 +1183,14 @@ export default {
 				Dropcursor.configure({
 					color: '#c71d23'
 				}),
+				Table.configure({
+					resizable: true,
+					// cellMinWidth: 25,
+					allowTableNodeSelection: true
+				}),
+				TableRow,
+				TableHeader,
+				TableCell,
 				Image.configure({
 					inline: true,
 					allowBase64: true
@@ -1095,7 +1203,6 @@ export default {
 				TaskItem.configure({
 					nested: true,
 				}),
-				Text,
 				TextStyle,
 				TextAlign.configure({
 					types: ['heading', 'paragraph'],
@@ -1129,8 +1236,8 @@ export default {
 				}
 			},
 		})
-		//设置自动保存
-		setInterval(() => {
+		//设置自动保存,记得Unmounted清除
+		this.autoSaver = setInterval(() => {
 			if (this) {
 				this.saveDocument('autosave')
 			}
@@ -1159,7 +1266,7 @@ export default {
 		})
 	},
 	beforeUnmount() {
-
+		clearInterval(this.autoSaver)//important 不然重复保存
 	},
 }
 
@@ -1562,6 +1669,7 @@ export default {
 	/* transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s; */
 }
 
+
 .ProseMirror:hover {
 	/* box-shadow: #666 3px 3px 3px 3px; */
 	/* background: #ddd; */
@@ -1689,6 +1797,10 @@ export default {
 	float: left;
 	height: 0;
 	pointer-events: none;
+}
+
+.ProseMirror .selectedCell {
+	background: rgb(199, 29, 35, 0.5);
 }
 
 /* 块引用 */

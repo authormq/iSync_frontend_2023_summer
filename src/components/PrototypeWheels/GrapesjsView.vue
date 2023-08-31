@@ -50,11 +50,11 @@
 			</svg>
 		</span>
 		<span v-if="Devices[0].selected" class="animate__animated animate__fadeIn">
-			{{ Devices[0].width }} x {{ Devices[0].height }}</span>
+			{{ Devices[0].width }} × {{ Devices[0].height }}</span>
 		<span v-if="Devices[1].selected" class="animate__animated animate__fadeIn">
-			{{ Devices[1].width }} x {{ Devices[1].height }}</span>
+			{{ Devices[1].width }} × {{ Devices[1].height }}</span>
 		<span v-if="Devices[2].selected" class="animate__animated animate__fadeIn">
-			{{ Devices[2].width }} x {{ Devices[2].height }}</span>
+			{{ Devices[2].width }} × {{ Devices[2].height }}</span>
 		<span v-if="Devices[3].selected" class="animate__animated animate__fadeIn">
 			<svg t="1693312903898" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
 				p-id="2576" width="25" height="25">

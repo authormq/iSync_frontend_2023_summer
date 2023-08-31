@@ -1,6 +1,7 @@
 <template>
     <!-- <div>{{ inspector?inspector.getHTML():'' }}</div> -->
     <div id="inspector-wrapper">
+        <toc></toc>
         <editor-content v-if="showHistoryVersion" :editor="inspector"></editor-content>
     </div>
 </template>
@@ -9,6 +10,10 @@
 import { Editor, EditorContent } from '@tiptap/vue-3';
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
+import Table from '@tiptap/extension-table'
+import TableCell from '@tiptap/extension-table-cell'
+import TableHeader from '@tiptap/extension-table-header'
+import TableRow from '@tiptap/extension-table-row'
 import CharactorCount from '@tiptap/extension-character-count'
 import Document from '@tiptap/extension-document'
 import Underline from '@tiptap/extension-underline'
@@ -24,6 +29,7 @@ import TextStyle from '@tiptap/extension-text-style'
 import TextAlign from '@tiptap/extension-text-align'
 import { lowlight } from 'lowlight'//代码高亮
 import CodeBlockLowLight from '@tiptap/extension-code-block-lowlight'//代码高亮
+import ContentTable from './Content.js'
 export default {
     components: {
         EditorContent
@@ -67,6 +73,7 @@ export default {
     mounted() {
         this.inspector = new Editor({
             extensions: [
+                ContentTable,
                 Document,
                 StarterKit.configure({
                     history: false//使用collaboration的history
@@ -78,6 +85,14 @@ export default {
                     inline: true,
                     allowBase64: true
                 }),
+                Table.configure({
+                    resizable: true,
+                    // cellMinWidth: 25,
+                    allowTableNodeSelection: true
+                }),
+                TableRow,
+                TableHeader,
+                TableCell,
                 Typography,
                 Underline,
                 Color,

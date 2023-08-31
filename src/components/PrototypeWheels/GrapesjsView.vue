@@ -1,17 +1,44 @@
 <template>
 	<span id="size-setter">
 		<!-- 桌面端按钮 -->
-		<span @click="switchDevice(0)"
+		<span @click="switchDevice(0)" v-tooltip="'桌面端'"
 			:class="{ 'selected-device': Devices[0].selected, 'unselected-device': !Devices[0].selected }">
-			<svg t="1693450725716" class="icon" style="cursor: pointer;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
-				p-id="1477" width="23" height="23">
+			<svg t="1693450725716" class="icon" style="cursor: pointer;" viewBox="0 0 1024 1024" version="1.1"
+				xmlns="http://www.w3.org/2000/svg" p-id="1477" width="23" height="23">
 				<path
 					d="M928 140H96c-17.7 0-32 14.3-32 32v496c0 17.7 14.3 32 32 32h380v112H304c-8.8 0-16 7.2-16 16v48c0 4.4 3.6 8 8 8h432c4.4 0 8-3.6 8-8v-48c0-8.8-7.2-16-16-16H548V700h380c17.7 0 32-14.3 32-32V172c0-17.7-14.3-32-32-32z m-40 488H136V212h752v416z"
 					p-id="1478"></path>
 			</svg>
 		</span>
+		<!-- 平板按钮 -->
+		<span @click="switchDevice(1)" v-tooltip="'平板端'"
+			:class="{ 'selected-device': Devices[1].selected, 'unselected-device': !Devices[1].selected }">
+			<svg t="1693456457079" class="icon" style="cursor: pointer;" viewBox="0 0 1024 1024" version="1.1"
+				xmlns="http://www.w3.org/2000/svg" p-id="2689" width="23" height="23">
+				<path
+					d="M800 64H224c-35.3 0-64 28.7-64 64v768c0 35.3 28.7 64 64 64h576c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64z m-8 824H232V136h560v752z"
+					p-id="2690"></path>
+				<path d="M512 784m-40 0a40 40 0 1 0 80 0 40 40 0 1 0-80 0Z" p-id="2691"></path>
+			</svg>
+		</span>
+		<!-- 手机按钮 -->
+		<span @click="switchDevice(2)" v-tooltip="'手机端'"
+			:class="{ 'selected-device': Devices[2].selected, 'unselected-device': !Devices[2].selected }">
+			<svg t="1693456616174" class="icon" style="cursor: pointer;" viewBox="0 0 1024 1024" version="1.1"
+				xmlns="http://www.w3.org/2000/svg" p-id="4595" width="23" height="23">
+				<path
+					d="M746.666667 949.333333H277.333333c-40.533333 0-74.666667-34.133333-74.666666-74.666666V149.333333c0-40.533333 34.133333-74.666667 74.666666-74.666666h469.333334c40.533333 0 74.666667 34.133333 74.666666 74.666666v725.333334c0 40.533333-34.133333 74.666667-74.666666 74.666666z m-469.333334-810.666666c-6.4 0-10.666667 4.266667-10.666666 10.666666v725.333334c0 6.4 4.266667 10.666667 10.666666 10.666666h469.333334c6.4 0 10.666667-4.266667 10.666666-10.666666V149.333333c0-6.4-4.266667-10.666667-10.666666-10.666666H277.333333z"
+					p-id="4596"></path>
+				<path d="M512 768m-42.666667 0a42.666667 42.666667 0 1 0 85.333334 0 42.666667 42.666667 0 1 0-85.333334 0Z"
+					p-id="4597"></path>
+				<path
+					d="M597.333333 245.333333h-170.666666c-17.066667 0-32-14.933333-32-32s14.933333-32 32-32h170.666666c17.066667 0 32 14.933333 32 32s-14.933333 32-32 32z"
+					p-id="4598"></path>
+			</svg>
+		</span>
 		<!-- 自定义按钮 -->
-		<span @click="switchDevice(3)" :class="{ 'selected-device': customize, 'unselected-device': !customize }">
+		<span @click="switchDevice(3)" v-tooltip="'自定义'"
+			:class="{ 'selected-device': Devices[3].selected, 'unselected-device': !Devices[3].selected }">
 			<svg t="1693400825308" style="cursor: pointer;" class="icon" viewBox="0 0 1024 1024" version="1.1"
 				xmlns="http://www.w3.org/2000/svg" p-id="11286" id="mx_n_1693400825309" width="23" height="23">
 				<path
@@ -22,8 +49,13 @@
 					p-id="11288"></path>
 			</svg>
 		</span>
-
-		<span v-if="customize" class="animate__animated animate__fadeIn">
+		<span v-if="Devices[0].selected" class="animate__animated animate__fadeIn">
+			{{ Devices[0].width }} x {{ Devices[0].height }}</span>
+		<span v-if="Devices[1].selected" class="animate__animated animate__fadeIn">
+			{{ Devices[1].width }} x {{ Devices[1].height }}</span>
+		<span v-if="Devices[2].selected" class="animate__animated animate__fadeIn">
+			{{ Devices[2].width }} x {{ Devices[2].height }}</span>
+		<span v-if="Devices[3].selected" class="animate__animated animate__fadeIn">
 			<svg t="1693312903898" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
 				p-id="2576" width="25" height="25">
 				<path
@@ -31,7 +63,7 @@
 					fill="#c71d23" p-id="2577"></path>
 			</svg>
 			<input type="number" v-model="canvasWidth" max="100000"> px</span>
-		<span v-if="customize" class="animate__animated animate__fadeIn"><svg t="1693314788367" class="icon "
+		<span v-if="Devices[3].selected" class="animate__animated animate__fadeIn"><svg t="1693314788367" class="icon "
 				viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3702" width="25" height="25">
 				<path
 					d="M113.777 819.198 113.777 204.8c0-50.267 40.75-91.022 91.02-91.022l614.376 0c50.29 0 91.045 40.755 91.045 91.022l0 614.398c0 50.27-40.755 91.02-91.045 91.02L204.797 910.218C154.527 910.218 113.777 869.468 113.777 819.198zM796.438 841.953c25.125 0 45.51-20.385 45.51-45.51L841.948 227.554c0-25.122-20.385-45.51-45.505-45.51L227.552 182.044c-25.125 0-45.535 20.387-45.535 45.51l0 568.889c0 25.125 20.39 45.51 45.535 45.51L796.438 841.953zM623.043 603.269l57.115-57.14L344.357 546.129l55.5 55.505c13.31 13.335 13.335 34.93 0 48.265-13.335 13.33-34.95 13.33-48.29 0l-105.765-105.77c-3.415-1.615-6.78-3.525-9.625-6.37-7.08-7.1-10.1-16.475-9.67-25.76-0.46-9.262 2.59-18.66 9.69-25.76 2.85-2.842 6.15-4.8 9.58-6.348l105.79-105.79c13.34-13.335 34.955-13.335 48.29 0 13.31 13.332 13.335 34.927 0 48.262l-55.5 55.502 335.802 0-57.115-57.117c-13.355-13.335-13.335-34.952 0-48.287s34.93-13.335 48.265 0l115.37 115.395c13.335 13.332 13.36 34.927 0 48.262l-115.37 115.395c-13.335 13.335-34.95 13.335-48.265 0C609.708 638.198 609.708 616.583 623.043 603.269z"
@@ -103,28 +135,29 @@ export default {
 				{
 					selected: true,
 					id: 'Desktop',
-					name: 'Desktop',
 					width: '1920px',
 					height: '1080px',
 				},
 				{
 					selected: false,
 					id: 'Tablet',
-					name: 'Tablet',
 					width: '2388px',
 					height: '1668px',
 				},
 				{
 					selected: false,
 					id: 'Mobile portrait',
-					name: 'Mobile portrait',
 					width: '1170px',
 					height: '2532px',
 				},
+				{
+					selected: false,
+					id: 'Customization',
+					width: '1000px',
+					height: '1000px',
+				},
 			],
-			customize: false,
 			editor: undefined,
-			currentDevice: undefined
 		}
 	},
 	watch: {
@@ -139,8 +172,9 @@ export default {
 				return
 			}
 			if (this.editor !== undefined) {
-				let newName = this.currentDevice.attributes.name === 'Customization' ? 'Customization1' : 'Customization'
-				let width = this.currentDevice.attributes.width//保持宽度不变
+				let oldName = this.editor.Devices.get('Customization') === null ? 'Customization1' : 'Customization'
+				let newName = oldName === 'Customization1' ? 'Customization' : 'Customization1'
+				let width = this.Devices[3].width//保持宽度不变
 				this.editor.Devices.add({//添加一个设备
 					id: newName,
 					name: newName,
@@ -149,12 +183,14 @@ export default {
 				})
 				// console.log(this.editor.Devices.get('Desktop').attributes.height)
 				this.editor.Devices.select(newName)//选择该设备
-				this.editor.Devices.remove(this.currentDevice)//把原来的设备删了
-				this.currentDevice = this.editor.Devices.get(newName)//变成新设备
+				this.editor.Devices.remove(oldName)//把原来的设备删了
+				this.Devices[3].id = newName//设置新id
+				this.Devices[3].height = value + 'px'//设置新高度
+				setTimeout(() => {
+					this.editor.store()
+				}, 100)
 			}
-			setTimeout(() => {
-				this.editor.store()
-			}, 100)
+
 		},
 		canvasWidth(value) {
 			if (value > 100000) {
@@ -165,8 +201,9 @@ export default {
 				alert('小于最小宽度')
 			}
 			if (this.editor !== undefined) {
-				let newName = this.currentDevice.attributes.name === 'Desktop' ? 'Tablet' : 'Desktop'
-				let height = this.currentDevice.attributes.height//保持高度不变
+				let oldName = this.editor.Devices.get('Customization') === null ? 'Customization1' : 'Customization'
+				let newName = oldName === 'Customization1' ? 'Customization' : 'Customization1'
+				let height = this.Devices[3].height//保持高度不变
 				this.editor.Devices.add({//添加一个设备
 					id: newName,
 					name: newName,
@@ -175,8 +212,9 @@ export default {
 				})
 				// console.log(this.editor.Devices.get('Desktop').attributes.height)
 				this.editor.Devices.select(newName)//选择该设备
-				this.editor.Devices.remove(this.currentDevice)//把原来的设备删了
-				this.currentDevice = this.editor.Devices.get(newName)//变成新设备
+				this.editor.Devices.remove(oldName)//把原来的设备删了
+				this.Devices[3].id = newName//设置新id
+				this.Devices[3].width = value + 'px'//设置新宽度
 				setTimeout(() => {
 					this.editor.store()
 				}, 100)
@@ -228,6 +266,23 @@ export default {
 				// },
 				deviceManager: {
 					devices: [
+						{
+							id: 'Desktop',
+							name: 'Desktop',
+							width: '1920px',
+							height: '1080px',
+						},
+						{
+							id: 'Tablet',
+							name: 'Tablet',
+							width: '2388px',
+							height: '1668px',
+						},
+						{
+							id: 'Mobile portrait',
+							width: '1170px',
+							height: '2532px',
+						},
 						{
 							id: 'Customization',
 							name: 'Customization',
@@ -303,7 +358,6 @@ export default {
 									width: this.canvasWidth,
 								}
 								data['Devices'] = this.Devices
-								data['customize'] = this.customize
 								this.ws.send(JSON.stringify(data))
 								return {
 									id: this.pageId,
@@ -321,7 +375,6 @@ export default {
 								this.Devices = result.Devices
 								this.canvasHeight = result.size.height
 								this.canvasWidth = result.size.width
-								this.customize = result.customize
 								return result.data
 							}
 
@@ -365,7 +418,6 @@ export default {
 				// 	]
 				// }
 			})
-			this.currentDevice = this.editor.Devices.get('Desktop')
 		},
 		addBlock() {
 			if (this.editor !== undefined) {
@@ -418,15 +470,8 @@ export default {
 			this.Devices.forEach((device) => {
 				device.selected = false
 			})
-
-			if (deviceIndex === 3) {
-				this.customize = true//设置为选中
-			}
-			else {
-				this.Devices[deviceIndex].selected = true
-				this.editor.Devices.select(this.Devices[deviceIndex].id)
-				this.customize = false
-			}
+			this.Devices[deviceIndex].selected = true
+			this.editor.Devices.select(this.Devices[deviceIndex].id)
 		}
 	}
 }
@@ -491,6 +536,7 @@ export default {
 :deep(.gjs-pn-devices-c .gjs-pn-btn) {
 	display: none;
 }
+
 /* :deep(.gjs-pn-devices-c .gjs-pn-btn:nth-child(3)) {
 	display: none;
 }
@@ -513,8 +559,9 @@ export default {
 
 #size-setter svg {
 	vertical-align: middle;
-	margin-right: 20px;
+	margin-right: 10px;
 	cursor: default;
+	border-radius: 3px;
 }
 
 #size-setter input {
@@ -528,7 +575,7 @@ export default {
 
 #size-setter span {
 	display: inline-block;
-	margin: 0 20px;
+	margin: 0 10px;
 	font-weight: 700;
 	font-family: consolas;
 	vertical-align: top;
@@ -555,12 +602,29 @@ export default {
 .selected-device svg {
 	fill: white;
 	background: #c71d23;
+	box-shadow: #c71d23 0 0 3px;
 }
+
+.unselected-device svg:hover {
+	fill: white;
+	background: #c71d23;
+}
+
+.unselected-device {
+	transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s;
+}
+
+.unselected-device:hover {
+	transform: scale(1.3);
+}
+
 
 .unselected-device svg {
 	fill: #c71d23;
+
 }
 
 .sharebutton {
 	margin-left: 20px;
-}</style>
+}
+</style>

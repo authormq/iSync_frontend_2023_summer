@@ -88,7 +88,7 @@ export default {
 						this.handleEditMessage(i, data)
 					}
 					else if (data.option == 'delete') {
-
+						this.handleDeleteMessage(i, data)
 					}
 				}
 			}
@@ -605,6 +605,14 @@ export default {
 						}))
 					}
 					break
+				}
+			}
+		},
+
+		handleDeleteMessage(i, data) {
+			if (this.rooms[i].lastMessage != null) {
+				if (this.rooms[i].lastMessage._id == message.id) {
+					this.rooms[i].lastMessage.content = '撤回了一条消息'
 				}
 			}
 		},

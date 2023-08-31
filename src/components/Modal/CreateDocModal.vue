@@ -137,7 +137,7 @@ export default {
             isPublic: this.isPublic,
             type: docType,
           }
-          alert('111')
+          // alert('111')
           this.$bus.emit('reloadDocListAfterCreateSucceed', newDoc)
           this.handleClose()
         },

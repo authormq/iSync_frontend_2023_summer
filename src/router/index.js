@@ -78,16 +78,16 @@ const router = createRouter({
         {
           path: 'page',
           component: PageListView
-        }
+        },
       ]
+    },
+    {
+      path: `/projects/:projectId/page/:protoId`,
+      component: GrapesjsView
     },
     {
       path: `/doc/:docId`,
       component: DocumentView
-    },
-    {
-      path: `/page/:protoId`,
-      component: GrapesjsView
     },
     {
       path: '/team/:teamId/invite/confirm',

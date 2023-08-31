@@ -6,7 +6,8 @@
 			:current-user-id="currentUserId" :rooms="JSON.stringify(rooms)" :rooms-loaded="roomsLoaded"
 			:messages="JSON.stringify(messages)" :messages-loaded="messagesLoaded" :custom-search-room-enabled="true"
 			:room-info-enabled="true" :message-selection-actions="JSON.stringify(messageSelectionActions)"
-			@send-message="sendMessage($event.detail[0])" @fetch-messages="fetchMessages($event.detail[0])"
+			@send-message="sendMessage($event.detail[0])" @edit-message="editMessage($event.detail[0])"
+			@delete-message="deleteMessage($event.detail[0])" @fetch-messages="fetchMessages($event.detail[0])"
 			@search-room="searchRoom($event.detail[0])" @open-file="openFile($event.detail[0])" @add-room="addRoom"
 			@message-selection-action-handler="messageSelectionActionHandler($event.detail[0])">
 			<!-- <div v-for="(message, index) in messages" :slot="'message_' + message._id" :key="index">
@@ -62,16 +63,17 @@ export default {
 			this.allRooms = this.rooms
 			// @all && last_message
 			for (let i = 0; i < this.rooms.length; i++) {
+				this.rooms[i].users = [
+					{
+						_id: '0',
+						username: '所有人'
+					},
+					...this.rooms[i].users
+				]
 				this.$http.get(`/api/groups/${this.rooms[i].roomId}/current_user_identity/`).then((response) => {
 					if (response.status == 200) {
-						if (response.data.identity != 'member') {
-							this.rooms[i].users = [
-								{
-									_id: '0',
-									username: '所有人'
-								},
-								...this.rooms[i].users
-							]
+						if (response.data.identity == 'member') {
+
 						}
 					}
 				})
@@ -79,61 +81,14 @@ export default {
 				this.ws[i] = new WebSocket(`ws://43.138.14.231:9000/ws/chat/group/${this.rooms[i].roomId}/${this.currentUserId}/`)
 				this.ws[i].onmessage = (messageEvent) => {
 					const data = JSON.parse(messageEvent.data)
-					const message = data.message
-					this.rooms[i].lastMessage = {
-						_id: message.id,
-						content: message.text_content,
-						senderId: `${message.sender.user.id}`,
-						username: message.sender.user.username,
-						avatar: message.sender.user.avatar,
-						timestamp: message.create_datetime.substring(11, 16),
-						date: message.create_datetime.substring(5, 10),
-						new: false,
-						replyMessage: message.reply_message == null ? null : {
-							_id: message.reply_message.id,
-							content: message.reply_message.text_content,
-							senderId: `${message.reply_message.sender.user.id}`,
-							username: message.reply_message.sender.user.username,
-							avatar: message.reply_message.sender.user.avatar,
-							timestamp: message.reply_message.create_datetime.substring(11, 16),
-							date: message.reply_message.create_datetime.substring(5, 10),
-							new: false,
-						},
-						files: message.file_content == null ? null : [{
-							name: message.file_content.name.split('message/file/')[1],
-							size: message.file_content.size,
-							url: message.file_content.url,
-							type: message.file_content.name.split('.')[1]
-						}]
+					if (data.option == 'send') {
+						this.handleSendMessage(i, data)
 					}
-					if (this.currentRoomId != this.rooms[i].roomId) {
-						this.rooms[i].unreadCount++
+					else if (data.option == 'edit') {
+						this.handleEditMessage(i, data)
 					}
-					else {
-						this.$http.post(`/api/groups/${this.currentRoomId}/messages/read_all/`)
-						this.messages = [
-							...this.messages,
-							this.rooms[i].lastMessage
-						]
-					}
-					for (let j = 0; j < this.rooms.length; j++) {
-						if (this.rooms[j].index > this.rooms[i].index) {
-							this.rooms[j].index--
-						}
-					}
-					this.rooms[i].index = 0
-					// @
-					for (let j = 0; j < data.mentioned_users.length; j++) {
-						if (data.mentioned_users[j]._id == this.currentUserId || data.mentioned_users[j]._id == '0') {
-							let formData = new FormData()
-							formData.append('group_message', message.id)
-							formData.append('receiver', this.currentUserId)
-							formData.append('sender', parseInt(message.sender.user.id))
-							this.$http.post('/api/news/', formData).then(() => {
-								this.$bus.emit('newMessage', message)
-							})
-							break
-						}
+					else if (data.option == 'delete') {
+						this.handleDeleteMessage(i, data)
 					}
 				}
 			}
@@ -259,8 +214,24 @@ export default {
 				color: rgba(199,29,35, 1) !important;
 				font-weight: bold !important;
 			}
+
+			.vac-message-box > .vac-avatar {
+				height: 35px !important;
+				width: 35px !important;
+				min-height: 35px !important;
+				min-width: 35px !important;
+				align-self: flex-start !important;
+				margin: 2px 0 0 !important;
+			}
+
+			.vac-message-container {
+				min-width: 40% !important;
+			}
+
+			.vac-message-wrapper .vac-message-container-offset {
+				margin: 0 !important;
+			}
 		`
-		
 		
 		
 		this.$refs.chat.shadowRoot.appendChild(style)
@@ -275,19 +246,16 @@ export default {
 		document.addEventListener('click', this.showGroupInfo)
 
 
-		setTimeout(() => {
-			this.scrollToMessage(1)
-		}, 3000);
 	},
 	beforeUnmount() {
 		document.removeEventListener('click', this.changeStyle)
 		document.removeEventListener('click', this.showGroupInfo)
 	},
-	// unmounted() {
-	// 	for (let i = 0; i < this.ws.length; i++) {
-	// 		this.ws[i].close()
-	// 	}
-	// },
+	unmounted() {
+		for (let i = 0; i < this.ws.length; i++) {
+			this.ws[i].close()
+		}
+	},
 	data() {
 		return {
 			showCreateRoomModal: false,
@@ -299,14 +267,6 @@ export default {
 			roomsLoaded: false,
 			messages: [],
 			messagesLoaded: false,
-			messageActions: [
-				{
-
-				},
-				{
-
-				}
-			],
 			messageSelectionActions: [
 				{
 					name: 'forwardItemByItem',
@@ -378,8 +338,8 @@ export default {
 					} else if (list.children.length === 4) {
 						list.children[0].children[0].innerHTML = '引用'
 						list.children[1].children[0].innerHTML = '编辑'
+						list.children[2].children[0].innerHTML = '撤回'
 						list.children[3].children[0].innerHTML = '多选'
-						list.children[2].style.display = 'none'
 						// list.children[3].style.display = 'none'
 					}
 				}
@@ -393,6 +353,7 @@ export default {
 				
 			}
 		},
+
 		showGroupInfo(e) {
 			const x = e.clientX
 			const y = e.clientY
@@ -409,6 +370,7 @@ export default {
 				}
 			}
 		},
+
 		fetchMessages({ room, options = {} }) {
 			this.currentRoomId = room.roomId
 			const offset = options.reset ? 0 : this.messages.length
@@ -444,6 +406,12 @@ export default {
 						timestamp: message.reply_message.create_datetime.substring(11, 16),
 						date: message.reply_message.create_datetime.substring(5, 10),
 						new: false,
+						files: message.reply_message.file_content == null ? null : [{
+							name: message.reply_message.file_content.name.split('message/file/')[1],
+							size: message.reply_message.file_content.size,
+							url: message.reply_message.file_content.url,
+							type: message.reply_message.file_content.name.split('.')[1]
+						}]
 					},
 					files: message.file_content == null ? null : [{
 						name: message.file_content.name.split('message/file/')[1],
@@ -461,6 +429,71 @@ export default {
 			})
 		},
 
+		handleSendMessage(i, data) {
+			const message = data.message
+			this.rooms[i].lastMessage = {
+				_id: message.id,
+				content: message.text_content,
+				senderId: `${message.sender.user.id}`,
+				username: message.sender.user.username,
+				avatar: message.sender.user.avatar,
+				timestamp: message.create_datetime.substring(11, 16),
+				date: message.create_datetime.substring(5, 10),
+				new: false,
+				replyMessage: message.reply_message == null ? null : {
+					_id: message.reply_message.id,
+					content: message.reply_message.text_content,
+					senderId: `${message.reply_message.sender.user.id}`,
+					username: message.reply_message.sender.user.username,
+					avatar: message.reply_message.sender.user.avatar,
+					timestamp: message.reply_message.create_datetime.substring(11, 16),
+					date: message.reply_message.create_datetime.substring(5, 10),
+					new: false,
+					files: message.reply_message.file_content == null ? null : [{
+						name: message.reply_message.file_content.name.split('message/file/')[1],
+						size: message.reply_message.file_content.size,
+						url: message.reply_message.file_content.url,
+						type: message.reply_message.file_content.name.split('.')[1]
+					}]
+				},
+				files: message.file_content == null ? null : [{
+					name: message.file_content.name.split('message/file/')[1],
+					size: message.file_content.size,
+					url: message.file_content.url,
+					type: message.file_content.name.split('.')[1]
+				}]
+			}
+			if (this.currentRoomId != this.rooms[i].roomId) {
+				this.rooms[i].unreadCount++
+			}
+			else {
+				this.$http.post(`/api/groups/${this.currentRoomId}/messages/read_all/`)
+				this.messages = [
+					...this.messages,
+					this.rooms[i].lastMessage
+				]
+			}
+			for (let j = 0; j < this.rooms.length; j++) {
+				if (this.rooms[j].index > this.rooms[i].index) {
+					this.rooms[j].index--
+				}
+			}
+			this.rooms[i].index = 0
+			// @
+			for (let j = 0; j < data.mentioned_users.length; j++) {
+				if (data.mentioned_users[j]._id == this.currentUserId || data.mentioned_users[j]._id == '0') {
+					let formData = new FormData()
+					formData.append('group_message', message.id)
+					formData.append('receiver', this.currentUserId)
+					formData.append('sender', parseInt(message.sender.user.id))
+					this.$http.post('/api/news/', formData).then(() => {
+						this.$bus.emit('newMessage', message)
+					})
+					break
+				}
+			}
+		},
+
 		sendMessage(message) {
 			for (let i = 0; i < this.rooms.length; i++) {
 				if (this.rooms[i].roomId == message.roomId) {
@@ -468,6 +501,7 @@ export default {
 						const reader = new FileReader()
 						reader.onload = (event) => {
 							this.ws[i].send(JSON.stringify({
+								'option': 'send',
 								'text_content': message.content,
 								'mentioned_users': message.usersTag,
 								'reply_message': message.replyMessage,
@@ -479,6 +513,7 @@ export default {
 					}
 					else {
 						this.ws[i].send(JSON.stringify({
+							'option': 'send',
 							'text_content': message.content,
 							'mentioned_users': message.usersTag,
 							'reply_message': message.replyMessage,
@@ -487,6 +522,128 @@ export default {
 						}))
 					}
 					break
+				}
+			}
+		},
+
+		handleEditMessage(i, data) {
+			const message = data.message
+			const newMessage = {
+				_id: message.id,
+				content: message.text_content,
+				senderId: `${message.sender.user.id}`,
+				username: message.sender.user.username,
+				avatar: message.sender.user.avatar,
+				timestamp: message.create_datetime.substring(11, 16),
+				date: message.create_datetime.substring(5, 10),
+				new: false,
+				replyMessage: message.reply_message == null ? null : {
+					_id: message.reply_message.id,
+					content: message.reply_message.text_content,
+					senderId: `${message.reply_message.sender.user.id}`,
+					username: message.reply_message.sender.user.username,
+					avatar: message.reply_message.sender.user.avatar,
+					timestamp: message.reply_message.create_datetime.substring(11, 16),
+					date: message.reply_message.create_datetime.substring(5, 10),
+					new: false,
+					files: message.reply_message.file_content == null ? null : [{
+						name: message.reply_message.file_content.name.split('message/file/')[1],
+						size: message.reply_message.file_content.size,
+						url: message.reply_message.file_content.url,
+						type: message.reply_message.file_content.name.split('.')[1]
+					}]
+				},
+				files: message.file_content == null ? null : [{
+					name: message.file_content.name.split('message/file/')[1],
+					size: message.file_content.size,
+					url: message.file_content.url,
+					type: message.file_content.name.split('.')[1]
+				}]
+			}
+			if (this.rooms[i].lastMessage != null) {
+				if (this.rooms[i].lastMessage._id == message.id) {
+					this.rooms[i].lastMessage = newMessage
+				}
+			}
+			if (this.currentRoomId == this.rooms[i].roomId) {
+				for (let i = 0; i < this.messages.length; i++) {
+					if (this.messages[i]._id == message.id) {
+						this.messages[i] = newMessage
+						break
+					}
+				}
+			}
+			// @
+			for (let j = 0; j < data.mentioned_users.length; j++) {
+				if (data.mentioned_users[j]._id == this.currentUserId || data.mentioned_users[j]._id == '0') {
+					let formData = new FormData()
+					formData.append('group_message', message.id)
+					formData.append('receiver', this.currentUserId)
+					formData.append('sender', parseInt(message.sender.user.id))
+					this.$http.post('/api/news/', formData).then(() => {
+						this.$bus.emit('newMessage', message)
+					})
+					break
+				}
+			}
+		},
+
+		editMessage(message) {
+			console.log(message)
+			for (let i = 0; i < this.rooms.length; i++) {
+				if (this.rooms[i].roomId == message.roomId) {
+					if (message.files != null && 'blob' in message.files[0]) {
+						const reader = new FileReader()
+						reader.onload = (event) => {
+							this.ws[i].send(JSON.stringify({
+								'option': 'edit',
+								'edit_file': true,
+								'message_id': message.messageId,
+								'text_content': message.newContent,
+								'mentioned_users': message.usersTag,
+								'reply_message': message.replyMessage,
+								'file_content': event.target.result.split('base64,')[1],
+								'file_name': message.files[0].name + '.' + message.files[0].extension
+							}))
+						}
+						reader.readAsDataURL(message.files[0].blob)
+					}
+					else {
+						this.ws[i].send(JSON.stringify({
+							'option': 'edit',
+							'edit_file': false,
+							'message_id': message.messageId,
+							'text_content': message.newContent,
+							'mentioned_users': message.usersTag,
+							'reply_message': message.replyMessage,
+							'file_content': null,
+							'file_name': null
+						}))
+					}
+					break
+				}
+			}
+		},
+
+		handleDeleteMessage(i, data) {
+			const message = data.message
+			if (this.rooms[i].lastMessage != null) {
+				if (this.rooms[i].lastMessage._id == message.id) {
+					this.rooms[i].lastMessage.content = '撤回了一条消息'
+				}
+			}
+			if (this.currentRoomId == this.rooms[i].roomId) {
+				this.messages = this.messages.filter(msg => msg._id != message.id)
+			}
+		},
+
+		deleteMessage(message) {
+			for (let i = 0; i < this.rooms.length; i++) {
+				if (this.rooms[i].roomId == message.roomId) {
+					this.ws[i].send(JSON.stringify({
+						'option': 'delete',
+						'message_id': message.message._id,
+					}))
 				}
 			}
 		},
@@ -519,7 +676,6 @@ export default {
 					break
 				}
 			}
-			i = 11
 			let doc = null
 			if (this.$refs.chat) {
 				doc = this.$refs.chat.shadowRoot

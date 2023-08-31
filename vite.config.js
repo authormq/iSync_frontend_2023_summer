@@ -16,7 +16,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': 'http://43.138.14.231:9000/', // 后端 URL
-      '/ws': 'ws://43.138.14.231:9000/'  
+      // '/ws': 'ws://43.138.14.231:9000/'  
     }
   }
 })

@@ -110,11 +110,17 @@ export default {
       this.avatarUrl = URL.createObjectURL(this.avatarFile)
     },
     handleClose() {
-      this.$emit('close')
       this.name = ''
       this.selectList = []
-      this.memberList = []
-      this.teamId = ''
+      this.avatarFile = null
+      this.avatarUrl = ''
+      this.cancelSelectProperty()
+      this.$emit('close')
+    },
+    cancelSelectProperty() {
+      for (let member of this.memberList) {
+        member.isSelect = false
+      }
     },
     createGroupConfirm() {
       let formData = new FormData()

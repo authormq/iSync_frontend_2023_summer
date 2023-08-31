@@ -723,6 +723,7 @@ export default {
 					break
 				}
 			}
+			i++
 			console.log(i)
 			let doc = null
 			if (this.$refs.chat) {
@@ -730,13 +731,19 @@ export default {
 				const container = doc.querySelector('#messages-list')
 				const msg = doc.querySelector(`#messages-list>div>div>span>div:nth-child(${i})`)
 				if (container && msg) {
-					container.style.scrollBehavior = 'smooth'
 					// msg.style.position = 'absolute'
 					// msg.style.top = 0
-					console.log('msg: ', msg.getBoundingClientRect().top)
-					console.log('con: ', container.getBoundingClientRect().top)
-					container.scrollTop = -1 * msg.getBoundingClientRect().bottom - container.getBoundingClientRect().top
-					console.log('@@@', container.scrollTop)
+					console.log('msg: ', msg.getBoundingClientRect().top, msg.getBoundingClientRect().bottom)
+					console.log('con: ', container.getBoundingClientRect().top, container.getBoundingClientRect().bottom)
+					console.log('@@@: ', container.scrollTop)
+					// container.scrollTop = -1 * msg.getBoundingClientRect().bottom - container.getBoundingClientRect().top
+					// container.scrollTop = -msg.getBoundingClientRect().top
+					const height = msg.getBoundingClientRect().bottom - msg.getBoundingClientRect().top
+					container.scrollTo({
+						top: container.scrollTop + msg.getBoundingClientRect().top - 396.7 + height / 2,
+						left: 0,
+						behavior: 'smooth'
+					})
 					// msg 最外层 div
 					// do something
 				}

@@ -9,9 +9,15 @@
 		<button class="sharebutton" @click="shareLink">生成预览链接</button>
 		<!-- <button @click="editor.runCommand('export-image')">导出</button> -->
 	</span>
-	<div id="gjs"></div>
 
-	<!-- <div id="blocks"></div> -->
+	<!-- Addpage -->
+	<div>
+		<button @click="addPage">新建页面</button>
+		<select v-model="currentPage" @change="switchPage">
+      <option v-for="(page, index) in pages" :key="index" :value="index">{{ page.name }}</option>
+    </select>
+		<div id="gjs"></div>
+	</div>
 </template>
 	
 <script>
@@ -25,7 +31,7 @@ import 'grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min.js';
 import Plugin from 'grapesjs-blocks-basic'; //basic-blocks
 import BasicPlugin from 'grapesjs-preset-webpage'; //basic-blocks
 import gjsForms from 'grapesjs-plugin-forms'; //form-blocks
-import Navbar from 'grapesjs-navbar'; //extra-navbar
+// import Navbar from 'grapesjs-navbar'; 
 import Countdown from 'grapesjs-component-countdown'; //倒计时
 import Tabs from 'grapesjs-tabs';
 import Tooltip from 'grapesjs-tooltip';
@@ -53,6 +59,10 @@ export default {
 		// 	}
 		// }
 		//设置默认大小
+		this.setPages(this.editor.Pages.getAll());
+    this.editor.on('page', () => {
+      this.pages = [...this.editor.Pages.getAll()];
+    });
 	},
 	unmounted() {
 		this.ws.close()
@@ -65,7 +75,9 @@ export default {
 			canvasHeight: '1000',
 			canvasWidth: '1000',
 			editor: undefined,
-			currentDevice: undefined
+			currentDevice: undefined,
+			pages: [{ name: 'Page 1', content: 'Page 1' }],
+			currentPage: 0
 		}
 	},
 	watch: {
@@ -122,7 +134,12 @@ export default {
 					this.editor.store()
 				},100)
 			}
-		}
+		},
+		currentPage(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        this.pages[oldVal].content = this.editor.getComponents().toHTML();
+      }
+    }
 	},
 	// beforeDestroy() {
 	//   // 当组件销毁时，我们也应该销毁 GrapesJS 编辑器以释放内存
@@ -179,7 +196,6 @@ export default {
 					Plugin, 
 					BasicPlugin, 
 					ExportPlugin, 
-					Navbar,
 					Tabs,
 					Tooltip,
 					CodePlugin,
@@ -189,6 +205,9 @@ export default {
 					ScriptPlugin
 				],
 				pluginsOpts: {
+					[BasicPlugin]: {
+						blocks:[]
+					},
 					[ExportPlugin]: {
 						addExportBtn: true,
 						btnLabel: '导出项目文件ZIP',
@@ -216,7 +235,7 @@ export default {
 						tabsBlock:{
 							category:'Extra'
 						}
-					}
+					},
 				},
 				styleManager: [],
 				storageManager: {
@@ -259,7 +278,7 @@ export default {
 
 						}
 					},
-				}
+				},
 				// blockManager: true
 				// blockManager: {
 				// 	appendTo: '#blocks',
@@ -298,6 +317,7 @@ export default {
 				// }
 			})
 			this.currentDevice = this.editor.Devices.get('Desktop')
+			// this.loadCurrentPageContent()
 		},
 		addBlock() {
 			if (this.editor !== undefined) {
@@ -343,7 +363,34 @@ export default {
 		},
 		shareLink() {
 			
-		}
+		},
+		//page
+		loadCurrentPageContent() {
+      const currentPageContent = this.pages[this.currentPage].content;
+      this.editor.setComponents(currentPageContent);
+    },
+		// setPages(pages) {
+    //   this.pages = [...pages];
+    // },
+    // isSelected(page) {
+    //   return this.editor.Pages.getSelected().id == page.id;
+    // },
+    // selectPage(pageId) {
+    //   return this.editor.Pages.select(pageId);
+    // },
+    // removePage(pageId) {
+    //   return this.editor.Pages.remove(pageId);
+    // },
+    addPage() {
+      const newName = `Page ${this.pages.length + 1}`;
+      this.pages.push({ name: newName, content: '' });
+      this.currentPage = this.pages.length - 1;
+      this.loadCurrentPageContent();
+    },
+		switchPage() {
+      this.pages[this.currentPage].content = this.editor.getComponents().toHTML();
+      this.loadCurrentPageContent();
+    }
 	}
 }
 </script>
@@ -393,7 +440,7 @@ export default {
 
 :deep(.gjs-three-bg) {
 	background-color: rgba(199,29,35, 1);
-	color: gray;
+	color: #eee;
 }
 
 :deep(.gjs-pn-commands) {
@@ -415,6 +462,7 @@ export default {
 :deep(.gjs-pn-btn){
 	transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s ;
 }
+
 :deep(.gjs-pn-btn:hover) {
 	background:rgb(199,29,35);
 	color:#ddd;
@@ -480,9 +528,38 @@ export default {
     color: rgba(199, 29, 35, 1);
     fill: rgba(199, 29, 35, 1);
 }
-:deep(.gjs-select option, .gjs-field-select option, .gjs-clm-select option, .gjs-sm-select option, .gjs-fields option, .gjs-sm-unit option) {
-    background-color: #ddd;
-    color: rgba(199, 29, 35, 1);
+/* todo */
+
+:deep(.gjs-input-unit option){
+	background-color: #ddd !important;
+    color: rgba(199, 29, 35, 1) !important;
+}
+:deep(.gjs-clm-tags #gjs-clm-new) {
+    color: gray;
+    padding: 5px 6px;
+    display: none;
+}
+:deep(.gjs-cv-canvas) {
+    box-sizing: border-box;
+    width: 80%;
+    height: calc(100% - 40px);
+    bottom: 0;
+    overflow: hidden;
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    top: 40px;
+}
+:deep(.gjs-mdl-dialog) {
+    text-shadow: none;
+    animation: gjs-slide-down .215s;
+    margin: auto;
+    max-width: 850px;
+    width: 90%;
+    border-radius: 3px;
+    font-weight: lighter;
+    position: relative;
+    z-index: 2;
 }
 /* :deep(.gjs-pn-panel) {
     display: inline-block;
@@ -539,4 +616,61 @@ export default {
 	margin-left: 20px;
 }
 
+/* page-design */
+body, html {
+  height: 100%;
+  margin: 0;
+}
+.app-wrap {
+  height: 100%;
+  width: 100%;
+  display: flex;
+}
+.editor-wrap  {
+  widtH: 100%;
+  height: 100%;
+}
+.pages-wrp, .pages {
+  display: flex;
+  flex-direction: column
+}
+.pages-wrp {
+  background: #eee;
+  padding: 5px;
+}
+.add-page {
+  background: #eee;
+  color: gray;
+  padding: 5px;
+  border-radius: 2px;
+  cursor: pointer;
+  white-space: nowrap;
+  margin-bottom: 10px;
+}
+.page {
+  background-color: #eee;
+  color: gray;
+  padding: 5px;
+  margin-bottom: 5px;
+  border-radius: 2px;
+  cursor: pointer;
+  /* &.selected {
+    background-color: #706f6f
+  } */
+}
+
+.page-close {
+  opacity: 0.5;
+  float: right;
+  background-color: #2c2c2c;
+  height: 20px;
+  display: inline-block;
+  width: 17px;
+  text-align: center;
+  border-radius: 3px;
+
+  /* &:hover {
+    opacity: 1;
+  } */
+}
 </style>

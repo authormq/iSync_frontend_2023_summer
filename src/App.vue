@@ -12,6 +12,7 @@
   <!-- <document-view></document-view> -->
   <!-- <GrapesjsView /> -->
   <!-- <CreateGroupRoom></CreateGroupRoom> -->
+  <GroupDetailModal></GroupDetailModal>
 </template>
 
 <script setup>
@@ -21,6 +22,7 @@ import TopNav from './components/TopNav/TopNav.vue'
 import StylishMessage from './components/Stylish/StylishMessage.vue'
 import GrapesjsView from './components/PrototypeWheels/GrapesjsView.vue'
 import CreateGroupRoom from './components/Modal/CreateGroupRoom.vue'
+import GroupDetailModal from './components/Modal/GroupDetailModal.vue'
 import { useStore } from 'vuex'
 
 

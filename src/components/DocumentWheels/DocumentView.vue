@@ -10,7 +10,7 @@
         <div :style="{
             'display': 'inline-block',
             'vertical-align': 'middle',
-            'margin':'0 auto'
+            'margin': '0 auto'
         }">
             <div :style="{
                 'width': '10px',
@@ -25,18 +25,18 @@
         <text-editor :isReadOnly="isReadOnlyIdentity" :doc-name="docName" :doc-id="docId" v-model:doc-content="docContent"
             @update-version="getVersionInfo" :showHistoryVersion="showHistoryVersion">
             <template #showHistoryButton>
-                <button class="btn" @click="change" v-tooltip="'历史记录'">
+                <button class="btn" :class="{ 'is-active': showHistoryVersion }" @click="change" v-tooltip="'历史记录'">
                     <svg t="1693229044900" class="icon" viewBox="0 0 1024 1024" version="1.1"
                         xmlns="http://www.w3.org/2000/svg" p-id="27713" width="30" height="30">
                         <path
                             d="M512 144C310.4 144 144 310.4 144 512S310.4 880 512 880 880 713.6 880 512 713.6 144 512 144z m0 672c-166.4 0-304-137.6-304-304s137.6-304 304-304 304 137.6 304 304-137.6 304-304 304z"
-                            fill="#707070" p-id="27714"></path>
-                        <path d="M528 275.2h-32v252.8H768v-32h-240z" fill="#707070" p-id="27715"></path>
+                            p-id="27714"></path>
+                        <path d="M528 275.2h-32v252.8H768v-32h-240z" p-id="27715"></path>
                     </svg>
                 </button>
                 <ul v-show="showHistoryVersion" class="his-list" ref="draggable">
                     <li v-show="currentVersionId !== undefined"><button @click="coverDocument">替换</button></li>
-                    <li v-for="data in versions" :key="data.versionId">
+                    <li v-for="  data   in   versions  " :key="data.versionId">
                         <button @click="showVersionContent(data.versionId)">
                             版本编号：{{ data.versionId }} 保存时间：{{ data.saveTime }}</button>
                     </li>
@@ -87,6 +87,7 @@ export default {
         },
         //展示选择的信息
         showVersionContent(versionId) {
+            this.currentVersionContent=''
             this.currentVersionId = versionId
             this.$http.get(`/api/projects/file/${this.docId}/version/show/${versionId}`).then((response) => {
                 this.currentVersionContent = response.data

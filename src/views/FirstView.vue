@@ -1,5 +1,5 @@
 <template>
-  <Guide />
+  <!-- <Guide /> -->
   <div class="first-view">
     <div class="all-projects">全部项目</div>
     <!-- 暂未拥有项目的 UI 可以在拓展 -->

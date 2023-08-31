@@ -246,9 +246,6 @@ export default {
 		document.addEventListener('click', this.showGroupInfo)
 
 
-		setTimeout(() => {
-			this.scrollToMessage(1)
-		}, 3000);
 	},
 	beforeUnmount() {
 		document.removeEventListener('click', this.changeStyle)
@@ -531,7 +528,6 @@ export default {
 
 		handleEditMessage(i, data) {
 			const message = data.message
-			console.log(message)
 			const newMessage = {
 				_id: message.id,
 				content: message.text_content,
@@ -613,6 +609,17 @@ export default {
 			}
 		},
 
+		deleteMessage(message) {
+			for (let i = 0; i < this.rooms.length; i++) {
+				if (this.rooms[i].roomId == message.roomId) {
+					this.ws[i].send(JSON.stringify({
+						'option': 'delete',
+						'message_id': message.messageId,
+					}))
+				}
+			}
+		},
+
 		openFile({ message, file }) {
 			if (file.action == 'download') {
 				const a = document.createElement('a')
@@ -641,7 +648,6 @@ export default {
 					break
 				}
 			}
-			i = 11
 			let doc = null
 			if (this.$refs.chat) {
 				doc = this.$refs.chat.shadowRoot

@@ -51,26 +51,31 @@ export default {
   },
   methods: {
     searchRecord() {
-      this.groupId = 38
-      // let formData = new FormData()
-      // formData.append('keyword', this.recordKeyword)
-      this.$http.get(`/api/groups/${this.groupId}/messages/?keyword=${this.recordKeyword}`).then(
-        response => {
-          this.recordList = response.data.map((record) => ({
-            id: record.id,
-            sender: record.sender,
-            textContent: record.text_content,
-            imageContent: record.image_content,
-            createDatetime: record.create_datetime,
-            groupId: record.group
-          }))
-          console.log(this.recordList)
-        },
-        error => {
-          console.log(error.message)
-        }
-      )
-    }, 
+      if (this.recordKeyword.trim() == '') {
+        this.$bus.emit('message', {
+          title: '关键词为空',
+          content: '搜索聊天关键词不能为空',
+          time: 3000
+        })
+      } else {
+        this.groupId = 38
+        this.$http.get(`/api/groups/${this.groupId}/messages/?keyword=${this.recordKeyword}`).then(
+          response => {
+            this.recordList = response.data.map((record) => ({
+              id: record.id,
+              sender: record.sender,
+              textContent: record.text_content,
+              imageContent: record.image_content,
+              createDatetime: record.create_datetime,
+              groupId: record.group
+            }))
+          },
+          error => {
+            console.log(error.message)
+          }
+        )
+      }
+    },
     handleClose() {
       this.recordKeyword = ''
       this.recordList = []

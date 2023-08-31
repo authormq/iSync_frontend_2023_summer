@@ -1,10 +1,10 @@
 <template>
   <!-- <div> -->
     <!-- 处于首页、文档编辑页时不显示 -->
-  <TopNav v-if="!('/' === instance.proxy.$route.path || instance.proxy.$route.path.indexOf('/doc/') !== -1)" />
+  <TopNav v-if="!('/' === instance.proxy.$route.path || instance.proxy.$route.path.indexOf('/doc/') !== -1 || instance.proxy.$route.path.indexOf('invite') !== -1)" />
   <!-- </div> -->
   <RouterView />
-  <TeamInviteComfirm></TeamInviteComfirm>
+  <!-- <TeamInviteComfirm></TeamInviteComfirm> -->
   <!-- <DocumentView /> -->
   <!-- 消息组件 -->
   <!-- 如果要展示分享链接，这一句代码就必须要加上 -->

@@ -731,6 +731,7 @@ import Suggestion from '@tiptap/suggestion'
 
 // color picker
 import { NColorPicker } from 'naive-ui'
+import { Static } from 'vue'
 
 export default {
 	name: 'TextEditor',
@@ -924,30 +925,35 @@ export default {
 			}
 		},
 		saveDocument(mode) {
-			// let formData = new FormData()
-			let blob = new Blob([this.editor.getHTML()], { type: 'text/html' })
 			const reader = new FileReader()
-			reader.onload = (event) => {
-				const dataUrl = event.target.result
-				// formData.append('source', dataUrl.split('base64,')[1])
-				if (mode === 'manualsave') {
-					this.$http.post(`/api/projects/file/${this.docId}/store/`, JSON.stringify
-						({
-							source: dataUrl.split('base64,')[1]
-						}), { headers: { 'Content-Type': 'application/json', } }).then(() => {
-							console.log('保存成功')
-							this.$emit('updateVersion')
-						})
-				} else {
-					this.$http.post(`/api/projects/file/${this.docId}/autostore/`, JSON.stringify
-						({
-							source: dataUrl.split('base64,')[1]
-						}), { headers: { 'Content-Type': 'application/json', } }).then(() => {
-							console.log('自动保存成功')
-						})
-				}
+			const blob = new Blob([this.editor.getHTML()], { type: 'text/html' })
+			const formData = new FormData()
+			formData.append('source', blob, `${this.docName}.html`)
+			// reader.onload = (event) => {
+			// 	const dataUrl = event.target.result
+			// 	formData.append('source', dataUrl)
+			// formData.append('source', dataUrl.split('base64,')[1])
+			if (mode === 'manualsave') {		
+				this.$http.post(`/api/projects/file/${this.docId}/store/`, formData, {
+					headers: {
+						'Content-type': 'multipart/form-data'
+					}
+				}).then(() => {
+					console.log('保存成功')
+					this.$emit('updateVersion')
+				})
+			} else {
+				this.$http.post(`/api/projects/file/${this.docId}/autostore/`, formData,{
+					headers: {
+						'Content-type': 'multipart/form-data'
+					}
+				}).then(() => {
+					console.log('自动保存成功')
+					this.$emit('updateVersion')
+				})
 			}
-			reader.readAsDataURL(blob)
+			// }
+			// reader.readAsText(blob)
 		}
 	},
 	watch: {
@@ -1125,14 +1131,17 @@ export default {
 		})
 		//设置自动保存
 		setInterval(() => {
-			this.saveDocument('autosave')
-		}, this.autoSavePeriod)
+			if (this) {
+				this.saveDocument('autosave')
+			}
+		}, 10000)
+
+
 		this.editor.commands.clearContent()
 		//当provider连接上时的设置
 		this.provider.on('status', event => {
 
 		})
-
 		//只有没有人在同时编辑的时候才加载，否则使用正在共享编辑的版本
 		//好像并不需要，后端还是能保存一段时间？
 		// setTimeout(() => {

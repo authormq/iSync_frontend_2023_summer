@@ -338,8 +338,8 @@ export default {
 					} else if (list.children.length === 4) {
 						list.children[0].children[0].innerHTML = '引用'
 						list.children[1].children[0].innerHTML = '编辑'
+						list.children[2].children[0].innerHTML = '撤回'
 						list.children[3].children[0].innerHTML = '多选'
-						list.children[2].style.display = 'none'
 						// list.children[3].style.display = 'none'
 					}
 				}
@@ -573,6 +573,19 @@ export default {
 					}
 				}
 			}
+			// @
+			for (let j = 0; j < data.mentioned_users.length; j++) {
+				if (data.mentioned_users[j]._id == this.currentUserId || data.mentioned_users[j]._id == '0') {
+					let formData = new FormData()
+					formData.append('group_message', message.id)
+					formData.append('receiver', this.currentUserId)
+					formData.append('sender', parseInt(message.sender.user.id))
+					this.$http.post('/api/news/', formData).then(() => {
+						this.$bus.emit('newMessage', message)
+					})
+					break
+				}
+			}
 		},
 
 		editMessage(message) {
@@ -610,10 +623,14 @@ export default {
 		},
 
 		handleDeleteMessage(i, data) {
+			const message = data.message
 			if (this.rooms[i].lastMessage != null) {
 				if (this.rooms[i].lastMessage._id == message.id) {
 					this.rooms[i].lastMessage.content = '撤回了一条消息'
 				}
+			}
+			if (this.currentRoomId == this.rooms[i].roomId) {
+				this.messages = this.messages.filter(msg => msg._id != message.id)
 			}
 		},
 
@@ -622,7 +639,7 @@ export default {
 				if (this.rooms[i].roomId == message.roomId) {
 					this.ws[i].send(JSON.stringify({
 						'option': 'delete',
-						'message_id': message.messageId,
+						'message_id': message.message._id,
 					}))
 				}
 			}

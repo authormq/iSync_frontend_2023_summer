@@ -23,7 +23,7 @@
           {{ record.createDatetime }}
           {{ record.textContent }}
         </div>
-        <button @click="locateToMessage">定位到聊天位置</button>
+        <button @click="locateToMessage(record.id)">定位到聊天位置</button>
       </div>
     </div>
   </StylishModal>
@@ -80,6 +80,10 @@ export default {
       this.recordKeyword = ''
       this.recordList = []
       this.$emit('close')
+    },
+    locateToMessage(id) {
+      this.handleClose()
+      this.$bus.emit('scrollToMessage', id)
     }
   }
 }

@@ -82,10 +82,10 @@ export default {
 				this.ws[i].onmessage = (messageEvent) => {
 					const data = JSON.parse(messageEvent.data)
 					if (data.option == 'send') {
-						this.addMessage(i, data)
+						this.handleSendMessage(i, data)
 					}
 					else if (data.option == 'edit') {
-						this.editMessage(i, data)
+						this.handleEditMessage(i, data)
 					}
 					else if (data.option == 'delete') {
 
@@ -427,7 +427,7 @@ export default {
 			})
 		},
 
-		addMessage(i, data) {
+		handleSendMessage(i, data) {
 			const message = data.message
 			this.rooms[i].lastMessage = {
 				_id: message.id,
@@ -524,6 +524,56 @@ export default {
 			}
 		},
 
+		handleEditMessage(i, data) {
+			const message = data.message
+			console.log(message)
+			const newMessage = {
+				_id: message.id,
+				content: message.text_content,
+				senderId: `${message.sender.user.id}`,
+				username: message.sender.user.username,
+				avatar: message.sender.user.avatar,
+				timestamp: message.create_datetime.substring(11, 16),
+				date: message.create_datetime.substring(5, 10),
+				new: false,
+				replyMessage: message.reply_message == null ? null : {
+					_id: message.reply_message.id,
+					content: message.reply_message.text_content,
+					senderId: `${message.reply_message.sender.user.id}`,
+					username: message.reply_message.sender.user.username,
+					avatar: message.reply_message.sender.user.avatar,
+					timestamp: message.reply_message.create_datetime.substring(11, 16),
+					date: message.reply_message.create_datetime.substring(5, 10),
+					new: false,
+					files: message.reply_message.file_content == null ? null : [{
+						name: message.reply_message.file_content.name.split('message/file/')[1],
+						size: message.reply_message.file_content.size,
+						url: message.reply_message.file_content.url,
+						type: message.reply_message.file_content.name.split('.')[1]
+					}]
+				},
+				files: message.file_content == null ? null : [{
+					name: message.file_content.name.split('message/file/')[1],
+					size: message.file_content.size,
+					url: message.file_content.url,
+					type: message.file_content.name.split('.')[1]
+				}]
+			}
+			if (this.rooms[i].lastMessage != null) {
+				if (this.rooms[i].lastMessage._id == message.id) {
+					this.rooms[i].lastMessage = newMessage
+				}
+			}
+			if (this.currentRoomId == this.rooms[i].roomId) {
+				for (let i = 0; i < this.messages.length; i++) {
+					if (this.messages[i]._id == message.id) {
+						this.messages[i] = newMessage
+						break
+					}
+				}
+			}
+		},
+
 		editMessage(message) {
 			for (let i = 0; i < this.rooms.length; i++) {
 				if (this.rooms[i].roomId == message.roomId) {
@@ -532,6 +582,7 @@ export default {
 						reader.onload = (event) => {
 							this.ws[i].send(JSON.stringify({
 								'option': 'edit',
+								'message_id': message.messageId,
 								'text_content': message.newContent,
 								'mentioned_users': message.usersTag,
 								'reply_message': message.replyMessage,
@@ -544,6 +595,7 @@ export default {
 					else {
 						this.ws[i].send(JSON.stringify({
 							'option': 'edit',
+							'message_id': message.messageId,
 							'text_content': message.newContent,
 							'mentioned_users': message.usersTag,
 							'reply_message': message.replyMessage,

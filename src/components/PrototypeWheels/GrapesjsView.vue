@@ -50,11 +50,11 @@
 			</svg>
 		</span>
 		<span v-if="Devices[0].selected" class="animate__animated animate__fadeIn">
-			{{ Devices[0].width }} x {{ Devices[0].height }}</span>
+			{{ Devices[0].width }} × {{ Devices[0].height }}</span>
 		<span v-if="Devices[1].selected" class="animate__animated animate__fadeIn">
-			{{ Devices[1].width }} x {{ Devices[1].height }}</span>
+			{{ Devices[1].width }} × {{ Devices[1].height }}</span>
 		<span v-if="Devices[2].selected" class="animate__animated animate__fadeIn">
-			{{ Devices[2].width }} x {{ Devices[2].height }}</span>
+			{{ Devices[2].width }} × {{ Devices[2].height }}</span>
 		<span v-if="Devices[3].selected" class="animate__animated animate__fadeIn">
 			<svg t="1693312903898" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
 				p-id="2576" width="25" height="25">
@@ -74,10 +74,10 @@
 		<button @click="exportAsImage">导出为图片</button>
 		<button class="sharebutton" @click="shareLink">生成预览链接</button>
 	</span>
-	<!-- <button @click="editor.runCommand('export-image')">导出</button> -->
-	<div id="gjs"></div>
-
-	<!-- <div id="blocks"></div> -->
+	<div class="page-select">
+		<PageSelect />
+		<div id="gjs"></div>
+	</div>
 </template>
 	
 <script>
@@ -91,7 +91,7 @@ import 'grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min.js';
 import Plugin from 'grapesjs-blocks-basic'; //basic-blocks
 import BasicPlugin from 'grapesjs-preset-webpage'; //basic-blocks
 import gjsForms from 'grapesjs-plugin-forms'; //form-blocks
-import Navbar from 'grapesjs-navbar'; //extra-navbar
+// import Navbar from 'grapesjs-navbar'; 
 import Countdown from 'grapesjs-component-countdown'; //倒计时
 import Tabs from 'grapesjs-tabs';
 import Tooltip from 'grapesjs-tooltip';
@@ -102,11 +102,23 @@ import ExportPlugin from 'grapesjs-plugin-export'; //导出html和css
 import ScriptPlugin from 'grapesjs-script-editor'; //js代码编辑
 import html2canvas from 'html2canvas';
 import 'animate.css'
+import PageSelect from './PageSelect.vue';
+
 
 export default {
 	name: 'GrapesEditor',
+	components: {
+		PageSelect
+	},
 	mounted() {
-		this.pageId = this.$route.params.protoId
+		this.$watch(
+			() => this.$route.params,
+			() => {
+				this.pageId = this.$route.params.protoId
+				this.initEditor();
+			},
+			{ immediate: true }
+		)
 		this.initEditor();
 		this.addBlock();
 		let topPanel = document.querySelector('.gjs-pn-panel.gjs-pn-devices-c.gjs-one-bg.gjs-two-color .gjs-pn-buttons')
@@ -129,6 +141,7 @@ export default {
 			ws: '',
 			pageId: null,
 			pageName: 'page1',
+			pagesNum: 1,
 			canvasHeight: '1000',
 			canvasWidth: '1000',
 			Devices: [
@@ -158,6 +171,7 @@ export default {
 				},
 			],
 			editor: undefined,
+			currentDevice: undefined
 		}
 	},
 	watch: {
@@ -241,7 +255,7 @@ export default {
 				},
 				height: 'calc(100vh - 70px)',
 				showOffsets: 1,
-				autosave: false,
+				autosave: true,
 				noticeOnUnload: 0,
 				formElement: true,
 				// storageManager: {
@@ -292,10 +306,9 @@ export default {
 				},
 				assetManager: [],//预加载资产，图片/图标等
 				plugins: [
-					Plugin,
-					BasicPlugin,
-					ExportPlugin,
-					Navbar,
+					Plugin, 
+					BasicPlugin, 
+					ExportPlugin, 
 					Tabs,
 					Tooltip,
 					CodePlugin,
@@ -305,6 +318,9 @@ export default {
 					ScriptPlugin
 				],
 				pluginsOpts: {
+					[BasicPlugin]: {
+						blocks:[]
+					},
 					[ExportPlugin]: {
 						addExportBtn: true,
 						btnLabel: '导出项目文件ZIP',
@@ -332,7 +348,7 @@ export default {
 						tabsBlock: {
 							category: 'Extra'
 						}
-					}
+					},
 				},
 				styleManager: [],
 				storageManager: {
@@ -342,10 +358,10 @@ export default {
 					autoload: true,
 					options: {
 						remote: {
-							// urlLoad: `http://localhost:3000/projects/${this.pageId}`,
-							// urlStore: `http://localhost:3000/projects/${this.pageId}`,
-							urlLoad: `http://localhost:3000/projects/1`,
-							urlStore: `http://localhost:3000/projects/1`,
+							urlLoad: `http://localhost:3000/projects/${this.pageId}`,
+							urlStore: `http://localhost:3000/projects/${this.pageId}`,
+							// urlLoad: `http://localhost:3000/projects/1`,
+							// urlStore: `http://localhost:3000/projects/1`,
 							// The `remote` storage uses the POST method when stores data but
 							// the json-server API requires PATCH.
 							fetchOptions: opts => (opts.method === 'POST' ? { method: 'PATCH' } : {}),
@@ -494,7 +510,7 @@ export default {
 }
 
 :deep(.gjs-four-color-h:hover) {
-	color: lightgray;
+	color: #ddd;
 }
 
 :deep(.gjs-four-color) {
@@ -522,7 +538,7 @@ export default {
 
 :deep(.gjs-three-bg) {
 	background-color: #c71d23;
-	color: gray;
+	color: #eee;
 }
 
 :deep(.gjs-pn-commands) {
@@ -547,14 +563,55 @@ export default {
 	transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s;
 }
 
+
 :deep(.gjs-pn-btn:hover) {
-	background: #c71d23;
-	color: #eee;
+	background:rgb(199,29,35);
+	color:#ddd;
 }
 
-#size-setter {
-	height: 30px;
-	display: inline-block;
+:deep(.cm-s-hopscotch.CodeMirror) {
+	background-color: white;
+	color: black;
+}
+:deep(.cm-s-hopscotch .CodeMirror-gutters) {
+    background: #eee;
+    border-right: 0px;
+}
+:deep(.gjs-cm-editor#gjs-cm-css #gjs-cm-title) {
+    color: #804f7b;
+}
+
+:deep(.CodeMirror) {
+    font-family: consolas;
+    height: 300px;
+    color: black;
+    direction: ltr;
+}
+
+:deep(.gjs-layer-name) {
+    padding: 8px 0;
+    display: inline-block;
+    box-sizing: content-box;
+    overflow: hidden;
+    white-space: nowrap;
+    margin: 0 30px 0 15px;
+    max-width: 170px;
+}
+
+:deep(.gjs-layer-vis) {
+    left: 0;
+    top: 0;
+    padding: 7px 10px 7px 10px;
+    position: absolute;
+    box-sizing: content-box;
+    cursor: pointer;
+    width: 20px;
+    z-index: 1;
+}
+
+#size-setter{
+	height:30px;
+	display:inline-block;
 }
 
 #size-setter svg {
@@ -592,21 +649,7 @@ export default {
 	background: none;
 	transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s;
 }
-
-#size-setter button:hover {
-	background: #c71d23;
-	color: #eee;
-	border: #c71d23 2px solid;
-}
-
-.selected-device svg {
-	fill: white;
-	background: #c71d23;
-	box-shadow: #c71d23 0 0 3px;
-}
-
-.unselected-device svg:hover {
-	fill: white;
+#size-setter button:hover{
 	background: #c71d23;
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <div v-for="proto in protoList" :key="proto.id" @click="$router.push(`/page/${proto.id}`)">
+  <div v-for="proto in protoList" :key="proto.id" @click="$router.push(`/projects/${projectId}/page/${proto.id}`)">
     <PageListItem :proto="proto" />
   </div>
 </template>

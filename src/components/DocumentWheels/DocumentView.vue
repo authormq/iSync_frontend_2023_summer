@@ -27,7 +27,7 @@
             <template #showHistoryButton>
                 <button class="btn" :class="{ 'is-active': showHistoryVersion }" @click="change" v-tooltip="'历史记录'">
                     <svg t="1693229044900" class="icon" viewBox="0 0 1024 1024" version="1.1"
-                        xmlns="http://www.w3.org/2000/svg" p-id="27713" width="40" height="40">
+                        xmlns="http://www.w3.org/2000/svg" p-id="27713" width="30" height="30">
                         <path
                             d="M512 144C310.4 144 144 310.4 144 512S310.4 880 512 880 880 713.6 880 512 713.6 144 512 144z m0 672c-166.4 0-304-137.6-304-304s137.6-304 304-304 304 137.6 304 304-137.6 304-304 304z"
                             p-id="27714"></path>

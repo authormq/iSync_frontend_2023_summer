@@ -121,9 +121,7 @@ export default {
       formData.append('name', this.name)
       formData.append('avatar', this.avatarFile)
       formData.append('team', this.teamId)
-      for (let users of this.selectList) {
-        formData.append('users', users)
-      }
+      formData.append('users', this.selectList.join(' '))
       this.$http.post('/api/groups/create/', formData).then(
         response => {
           console.log(response.data);

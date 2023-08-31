@@ -232,7 +232,7 @@ export default {
 				margin: 0 !important;
 			}
 		`
-		
+		this.$bus.on('scrollToMessage', messageId => this.fetchAllAndScroll(messageId))
 		
 		this.$refs.chat.shadowRoot.appendChild(style)
 		// const newHTML = this.$refs.chat.shadowRoot.innerHTML.replace('placeholder="Search"', 'placeholder="检索"')
@@ -245,7 +245,6 @@ export default {
 		document.addEventListener('click', this.changeStyle)
 		document.addEventListener('click', this.showGroupInfo)
 
-
 	},
 	beforeUnmount() {
 		document.removeEventListener('click', this.changeStyle)
@@ -255,6 +254,7 @@ export default {
 		for (let i = 0; i < this.ws.length; i++) {
 			this.ws[i].close()
 		}
+		this.$bus.off('scrollToMessage')
 	},
 	data() {
 		return {
@@ -345,7 +345,6 @@ export default {
 				}
 				setTimeout(() => {
 					let cancel = doc.querySelector('.vac-selection-cancel')
-					console.log('c:', cancel)
 					if (cancel) {
 						cancel.innerHTML = '取消'
 					}
@@ -589,7 +588,6 @@ export default {
 		},
 
 		editMessage(message) {
-			console.log(message)
 			for (let i = 0; i < this.rooms.length; i++) {
 				if (this.rooms[i].roomId == message.roomId) {
 					if (message.files != null && 'blob' in message.files[0]) {
@@ -669,13 +667,58 @@ export default {
 			}
 		},
 
+		fetchAllAndScroll(messageId) {
+			if (this.messagesLoaded == false) {
+				this.$http.get(`/api/groups/${this.currentRoomId}/messages/`).then((response) => {
+					this.messages = response.data.map((message) => ({
+						_id: message.id,
+						content: message.text_content,
+						senderId: `${message.sender.user.id}`,
+						username: message.sender.user.username,
+						avatar: message.sender.user.avatar,
+						timestamp: message.create_datetime.substring(11, 16),
+						date: message.create_datetime.substring(5, 10),
+						new: false,
+						replyMessage: message.reply_message == null ? null : {
+							_id: message.reply_message.id,
+							content: message.reply_message.text_content,
+							senderId: `${message.reply_message.sender.user.id}`,
+							username: message.reply_message.sender.user.username,
+							avatar: message.reply_message.sender.user.avatar,
+							timestamp: message.reply_message.create_datetime.substring(11, 16),
+							date: message.reply_message.create_datetime.substring(5, 10),
+							new: false,
+							files: message.reply_message.file_content == null ? null : [{
+								name: message.reply_message.file_content.name.split('message/file/')[1],
+								size: message.reply_message.file_content.size,
+								url: message.reply_message.file_content.url,
+								type: message.reply_message.file_content.name.split('.')[1]
+							}]
+						},
+						files: message.file_content == null ? null : [{
+							name: message.file_content.name.split('message/file/')[1],
+							size: message.file_content.size,
+							url: message.file_content.url,
+							type: message.file_content.name.split('.')[1]
+						}]
+					})).reverse()
+					this.messagesLoaded = true
+					this.scrollToMessage(messageId)
+				})
+			}
+			else {
+				this.scrollToMessage(messageId)
+			}
+		},
+
 		scrollToMessage(messageId) {
 			let i = 0
 			for (; i < this.messages.length; i++) {
-				if (this.messages[i].id == messageId) {
+				if (this.messages[i]._id == messageId) {
 					break
 				}
 			}
+			console.log(i)
 			let doc = null
 			if (this.$refs.chat) {
 				doc = this.$refs.chat.shadowRoot
@@ -693,8 +736,6 @@ export default {
 					// do something
 				}
 			}
-			// const target = document.getElementById(`\\${i + 1}`)
-			// console.log(target)
 		},
 
 		addRoom() {

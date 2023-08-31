@@ -251,11 +251,11 @@ export default {
 		document.removeEventListener('click', this.changeStyle)
 		document.removeEventListener('click', this.showGroupInfo)
 	},
-	// unmounted() {
-	// 	for (let i = 0; i < this.ws.length; i++) {
-	// 		this.ws[i].close()
-	// 	}
-	// },
+	unmounted() {
+		for (let i = 0; i < this.ws.length; i++) {
+			this.ws[i].close()
+		}
+	},
 	data() {
 		return {
 			showCreateRoomModal: false,
@@ -589,13 +589,15 @@ export default {
 		},
 
 		editMessage(message) {
+			console.log(message)
 			for (let i = 0; i < this.rooms.length; i++) {
 				if (this.rooms[i].roomId == message.roomId) {
-					if (message.files != null) {
+					if (message.files != null && 'blob' in message.files[0]) {
 						const reader = new FileReader()
 						reader.onload = (event) => {
 							this.ws[i].send(JSON.stringify({
 								'option': 'edit',
+								'edit_file': true,
 								'message_id': message.messageId,
 								'text_content': message.newContent,
 								'mentioned_users': message.usersTag,
@@ -609,6 +611,7 @@ export default {
 					else {
 						this.ws[i].send(JSON.stringify({
 							'option': 'edit',
+							'edit_file': false,
 							'message_id': message.messageId,
 							'text_content': message.newContent,
 							'mentioned_users': message.usersTag,

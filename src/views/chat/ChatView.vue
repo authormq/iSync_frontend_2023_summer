@@ -15,18 +15,21 @@
 			</div> -->
 		</vue-advanced-chat>
 		<CreateGroupRoom :show="showCreateRoomModal" @close="showCreateRoomModal = false"></CreateGroupRoom>
+		<TransmitMessage :show="showTransmitMessageModal" :transmitType="transmitType" :rooms="rooms"
+			@close="showTransmitMessageModal = false"></TransmitMessage>
 	</div>
 </template>
 
 <script>
 import { register } from 'vue-advanced-chat'
 import CreateGroupRoom from '../../components/Modal/CreateGroupRoom.vue'
+import TransmitMessage from '../../components/Modal/TransmitMessage.vue'
 // import  ChatWindow  from 'vue-advanced-chat'
 register()
 export default {
 	name: 'ChatView',
 	// components: { ChatWindow },
-	components: {CreateGroupRoom},
+	components: { CreateGroupRoom, TransmitMessage },
 	mounted() {
 		this.currentUserId = this.$cookies.get('user_id')
 		this.roomsLoaded = false
@@ -259,6 +262,8 @@ export default {
 	data() {
 		return {
 			showCreateRoomModal: false,
+			showTransmitMessageModal: false,
+			transmitType: '',
 			ws: [],
 			currentUserId: '',
 			currentRoomId: '',
@@ -325,7 +330,7 @@ export default {
 	},
 	methods: {
 		// 改变列表样式的回调
-		changeStyle () {
+		changeStyle() {
 			let doc = null
 			if (this.$refs.chat) {
 				doc = this.$refs.chat.shadowRoot
@@ -349,7 +354,7 @@ export default {
 						cancel.innerHTML = '取消'
 					}
 				}, 300);
-				
+
 			}
 		},
 
@@ -746,10 +751,12 @@ export default {
 			console.log(message)
 			switch (action.name) {
 				case 'forwardItemByItem':
-					alert('forwardItemByItem')
+					this.transmitType = 'forwardItemByItem'
+					this.showTransmitMessageModal = true
 					break
 				case 'forwardCombined':
-					alert('forwardCombined')
+					this.transmitType = 'forwardCombined'
+					this.showTransmitMessageModal = true
 					break
 			}
 		}

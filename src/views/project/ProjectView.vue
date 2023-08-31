@@ -2,9 +2,9 @@
 <template>
   <div class="container" :key="$route.fullPath">
     <ul>
+      <li class="link" @click="$router.push(`/team/${curProject.teamId}/info`)">返回团队</li>
       <li><router-link class="link" :to="`/project/${$route.params.projectId}/doc`">项目文档</router-link></li>
       <li><router-link class="link" :to="`/project/${$route.params.projectId}/page`">项目原型</router-link></li>
-      <li class="link" @click="$router.push(`/team/${curProject.teamId}/info`)">返回团队</li>
     </ul>
     <div class="right-part">
       <div class="project-info">
@@ -25,16 +25,24 @@
           </div>
         </div>
       </div>
+
+      <!-- <div class="create">
+        <template v-if="$route.fullPath.indexOf('doc') !== -1">
+          <a v-if="!inFolder">新建文件夹</a>
+          <a @click="showDocModal = true">新建文档</a>
+        </template>
+        <a v-else @click="showPageModal = true">新建原型</a>
+      </div> -->
+
       <div class="presentation">
-        
-        <NewProject v-if="$route.fullPath.indexOf('doc') !== -1" @click="showDocModal = true"/>
-        <NewProject v-else @click="showPageModal = true" />
+        <!-- <NewProject v-if="$route.fullPath.indexOf('doc') !== -1" @click="showDocModal = true"/>
+        <NewProject v-else @click="showPageModal = true" /> -->
         <RouterView :key="$route.fullPath"></RouterView>
       </div>
     </div>
   </div>
   <CreateDocModal :show="showDocModal" :projectId="projectId" @close="showDocModal = false" />
-  <CreateProtoModal :show="showPageModal" :projectId="projectId" @close="showPageModal = false" />
+  <!-- <CreateProtoModal :show="showPageModal" :projectId="projectId" @close="showPageModal = false" /> -->
 </template>
 
 <script>
@@ -52,7 +60,8 @@ export default {
       protoList: [],
       projectId: '',
       showDocModal: false,
-      showPageModal: false
+      showPageModal: false,
+      inFolder: false
     }
   },
   mounted() {
@@ -67,29 +76,29 @@ export default {
         console.log(error.message)
       }
     )
-    this.$http.get(`/api/projects/file/list/${this.projectId}/`).then(
-      response => {
-        this.docList = response.data.map((doc) => ({
-          id: doc.id,
-          name: doc.name
-        }))
-      },
-      error => {
-        console.log(error.message)
-      }
-    )
-    this.$http.get(`/api/projects/page/${this.projectId}/list/`).then(
-      response => {
-        this.protoList = response.data.map((proto) => ({
-          id: proto.id,
-          name: proto.name,
-          image: proto.image
-        }))
-      },
-      error => {
-        console.log(error.message)
-      }
-    )
+    // this.$http.get(`/api/projects/file/list/${this.projectId}/`).then(
+    //   response => {
+    //     this.docList = response.data.files.map((doc) => ({
+    //       id: doc.id,
+    //       name: doc.name
+    //     }))
+    //   },
+    //   error => {
+    //     console.log(error.message)
+    //   }
+    // )
+    // this.$http.get(`/api/projects/page/${this.projectId}/list/`).then(
+    //   response => {
+    //     this.protoList = response.data.map((proto) => ({
+    //       id: proto.id,
+    //       name: proto.name,
+    //       image: proto.image
+    //     }))
+    //   },
+    //   error => {
+    //     console.log(error.message)
+    //   }
+    // )
   },
 }
 </script>
@@ -196,11 +205,10 @@ ul {
   color: grey;  
 }
 
-.presentation {
+/* .presentation {
   display: flex;
-  margin-top: 40px;
+  margin-top: 0px;
   width: 1150px;
   overflow-x: auto;
-  /* background-color: aqua; */
-}
+} */
 </style>

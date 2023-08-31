@@ -7,7 +7,7 @@
       <div class="info">
         <img :src="avatar">
         <div class="info-text">
-          <div class="profile">{{ profile }} Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius iure explicabo iste, suscipit odio ducimus quo porro rerum cum eaque voluptatum culpa architecto fugiat in reiciendis dolorum hic, facere nostrum exercitationem. Architecto, ipsum amet voluptates vitae mollitia quibusdam ipsam excepturi iusto praesentium dolor! Quis eaque recusandae quas minus, sint incidunt? </div>
+          <div class="profile">{{ profile }}</div>
           <div class="creator">由{{ creator }}</div>
           <div class="time">创建于{{ createTime }}</div>
         </div>

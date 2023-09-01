@@ -18,7 +18,7 @@
 			<CombineTransmit :show="message.show" :combineMessageList="message.combineMessageList"
 				@close="closeCombineTransmit"></CombineTransmit>
 		</div>
-		<!-- <GroupDetailModal /> -->
+		<GroupDetailModal />
 	</div>
 </template>
 

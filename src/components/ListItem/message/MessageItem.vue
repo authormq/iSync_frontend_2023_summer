@@ -41,7 +41,6 @@ export default {
   props: ['msg'],
   components: { MailIcon, TrashIcon },
   methods: {
-    // 这个函数需要检查正确性
     handleChangeStatus() {
       this.$bus.emit('sendChangeStatusSignal', this.msg)
     },

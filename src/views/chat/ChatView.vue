@@ -6,15 +6,19 @@
 			:current-user-id="currentUserId" :rooms="JSON.stringify(rooms)" :rooms-loaded="roomsLoaded"
 			:messages="JSON.stringify(messages)" :messages-loaded="messagesLoaded" :custom-search-room-enabled="true"
 			:room-info-enabled="true" :user-tags-enabled="userTagsEnabled" :load-first-room="$route.query.groupId == undefined"
-			:message-selection-actions="JSON.stringify(messageSelectionActions)"
-			@send-message="sendMessage($event.detail[0])" @edit-message="editMessage($event.detail[0])"
-			@delete-message="deleteMessage($event.detail[0])" @fetch-messages="fetchMessages($event.detail[0])"
-			@search-room="searchRoom($event.detail[0])" @open-file="openFile($event.detail[0])" @add-room="addRoom"
+			:message-selection-actions="JSON.stringify(messageSelectionActions)" @send-message="sendMessage($event.detail[0])"
+			@edit-message="editMessage($event.detail[0])" @delete-message="deleteMessage($event.detail[0])"
+			@fetch-messages="fetchMessages($event.detail[0])" @search-room="searchRoom($event.detail[0])"
+			@open-file="openFile($event.detail[0])" @add-room="addRoom"
 			@message-selection-action-handler="messageSelectionActionHandler($event.detail[0])">
 		</vue-advanced-chat>
 		<CreateGroupRoom :show="showCreateRoomModal" @close="showCreateRoomModal = false"></CreateGroupRoom>
 		<TransmitMessage :show="showTransmitMessageModal" :transmitType="transmitType" :rooms="rooms"
 			@close="showTransmitMessageModal = false"></TransmitMessage>
+		<div v-for="(value, index) in combineTransmitInstances" :key="index">
+			<CombineTransmit :show="value.show" :combineMessageList="value.combineMessageList"
+				@close="value.show = false"></CombineTransmit>
+		</div>
 	</div>
 </template>
 
@@ -22,12 +26,13 @@
 import { register } from 'vue-advanced-chat'
 import CreateGroupRoom from '../../components/Modal/CreateGroupRoom.vue'
 import TransmitMessage from '../../components/Modal/TransmitMessage.vue'
+import CombineTransmit from '../../components/Modal/CombineTransmit.vue'
 // import  ChatWindow  from 'vue-advanced-chat'
 register()
 export default {
 	name: 'ChatView',
 	// components: { ChatWindow },
-	components: { CreateGroupRoom, TransmitMessage },
+	components: { CreateGroupRoom, TransmitMessage, CombineTransmit },
 	mounted() {
 		this.currentUserId = this.$cookies.get('user_id')
 		this.roomsLoaded = false
@@ -247,7 +252,7 @@ export default {
 		this.$bus.on('fetchAllMessages', () => this.fetchAllMessages())
 		this.$bus.on('scrollToMessage', messageId => this.scrollToMessage(messageId))
 		this.$bus.on('forwardMessages', transmitList => this.forwardMessages(transmitList))
-		
+
 		this.$refs.chat.shadowRoot.appendChild(style)
 		// const newHTML = this.$refs.chat.shadowRoot.innerHTML.replace('placeholder="Search"', 'placeholder="检索"')
 		// console.log(newHTML)
@@ -276,6 +281,9 @@ export default {
 		return {
 			showCreateRoomModal: false,
 			showTransmitMessageModal: false,
+			showCombinedmessageModal: false,
+			combineTransmitInstances: [],
+			combinedMessage: [],
 			transmitType: '',
 			ws: [],
 			currentUserId: '',
@@ -505,6 +513,11 @@ export default {
 					...this.messages,
 					this.rooms[i].lastMessage
 				]
+				if (message.forwardMessages.length != 0) {
+					setTimeout(() => {
+						this.loadCombinedMessages(this.messages.length - 1)
+					});
+				}
 			}
 			for (let j = 0; j < this.rooms.length; j++) {
 				if (this.rooms[j].index > this.rooms[i].index) {
@@ -839,15 +852,41 @@ export default {
 			// #\35 07 > div > div.vac-message-container > div > div.vac-format-message-wrapper > div > div > span
 			if (this.$refs.chat) {
 				const doc = this.$refs.chat.shadowRoot
-				const msg = doc.querySelector(`#messages-list>div>div>span>div:nth-child(${i+1})`)
+				const msg = doc.querySelector(`#messages-list>div>div>span>div:nth-child(${i + 1})`)
 				console.log(this.messages[i].forwardMessages)
 				msg.onclick = () => this.showCombinedMessages(this.messages[i].forwardMessages)
 			}
 		},
 
 		showCombinedMessages(messages) {
-			alert('show')
-		}
+			console.log(messages);
+			this.combinedMessage = messages.map((message) => ({
+				id: message.id,
+				avatar: message.sender.user.avatar,
+				username: message.sender.user.username,
+				time: message.create_datetime,
+				content: message.text_content,
+				isPravite: message.group_is_private,
+				groupName: message.group_name
+			}))
+			this.combinedMessage.sort((a, b) => a.id - b.id)
+			// this.showCombinedmessageModal = true
+			this.openNewCombineTransmit(this.combinedMessage)
+		},
+		// 打开一个合并转发消息的模态框
+		openNewCombineTransmit(message) {
+      // const newKey = Date.now().toString(); // 生成唯一的key
+      const newCombineTransmit = {
+        // key: newKey,
+        show: true,
+        combineMessageList: message, // 设置合并消息列表
+      };
+      this.combineTransmitInstances.push(newCombineTransmit);
+    },
+		// 关闭一个合并转发消息的模态框
+		closeCombineTransmit(combineTransmit) {
+      combineTransmit.show = false; // 关闭特定的CombineTransmit组件
+    }
 	}
 }
 </script>

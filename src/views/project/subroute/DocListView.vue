@@ -460,6 +460,7 @@ export default {
 }
 
 .folder-input input {
+  display: inline-block !important;
   margin-top: 5px;
   width: 160px;
   height: 20px;

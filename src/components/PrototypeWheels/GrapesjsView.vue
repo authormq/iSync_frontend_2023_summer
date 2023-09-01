@@ -653,6 +653,7 @@ export default {
 
 #size-setter button:hover {
 	background: #c71d23;
+	color:white;
 }
 
 .selected-device svg {
@@ -660,6 +661,7 @@ export default {
 	background: #c71d23;
 	box-shadow: #c71d23 0 0 3px;
 }
+
 
 .unselected-device svg:hover {
 	fill: white;

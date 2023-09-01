@@ -36,8 +36,18 @@ export default {
 }
 </script>
 <style scoped>
+.container-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 50px;
+  margin-bottom: 20px;
+}
+
 .header-title {
   font-size: 30px;
   font-weight: bold;
+  padding-left: 70px;
+  color: rgba(199, 29, 35, 1);
 }
 </style>

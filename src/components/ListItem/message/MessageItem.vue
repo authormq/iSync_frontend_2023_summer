@@ -54,7 +54,7 @@ export default {
         this.$router.push(`/team/${this.msg.teamId}/chat/?groupId=${this.msg.groupId}&messageId=${this.msg.messageId}`)
       }
       else {
-        this.$router.push(`/doc/${this.msg.fileId}`)
+        this.$router.push(`/doc/${this.msg.fileId}/?atId=${this.msg.fileElementId}`)
       }
     }
   },

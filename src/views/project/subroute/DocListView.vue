@@ -1,11 +1,11 @@
 <template>
   <!-- 顶部按钮菜单 -->
   <div class="create clearfix" ref="reference">
-    <a class="leftfix" v-if="inFolder" @click="inFolder = false">返回</a>
+    <a class="leftfix" v-if="inFolder" @click="inFolder = false; curFolder = null">返回</a>
     <a class="leftfix" v-if="!inFolder" @click="toCreateFolder">新建文件夹</a>
     <a class="leftfix" @click="showDocModal = true">新建文档</a>
     <div class="folder leftfix" v-if="inFolder">
-      /{{ curFolder }}
+      /{{ curFolder.name }}
     </div>
   </div>
   <div class="list" ref="list">
@@ -27,8 +27,10 @@
 
       <!-- 文件夹列表 -->
       <div 
-        v-for="(folder, index) in folderList" :key="folder.id" @click="changeToFolder(folder)"
+        style="margin: 5px"
         class="folder-item"
+        v-for="(folder, index) in folderList" :key="folder.id" 
+        @click="changeToFolder(folder)"
         @drop="dropIntoFolder(folder.id); unhighlightFolder(index)"
         @dragover="allowDrop"
         @dragenter="highlightFolder(index)"
@@ -45,9 +47,11 @@
 
       <!-- 文件列表 -->
       <div 
+        style="margin: 5px"
+        class="list-item"
         v-for="doc in docList" 
         :key="doc.id" 
-        @click="$router.push(`/doc/${doc.id}`)" 
+        @click="handleDocClick($event, doc)" 
         draggable="true"
         @dragstart="docBeDragged($event, doc.id)"
         @drag="scrollParent"
@@ -56,17 +60,18 @@
         <DocListItem :doc="doc"/>
       </div>
       
+
     </template>
 
 
     <!-- 文件夹中的文档列表 -->
-    <div v-else v-for="doc in folderDocList" :key="doc.id" @click="$router.push(`/doc/${doc.id}`)" >
-      <DocListItem :doc="doc" />
+    <div v-else v-for="doc in folderDocList" :key="doc.id" @click="handleDocClick($event, doc)" >
+      <DocListItem :doc="doc" inFolder/>
     </div>
   </div>
 
 
-  <CreateDocModal :show="showDocModal" :projectId="projectId"  @close="showDocModal = false"/>
+  <CreateDocModal :show="showDocModal" :projectId="projectId"  @close="showDocModal = false" :folder="curFolder"/>
 </template>
 
 <script>
@@ -87,14 +92,13 @@ export default {
       folderDocList: [],
       projectId: '',
       inFolder: false,
-      curFolder: '',
+      curFolder: null,
       newFolderName: '',
       isCreatingFolder: false,
 
       // 以下是实现文件拖拽进文件夹的变量
       docId: null,
       folderId: null,
-      docIsBeingDragged: false,
       timer: null,
       scrollDis: 0
     }
@@ -106,8 +110,16 @@ export default {
     this.$bus.on('deleteDocRequest', this.handleDeleteDocRequest)
     this.$bus.on('renameDocRequest', this.handleRenameDocRequest)
     this.$bus.on('reloadDocListAfterCreateSucceed', this.handleReloadDocList)
+    this.$bus.on('flushFolder', this.flushFolder)
   },
   methods: {
+    handleDocClick(e, doc) {
+      if (e.target.tagName === 'INPUT') {
+        e.target.focus()
+      } else {
+        this.$router.push(`/doc/${doc.id}`)
+      }
+    },
     getFiles() {
       this.$http.get(`/api/projects/file/list/${this.projectId}/`).then(
       response => {
@@ -126,47 +138,10 @@ export default {
       }
     )
     },
-    handleReloadDocList(data) {
-      this.docList.unshift(data)
-    },
-    handleDeleteDocRequest(doc) {
-      this.$http.delete(`/api/projects/file/${doc.id}/delete/`).then(
-        response => {
-          this.docList.splice(this.docList.indexOf(doc), 1)
-        },
-        error => {
-          console.log(error.message)
-        }
-      )
-    },
-    handleRenameDocRequest(docRenameData) {
-      this.$http.post(`/api/projects/file/${docRenameData.doc.id}/rename/${docRenameData.rename}/`).then(
-        response => {
-          this.docList[this.docList.indexOf(docRenameData.doc)].name = docRenameData.rename
-        },
-        error => {
-          this.$bus.emit('message', {
-            title: error.response.data.detail,
-            content: '',
-            time: 2000
-          })
-        }
-      )
-    },
-    handleChangeDocIdentityRequest(doc) {
-      this.$http.post(`/api/projects/file/${doc.id}/is_public/`).then(
-        response => {
-          this.docList[this.docList.indexOf(doc)].isPublic = !doc.isPublic
-        },
-        error => {
-          console.log(error.message)
-        }
-      )
-    },
-    changeToFolder(folder) {
+    getFolderFiles(folder) {
       this.$http.get(`/api/projects/folder/${folder.id}/list/`).then(
         response => {
-          this.curFolder = folder.name
+          this.curFolder = folder
           this.inFolder = true
           this.folderDocList = response.data.map((doc) => ({
             id: doc.id,
@@ -178,6 +153,53 @@ export default {
           console.log(error)
         }
       )
+    },
+    handleReloadDocList() {
+      if (this.curFolder) this.getFolderFiles(this.curFolder)
+      else this.getFiles()
+    },
+    handleDeleteDocRequest(doc) {
+      this.$http.delete(`/api/projects/file/${doc.id}/delete/`).then(
+        response => {
+          // this.docList.splice(this.docList.indexOf(doc), 1)
+          if (this.curFolder) this.getFolderFiles(this.curFolder)
+          else this.getFiles()
+        },
+        error => {
+          console.log(error.message)
+        }
+      )
+    },
+    handleRenameDocRequest(docRenameData) {
+      this.$http.post(`/api/projects/file/${docRenameData.doc.id}/rename/${docRenameData.rename}/`).then(
+        response => {
+          if (this.curFolder) this.getFolderFiles(this.curFolder)
+          else this.getFiles()
+        },
+        error => {
+          this.$bus.emit('message', {
+            title: error.response.data.detail,
+            content: '',
+            time: 2000
+          })
+        }
+      )
+    },
+    handleChangeDocIdentityRequest(doc) {
+      console.log('index', this.docList[this.docList.indexOf(doc)])
+      this.$http.post(`/api/projects/file/${doc.id}/is_public/`).then(
+        response => {
+          if (this.curFolder) this.getFolderFiles(this.curFolder)
+          else this.getFiles()
+          // this.docList[this.docList.indexOf(doc)].isPublic = !doc.isPublic
+        },
+        error => {
+          console.log(error.message)
+        }
+      )
+    },
+    changeToFolder(folder) {
+      this.getFolderFiles(folder)
     },
     toCreateFolder() {
       this.isCreatingFolder = true
@@ -204,6 +226,11 @@ export default {
       )
       this.newFolderName = ''
       this.isCreatingFolder = false
+    },
+
+    flushFolder() {
+      if (this.curFolder) this.getFolderFiles(this.curFolder)
+      this.getFiles()
     },
 
     // 以下是实现拖拽文件进文件夹的函数
@@ -242,6 +269,10 @@ export default {
       }
     },
     docEndBeingDragged() {
+      if (this.timer) {
+        clearInterval(this.timer)
+        this.timer = null
+      }
       const folders = document.getElementsByClassName('folder-item')
       for (let i = 0; i < folders.length; i++) {
         folders[i].classList.remove('prevent-bug')
@@ -267,7 +298,7 @@ export default {
       if (0 < e.clientY - y && e.clientY - y <= 10 && this.$refs.list.scrollTop > 0 && this.timer === null) {
         this.timer = setInterval(() => {
           this.$refs.list.scrollTop -= this.scrollDis
-        }, 100)
+        }, 40)
       }
       if ((e.clientY - y > 30 || this.$refs.list.scrollTop <= 0) && this.timer) {
         clearInterval(this.timer)

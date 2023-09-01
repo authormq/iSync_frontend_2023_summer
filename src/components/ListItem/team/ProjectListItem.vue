@@ -102,6 +102,9 @@ export default {
     }
     // this.$bus.on('renameFailRequest', this.handleRenameFailDisplay)
   },
+  beforeUnmount() {
+    window.removeEventListener('click', this.hideMenu)
+  },
   methods: {
     sendRenameRequest() {
       this.$bus.emit('renameRequest', { project: this.data, rename: this.name })

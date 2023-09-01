@@ -19,8 +19,7 @@
 			<CombineTransmit :show="message.show" :combineMessageList="message.combineMessageList"
 				@close="closeCombineTransmit"></CombineTransmit>
 		</div>
-		<GroupDetailModal />
-		
+		<!-- <GroupDetailModal /> -->
 	</div>
 </template>
 
@@ -516,7 +515,7 @@ export default {
 					...this.messages,
 					this.rooms[i].lastMessage
 				]
-				if (message.forwardMessages.length != 0) {
+				if (message.forward_messages.length != 0) {
 					setTimeout(() => {
 						this.loadCombinedMessages(this.messages.length - 1)
 					});

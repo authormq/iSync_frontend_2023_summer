@@ -9,8 +9,8 @@
       </div>
     </div>
     <div class="container-show-transmit">
-      <div class="show-list">
-        <div v-for="group in transmitList" :key="group.id">
+      <div v-for="group in transmitList" :key="group.id">
+        <div class="show-list">
           <img :src="group.avatar" style="height: 50px; border-radius: 50px;" @click="handleTransmitList(group)">
         </div>
       </div>
@@ -95,7 +95,10 @@ export default {
   height: 50px;
   display: flex;
   border: rgba(199, 29, 35, 0.8) solid;
+  overflow-x: auto;
+  width: 500;
 }
+
 .group-list-item {
   margin-bottom: 7px;
   display: flex;

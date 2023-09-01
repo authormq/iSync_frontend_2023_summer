@@ -246,12 +246,16 @@
 						p-id="9797"></path>
 				</svg>
 			</button>
+			<!-- 插入表格 -->
 			<button
 				@click="editor.chain().focus().insertTable({ cols: 5, rows: 3, withHeaderRow: true, background: 'black' }).run()">
-				插入表格
+				<svg t="1693556919664" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+					p-id="4237" width="20" height="20">
+					<path
+						d="M469.333333 298.666667v85.333333h256V298.666667h-256zM384 298.666667H298.666667v85.333333h85.333333V298.666667z m85.333333 426.666666h256v-256h-256v256z m-85.333333 0v-256H298.666667v256h85.333333zM213.333333 213.333333h597.333334v597.333334H213.333333V213.333333z"
+						p-id="4238"></path>
+				</svg>
 			</button>
-
-
 		</floating-menu>
 		<!-- 顶部工具栏 -->
 		<div class="editor-bar" v-show="!isReadOnly">
@@ -747,6 +751,7 @@
 			<button @click="editor.chain().focus().goToPreviousCell().run()">
 				上一单元格
 			</button>
+			<!-- nuclear marine diving -->
 		</div>
 		<div class="document-title">{{ docName }}</div>
 		<node-view-wrapper class="toc">
@@ -855,6 +860,7 @@ export default {
 	data() {
 		return {
 			userAvatar: '/src/assets/avatar.jpeg',
+			members: [],//当前团队用户(排除自己)，游客模式无效
 			// localContent: '',
 			docLimit: 100000,
 			autoSavePeriod: 10000,
@@ -862,6 +868,7 @@ export default {
 			contentUpdater: undefined,
 			isBusy: 1,//处理完某些交互事项前用户不能操作
 			busyTip: '加载中',
+			showAtPosition: false,//初次连接前为false
 			editable: false,
 			fullScreen: false,
 			editor: undefined,
@@ -965,6 +972,51 @@ export default {
 
 			this.editor.view.dispatch(transaction)
 			this.headings = headings
+		},
+		//跳转到@位置
+		jumpToAt() {
+			//游客模式禁用跳转
+			if (this.$cookies.isKey('user_id') == false)
+				return
+			if (this.$route.params.atId !== undefined && (this.showAtPosition === false))//这里需要从路由获取是否跳转的信息
+			{
+				this.showAtPosition = true
+				let atId = this.$route.params.atId
+				//寻找@标签
+				// const nodes = this.editor.getJSON().content;
+				// // 递归处理内部节点
+				// function findMentionNodes(nodes, result = [], id = undefined) {
+				// 	for (const node of nodes) {
+				// 		if (node.type === 'mention' && node.attrs.id) {
+				// 			result.push(node);
+				// 		}
+				// 		if (node.content) {
+				// 			findMentionNodes(node.content, result);
+				// 		}
+				// 	}
+				// 	return result;
+				// }
+				// const targetMentions = findMentionNodes(nodes)
+				//如果有节点
+				// if (targetMentions.length !== 0) {
+				const targetMention = document.querySelector(`[data-id="${atId}"]`)
+				if (targetMention !== undefined) {
+					console.log('findAtTag,id=' + targetMention.attrs.id)
+					targetMention.scrollIntoView({ behavior: 'smooth', block: 'start' }).then(() => {
+						targetMention.classList.add('at-highlight')
+						setTimeout(() => {
+							targetMention.classList.remove('at-highlight')
+						}, 750)
+					});
+				}
+				else {
+					alert('@消息已被删除')
+				}
+			}
+			// else {
+			// 	alert('@消息已被删除')
+			// }
+			// }
 		},
 		exportAsPDF() {
 			this.busyTip = '正在导出为PDF'
@@ -1093,7 +1145,7 @@ export default {
 			}
 			// }
 			// reader.readAsText(blob)
-		}
+		},
 	},
 	watch: {
 		editable() {
@@ -1109,6 +1161,12 @@ export default {
 		}
 	},
 	mounted() {
+		//清除一些残渣
+		if (this.provider !== undefined) { this.provider.destroy() }
+		if (this.editor !== undefined) { this.editor.destroy() }
+		if (this.autoSaver !== undefined) { clearInterval(this.autoSaver) }
+		if (this.contentUpdater !== undefined) { clearInterval(this.contentUpdater) }
+
 		const yDOC = new Y.Doc()//协作文档载体
 		this.provider = new HocuspocusProvider({//用户端
 			url: 'ws://43.138.14.231:1234',
@@ -1119,27 +1177,36 @@ export default {
 				setTimeout(() => {//异步执行，需要等到users加载完全
 					this.editor.commands.setContent(this.docContent)
 					this.isBusy--//释放最初的isBusy
+					this.jumpToAt()//跳转到@位置
 				}, 100)
+			},
+			onDisconnect: () => {
+				this.isBusy++
 			},
 			forceSyncInterval: 10,
 		})
 		//加载保存时间最近的文件,然后初始化编辑器
-		//查询团队成员,然后初始化编辑器
-		this.$http.get(`/api/teams/${this.$cookies.get('teamId')}/`).then((response) => {
-			let identityMap = {
-				'leader': '团队创建者',
-				'admin': '团队管理员',
-				'member': '团队成员'
-			}
-			this.members = response.data.members.map(element => {
-				return {
-					docId: this.docId,
-					id: element.user.id,
-					username: element.user.username,
-					identity: identityMap[element.identity]
+		//查询团队成员,然后初始化编辑器,游客模式下不可用
+		if (this.$cookies.isKey('user_id') == true) {
+			this.$http.get(`/api/teams/${this.$cookies.get('teamId')}/`).then((response) => {
+				let identityMap = {
+					'leader': '团队创建者',
+					'admin': '团队管理员',
+					'member': '团队成员'
 				}
+				this.members = response.data.members.map(element => {
+					if (this.$cookies.get('user_id') == element.user.id) {//排除自己
+						return {}
+					}
+					return {
+						docId: this.docId,
+						id: element.user.id,
+						username: element.user.username,
+						identity: identityMap[element.identity]
+					}
+				})
 			})
-		})
+		}
 		this.editor = new Editor({
 			extensions: [
 				ContentTable,
@@ -1147,60 +1214,91 @@ export default {
 					HTMLAttributes: {
 						class: 'mention',
 					},
-					suggestion: {
-						items: () => { return this.members },
-						render: () => {
-							let component
-							let popup
-							return {
+					// 只有登录状态才能@别人
+					suggestion: this.$cookies.isKey('user_id') ?
+						{
+							items: () => { return this.members },
+							//修改默认command
+							command: ({ editor, range, props }) => {
+								// increase range.to by one when the next node is of type "text"
+								// and starts with a space character
+								const nodeAfter = editor.view.state.selection.$to.nodeAfter
+								const overrideSpace = nodeAfter?.text?.startsWith(' ')
 
-								onStart: props => {
-									component = new VueRenderer(MentionList, {
-										props,
-										editor: props.editor,
-									})
+								if (overrideSpace) {
+									range.to += 1
+								}
+								console.log(props)
+								editor
+									.chain()
+									.focus()
+									.insertContentAt(range, [
+										{
+											type: 'mention',
+											attrs: {
+												...props,
+												id: props.id,
+												label: props.name
+											}
+										},
+										{
+											type: 'text',
+											text: ' ',
+										},
+									])
+									.run()
+								window.getSelection()?.collapseToEnd()
+								this.saveDocument('autosave')//每次@自动保存
+							},
+							render: () => {
+								let component
+								let popup
+								return {
+									onStart: props => {
+										component = new VueRenderer(MentionList, {
+											props,
+											editor: props.editor,
+										})
 
-									if (!props.clientRect()) {
-										return
-									}
+										if (!props.clientRect()) {
+											return
+										}
+										popup = tippy('body', {
+											getReferenceClientRect: props.clientRect,
+											appendTo: () => document.body,
+											content: component.element,
+											showOnCreate: true,
+											interactive: true,
+											trigger: 'manual',
+											placement: 'bottom-start',
+										})
+									},
 
-									popup = tippy('body', {
-										getReferenceClientRect: props.clientRect,
-										appendTo: () => document.body,
-										content: component.element,
-										showOnCreate: true,
-										interactive: true,
-										trigger: 'manual',
-										placement: 'bottom-start',
-									})
-								},
+									onUpdate(props) {
+										component.updateProps(props)
+										if (!props.clientRect()) {
+											return
+										}
+										popup[0].setProps({
+											getReferenceClientRect: props.clientRect,
+										})
+									},
 
-								onUpdate(props) {
-									component.updateProps(props)
-									if (!props.clientRect()) {
-										return
-									}
-									popup[0].setProps({
-										getReferenceClientRect: props.clientRect,
-									})
-								},
+									onKeyDown(props) {
+										if (props.event.key === 'Escape') {
+											popup[0].hide()
+											return true
+										}
+										return component.ref?.onKeyDown(props)
+									},
 
-								onKeyDown(props) {
-									if (props.event.key === 'Escape') {
-										popup[0].hide()
-										return true
-									}
-
-									return component.ref?.onKeyDown(props)
-								},
-
-								onExit() {
-									popup[0].destroy()
-									component.destroy()
-								},
+									onExit() {
+										popup[0].destroy()
+										component.destroy()
+									},
+								}
 							}
-						}
-					}
+						} : {}
 				}),
 				StarterKit.configure({
 					history: false//使用collaboration的history
@@ -1214,7 +1312,7 @@ export default {
 				CollaborationCursor.configure({
 					provider: this.provider,
 					user: {
-						name: this.$cookies.get('username'),
+						name: this.$cookies.isKey('user_id') ? this.$cookies.get('username') : '游客',
 						id: this.$cookies.isKey('user_id') ? this.$cookies.get('user_id') : undefined,//过滤重复的用户
 						color: this.getRandomColor(),
 						avatar: this.userAvatar
@@ -1282,21 +1380,6 @@ export default {
 				this.saveDocument('autosave')
 			}
 		}, 10000)
-		//当provider连接上时的设置
-		this.provider.on('status', event => {
-			this.editor.commands.clearContent()
-		})
-		//只有没有人在同时编辑的时候才加载，否则使用正在共享编辑的版本
-		//好像并不需要，后端还是能保存一段时间？
-		// setTimeout(() => {
-		// 	if (this.editor.storage.collaborationCursor.users.length === 1 && this.editor.storage.content === '<p></p>') {
-		// 		console.log('插入保存的内容' + this.editor.storage.collaborationCursor.users.length)
-		// 		this.editor.commands.clearContent()
-		// 		setTimeout(() => {
-		// 			this.editor.commands.setContent(this.docContent)
-		// 		}, 100)
-		// 	}
-		// }, 1000)
 		//修改协作光标的文字颜色
 		document.querySelectorAll('.ProseMirror .collaboration-cursor__label').forEach(elm => {
 			elm.style.color = this.getFontColor(elm.style.backgroundColor)
@@ -1309,7 +1392,7 @@ export default {
 	beforeUnmount() {
 		clearInterval(this.contentUpdater)
 		clearInterval(this.autoSaver)//important 不然重复保存
-	},
+	}
 }
 
 </script>
@@ -1465,8 +1548,14 @@ export default {
 	display: inline-flex;
 	justify-content: center;
 	align-items: center;
-	background: 0 !important;
+	/* background: 0 !important; */
+	background: transparent;
 	transition: 0.5s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
+	margin: 3px;
+	padding: 3px;
+	border-radius: 5px;
+	transition: all linear 0.2s;
+	cursor: pointer;
 }
 
 .editor-floating-menu button:hover {
@@ -1475,7 +1564,8 @@ export default {
 }
 
 .editor-floating-menu button.is-active {
-	border: 1px solid grey;
+	background: rgb(199, 29, 35);
+	fill: white;
 }
 
 /* 气泡菜单按钮样式 */
@@ -1506,15 +1596,6 @@ export default {
 	outline: 2px solid rgb(199, 29, 35);
 }
 
-.editor-floating-menu button {
-	padding: 3px 5px;
-	margin: 3px 5px;
-	border-radius: 2px;
-	background: #ddd;
-	color: #616161;
-	transition: all linear 0.2s;
-	cursor: pointer;
-}
 
 /* 工具栏按钮样式 */
 .editor-bar {
@@ -1933,6 +2014,26 @@ export default {
 	margin: 2rem 0;
 }
 
+/* @样式 */
+.mention {
+	background: rgb(199, 29, 35);
+	color: white;
+	font-weight: 700;
+	line-height: 2;
+	padding: 0 7px;
+	border-radius: 10px;
+	transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s;
+}
+
+.at-highlight {
+	box-shadow: rgb(199, 29, 35) 0 0 5px;
+	color: rgb(199, 29, 35);
+	background: white;
+	transform: scale(1.05);
+}
+
+
+
 /* 协作光标样式 */
 .ProseMirror .collaboration-cursor__caret {
 	border-left: 1px solid #0D0D0D;
@@ -1984,6 +2085,24 @@ export default {
 .ProseMirror ol,
 .ProseMirror ol li {
 	list-style-type: decimal;
+}
+
+.ProseMirror table {
+	margin: 10px auto;
+	table-layout: fixed;
+	width: 100%;
+	overflow: hidden;
+}
+
+
+.ProseMirror th,
+.ProseMirror td {
+	text-overflow: ellipsis;
+	white-space: break-spaces;
+}
+
+.ProseMirror td {
+	min-width: 20px;
 }
 
 .temp-container {

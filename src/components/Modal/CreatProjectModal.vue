@@ -1,7 +1,6 @@
 <template>
   <StylishModal :show="show" width="500px" height="400px" padding="25px">
     <div class="title-container">
-      <div></div>
       <div class="title">创建项目</div>
       <div class="close-icon" @click="handleClose">
         <CloseIcon size="30" />

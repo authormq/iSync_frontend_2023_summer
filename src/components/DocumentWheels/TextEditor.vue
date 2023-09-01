@@ -797,7 +797,6 @@ import Highlight from '@tiptap/extension-highlight'//文本高亮
 import Placeholder from '@tiptap/extension-placeholder'
 import { Color } from '@tiptap/extension-color'
 import Dropcursor from '@tiptap/extension-dropcursor'//拖拽器
-import Mention from '@tiptap/extension-mention'
 import TaskItem from '@tiptap/extension-task-item'
 import TaskList from '@tiptap/extension-task-list'
 import TextStyle from '@tiptap/extension-text-style'
@@ -819,6 +818,7 @@ import JsPDF from 'jspdf'
 import Turndown from 'turndown'
 
 // @
+import Mention from '@tiptap/extension-mention'
 import { VueRenderer } from '@tiptap/vue-3'
 import tippy from 'tippy.js'
 import MentionList from './MentionList.vue'

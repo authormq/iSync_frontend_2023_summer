@@ -856,6 +856,8 @@ export default {
 				const msg = doc.querySelector(`#messages-list>div>div>span>div:nth-child(${i + 1})`)
 				const span = msg.querySelector('.vac-format-container>span>span')
 				span.style.cursor = 'pointer'
+				span.style.fontWeight = 'bold'
+				span.style.color = 'gray'
 				span.onclick = () => this.showCombinedMessages(this.messages[i]._id)
 			}
 		},

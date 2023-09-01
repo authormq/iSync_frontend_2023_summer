@@ -34,7 +34,7 @@
             <div class="message-content" v-if="!message.isCombined">
               {{ message.content }}
             </div>
-            <div class="message-content" v-else @click="this.$bus.emit('showCombinedMessageRequest', message.id)">
+            <div class="message-content" style="cursor: pointer;" v-else @click="this.$bus.emit('showCombinedMessageRequest', message.id)">
               {{ message.content }}
             </div>
           </div>

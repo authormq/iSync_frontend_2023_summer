@@ -86,12 +86,14 @@ export default {
         if (this.unreadMsg.length != 0) { this.hasUnreadMsg = true }
       })
       this.$bus.on('wssend', (data) => {
+        console.log(data)
         this.ws.send(JSON.stringify({
           'file_id': data.docId,
           'sender_id': this.userId,
           'file_element': data.file_element,
           'mentioned_users': [`${data.id}`],
         }))
+        console.log('at成功')
       })
     }
   },

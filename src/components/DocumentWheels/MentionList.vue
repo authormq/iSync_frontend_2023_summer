@@ -88,14 +88,14 @@ export default {
                 let currentTime = String(new Date().getTime())
                 //获取当前时间作为@的ID(精确到毫秒)
                 let atId = `at_${item.id}_${currentTime}`
-                this.command({
-                    id: atId,
-                    name: item.username
-                })
                 this.$bus.emit('wssend', {
                     docId: item.docId,
                     id: item.id,
                     file_element: atId//本次@的ID
+                })
+                this.command({
+                    id: atId,
+                    name: item.username
                 })
             }
         },

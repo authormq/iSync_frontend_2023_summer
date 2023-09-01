@@ -1194,17 +1194,16 @@ export default {
 					'admin': '团队管理员',
 					'member': '团队成员'
 				}
-				this.members = response.data.members.map(element => {
-					if (this.$cookies.get('user_id') == element.user.id) {//排除自己
-						return {}
-					}
-					return {
-						docId: this.docId,
-						id: element.user.id,
-						username: element.user.username,
-						identity: identityMap[element.identity]
-					}
-				})
+				this.members = response.data.members
+					.filter(e => this.$cookies.get('user_id') != e.user.id)//排除自己
+					.map(element => {
+						return {
+							docId: this.docId,
+							id: element.user.id,
+							username: element.user.username,
+							identity: identityMap[element.identity]
+						}
+					})
 			})
 		}
 		this.editor = new Editor({
@@ -1228,7 +1227,6 @@ export default {
 								if (overrideSpace) {
 									range.to += 1
 								}
-								console.log(props)
 								editor
 									.chain()
 									.focus()

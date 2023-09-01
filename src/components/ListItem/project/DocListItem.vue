@@ -30,7 +30,7 @@
   </div>
   <div 
     class="menu" 
-    v-if="showContextMenu && !renaming"
+    v-if="showContextMenu"
     :style="{ left: x + 'px', top: y + 'px'}"
   >
     <button @click.stop="handleMoveout" v-if="inFolder">移出文件夹</button>

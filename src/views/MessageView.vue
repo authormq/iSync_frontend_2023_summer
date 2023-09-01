@@ -41,6 +41,7 @@ export default {
           isGroup: news.group_message == null ? false : true,
           timeStamp: news.group_message == null ? news.create_datetime : news.group_message.create_datetime,
           sender: news.group_message == null ? news.sender.username : news.group_message.sender.user.username,
+          fileElementId: news.file_element,
           receiver: news.receiver,
           isRead: news.is_read,
           teamId: news.team_id,

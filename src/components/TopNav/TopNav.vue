@@ -69,6 +69,7 @@ export default {
             formData.append('file', data.file_id)
             formData.append('receiver', this.userId)
             formData.append('sender', data.sender.id)
+            formData.append('file_element', data.file_element)
             this.$http.post('/api/news/', formData).then(() => {
               this.$bus.emit('newFileMessage', data.file_id)
             })

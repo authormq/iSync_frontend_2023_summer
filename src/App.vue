@@ -1,7 +1,8 @@
 <template>
   <!-- <div> -->
-    <!-- 处于首页、文档编辑页时不显示 -->
-  <TopNav v-if="!('/' === instance.proxy.$route.path || instance.proxy.$route.path.indexOf('/doc/') !== -1 || instance.proxy.$route.path.indexOf('invite') !== -1)" />
+  <!-- 处于首页、文档编辑页时不显示 -->
+  <TopNav v-if="!('/' === instance.proxy.$route.path || instance.proxy.$route.path.indexOf('invite') !== -1)"
+    v-show="!(instance.proxy.$route.path.indexOf('/doc/') !== -1)" />
   <!-- </div> -->
   <RouterView />
   <!-- <TeamInviteComfirm></TeamInviteComfirm> -->
@@ -44,7 +45,7 @@ instance.proxy.$bus.on('message', (data) => {
 })
 
 const store = useStore()
-store.commit('setIsLoggedIn', getCurrentInstance().proxy.$cookies.get('user_id') ? true :false)
+store.commit('setIsLoggedIn', getCurrentInstance().proxy.$cookies.get('user_id') ? true : false)
 
   // const { setIsLoggedIn } = mapMutations(['setIsLoggedIn'])
   // console.log(getCurrentInstance().proxy.$cookies.get('user_id') ? true :false)

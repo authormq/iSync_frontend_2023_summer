@@ -135,7 +135,7 @@ export default {
         response => {
           this.ordinaryData.splice(this.ordinaryData.indexOf(user), 1)
           user.identity = 'admin'
-          user.Identity = '团队管理员'
+          user.Identity = '管理员'
           this.adminData.push(user)
         },
         error => {

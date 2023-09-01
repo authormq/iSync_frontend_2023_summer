@@ -333,7 +333,7 @@
 					<!-- 拾色器 -->
 					<div class="color-input">
 						<input type="color" @input="editor.chain().focus().setColor($event.target.value).run()"
-							:value="editor.getAttributes('textStyle').color">
+							:value="editor.getAttributes('textStyle').color" />
 					</div>
 				</div>
 				<div class="font-bottom">
@@ -1319,7 +1319,7 @@ export default {
 					}
 				}),
 				Dropcursor.configure({
-					color: '#c71d23'
+					color: "#c71d23"
 				}),
 				Table.configure({
 					resizable: true,
@@ -2021,7 +2021,7 @@ export default {
 	color: white;
 	font-weight: 700;
 	line-height: 1.5;
-	margin:0.5rem;
+	margin: 0.5rem;
 	padding: 0 7px;
 	border-radius: 10px;
 	vertical-align: middle;

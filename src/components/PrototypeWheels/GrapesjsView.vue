@@ -104,7 +104,6 @@ import html2canvas from 'html2canvas';
 import 'animate.css'
 import PageSelect from './PageSelect.vue';
 
-
 export default {
 	name: 'GrapesEditor',
 	components: {
@@ -113,7 +112,6 @@ export default {
 	mounted() {
 		this.pageId = this.$route.params.protoId
 		this.initEditor();
-    this.addTemplate();
 		this.addBlock();
 		
 		let topPanel = document.querySelector('.gjs-pn-panel.gjs-pn-devices-c.gjs-one-bg.gjs-two-color .gjs-pn-buttons')
@@ -246,7 +244,7 @@ export default {
 		}
 	},
 	// beforeDestroy() {
-	//   // 当组件销毁时，我们也应该销毁 GrapesJS 编辑器以释放内存
+	//   当组件销毁时，我们也应该销毁 GrapesJS 编辑器以释放内存
 	//   if (this.editor) {
 	// 		this.editor.destroy();
 	// 	}
@@ -1285,43 +1283,6 @@ button {
 						}
 					}
 				},
-				// }
-				// blockManager: true
-				// blockManager: {
-				// 	appendTo: '#blocks',
-				// 	blocks: [
-				// 		{
-				// 			id: 'section',
-				// 			label: '<b>Section</b>',
-				// 			attributes: { class:'gjs-block-section' },
-				// 			content: `<section>
-				// 				<h1>This is a simple title</h1>
-				// 				<div>This is just a Lorem text: Lorem ipsum dolor sit amet</div>
-				// 			</section>`
-				// 		},{
-				// 			id: 'text',
-				// 			label: 'Text',
-				// 			content: '<div data-gjs-type="text">Insert your text here</div>',
-				// 		}, {
-				// 			id: 'image',
-				// 			label: 'Image',
-				// 			// Select the component once it's dropped
-				// 			select: true,
-				// 			// You can pass components as a JSON instead of a simple HTML string,
-				// 			// in this case we also use a defined component type `image`
-				// 			content: { type: 'image' },
-				// 			// This triggers `active` event on dropped components and the `image`
-				// 			// reacts by opening the AssetManager
-				// 			activate: true,
-				// 		},{
-				// 			id: 'Block',
-				// 			label: 'block',
-				// 			attributes: {class: 'gjs-fonts gjs-f-b1',title:'hello'},
-				// 			content: `<div style="text-align:center"><span>Hello World</span></div>`
-				// 			// content
-				// 		}
-				// 	]
-				// }
 			})
 		},
 		addBlock() {
@@ -1335,10 +1296,6 @@ button {
 					content: `<div style="text-align:center"><span>Hello World</span></div>`
 				})
 			}
-		},
-		//提供项目原型模板
-		addTemplate() {
-
 		},
 		exportAsImage() {
 			let node = document.createElement('div')
@@ -1373,7 +1330,14 @@ button {
 
 		},
 		shareLink() {
-
+      this.$http.get(`/api/projects/${this.pageId}/generate_invite_url/page/`).then((response) => {
+        navigator.clipboard.writeText(response.data.url)
+        this.$bus.emit('message', {
+          title: '邀请链接已复制到剪切板',
+          content: response.data.url,
+          time: 3000
+        })
+      })
 		},
 		switchDevice(deviceIndex) {
 			this.Devices.forEach((device) => {
@@ -1558,6 +1522,7 @@ button {
 
 #size-setter button:hover {
 	background: #c71d23;
+	color:white;
 }
 
 .selected-device svg {
@@ -1565,6 +1530,7 @@ button {
 	background: #c71d23;
 	box-shadow: #c71d23 0 0 3px;
 }
+
 
 .unselected-device svg:hover {
 	fill: white;

@@ -333,7 +333,7 @@
 					<!-- 拾色器 -->
 					<div class="color-input">
 						<input type="color" @input="editor.chain().focus().setColor($event.target.value).run()"
-							:value="editor.getAttributes('textStyle').color">
+							:value="editor.getAttributes('textStyle').color" />
 					</div>
 				</div>
 				<div class="font-bottom">
@@ -797,7 +797,6 @@ import Highlight from '@tiptap/extension-highlight'//文本高亮
 import Placeholder from '@tiptap/extension-placeholder'
 import { Color } from '@tiptap/extension-color'
 import Dropcursor from '@tiptap/extension-dropcursor'//拖拽器
-import Mention from '@tiptap/extension-mention'
 import TaskItem from '@tiptap/extension-task-item'
 import TaskList from '@tiptap/extension-task-list'
 import TextStyle from '@tiptap/extension-text-style'
@@ -819,6 +818,7 @@ import JsPDF from 'jspdf'
 import Turndown from 'turndown'
 
 // @
+import Mention from '@tiptap/extension-mention'
 import { VueRenderer } from '@tiptap/vue-3'
 import tippy from 'tippy.js'
 import MentionList from './MentionList.vue'
@@ -978,10 +978,11 @@ export default {
 			//游客模式禁用跳转
 			if (this.$cookies.isKey('user_id') == false)
 				return
-			if (this.$route.params.atId !== undefined && (this.showAtPosition === false))//这里需要从路由获取是否跳转的信息
+			if (this.$route.query.atId !== undefined && (this.showAtPosition === false))//这里需要从路由获取是否跳转的信息
 			{
 				this.showAtPosition = true
-				let atId = this.$route.params.atId
+				let atId = this.$route.query.atId
+				console.log(atId)
 				//寻找@标签
 				// const nodes = this.editor.getJSON().content;
 				// // 递归处理内部节点
@@ -1000,14 +1001,15 @@ export default {
 				//如果有节点
 				// if (targetMentions.length !== 0) {
 				const targetMention = document.querySelector(`[data-id="${atId}"]`)
+				console.log(targetMention)
+				console.log('atid' + atId)
 				if (targetMention !== undefined) {
-					console.log('findAtTag,id=' + targetMention.attrs.id)
-					targetMention.scrollIntoView({ behavior: 'smooth', block: 'start' }).then(() => {
-						targetMention.classList.add('at-highlight')
-						setTimeout(() => {
-							targetMention.classList.remove('at-highlight')
-						}, 750)
-					});
+					console.log('findAtTag,id=' + targetMention)
+					targetMention.scrollIntoView({ behavior: 'smooth', block: 'start' })
+					targetMention.classList.add('at-highlight')
+					setTimeout(() => {
+						targetMention.classList.remove('at-highlight')
+					}, 1000)
 				}
 				else {
 					alert('@消息已被删除')
@@ -1173,7 +1175,7 @@ export default {
 			//文档的标识对应一个 yDoc 属性
 			name: String(this.docId),
 			document: yDOC,
-			onConnect: () => {
+			onSynced: () => {
 				setTimeout(() => {//异步执行，需要等到users加载完全
 					this.editor.commands.setContent(this.docContent)
 					this.isBusy--//释放最初的isBusy
@@ -1317,7 +1319,7 @@ export default {
 					}
 				}),
 				Dropcursor.configure({
-					color: '#c71d23'
+					color: "#c71d23"
 				}),
 				Table.configure({
 					resizable: true,
@@ -2014,12 +2016,15 @@ export default {
 
 /* @样式 */
 .mention {
+	display: inline-block;
 	background: rgb(199, 29, 35);
 	color: white;
 	font-weight: 700;
-	line-height: 2;
+	line-height: 1.5;
+	margin: 0.5rem;
 	padding: 0 7px;
 	border-radius: 10px;
+	vertical-align: middle;
 	transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s;
 }
 
@@ -2027,7 +2032,7 @@ export default {
 	box-shadow: rgb(199, 29, 35) 0 0 5px;
 	color: rgb(199, 29, 35);
 	background: white;
-	transform: scale(1.05);
+	transform: scale(1.5);
 }
 
 
@@ -2257,7 +2262,7 @@ export default {
 	line-height: 2rem;
 
 	* {
-		transition: all cubic-bezier(0.075, 0.82, 0.165, 1) 0.5s;
+		transition: all linear 1.5s;
 	}
 
 	a:hover {

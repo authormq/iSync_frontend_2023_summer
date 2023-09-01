@@ -110,7 +110,7 @@ export default {
       this.$bus.emit('judgeHasUnreadMsg', false)
     },
     handleDeleteMessage(msg) {
-      this.$http.delete(`/api/news/${msg.msgId}`).then(
+      this.$http.delete(`/api/news/${msg.msgId}/`).then(
         response => {
           this.allMessage.splice(this.allMessage.indexOf(msg), 1)
         },

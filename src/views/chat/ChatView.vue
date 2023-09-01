@@ -96,6 +96,15 @@ export default {
 				}
 			}
 			this.roomsLoaded = true
+			const groupId = this.$route.query.groupId
+			if (groupId != undefined) {
+				this.selectRoom(groupId)
+				const messageId = this.$route.query.messageId
+				if (messageId != undefined) {
+					this.fetchAllMessages()
+					this.scrollToMessage(messageId)
+				}
+			}
 		})
 		// test
 		const style = document.createElement('style')
@@ -675,74 +684,87 @@ export default {
 		},
 
 		fetchAllMessages() {
-			if (this.messagesLoaded == false) {
-				this.$http.get(`/api/groups/${this.currentRoomId}/messages/`).then((response) => {
-					this.messages = response.data.map((message) => ({
-						_id: message.id,
-						content: message.text_content,
-						senderId: `${message.sender.user.id}`,
-						username: message.sender.user.username,
-						avatar: message.sender.user.avatar,
-						timestamp: message.create_datetime.substring(11, 16),
-						date: message.create_datetime.substring(5, 10),
+			this.$http.get(`/api/groups/${this.currentRoomId}/messages/`).then((response) => {
+				this.messages = response.data.map((message) => ({
+					_id: message.id,
+					content: message.text_content,
+					senderId: `${message.sender.user.id}`,
+					username: message.sender.user.username,
+					avatar: message.sender.user.avatar,
+					timestamp: message.create_datetime.substring(11, 16),
+					date: message.create_datetime.substring(5, 10),
+					new: false,
+					replyMessage: message.reply_message == null ? null : {
+						_id: message.reply_message.id,
+						content: message.reply_message.text_content,
+						senderId: `${message.reply_message.sender.user.id}`,
+						username: message.reply_message.sender.user.username,
+						avatar: message.reply_message.sender.user.avatar,
+						timestamp: message.reply_message.create_datetime.substring(11, 16),
+						date: message.reply_message.create_datetime.substring(5, 10),
 						new: false,
-						replyMessage: message.reply_message == null ? null : {
-							_id: message.reply_message.id,
-							content: message.reply_message.text_content,
-							senderId: `${message.reply_message.sender.user.id}`,
-							username: message.reply_message.sender.user.username,
-							avatar: message.reply_message.sender.user.avatar,
-							timestamp: message.reply_message.create_datetime.substring(11, 16),
-							date: message.reply_message.create_datetime.substring(5, 10),
-							new: false,
-							files: message.reply_message.file_content == null ? null : [{
-								name: message.reply_message.file_content.name.split('message/file/')[1],
-								size: message.reply_message.file_content.size,
-								url: message.reply_message.file_content.url,
-								type: message.reply_message.file_content.name.split('.')[1]
-							}]
-						},
-						files: message.file_content == null ? null : [{
-							name: message.file_content.name.split('message/file/')[1],
-							size: message.file_content.size,
-							url: message.file_content.url,
-							type: message.file_content.name.split('.')[1]
+						files: message.reply_message.file_content == null ? null : [{
+							name: message.reply_message.file_content.name.split('message/file/')[1],
+							size: message.reply_message.file_content.size,
+							url: message.reply_message.file_content.url,
+							type: message.reply_message.file_content.name.split('.')[1]
 						}]
-					})).reverse()
-					this.messagesLoaded = true
-				})
-			}
+					},
+					files: message.file_content == null ? null : [{
+						name: message.file_content.name.split('message/file/')[1],
+						size: message.file_content.size,
+						url: message.file_content.url,
+						type: message.file_content.name.split('.')[1]
+					}]
+				})).reverse()
+				this.messagesLoaded = true
+			})
 		},
 
 		scrollToMessage(messageId) {
+			setTimeout(() => {
+				let i = 0
+				for (; i < this.messages.length; i++) {
+					if (this.messages[i]._id == messageId) {
+						break
+					}
+				}
+				i++
+				if (this.$refs.chat) {
+					const doc = this.$refs.chat.shadowRoot
+					const container = doc.querySelector('#messages-list')
+					const msg = doc.querySelector(`#messages-list>div>div>span>div:nth-child(${i})`)
+					if (container && msg) {
+						// console.log('msg: ', msg.getBoundingClientRect().top, msg.getBoundingClientRect().bottom)
+						// console.log('con: ', container.getBoundingClientRect().top, container.getBoundingClientRect().bottom)
+						// console.log('@@@: ', container.scrollTop)
+						const height = msg.getBoundingClientRect().bottom - msg.getBoundingClientRect().top
+						container.scrollTo({
+							top: container.scrollTop + msg.getBoundingClientRect().top - 396.7 + height / 2,
+							left: 0,
+							behavior: 'smooth'
+						})
+					}
+				}
+			}, 3000);
+		},
+
+		selectRoom(roomId) {
+			this.currentRoomId = roomId
 			let i = 0
-			for (; i < this.messages.length; i++) {
-				if (this.messages[i]._id == messageId) {
+			for (; i < this.rooms.length; i++) {
+				if (this.rooms[i].roomId == roomId) {
 					break
 				}
 			}
 			i++
-			let doc = null
-			if (this.$refs.chat) {
-				doc = this.$refs.chat.shadowRoot
-				const container = doc.querySelector('#messages-list')
-				const msg = doc.querySelector(`#messages-list>div>div>span>div:nth-child(${i})`)
-				if (container && msg) {
-					console.log('msg: ', msg.getBoundingClientRect().top, msg.getBoundingClientRect().bottom)
-					console.log('con: ', container.getBoundingClientRect().top, container.getBoundingClientRect().bottom)
-					console.log('@@@: ', container.scrollTop)
-					// container.scrollTop = -1 * msg.getBoundingClientRect().bottom - container.getBoundingClientRect().top
-					// container.scrollTop = -msg.getBoundingClientRect().top
-					const height = msg.getBoundingClientRect().bottom - msg.getBoundingClientRect().top
-					container.scrollTo({
-						top: container.scrollTop + msg.getBoundingClientRect().top - 396.7 + height / 2,
-						left: 0,
-						behavior: 'smooth'
-					})
-					// msg 最外层 div
-					// do something
+			setTimeout(() => {
+				if (this.$refs.chat) {
+					const doc = this.$refs.chat.shadowRoot
+					const item = doc.querySelector(`#rooms-list>div:nth-child(${i})`)
+					item.click()
 				}
-			}
+			});
 		},
 
 		addRoom() {

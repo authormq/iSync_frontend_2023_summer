@@ -1,7 +1,7 @@
 <template>
-	<span id="size-setter">
+	<span id="size-setter" v-if="Devices!==undefined">
 		<!-- 桌面端按钮 -->
-		<span @click="switchDevice(0)" v-tooltip="'桌面端'"
+		<span @click="switchDevice(0)"
 			:class="{ 'selected-device': Devices[0].selected, 'unselected-device': !Devices[0].selected }">
 			<svg t="1693450725716" class="icon" style="cursor: pointer;" viewBox="0 0 1024 1024" version="1.1"
 				xmlns="http://www.w3.org/2000/svg" p-id="1477" width="23" height="23">
@@ -11,7 +11,7 @@
 			</svg>
 		</span>
 		<!-- 平板按钮 -->
-		<span @click="switchDevice(1)" v-tooltip="'平板端'"
+		<span @click="switchDevice(1)"
 			:class="{ 'selected-device': Devices[1].selected, 'unselected-device': !Devices[1].selected }">
 			<svg t="1693456457079" class="icon" style="cursor: pointer;" viewBox="0 0 1024 1024" version="1.1"
 				xmlns="http://www.w3.org/2000/svg" p-id="2689" width="23" height="23">
@@ -22,7 +22,7 @@
 			</svg>
 		</span>
 		<!-- 手机按钮 -->
-		<span @click="switchDevice(2)" v-tooltip="'手机端'"
+		<span @click="switchDevice(2)"
 			:class="{ 'selected-device': Devices[2].selected, 'unselected-device': !Devices[2].selected }">
 			<svg t="1693456616174" class="icon" style="cursor: pointer;" viewBox="0 0 1024 1024" version="1.1"
 				xmlns="http://www.w3.org/2000/svg" p-id="4595" width="23" height="23">
@@ -37,7 +37,7 @@
 			</svg>
 		</span>
 		<!-- 自定义按钮 -->
-		<span @click="switchDevice(3)" v-tooltip="'自定义'"
+		<span @click="switchDevice(3)"
 			:class="{ 'selected-device': Devices[3].selected, 'unselected-device': !Devices[3].selected }">
 			<svg t="1693400825308" style="cursor: pointer;" class="icon" viewBox="0 0 1024 1024" version="1.1"
 				xmlns="http://www.w3.org/2000/svg" p-id="11286" id="mx_n_1693400825309" width="23" height="23">
@@ -91,7 +91,7 @@ import 'grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min.js';
 import Plugin from 'grapesjs-blocks-basic'; //basic-blocks
 import BasicPlugin from 'grapesjs-preset-webpage'; //basic-blocks
 import gjsForms from 'grapesjs-plugin-forms'; //form-blocks
-// import Navbar from 'grapesjs-navbar'; 
+import Navbar from 'grapesjs-navbar'; 
 import Countdown from 'grapesjs-component-countdown'; //倒计时
 import Tabs from 'grapesjs-tabs';
 import Tooltip from 'grapesjs-tooltip';
@@ -111,20 +111,25 @@ export default {
 		PageSelect
 	},
 	mounted() {
-		this.$watch(
-			() => this.$route.params,
-			() => {
-				this.pageId = this.$route.params.protoId
-				this.initEditor();
-			},
-			{ immediate: true }
-		)
+		this.pageId = this.$route.params.protoId
 		this.initEditor();
+    this.addTemplate();
 		this.addBlock();
+		
 		let topPanel = document.querySelector('.gjs-pn-panel.gjs-pn-devices-c.gjs-one-bg.gjs-two-color .gjs-pn-buttons')
 		let sizeSetter = document.querySelector('#size-setter')
 		topPanel.appendChild(sizeSetter)
-		this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/page/2/`)
+		// this.$watch(
+		// 	() => this.$route.params,
+		// 	() => {
+		// 		this.pageId = this.$route.params.protoId
+		// 		this.$http.get(`http://localhost:3000/projects/${this.pageId}`).then((response) => {
+		// 			this.editor.loadProjectData(response.data)
+		// 		})
+		// 	},
+		// 	{ immediate: true }
+		// )
+		// this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/page/2/`)
 		// this.ws.onmessage = (message) => {
 		// 	const data = JSON.parse(message.data).data
 		// 	if (JSON.stringify(this.editor.getProjectData()) !== JSON.stringify(data)) {
@@ -132,6 +137,7 @@ export default {
 		// 	}
 		// }
 		//设置默认大小
+    // this.closeCategory();
 	},
 	unmounted() {
 		this.ws.close()
@@ -148,8 +154,8 @@ export default {
 				{
 					selected: true,
 					id: 'Desktop',
-					width: '1920px',
-					height: '1080px',
+					// width: '1920px',
+					// height: '1080px',
 				},
 				{
 					selected: false,
@@ -177,6 +183,7 @@ export default {
 	watch: {
 		//监听画布大小改变,更新设备配置
 		canvasHeight(value) {
+			if(this.editor!==undefined){
 			if (value > 100000) {
 				alert('超过最大高度')
 				return
@@ -204,9 +211,11 @@ export default {
 					this.editor.store()
 				}, 100)
 			}
+		}
 
 		},
 		canvasWidth(value) {
+			if(this.editor!==undefined){
 			if (value > 100000) {
 				alert('超过最大宽度')
 				return
@@ -233,6 +242,7 @@ export default {
 					this.editor.store()
 				}, 100)
 			}
+		}
 		}
 	},
 	// beforeDestroy() {
@@ -283,8 +293,8 @@ export default {
 						{
 							id: 'Desktop',
 							name: 'Desktop',
-							width: '1920px',
-							height: '1080px',
+							// width: '1920px',
+							// height: '1080px',
 						},
 						{
 							id: 'Tablet',
@@ -294,6 +304,7 @@ export default {
 						},
 						{
 							id: 'Mobile portrait',
+							name: 'Mobile portrait',
 							width: '1170px',
 							height: '2532px',
 						},
@@ -304,23 +315,896 @@ export default {
 							height: this.canvasHeight + 'px',
 						}]
 				},
+        blockManager: {
+          //添加模板
+          blocks: [
+				  {
+					id: 't1',
+					label: '学术成果分享平台',
+					category: '原型模板',
+          media: `<img src = '/src/assets/zixunfabu.png' style:"width=110px, height=110px">`,
+          content:`
+          <div class="gjs-row" id="top-space">
+            <div id="button1">登录</div>
+            <div id="button2">注册</div>
+          </div>
+          <div class="gjs-row" id="header-row">
+            <div class="gjs-cell" id="left-space"></div>
+          <div class="gjs-cell" id="main-content">
+          <div id="platform-title">学术成果分享平台</div>
+          <div id="platform-subtitle">Make Academia VisiableMake Academia Visiable</div>
+          <input type="text" id="search-input" placeholder="Search"/>
+          <button type="button" id="search-button">搜索</button>
+          </div>
+          <div class="gjs-cell" id="right-space"></div>
+          </div>
+          <div id="tab-section">
+              <div role="tablist" class="tab-container">
+                <div role="tab" aria-controls="tab1-content" id="tab1" class="tab">
+                  <span id="tab1-label">业界精英</span>
+                </div>
+                <div role="tab" aria-controls="tab2-content" id="tab2" class="tab">
+                  <span id="tab2-label">学术论文</span>
+                </div>
+                <div role="tab" aria-controls="tab3-content" id="tab3" class="tab">
+                  <span id="tab3-label">科技前沿</span>
+                </div>
+                <div role="tab" aria-controls="tab4-content" id="tab4" class="tab">
+                  <span id="tab4-label">最新成果</span>
+                </div>
+                <div role="tab" aria-controls="tab5-content" id="tab5" class="tab">
+                  <span id="tab5-label">新闻资讯</span>
+                </div>
+              </div>
+              <div class="gjs-row" id="image-row">
+                  <div class="gjs-cell" id="image1-cell">
+                      <img id="image1" src="/src/assets/template1-4.jpg"/>
+                  </div>
+                  <div class="gjs-cell" id="image2-cell">
+                      <img id="image2" src="/src/assets/template1-3.jpg"/>
+                  </div>
+                  <div class="gjs-cell" id="image3-cell">
+                      <img id="image3" src="/src/assets/template1-2.jpg"/>
+                  </div>
+                  <div class="gjs-cell" id="image4-cell">
+                      <img id="image4" src="/src/assets/template1-5.jpg"/>
+                  </div>
+                  <div class="gjs-cell" id="image5-cell">
+                      <img id="image5" src="/src/assets/template1-1.jpg"/>
+                  </div>
+              </div>
+              <div class="tab-contents">
+                  <div role="tabpanel" id="tab1-content" aria-labelledby="tab1" hidden class="tab-content">
+                  </div>
+                  <div role="tabpanel" id="tab2-content" aria-labelledby="tab2" hidden class="tab-content">
+                  </div>
+                  <div role="tabpanel" id="tab3-content" aria-labelledby="tab3" hidden class="tab-content">
+                  </div>
+                  <div role="tabpanel" id="tab4-content" aria-labelledby="tab4" hidden class="tab-content">
+                  </div>
+              </div>
+          </div>
+          <style>
+          body {
+              font-family: 'Arial', sans-serif;
+              margin: 0;
+              padding: 0;
+              background-color: #c2cedc;
+          }
+
+          #button1 {
+            margin-top:8px;
+            float:right;
+            margin-right:20px;
+            padding:10px;
+          }
+
+          #button2 {
+            margin-top:8px;
+            float:right;
+            margin-right:20px;
+            padding:10px;
+          }
+          #top-space {
+              height: 60px;
+          }
+
+          #header-row {
+              background-color: #686789;
+              color: #ffffff;
+              padding: 50px;
+              display: flex;
+          }
+
+          #left-space, #right-space {
+              flex: 1;
+          }
+
+          #main-content {
+              flex: 3;
+              text-align: center;
+          }
+
+          #platform-title {
+              font-size: 30px;
+              margin-bottom: 10px;
+          }
+
+          #platform-subtitle {
+              margin-bottom: 20px;
+          }
+
+          #search-input {
+              padding: 10px;
+              border-radius: 5px;
+              border: 1px solid #ccc;
+          }
+
+          #search-button {
+              padding: 10px 15px;
+              background-color: #555;
+              border: none;
+              border-radius: 5px;
+              color: #fff;
+              cursor: pointer;
+              margin-left: 10px;
+          }
+
+          .tab-container {
+              display: flex;
+              justify-content: space-around;
+              margin-top: 50px;
+          }
+
+          .tab {
+              cursor: pointer;
+              padding: 5px 20px;
+              border: 2px solid #ccc;
+              border-radius: 5px;
+              background-color: #f4f4f4;
+          }
+
+          .tab:hover {
+              background-color: #ddd;
+          }
+
+          #image-row {
+              margin-top: 30px;
+              display: flex;
+          }
+
+          .gjs-cell {
+              flex: 1;
+              padding: 10px;
+          }
+
+          img {
+              max-width: 100%;
+              display: block;
+              margin: 0 auto;
+          }
+
+          </style>
+          `
+				  },
+          {
+					id: 't2',
+					label: '后台用户管理界面',
+					category: '原型模板',
+          media: `<img src = '/src/assets/Channel.png' style:"width=110px, height=110px">`,
+          content:`
+          <body>
+    <header>
+        <div class="logo">后台用户管理界面</div>
+        <nav>
+            <ul>
+                <li><a href="#">仪表板</a></li>
+                <li><a href="#">用户管理</a></li>
+                <li><a href="#">设置</a></li>
+                <li><a href="#">注销</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h1>用户管理</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>用户名</th>
+                    <th>邮箱</th>
+                    <th>电话</th>
+                    <th>城市</th>
+                    <th>注册日期</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>John Doe</td>
+                    <td>john@example.com</td>
+                    <td>1234567890</td>
+                    <td>北京</td>
+                    <td>2023-09-01</td>
+                    <td>
+                        <button class="edit">编辑</button>
+                        <button class="delete">删除</button>
+                        <button class="view">查看</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Jane Smith</td>
+                    <td>jane@example.com</td>
+                    <td>0987654321</td>
+                    <td>上海</td>
+                    <td>2023-08-28</td>
+                    <td>
+                        <button class="edit">编辑</button>
+                        <button class="delete">删除</button>
+                        <button class="view">查看</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Lucas Green</td>
+                    <td>lucas@example.com</td>
+                    <td>1112223334</td>
+                    <td>广州</td>
+                    <td>2023-08-20</td>
+                    <td>
+                        <button class="edit">编辑</button>
+                        <button class="delete">删除</button>
+                        <button class="view">查看</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Mary Johnson</td>
+                    <td>mary@example.com</td>
+                    <td>5556667778</td>
+                    <td>深圳</td>
+                    <td>2023-07-15</td>
+                    <td>
+                        <button class="edit">编辑</button>
+                        <button class="delete">删除</button>
+                        <button class="view">查看</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+    <style>
+    body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+}
+
+
+header {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+nav ul {
+    list-style-type: none;
+    display: flex;
+}
+
+nav ul li {
+    margin-right: 20px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+nav ul li a:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+main {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    border-bottom: 2px solid black;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.edit {
+    background-color: #3498db;
+    color: #fff;
+    transition: background-color 0.3s;
+}
+
+.edit:hover {
+    background-color: #2980b9;
+}
+
+.delete {
+    background-color: #e74c3c;
+    color: #fff;
+    transition: background-color 0.3s;
+}
+
+.delete:hover {
+    background-color: #c0392b;
+}
+
+.view {
+    background-color: #2ecc71;
+    color: #fff;
+    transition: background-color 0.3s;
+}
+
+.view:hover {
+    background-color: #27ae60;
+}
+    </style>
+          `
+				  },
+          {
+					id: 't3',
+					label: '个人博客',
+					category: '原型模板',
+          media: `<img src = '/src/assets/Kinguser.png' style:"width=110px, height=110px">`,
+          content:`
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link rel="stylesheet" href="blog-styles.css">
+            <title>我的博客</title>
+          </head>
+
+          <body>
+            <header>
+              <div class="logo">我的个人博客</div>
+              <nav>
+                <ul>
+                  <li><a href="#">首页</a></li>
+                  <li><a href="#">关于我</a></li>
+                  <li><a href="#">博客文章</a></li>
+                  <li><a href="#">联系</a></li>
+                </ul>
+              </nav>
+            </header>
+
+            <main>
+              <section class="intro">
+                <img src="/src/assets/template2.png" alt="个人照片">
+                <p>欢迎来到我的博客! 请随便看看吧！</p>
+              </section>
+              <section class="posts">
+                <article>
+                  <h2>博客标题1</h2>
+                  <p>这里是博客摘要。点击阅读更多...</p>
+                  <footer>
+                    <span>发布于 2023-09-01</span>
+                    <a href="#">阅读更多</a>
+                  </footer>
+                </article>
+                <article>
+                  <h2>博客标题2</h2>
+                  <p>这里是博客摘要。点击阅读更多...</p>
+                  <footer>
+                    <span>发布于 2023-08-25</span>
+                    <a href="#">阅读更多</a>
+                  </footer>
+                </article>
+                <!-- 更多博客文章... -->
+              </section>
+            </main>
+            <footer>
+            </footer>
+          </body>
+
+          <style>
+          a {
+            color: #fff;
+            margin-left: 10px;
+          }
+          body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fffed7;
+            color: #333;
+          }
+          header {
+            background-color: #e5e2b9;
+            color: #fff;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+          .logo {
+            font-size: 28px;
+            font-weight: bold;
+          }
+          nav ul {
+            list-style-type: none;
+            display: flex;
+            gap: 20px;
+          }
+          nav ul li a {
+            text-decoration: none;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+          }
+          nav ul li a:hover {
+            background-color: #3a4750;
+          }
+          main {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+          }
+          .intro {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          }
+          .intro img {
+            max-width: 150px;
+            border-radius: 50%;
+          }
+          .posts article {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+          }
+          h2 {
+            color: #1b262c;
+            margin-top: 0;
+          }
+          footer {
+            background-color: #e5e2b9;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+          }
+          </style>
+        `
+				  },
+				  {
+					id: 't4',
+					label: '计划清单',
+					category: '原型模板',
+          media: `<img src = '/src/assets/Zhishifabu.png' style:"width=110px, height=110px">`,
+          content:`
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link rel="stylesheet" href="styles.css">
+            <title>计划清单</title>
+        </head>
+
+        <body>
+            <header>
+                <h1>我的计划清单</h1>
+            </header>
+
+            <main>
+                <section class="todo-section">
+                    <div id="todo-inputs">
+                        <input type="text" id="new-todo" placeholder="新任务...">
+                        <textarea id="description" placeholder="任务描述..."></textarea>
+                        <input type="date" id="due-date">
+                        <button id="add-button">添加</button>
+                    </div>
+
+                    <ul id="todo-list">
+                        <li>
+                            <input type="checkbox">
+                            <div>
+                                <strong>学习CSS</strong>
+                                <p>学习关于Flexbox和Grid的基本知识。</p>
+                                <small>到期日: 2023-09-15</small>
+                            </div>
+                        </li>
+                        <li>
+                            <input type="checkbox">
+                            <div>
+                                <strong>完成项目报告</strong>
+                                <p>为下周的会议完成关于项目进展的报告。</p>
+                                <small>到期日: 2023-09-10</small>
+                            </div>
+                        </li>
+                    </ul>
+                </section>
+            </main>
+        </body>
+        <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+            color: #333;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: #ffffff;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        main {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .todo-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #todo-inputs {
+            width: 80%;
+        }
+
+        #new-todo, #description, #due-date {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        #description {
+            height: 80px;
+            resize: vertical;
+        }
+
+        #add-button {
+            padding: 10px 20px;
+            margin-top: 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #add-button:hover {
+            background-color: #45a049;
+        }
+
+        #todo-list {
+            list-style-type: none;
+            width: 80%;
+            margin-top: 20px;
+            padding: 0;
+        }
+
+        #todo-list li {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        #todo-list li:last-child {
+            border-bottom: none;
+        }
+
+        strong {
+            font-size: 18px;
+        }
+
+        small {
+            display: block;
+            margin-top: 10px;
+            color: #777;
+        }
+
+        footer {
+            background-color: #4CAF50;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+        </style>
+          `
+				  },
+				  {
+					id: 't5',
+					label: '线上商城',
+					category: '原型模板',
+          media: `<img src = '/src/assets/zixun-zhuanti.png' style:"width=110px, height=110px">`,
+          content:`
+        <body>
+            <header>
+                <div class="logo">MyShop</div>
+                <nav>
+                    <ul>
+                        <li><a href="#">首页</a></li>
+                        <li><a href="#">商品分类</a></li>
+                        <li><a href="#">热销商品</a></li>
+                        <li><a href="#">关于我们</a></li>
+                        <li><a href="#">联系方式</a></li>
+                    </ul>
+                </nav>
+                <div class="cart">
+                    <a href="#"><svg t="1693569366497" class="icon" viewBox="0 0 1028 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2624" width="32" height="32"><path d="M332.8 790.528q19.456 0 36.864 7.168t30.208 19.968 20.48 30.208 7.68 36.864-7.68 36.864-20.48 30.208-30.208 20.48-36.864 7.68q-20.48 0-37.888-7.68t-30.208-20.48-20.48-30.208-7.68-36.864 7.68-36.864 20.48-30.208 30.208-19.968 37.888-7.168zM758.784 792.576q19.456 0 37.376 7.168t30.72 19.968 20.48 30.208 7.68 36.864-7.68 36.864-20.48 30.208-30.72 20.48-37.376 7.68-36.864-7.68-30.208-20.48-20.48-30.208-7.68-36.864 7.68-36.864 20.48-30.208 30.208-19.968 36.864-7.168zM930.816 210.944q28.672 0 44.544 7.68t22.528 18.944 6.144 24.064-3.584 22.016-13.312 37.888-22.016 62.976-23.552 68.096-18.944 53.248q-13.312 40.96-33.28 56.832t-49.664 15.872l-35.84 0-65.536 0-86.016 0-96.256 0-253.952 0 14.336 92.16 517.12 0q49.152 0 49.152 41.984 0 20.48-9.728 35.84t-38.4 14.336l-49.152 0-94.208 0-118.784 0-119.808 0-99.328 0-55.296 0q-20.48 0-34.304-9.216t-23.04-24.064-14.848-32.256-8.704-32.768q-1.024-6.144-5.632-29.696t-11.264-58.88-14.848-78.848-16.384-87.552q-19.456-103.424-44.032-230.4l-76.8 0q-15.36 0-25.6-7.68t-16.896-18.432-9.216-23.04-2.56-22.528q0-20.48 13.824-33.792t37.376-12.288l103.424 0q20.48 0 32.768 6.144t19.456 15.36 10.24 18.944 5.12 16.896q2.048 8.192 4.096 23.04t4.096 30.208q3.072 18.432 6.144 38.912l700.416 0zM892.928 302.08l-641.024-2.048 35.84 185.344 535.552 1.024z" p-id="2625" fill="#ffffff"></path></svg></a>
+                </div>
+            </header>
+
+            <main>
+                <section class="product-section">
+                    <!-- Sample products. You can add more similar structures -->
+                    <article class="product">
+                        <img src="/src/assets/shopping1.png" alt="商品1">
+                        <h3>商品1</h3>
+                        <p>简洁的商品描述1</p>
+                        <span class="price">$19.99</span>
+                        <button class="add-to-cart">添加到购物车</button>
+                    </article>
+
+                    <article class="product">
+                        <img src="/src/assets/shopping2.png" alt="商品2">
+                        <h3>商品2</h3>
+                        <p>美观的商品描述2</p>
+                        <span class="price">$24.99</span>
+                        <button class="add-to-cart">添加到购物车</button>
+                    </article>
+
+                    <article class="product">
+                        <img src="/src/assets/shopping3.png" alt="商品3">
+                        <h3>商品3</h3>
+                        <p>优雅的商品描述3</p>
+                        <span class="price">$29.99</span>
+                        <button class="add-to-cart">添加到购物车</button>
+                    </article>
+
+                    <article class="product">
+                        <img src="/src/assets/shopping4.png" alt="商品4">
+                        <h3>商品4</h3>
+                        <p>古典的商品描述4</p>
+                        <span class="price">$14.99</span>
+                        <button class="add-to-cart">添加到购物车</button>
+                    </article>
+
+                    <article class="product">
+                        <img src="/src/assets/shopping5.png" alt="商品5">
+                        <h3>商品5</h3>
+                        <p>动感的商品描述5</p>
+                        <span class="price">$34.99</span>
+                        <button class="add-to-cart">添加到购物车</button>
+                    </article>
+
+                    <article class="product">
+                        <img src="/src/assets/shopping6.png" alt="商品6">
+                        <h3>商品6</h3>
+                        <p>流畅的商品描述6</p>
+                        <span class="price">$44.99</span>
+                        <button class="add-to-cart">添加到购物车</button>
+                    </article>
+                </section>
+            </main>
+        </body>
+        <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        header {
+            background-color: #b57c82;
+            color: #ecf0f1;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        nav ul {
+            list-style-type: none;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-right: 25px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #ecf0f1;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #bdc3c7;
+        }
+
+        .cart img {
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+        }
+
+        main {
+            max-width: 1200px;
+
+            padding: 20px;
+        }
+
+        .product-section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .product {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .product:hover {
+            transform: translateY(-10px);
+        }
+
+        .product img {
+            max-width: 250px;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .product h3 {
+            font-size: 20px;
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        .product p {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+
+        .price {
+            font-size: 20px;
+            color: #724e52;
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        .add-to-cart {
+            padding: 10px 20px;
+            background-color: #ecced0;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .add-to-cart:hover {
+            background-color: #2980b9;
+        }
+
+        footer {
+            background-color: #34495e;
+            color: #ecf0f1;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 60px;
+        }
+
+        </style>
+        `
+				  }
+          ]
+        },
 				assetManager: [],//预加载资产，图片/图标等
 				plugins: [
-					Plugin, 
-					BasicPlugin, 
-					ExportPlugin, 
+					Plugin,
+					BasicPlugin,
+					ExportPlugin,
 					Tabs,
 					Tooltip,
 					CodePlugin,
 					Countdown,
 					gjsForms,
 					Type,
+					Navbar,
 					ScriptPlugin
 				],
 				pluginsOpts: {
+          [Plugin]: {
+            category: '基础组件'
+          },
 					[BasicPlugin]: {
-						blocks:[]
+						blocks:['quote', 'text-basic'],
+            block:() => ({category: '基础组件'})
 					},
+          [Navbar]: {
+            block: {category: '进阶组件'}
+          },
+          [Countdown]: {
+            block: {category: '进阶组件'}
+          },
+          [Tooltip]: {
+            blockTooltip: {category: '进阶组件'}
+          },
+          [CodePlugin]: {
+            blockCustomCode: {category: '进阶组件'}
+          },
 					[ExportPlugin]: {
 						addExportBtn: true,
 						btnLabel: '导出项目文件ZIP',
@@ -341,14 +1225,17 @@ export default {
 					},
 					[Type]: {
 						block: {
-							category: 'Extra'
+							category: '进阶组件'
 						}
 					},
 					[Tabs]: {
 						tabsBlock: {
-							category: 'Extra'
+							category: '进阶组件'
 						}
 					},
+          [gjsForms]: {
+            category: '表单组件'
+          }
 				},
 				styleManager: [],
 				storageManager: {
@@ -364,7 +1251,7 @@ export default {
 							// urlStore: `http://localhost:3000/projects/1`,
 							// The `remote` storage uses the POST method when stores data but
 							// the json-server API requires PATCH.
-							fetchOptions: opts => (opts.method === 'POST' ? { method: 'PATCH' } : {}),
+							// fetchOptions: opts => (opts.method === 'POST' ? { method: 'PATCH' } : {}),
 							// As the API stores projects in this format `{id: 1, data: projectData }`,
 							// we have to properly update the body before the store and extract the
 							// project data from the response result.
@@ -387,15 +1274,18 @@ export default {
 								}
 							},
 							onLoad: result => {
-								this.Devices = result.Devices
+	
+								// this.Devices = result.Devices
 								this.canvasHeight = result.size.height
 								this.canvasWidth = result.size.width
+								console.log(result)
 								return result.data
 							}
 
 						}
-					},
-				}
+					}
+				},
+				// }
 				// blockManager: true
 				// blockManager: {
 				// 	appendTo: '#blocks',
@@ -439,12 +1329,16 @@ export default {
 				this.editor.BlockManager.add('testBlock', {
 					id: 'block',
 					label: 'Block',
-					category: 'Basic',
+					category: '基础组件',
 					media: '<svg t="1693317219863" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1506" width="100%" height="100%"><path d="M960 392.078222a98.602667 98.602667 0 0 1-98.588444 98.588445H148.366222A98.602667 98.602667 0 0 1 49.777778 392.078222V148.366222A98.602667 98.602667 0 0 1 148.366222 49.777778h713.059556a98.602667 98.602667 0 0 1 98.588444 98.588444v243.712z m-56.888889-243.712A41.699556 41.699556 0 0 0 861.411556 106.666667H148.366222A41.699556 41.699556 0 0 0 106.666667 148.366222v243.726222a41.699556 41.699556 0 0 0 41.699555 41.699556h713.059556a41.699556 41.699556 0 0 0 41.699555-41.699556V148.366222z" fill="#c71d23" p-id="1507"></path><path d="M163.555556 277.333333a14.222222 14.222222 0 0 1-14.222223-14.222222v-25.628444c0-36.352 17.720889-73.927111 56.32-73.927111h94.776889a14.222222 14.222222 0 1 1 0 28.444444H205.653333c-20.792889 0-27.875556 23.125333-27.875555 45.482667V263.111111a14.222222 14.222222 0 0 1-14.222222 14.222222zM152.092444 326.115556c-3.697778 0-7.409778-1.564444-10.097777-4.124445-2.702222-2.688-4.124444-6.4-4.124445-10.097778s1.422222-7.395556 4.124445-10.097777c5.404444-5.404444 14.791111-5.262222 20.053333 0 2.688 2.702222 4.266667 6.4 4.266667 10.097777s-1.564444 7.409778-4.124445 9.955556c-2.844444 2.688-6.4 4.266667-10.097778 4.266667zM661.333333 875.633778a98.602667 98.602667 0 0 1-98.588444 98.588444H148.366222A98.602667 98.602667 0 0 1 49.777778 875.633778V631.921778a98.602667 98.602667 0 0 1 98.588444-98.588445h414.392889a98.602667 98.602667 0 0 1 98.588445 98.588445v243.712z m-56.888889-243.712a41.699556 41.699556 0 0 0-41.699555-41.699556H148.366222A41.699556 41.699556 0 0 0 106.666667 631.921778v243.726222a41.699556 41.699556 0 0 0 41.699555 41.699556h414.392889a41.699556 41.699556 0 0 0 41.699556-41.699556V631.921778z" fill="#c71d23" p-id="1508"></path><path d="M974.222222 875.633778a98.602667 98.602667 0 0 1-98.588444 98.588444h-73.059556a98.602667 98.602667 0 0 1-98.588444-98.588444V631.921778a98.602667 98.602667 0 0 1 98.588444-98.588445h73.059556a98.602667 98.602667 0 0 1 98.588444 98.588445v243.712z m-56.888889-243.712a41.699556 41.699556 0 0 0-41.699555-41.699556h-73.059556a41.699556 41.699556 0 0 0-41.699555 41.699556v243.726222a41.699556 41.699556 0 0 0 41.699555 41.699556h73.059556a41.699556 41.699556 0 0 0 41.699555-41.699556V631.921778z" fill="#c71d23" p-id="1509"></path></svg>',
 					attributes: { class: 'gjs-fonts gjs-f-b1', title: 'hello' },
 					content: `<div style="text-align:center"><span>Hello World</span></div>`
 				})
 			}
+		},
+		//提供项目原型模板
+		addTemplate() {
+
 		},
 		exportAsImage() {
 			let node = document.createElement('div')
@@ -493,11 +1387,14 @@ export default {
 </script>
 
 <style scoped>
+#gjs * {
+  font-family: sans-serif !important;
+}
 #gjs {
 	margin: 0 auto;
 	display: inline-block;
-	--frame-height: 1080px;
-	--frame-width: 1920px;
+	/* --frame-height: 1080px;
+	 --frame-width: 1920px; */
 }
 
 :deep(.gjs-one-bg) {
@@ -546,8 +1443,16 @@ export default {
 
 :deep(.gjs-cv-canvas) {
 	overflow: auto;
+  box-sizing: border-box;
+    width: 80%;
+    height: calc(100% - 40px);
+    bottom: 0;
+    overflow: hidden;
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    top: 40px;
 }
-
 :deep(.gjs-pn-devices-c .gjs-pn-btn) {
 	display: none;
 }
@@ -564,53 +1469,55 @@ export default {
 
 
 :deep(.gjs-pn-btn:hover) {
-	background:rgb(199,29,35);
-	color:#ddd;
+	background: rgb(199, 29, 35);
+	color: #ddd;
 }
 
 :deep(.cm-s-hopscotch.CodeMirror) {
 	background-color: white;
 	color: black;
 }
+
 :deep(.cm-s-hopscotch .CodeMirror-gutters) {
-    background: #eee;
-    border-right: 0px;
+	background: #eee;
+	border-right: 0px;
 }
+
 :deep(.gjs-cm-editor#gjs-cm-css #gjs-cm-title) {
-    color: #804f7b;
+	color: #804f7b;
 }
 
 :deep(.CodeMirror) {
-    font-family: consolas;
-    height: 300px;
-    color: black;
-    direction: ltr;
+	font-family: consolas;
+	height: 300px;
+	color: black;
+	direction: ltr;
 }
 
 :deep(.gjs-layer-name) {
-    padding: 8px 0;
-    display: inline-block;
-    box-sizing: content-box;
-    overflow: hidden;
-    white-space: nowrap;
-    margin: 0 30px 0 15px;
-    max-width: 170px;
+	padding: 8px 0;
+	display: inline-block;
+	box-sizing: content-box;
+	overflow: hidden;
+	white-space: nowrap;
+	margin: 0 30px 0 15px;
+	max-width: 170px;
 }
 
 :deep(.gjs-layer-vis) {
-    left: 0;
-    top: 0;
-    padding: 7px 10px 7px 10px;
-    position: absolute;
-    box-sizing: content-box;
-    cursor: pointer;
-    width: 20px;
-    z-index: 1;
+	left: 0;
+	top: 0;
+	padding: 7px 10px 7px 10px;
+	position: absolute;
+	box-sizing: content-box;
+	cursor: pointer;
+	width: 20px;
+	z-index: 1;
 }
 
-#size-setter{
-	height:30px;
-	display:inline-block;
+#size-setter {
+	height: 30px;
+	display: inline-block;
 }
 
 #size-setter svg {
@@ -648,7 +1555,19 @@ export default {
 	background: none;
 	transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s;
 }
-#size-setter button:hover{
+
+#size-setter button:hover {
+	background: #c71d23;
+}
+
+.selected-device svg {
+	fill: white;
+	background: #c71d23;
+	box-shadow: #c71d23 0 0 3px;
+}
+
+.unselected-device svg:hover {
+	fill: white;
 	background: #c71d23;
 }
 
@@ -663,10 +1582,10 @@ export default {
 
 .unselected-device svg {
 	fill: #c71d23;
+	transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s;
 
 }
-
 .sharebutton {
 	margin-left: 20px;
 }
-</style>
+</style> 

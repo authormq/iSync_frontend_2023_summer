@@ -27,8 +27,8 @@
 
       <!-- 文件夹列表 -->
       <div 
-        class="prevent-bug"
         v-for="(folder, index) in folderList" :key="folder.id" @click="changeToFolder(folder)"
+        class="folder-item"
         @drop="dropIntoFolder(folder.id); unhighlightFolder(index)"
         @dragover="allowDrop"
         @dragenter="highlightFolder(index)"
@@ -51,42 +51,10 @@
         draggable="true"
         @dragstart="docBeDragged($event, doc.id)"
         @drag="scrollParent"
+        @dragend="docEndBeingDragged"
       >
         <DocListItem :doc="doc"/>
       </div>
-      <!-- ======== 测试滚动用，应该注释 ======== -->
-      <div 
-        v-for="doc in docList" 
-        :key="doc.id" 
-        @click="$router.push(`/doc/${doc.id}`)" 
-        draggable="true"
-        @dragstart="docBeDragged($event, doc.id)"
-        @drag="scrollParent"
-      >
-        <DocListItem :doc="doc"/>
-      </div>
-      <div 
-        v-for="doc in docList" 
-        :key="doc.id" 
-        @click="$router.push(`/doc/${doc.id}`)" 
-        draggable="true"
-        @dragstart="docBeDragged($event, doc.id)"
-        @drag="scrollParent"
-      >
-        <DocListItem :doc="doc"/>
-      </div>
-      <div 
-        v-for="doc in docList" 
-        :key="doc.id" 
-        @click="$router.push(`/doc/${doc.id}`)" 
-        draggable="true"
-        @dragstart="docBeDragged($event, doc.id)"
-        @drag="scrollParent"
-      >
-        <DocListItem :doc="doc"/>
-      </div>
-      <!-- ======== 测试滚动用，应该注释 ======== -->
-      
       
     </template>
 
@@ -246,7 +214,11 @@ export default {
       const start = e.target.getBoundingClientRect().bottom
       const top = this.$refs.list.getBoundingClientRect().top
       this.scrollDis = (start - top) * 0.05
-    },
+      const folders = document.getElementsByClassName('folder-item')
+      for (let i = 0; i < folders.length; i++) {
+        folders[i].classList.add('prevent-bug')
+      }
+   },
     // 获取文件夹的 id，调用接口，并刷新列表
     dropIntoFolder(id) {
       this.folderId = id
@@ -267,6 +239,12 @@ export default {
             this.$bus.emit('message', { title: '移动文件失败', content: '', time: 1000 })
           }
         )
+      }
+    },
+    docEndBeingDragged() {
+      const folders = document.getElementsByClassName('folder-item')
+      for (let i = 0; i < folders.length; i++) {
+        folders[i].classList.remove('prevent-bug')
       }
     },
     // 阻止默认行为

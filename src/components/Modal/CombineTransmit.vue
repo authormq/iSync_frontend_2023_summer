@@ -8,13 +8,23 @@
         <CloseIcon :size="30"></CloseIcon>
       </div>
     </div>
+    <div class="container-info">
+      <div v-if="combineMessageList[0].isPravite">
+        来自与 {{ groupName }} 的聊天
+      </div>
+      <div v-else>
+        来自群聊： {{ combineMessageList[0].groupName }}
+      </div>
+    </div>
     <div class="container-body">
       <div v-for="message in combineMessageList" :key="message.id">
-        <img style="height: 10px;" :src="message.avatar">
         <div>
-          {{ message.time }}
-          {{ message.username }}
-          {{ message.content }}
+          <img class="user-avatar" :src="message.avatar">
+          <div>
+            {{ message.time }}
+            {{ message.username }}
+            {{ message.content }}
+          </div>
         </div>
       </div>
     </div>
@@ -32,6 +42,11 @@ export default {
     handleClose() {
       this.$emit('close')
     }
+  },
+  computed: {
+    groupName() {
+      return this.combineMessageList[0].groupName.replace(this.$cookies.get('username'), '')
+    }
   }
 }
 </script>
@@ -41,13 +56,25 @@ export default {
   justify-content: space-between;
   align-items: center;
   height: 50px;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
 }
 
 .header-title {
   font-size: 30px;
   font-weight: bold;
-  padding-left: 70px;
+  padding-left: 130px;
   color: rgba(199, 29, 35, 1);
+}
+
+.container-info {
+  font-size: 15px;
+  font-weight: bold;
+  text-align: center;
+  color: gray;
+  margin-bottom: 15px;
+}
+
+.user-avatar {
+  height: 40px;
 }
 </style>

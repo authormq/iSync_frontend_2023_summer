@@ -850,12 +850,15 @@ export default {
 		},
 
 		showCombinedMessages(messages) {
+			console.log(messages);
 			this.combinedMessage = messages.map((message) => ({
 				id: message.id,
 				avatar: message.sender.user.avatar,
 				username: message.sender.user.username,
 				time: message.create_datetime,
-				content: message.text_content
+				content: message.text_content,
+				isPravite: message.group_is_private,
+				groupName: message.group_name
 			}))
 			this.combinedMessage.sort((a, b) => a.id - b.id)
 			this.showCombinedmessageModal = true

@@ -10,9 +10,6 @@
 			@delete-message="deleteMessage($event.detail[0])" @fetch-messages="fetchMessages($event.detail[0])"
 			@search-room="searchRoom($event.detail[0])" @open-file="openFile($event.detail[0])" @add-room="addRoom"
 			@message-selection-action-handler="messageSelectionActionHandler($event.detail[0])">
-			<!-- <div v-for="(message, index) in messages" :slot="'message_' + message._id" :key="index">
- 				<div>hahaha{{ message.content }}</div>
-			</div> -->
 		</vue-advanced-chat>
 		<CreateGroupRoom :show="showCreateRoomModal" @close="showCreateRoomModal = false"></CreateGroupRoom>
 		<TransmitMessage :show="showTransmitMessageModal" :transmitType="transmitType" :rooms="rooms"

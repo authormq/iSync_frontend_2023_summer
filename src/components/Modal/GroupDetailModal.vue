@@ -18,7 +18,7 @@
       <button @click="clickSearchRecordModal">
         查找聊天记录
       </button>
-      <button>
+      <button @click="handleQuitGroup">
         退出群聊
         退出群聊的时候最好还是有一个确认框比较好
       </button>
@@ -92,6 +92,24 @@ export default {
     clickSearchRecordModal() {
       this.$bus.emit('fetchAllMessages')
       this.showSearchRecordModal = true
+    },
+    handleQuitGroup() {
+      this.$http.delete(`/api/groups/${this.groupId}/quit/`).then(
+        response => {
+          this.$bus.emit('message', {
+            title: '退出群聊成功',
+            content: '',
+            time: 2000
+          })
+        },
+        error => {
+          this.$bus.emit('message', {
+            title: '退出群聊失败',
+            content: '',
+            time: 2000
+          })
+        }
+      )
     }
   }
 }

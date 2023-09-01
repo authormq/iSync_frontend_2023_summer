@@ -31,9 +31,11 @@
                 {{ message.time }}
               </div>
             </div>
-            <div class="message-content">
-              <!-- {{ message.content }} -->
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Fugit autem nulla id. Optio, ipsam. Recusandae repudiandae alias ipsum earum, numquam quis laboriosam aspernatur mollitia nobis pariatur beatae rerum consectetur? Veniam maiores libero excepturi iure itaque ut voluptate ab et sit aliquid voluptatem quae soluta delectus ipsum, obcaecati facilis tenetur sint! Expedita nemo deserunt odit molestias quod officia hic non, perferendis pariatur suscipit cum rem doloribus sit veniam similique voluptatem debitis totam dolores consequatur laudantium? Molestiae est perspiciatis porro dolorum soluta dolores consequatur animi illo modi corporis explicabo inventore eaque necessitatibus itaque recusandae quis laboriosam, voluptates tempora aliquam dicta voluptas tempore.
+            <div class="message-content" v-if="!message.isCombined">
+              {{ message.content }}
+            </div>
+            <div class="message-content" v-else @click="this.$bus.emit('showCombinedMessageRequest', message.id)">
+              {{ message.content }}
             </div>
           </div>
         </div>

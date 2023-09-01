@@ -252,6 +252,7 @@ export default {
 		this.$bus.on('fetchAllMessages', () => this.fetchAllMessages())
 		this.$bus.on('scrollToMessage', messageId => this.scrollToMessage(messageId))
 		this.$bus.on('forwardMessages', transmitList => this.forwardMessages(transmitList))
+		this.$bus.on('showCombinedMessageRequest', messageId => this.showCombinedMessages(messageId))
 
 		this.$refs.chat.shadowRoot.appendChild(style)
 		// const newHTML = this.$refs.chat.shadowRoot.innerHTML.replace('placeholder="Search"', 'placeholder="检索"')
@@ -283,7 +284,6 @@ export default {
 			showTransmitMessageModal: false,
 			showCombinedmessageModal: false,
 			combineTransmitInstances: [],
-			combinedMessage: [],
 			transmitType: '',
 			ws: [],
 			currentUserId: '',
@@ -853,25 +853,28 @@ export default {
 			if (this.$refs.chat) {
 				const doc = this.$refs.chat.shadowRoot
 				const msg = doc.querySelector(`#messages-list>div>div>span>div:nth-child(${i + 1})`)
-				console.log(this.messages[i].forwardMessages)
-				msg.onclick = () => this.showCombinedMessages(this.messages[i].forwardMessages)
+				//console.log(this.messages[i].forwardMessages)
+				msg.onclick = () => this.showCombinedMessages(this.messages[i]._id)
 			}
 		},
 
-		showCombinedMessages(messages) {
-			console.log(messages);
-			this.combinedMessage = messages.map((message) => ({
-				id: message.id,
-				avatar: message.sender.user.avatar,
-				username: message.sender.user.username,
-				time: message.create_datetime,
-				content: message.text_content,
-				isPravite: message.group_is_private,
-				groupName: message.group_name
-			}))
-			this.combinedMessage.sort((a, b) => a.id - b.id)
-			// this.showCombinedmessageModal = true
-			this.openNewCombineTransmit(this.combinedMessage)
+		showCombinedMessages(messageId) {
+			this.$http.get(`/api/groups/messages/${messageId}/`).then((response) => {
+				const combinedMessage = response.data.forward_messages.map((message) => ({
+					id: message.id,
+					avatar: message.sender.user.avatar,
+					username: message.sender.user.username,
+					time: message.create_datetime,
+					content: message.text_content,
+					isPravite: message.group_is_private,
+					groupName: message.group_name,
+					isCombined: message.forward_messages.length == 0 ? false : true
+				}))
+				combinedMessage.sort((a, b) => a.id - b.id)
+				console.log(combinedMessage)
+				// this.showCombinedmessageModal = true
+				this.openNewCombineTransmit(combinedMessage)
+			})
 		},
 		// 打开一个合并转发消息的模态框
 		openNewCombineTransmit(message) {

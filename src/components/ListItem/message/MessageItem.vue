@@ -25,9 +25,10 @@
       </div>
     </div>
     <div class="bottom" @click="jump">
-      {{ msg.content }}
+      <div>{{ msg.content }}</div>
+      <div class="botton-info">「点击可以跳转到@位置」</div>
     </div>
-    <div>
+    <div class="from-info">
       {{ showFrom }}
     </div>
   </div>
@@ -64,9 +65,9 @@ export default {
     },
     showFrom() {
       if (this.msg.isGroup) {
-        return '来自群聊: ' + this.msg.teamName
+        return '来自群聊:「' + this.msg.teamName + '」'
       } else {
-        return '来自团队: ' + this.msg.teamName + ' 的项目文档: ' + this.msg.fileName
+        return '来自团队:「' + this.msg.teamName + '」的项目文档:《 ' + this.msg.fileName + ' 》'
       }
     }
   }
@@ -153,5 +154,16 @@ export default {
 
 .bottom {
   padding: 5px;
+  cursor: pointer;
+}
+
+.botton-info {
+  font-size: 10px;
+  color: gray;
+}
+.from-info {
+  margin-top: 10px;
+  font-size: 17px;
+  font-weight: bold;
 }
 </style>

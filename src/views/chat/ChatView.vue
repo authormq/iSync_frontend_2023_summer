@@ -15,6 +15,7 @@
 		<CreateGroupRoom :show="showCreateRoomModal" @close="showCreateRoomModal = false"></CreateGroupRoom>
 		<TransmitMessage :show="showTransmitMessageModal" :transmitType="transmitType" :rooms="rooms"
 			@close="showTransmitMessageModal = false"></TransmitMessage>
+		<CombineTransmit :show="showCombinedmessageModal" :combineMessageList="combinedMessage" @close="showCombinedmessageModal = false"></CombineTransmit>
 	</div>
 </template>
 
@@ -22,12 +23,13 @@
 import { register } from 'vue-advanced-chat'
 import CreateGroupRoom from '../../components/Modal/CreateGroupRoom.vue'
 import TransmitMessage from '../../components/Modal/TransmitMessage.vue'
+import CombineTransmit from '../../components/Modal/CombineTransmit.vue'
 // import  ChatWindow  from 'vue-advanced-chat'
 register()
 export default {
 	name: 'ChatView',
 	// components: { ChatWindow },
-	components: { CreateGroupRoom, TransmitMessage },
+	components: { CreateGroupRoom, TransmitMessage, CombineTransmit },
 	mounted() {
 		this.currentUserId = this.$cookies.get('user_id')
 		this.roomsLoaded = false
@@ -276,6 +278,8 @@ export default {
 		return {
 			showCreateRoomModal: false,
 			showTransmitMessageModal: false,
+			showCombinedmessageModal: false,
+			combinedMessage: [],
 			transmitType: '',
 			ws: [],
 			currentUserId: '',
@@ -851,7 +855,18 @@ export default {
 		},
 
 		showCombinedMessages(messages) {
-			alert('show')
+			console.log(messages);
+			this.combinedMessage = messages.map((message) => ({
+				id: message.id,
+				avatar: message.sender.user.avatar,
+				username: message.sender.user.username,
+				time: message.create_datetime,
+				content: message.text_content,
+				isPravite: message.group_is_private,
+				groupName: message.group_name
+			}))
+			this.combinedMessage.sort((a, b) => a.id - b.id)
+			this.showCombinedmessageModal = true
 		}
 	}
 }

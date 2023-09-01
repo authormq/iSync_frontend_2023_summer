@@ -51,7 +51,7 @@ export default {
 
     jump() {
       if (this.msg.teamId != null) {
-        this.$router.push(`/team/${this.msg.teamId}/chat/?message=${this.msg.msgId}`)
+        this.$router.push(`/team/${this.msg.teamId}/chat/?groupId=${this.msg.groupId}&messageId=${this.msg.messageId}`)
       }
       else {
         this.$router.push(`/doc/${this.msg.fileId}`)

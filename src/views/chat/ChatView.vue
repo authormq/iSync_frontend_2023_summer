@@ -441,7 +441,8 @@ export default {
 						size: message.file_content.size,
 						url: message.file_content.url,
 						type: message.file_content.name.split('.')[1]
-					}]
+					}],
+					forwardMessages: message.forward_messages
 				})).reverse()
 				if (options.reset) {
 					this.messages = messages
@@ -449,6 +450,13 @@ export default {
 				else {
 					this.messages = [...messages, ...this.messages]
 				}
+				setTimeout(() => {
+					for (let i = 0; i < this.messages.length; i++) {
+						if (this.messages[i].forwardMessages.length != 0) {
+							this.loadCombinedMessages(i)
+						}
+					}
+				}, 1000);
 			})
 		},
 
@@ -738,41 +746,47 @@ export default {
 						size: message.file_content.size,
 						url: message.file_content.url,
 						type: message.file_content.name.split('.')[1]
-					}]
+					}],
+					forwardMessages: message.forward_messages
 				})).reverse()
 				this.messagesLoaded = true
+				setTimeout(() => {
+					for (let i = 0; i < this.messages.length; i++) {
+						if (this.messages[i].forwardMessages.length != 0) {
+							this.loadCombinedMessages(i)
+						}
+					}
+				}, 1000);
 			})
 		},
 
 		scrollToMessage(messageId) {
-			this.$nextTick(() => {
-				setTimeout(() => {
-					let i = 0
-					for (; i < this.messages.length; i++) {
-						if (this.messages[i]._id == messageId) {
-							break
-						}
+			setTimeout(() => {
+				let i = 0
+				for (; i < this.messages.length; i++) {
+					if (this.messages[i]._id == messageId) {
+						break
 					}
-					i++
-					console.log(i)
-					if (this.$refs.chat) {
-						const doc = this.$refs.chat.shadowRoot
-						const container = doc.querySelector('#messages-list')
-						const msg = doc.querySelector(`#messages-list>div>div>span>div:nth-child(${i})`)
-						if (container && msg) {
-							// console.log('msg: ', msg.getBoundingClientRect().top, msg.getBoundingClientRect().bottom)
-							// console.log('con: ', container.getBoundingClientRect().top, container.getBoundingClientRect().bottom)
-							// console.log('@@@: ', container.scrollTop)
-							const height = msg.getBoundingClientRect().bottom - msg.getBoundingClientRect().top
-							container.scrollTo({
-								top: container.scrollTop + msg.getBoundingClientRect().top - 396.7 + height / 2,
-								left: 0,
-								behavior: 'smooth'
-							})
-						}
+				}
+				i++
+				console.log(i)
+				if (this.$refs.chat) {
+					const doc = this.$refs.chat.shadowRoot
+					const container = doc.querySelector('#messages-list')
+					const msg = doc.querySelector(`#messages-list>div>div>span>div:nth-child(${i})`)
+					if (container && msg) {
+						// console.log('msg: ', msg.getBoundingClientRect().top, msg.getBoundingClientRect().bottom)
+						// console.log('con: ', container.getBoundingClientRect().top, container.getBoundingClientRect().bottom)
+						// console.log('@@@: ', container.scrollTop)
+						const height = msg.getBoundingClientRect().bottom - msg.getBoundingClientRect().top
+						container.scrollTo({
+							top: container.scrollTop + msg.getBoundingClientRect().top - 396.7 + height / 2,
+							left: 0,
+							behavior: 'smooth'
+						})
 					}
-				});
-			})
+				}
+			}, 6000);
 		},
 
 		selectRoom(roomId) {
@@ -819,6 +833,20 @@ export default {
 					this.showTransmitMessageModal = true
 					break
 			}
+		},
+
+		loadCombinedMessages(i) {
+			// #\35 07 > div > div.vac-message-container > div > div.vac-format-message-wrapper > div > div > span
+			if (this.$refs.chat) {
+				const doc = this.$refs.chat.shadowRoot
+				const msg = doc.querySelector(`#messages-list>div>div>span>div:nth-child(${i+1})`)
+				console.log(this.messages[i].forwardMessages)
+				msg.onclick = () => this.showCombinedMessages(this.messages[i].forwardMessages)
+			}
+		},
+
+		showCombinedMessages(messages) {
+			alert('show')
 		}
 	}
 }

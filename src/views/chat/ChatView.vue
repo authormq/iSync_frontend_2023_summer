@@ -1,7 +1,6 @@
 <!-- 聊天详情页 -->
 <template>
 	<div>
-		<!-- <vue-advanced-chat -->
 		<vue-advanced-chat ref="chat" theme="light" height="calc(100vh - 90px)" :styles="JSON.stringify(styles)"
 			:current-user-id="currentUserId" :rooms="JSON.stringify(rooms)" :rooms-loaded="roomsLoaded"
 			:messages="JSON.stringify(messages)" :messages-loaded="messagesLoaded" :custom-search-room-enabled="true"
@@ -218,8 +217,11 @@ export default {
 			}
 
 			/* header 右边的 ··· */
+			.vac-room-header {
+				--header-content: '···';
+			}
 			.vac-room-header::before {
-				content: '···' !important;
+				content: var(--header-content) !important;
 				position: absolute !important;
 				right: 10px !important;
 				font-size: 20px !important;
@@ -385,6 +387,7 @@ export default {
 		},
 
 		showGroupInfo(e) {
+			e.stopPropagation()
 			const x = e.clientX
 			const y = e.clientY
 			let doc = null
@@ -396,7 +399,9 @@ export default {
 				const right = header.getBoundingClientRect().right
 				const top = header.getBoundingClientRect().top
 				if (right - 50 <= x && x <= right - 10 && top + 15 <= y && y <= top + 40) {
-					// 
+					if (this.userTagsEnabled) {
+						this.$bus.emit('showGroupDetail')
+					}
 				}
 			}
 		},
@@ -417,6 +422,13 @@ export default {
 					}
 				}
 			}
+			setTimeout(() => {
+				if (!this.userTagsEnabled) {
+					this.$refs.chat.shadowRoot.querySelector('.vac-room-header').style.setProperty('--header-content', '···')
+				} else {
+					this.$refs.chat.shadowRoot.querySelector('.vac-room-header').style.setProperty('--header-content', '')
+				}
+			}, 100)
 			this.$http.get(`/api/groups/${room.roomId}/messages/?limit=30&offset=${offset}`).then((response) => {
 				if (response.data.results.length == 0) {
 					this.messagesLoaded = true

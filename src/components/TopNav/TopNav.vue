@@ -63,9 +63,11 @@ export default {
       this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/news/${this.userId}/`)
       this.ws.onmessage = (messageEvent) => {
         const data = JSON.parse(messageEvent.data)
+        console.log(data)
         for (let i = 0; i < data.mentioned_users.length; i++) {
           if (data.mentioned_users[i] == this.userId || data.mentioned_users[i] == '0') {
             let formData = new FormData()
+            console.log('1234')
             formData.append('file', data.file_id)
             formData.append('receiver', this.userId)
             formData.append('sender', data.sender.id)

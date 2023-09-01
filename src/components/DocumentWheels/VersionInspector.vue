@@ -30,6 +30,13 @@ import TextAlign from '@tiptap/extension-text-align'
 import { lowlight } from 'lowlight'//代码高亮
 import CodeBlockLowLight from '@tiptap/extension-code-block-lowlight'//代码高亮
 import ContentTable from './Content.js'
+
+// @
+import Mention from '@tiptap/extension-mention'
+import { VueRenderer } from '@tiptap/vue-3'
+import tippy from 'tippy.js'
+import MentionList from './MentionList.vue'
+import Suggestion from '@tiptap/suggestion'
 export default {
     components: {
         EditorContent
@@ -75,6 +82,95 @@ export default {
             extensions: [
                 ContentTable,
                 Document,
+                		Mention.configure({
+                    HTMLAttributes: {
+                        class: 'mention',
+                    },
+                    // 只有登录状态才能@别人
+                    suggestion: this.$cookies.isKey('user_id') ?
+                        {
+                            items: () => { return this.members },
+                            //修改默认command
+                            command: ({ editor, range, props }) => {
+                                // increase range.to by one when the next node is of type "text"
+                                // and starts with a space character
+                                const nodeAfter = editor.view.state.selection.$to.nodeAfter
+                                const overrideSpace = nodeAfter?.text?.startsWith(' ')
+
+                                if (overrideSpace) {
+                                    range.to += 1
+                                }
+                                editor
+                                    .chain()
+                                    .focus()
+                                    .insertContentAt(range, [
+                                        {
+                                            type: 'mention',
+                                            attrs: {
+                                                ...props,
+                                                id: props.id,
+                                                label: props.name
+                                            }
+                                        },
+                                        {
+                                            type: 'text',
+                                            text: ' ',
+                                        },
+                                    ])
+                                    .run()
+                                window.getSelection()?.collapseToEnd()
+                                this.saveDocument('autosave')//每次@自动保存
+                            },
+                            render: () => {
+                                let component
+                                let popup
+                                return {
+                                    onStart: props => {
+                                        component = new VueRenderer(MentionList, {
+                                            props,
+                                            editor: props.editor,
+                                        })
+
+                                        if (!props.clientRect()) {
+                                            return
+                                        }
+                                        popup = tippy('body', {
+                                            getReferenceClientRect: props.clientRect,
+                                            appendTo: () => document.body,
+                                            content: component.element,
+                                            showOnCreate: true,
+                                            interactive: true,
+                                            trigger: 'manual',
+                                            placement: 'bottom-start',
+                                        })
+                                    },
+
+                                    onUpdate(props) {
+                                        component.updateProps(props)
+                                        if (!props.clientRect()) {
+                                            return
+                                        }
+                                        popup[0].setProps({
+                                            getReferenceClientRect: props.clientRect,
+                                        })
+                                    },
+
+                                    onKeyDown(props) {
+                                        if (props.event.key === 'Escape') {
+                                            popup[0].hide()
+                                            return true
+                                        }
+                                        return component.ref?.onKeyDown(props)
+                                    },
+
+                                    onExit() {
+                                        popup[0].destroy()
+                                        component.destroy()
+                                    },
+                                }
+                            }
+                        } : {}
+                }),
                 StarterKit.configure({
                     history: false//使用collaboration的history
                 }),

@@ -559,9 +559,9 @@ export default {
 
 .input-hint {
   display: none;
-  position: absolute;
+  /* position: absolute; */
   font-size: 12px;
-  top: -15px;
+  /* top: 20px; */
   font-weight: bold;
   color: grey;
 }

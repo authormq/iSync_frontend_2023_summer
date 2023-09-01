@@ -1,6 +1,6 @@
 <template>
   <teleport to="html">
-    <div class="stylish-modal-mask" v-if="show">
+    <div class="stylish-modal-mask" v-show="show">
       <div class="stylish-modal" ref="modal">
         <slot></slot>
       </div>
@@ -20,6 +20,17 @@ export default {
     borderRadius: { type: String, default: '15px' },
     border: { type: String, default: 'none' },
     shadow: { type: String, default: '1px 1px 5px grey' }
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.$refs.modal.style.width = this.width
+      this.$refs.modal.style.height = this.height
+      this.$refs.modal.style.background = this.background
+      this.$refs.modal.style.padding = this.padding
+      this.$refs.modal.style.borderRadius = this.borderRadius
+      this.$refs.modal.style.border = this.border
+      this.$refs.modal.style.boxShadow = this.shadow
+    })
   },
   updated() {
     if (this.show) {

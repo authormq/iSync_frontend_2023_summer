@@ -19,6 +19,8 @@
 			<CombineTransmit :show="value.show" :combineMessageList="value.combineMessageList"
 				@close="value.show = false"></CombineTransmit>
 		</div>
+		<GroupDetailModal />
+		
 	</div>
 </template>
 
@@ -27,12 +29,13 @@ import { register } from 'vue-advanced-chat'
 import CreateGroupRoom from '../../components/Modal/CreateGroupRoom.vue'
 import TransmitMessage from '../../components/Modal/TransmitMessage.vue'
 import CombineTransmit from '../../components/Modal/CombineTransmit.vue'
+import GroupDetailModal from '../../components/Modal/GroupDetailModal.vue'
 // import  ChatWindow  from 'vue-advanced-chat'
 register()
 export default {
 	name: 'ChatView',
 	// components: { ChatWindow },
-	components: { CreateGroupRoom, TransmitMessage, CombineTransmit },
+	components: { CreateGroupRoom, TransmitMessage, CombineTransmit, GroupDetailModal },
 	mounted() {
 		this.currentUserId = this.$cookies.get('user_id')
 		this.roomsLoaded = false

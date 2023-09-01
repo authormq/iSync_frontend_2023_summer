@@ -116,12 +116,12 @@ export default {
 </script>
 <style scoped>
 .outer-container {
-  background-color: #f8f9fa;
+  background-color: yellow;
   border: gray solid;
   border-radius: 10px;
   position: fixed;
   width: 250px;
-  height: 100px;
+  /* height: 100px; */
   height: 100vh - 70;
   z-index: 999;
   right: 50px;

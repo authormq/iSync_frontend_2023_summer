@@ -31,15 +31,17 @@
                 {{ message.time }}
               </div>
             </div>
-            <div class="message-content" v-if="!message.isCombined">
+            <div class="message-content-normal" v-if="!message.isCombined">
               {{ message.content }}
             </div>
-            <div class="message-content" style="cursor: pointer;" v-else @click="this.$bus.emit('showCombinedMessageRequest', message.id)">
-              {{ message.content }}
+            <div class="message-content-combined" v-else
+              @click="this.$bus.emit('showCombinedMessageRequest', message.id)"
+              >{{ message.content }}
             </div>
           </div>
         </div>
       </div>
+      <hr>
     </div>
   </StylishModal>
 </template>
@@ -88,15 +90,15 @@ export default {
   font-weight: bold;
   text-align: center;
   color: gray;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .container-body {
   overflow-y: auto;
   height: 550px;
 }
+
 .message-item {
-  /* display: flex; */
   margin-bottom: 10px;
 }
 
@@ -126,9 +128,18 @@ export default {
   padding-top: 8px;
 }
 
-.message-content {
+.message-content-normal {
   max-width: 340px;
   word-break: break-all;
   margin-left: 10px;
+}
+
+.message-content-combined {
+  max-width: 340px;
+  word-break: break-all;
+  font-weight: bold;
+  margin-left: 10px;
+  color: gray;
+  cursor: pointer;
 }
 </style>

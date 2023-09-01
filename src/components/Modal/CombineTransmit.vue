@@ -1,5 +1,5 @@
 <template>
-  <StylishModal :show="true" width="500px" height="700px" padding="25px">
+  <StylishModal :show="show" width="500px" height="700px" padding="25px">
     <div class="container-header">
       <div class="header-title">
         合并消息转发
@@ -10,7 +10,7 @@
     </div>
     <div class="container-body">
       <div v-for="message in combineMessageList" :key="message.id">
-        <img :src="message.avatar">
+        <img style="height: 10px;" :src="message.avatar">
         <div>
           {{ message.time }}
           {{ message.username }}
@@ -27,7 +27,7 @@ export default {
   name: 'CombineTransmit',
   emits: ['close'],
   components: { StylishModal, CloseIcon },
-  props: ['combineMessageList'],
+  props: ['show', 'combineMessageList'],
   methods: {
     handleClose() {
       this.$emit('close')

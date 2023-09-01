@@ -15,7 +15,7 @@
 		<CreateGroupRoom :show="showCreateRoomModal" @close="showCreateRoomModal = false"></CreateGroupRoom>
 		<TransmitMessage :show="showTransmitMessageModal" :transmitType="transmitType" :rooms="rooms"
 			@close="showTransmitMessageModal = false"></TransmitMessage>
-		<CombineTransmit></CombineTransmit>
+		<CombineTransmit :show="showCombinedmessageModal" :combineMessageList="combinedMessage" @close="showCombinedmessageModal = false"></CombineTransmit>
 	</div>
 </template>
 
@@ -278,6 +278,8 @@ export default {
 		return {
 			showCreateRoomModal: false,
 			showTransmitMessageModal: false,
+			showCombinedmessageModal: false,
+			combinedMessage: [],
 			transmitType: '',
 			ws: [],
 			currentUserId: '',
@@ -848,7 +850,15 @@ export default {
 		},
 
 		showCombinedMessages(messages) {
-			alert('show')
+			this.combinedMessage = messages.map((message) => ({
+				id: message.id,
+				avatar: message.sender.user.avatar,
+				username: message.sender.user.username,
+				time: message.create_datetime,
+				content: message.text_content
+			}))
+			this.combinedMessage.sort((a, b) => a.id - b.id)
+			this.showCombinedmessageModal = true
 		}
 	}
 }

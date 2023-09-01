@@ -88,6 +88,7 @@ export default {
         this.ws.send(JSON.stringify({
           'file_id': data.docId,
           'sender_id': this.userId,
+          'file_element': data.file_element,
           'mentioned_users': [`${data.id}`],
         }))
       })

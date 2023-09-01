@@ -15,10 +15,12 @@
 		<CreateGroupRoom :show="showCreateRoomModal" @close="showCreateRoomModal = false"></CreateGroupRoom>
 		<TransmitMessage :show="showTransmitMessageModal" :transmitType="transmitType" :rooms="rooms"
 			@close="showTransmitMessageModal = false"></TransmitMessage>
-		<div v-for="(value, index) in combineTransmitInstances" :key="index">
-			<CombineTransmit :show="value.show" :combineMessageList="value.combineMessageList"
-				@close="value.show = false"></CombineTransmit>
+		<div v-for="message in combineTransmitInstances" :key="message">
+			<CombineTransmit :show="message.show" :combineMessageList="message.combineMessageList"
+				@close="closeCombineTransmit"></CombineTransmit>
 		</div>
+		<GroupDetailModal />
+		
 	</div>
 </template>
 
@@ -27,12 +29,13 @@ import { register } from 'vue-advanced-chat'
 import CreateGroupRoom from '../../components/Modal/CreateGroupRoom.vue'
 import TransmitMessage from '../../components/Modal/TransmitMessage.vue'
 import CombineTransmit from '../../components/Modal/CombineTransmit.vue'
+import GroupDetailModal from '../../components/Modal/GroupDetailModal.vue'
 // import  ChatWindow  from 'vue-advanced-chat'
 register()
 export default {
 	name: 'ChatView',
 	// components: { ChatWindow },
-	components: { CreateGroupRoom, TransmitMessage, CombineTransmit },
+	components: { CreateGroupRoom, TransmitMessage, CombineTransmit, GroupDetailModal },
 	mounted() {
 		this.currentUserId = this.$cookies.get('user_id')
 		this.roomsLoaded = false
@@ -868,27 +871,23 @@ export default {
 					content: message.text_content,
 					isPravite: message.group_is_private,
 					groupName: message.group_name,
-					isCombined: message.forward_messages.length == 0 ? false : true
+					isCombined: message.forward_messages.length	== 0 ? false : true
 				}))
 				combinedMessage.sort((a, b) => a.id - b.id)
-				console.log(combinedMessage)
-				// this.showCombinedmessageModal = true
 				this.openNewCombineTransmit(combinedMessage)
 			})
 		},
 		// 打开一个合并转发消息的模态框
 		openNewCombineTransmit(message) {
-      // const newKey = Date.now().toString(); // 生成唯一的key
       const newCombineTransmit = {
-        // key: newKey,
         show: true,
         combineMessageList: message, // 设置合并消息列表
       };
       this.combineTransmitInstances.push(newCombineTransmit);
     },
 		// 关闭一个合并转发消息的模态框
-		closeCombineTransmit(combineTransmit) {
-      combineTransmit.show = false; // 关闭特定的CombineTransmit组件
+		closeCombineTransmit() {
+			this.combineTransmitInstances.pop()
     }
 	}
 }

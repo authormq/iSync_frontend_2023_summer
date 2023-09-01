@@ -209,7 +209,7 @@ export default {
     handleCopyProject(id) {
       this.$http.post(`/api/projects/copy/${id}`).then(
         response => {
-
+          this.getProjectData()
         },
         error => {
           this.$bus.emit('message', {

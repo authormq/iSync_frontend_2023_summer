@@ -243,6 +243,7 @@ export default {
 				margin: 0 !important;
 			}
 		`
+		this.$bus.on('scrollToMessage', messageId => this.fetchAllAndScroll(messageId))
 		this.$bus.on('fetchAllMessages', () => this.fetchAllMessages())
 		this.$bus.on('scrollToMessage', messageId => this.scrollToMessage(messageId))
 		this.$bus.on('forwardMessages', transmitList => this.forwardMessages(transmitList))
@@ -518,9 +519,16 @@ export default {
 					formData.append('group_message', message.id)
 					formData.append('receiver', this.currentUserId)
 					formData.append('sender', parseInt(message.sender.user.id))
-					this.$http.post('/api/news/', formData).then(() => {
-						this.$bus.emit('newMessage', message)
-					})
+					this.$http.post('/api/news/', formData).then(
+						response => {
+							this.$bus.emit('message', {
+								title: `群聊：${message.group_name} 收到消息`,
+								content: `${message.sender.user.username} @了你`,
+								time: 3000
+							})
+							this.$bus.emit('judgeHasUnreadMsg', true)
+						}
+					)
 					break
 				}
 			}
@@ -612,9 +620,15 @@ export default {
 					formData.append('group_message', message.id)
 					formData.append('receiver', this.currentUserId)
 					formData.append('sender', parseInt(message.sender.user.id))
-					this.$http.post('/api/news/', formData).then(() => {
-						this.$bus.emit('newMessage', message)
-					})
+					this.$http.post('/api/news/', formData).then(
+						response => {
+							this.$bus.emit('message', {
+								title: `文档：${message.group_name} 收到消息`,
+								content: `${message.sender.user.username} @了你`,
+								time: 3000
+							})
+							this.$bus.emit('judgeHasUnreadMsg', true)
+						})
 					break
 				}
 			}

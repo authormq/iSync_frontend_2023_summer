@@ -11,11 +11,11 @@
   <div class="container">
     <div v-if="showAllMsg">
       <div class="messageListTitle">全部消息</div>
-      <MessageItem v-for="msg in allMessage" :key="msg" :msg="msg" />
+      <MessageItem v-for="msg in allMessage" :key="msg.msgId" :msg="msg" />
     </div>
     <div v-else>
       <div class="messageListTitle">未读消息</div>
-      <MessageItem v-for="msg in unReadMessage" :key="msg" :msg="msg" />
+      <MessageItem v-for="msg in unReadMessage" :key="msg.msgId" :msg="msg" />
     </div>
   </div>
 </template>
@@ -57,22 +57,6 @@ export default {
         console.log('@@@', this.allMessage);
         console.log('###', this.unReadMessage)
       })
-    // 具体需不需要这些函数，看后期后端怎么给我返回数据
-    this.$bus.on('newMessage', (message) => {
-      // this.$bus.emit('message', {
-      //   title: '消息通知',
-      //   content: `${message.sender.user.username}提到了你`,
-      //   time: 1000
-      // })
-      this.unReadMessage.unshift({
-        timeStamp: message.create_datetime,
-        sender: message.sender.user.username,
-        receiver: this.receiver,
-        isRead: false,
-        content: `${message.sender.user.username}提到了你`
-      })
-      this.$bus.emit('judgeHasUnreadMsg', true)
-    })
     this.$bus.on('sendChangeStatusSignal', this.handleReadStatus)
     this.$bus.on('sendDeleteMessageRequest', this.handleDeleteMessage)
   },
@@ -82,8 +66,9 @@ export default {
       formData.append('is_read', true)
       this.$http.patch(`/api/news/${message.msgId}/`, formData).then(
         response => {
-          message.isRead = !message.isRead
           this.unReadMessage.splice(this.unReadMessage.indexOf(message), 1)
+          this.allMessage[this.allMessage.indexOf(message)].isRead = true
+          // 再使用的时候就会直接刷新了
           if (this.unReadMessage.length > 0) {
             this.$bus.emit('judgeHasUnreadMsg', true)
           } else {

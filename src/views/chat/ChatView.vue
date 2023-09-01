@@ -19,8 +19,7 @@
 			<CombineTransmit :show="message.show" :combineMessageList="message.combineMessageList"
 				@close="closeCombineTransmit"></CombineTransmit>
 		</div>
-		<GroupDetailModal />
-		
+		<!-- <GroupDetailModal /> -->
 	</div>
 </template>
 
@@ -516,7 +515,7 @@ export default {
 					...this.messages,
 					this.rooms[i].lastMessage
 				]
-				if (message.forwardMessages.length != 0) {
+				if (message.forward_messages.length != 0) {
 					setTimeout(() => {
 						this.loadCombinedMessages(this.messages.length - 1)
 					});
@@ -852,12 +851,12 @@ export default {
 		},
 
 		loadCombinedMessages(i) {
-			// #\35 07 > div > div.vac-message-container > div > div.vac-format-message-wrapper > div > div > span
 			if (this.$refs.chat) {
 				const doc = this.$refs.chat.shadowRoot
 				const msg = doc.querySelector(`#messages-list>div>div>span>div:nth-child(${i + 1})`)
-				//console.log(this.messages[i].forwardMessages)
-				msg.onclick = () => this.showCombinedMessages(this.messages[i]._id)
+				const span = msg.querySelector('.vac-format-container>span>span')
+				span.style.cursor = 'pointer'
+				span.onclick = () => this.showCombinedMessages(this.messages[i]._id)
 			}
 		},
 

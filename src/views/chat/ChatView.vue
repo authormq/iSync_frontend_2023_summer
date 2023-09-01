@@ -5,18 +5,22 @@
 		<vue-advanced-chat ref="chat" theme="light" height="calc(100vh - 90px)" :styles="JSON.stringify(styles)"
 			:current-user-id="currentUserId" :rooms="JSON.stringify(rooms)" :rooms-loaded="roomsLoaded"
 			:messages="JSON.stringify(messages)" :messages-loaded="messagesLoaded" :custom-search-room-enabled="true"
-			:room-info-enabled="true" :message-selection-actions="JSON.stringify(messageSelectionActions)"
-			@send-message="sendMessage($event.detail[0])" @edit-message="editMessage($event.detail[0])"
-			@delete-message="deleteMessage($event.detail[0])" @fetch-messages="fetchMessages($event.detail[0])"
-			@search-room="searchRoom($event.detail[0])" @open-file="openFile($event.detail[0])" @add-room="addRoom"
+			:room-info-enabled="true" :user-tags-enabled="userTagsEnabled" :load-first-room="$route.query.groupId == undefined"
+			:message-selection-actions="JSON.stringify(messageSelectionActions)" @send-message="sendMessage($event.detail[0])"
+			@edit-message="editMessage($event.detail[0])" @delete-message="deleteMessage($event.detail[0])"
+			@fetch-messages="fetchMessages($event.detail[0])" @search-room="searchRoom($event.detail[0])"
+			@open-file="openFile($event.detail[0])" @add-room="addRoom"
 			@message-selection-action-handler="messageSelectionActionHandler($event.detail[0])">
-			<!-- <div v-for="(message, index) in messages" :slot="'message_' + message._id" :key="index">
- 				<div>hahaha{{ message.content }}</div>
-			</div> -->
 		</vue-advanced-chat>
 		<CreateGroupRoom :show="showCreateRoomModal" @close="showCreateRoomModal = false"></CreateGroupRoom>
 		<TransmitMessage :show="showTransmitMessageModal" :transmitType="transmitType" :rooms="rooms"
 			@close="showTransmitMessageModal = false"></TransmitMessage>
+		<div v-for="message in combineTransmitInstances" :key="message">
+			<CombineTransmit :show="message.show" :combineMessageList="message.combineMessageList"
+				@close="closeCombineTransmit"></CombineTransmit>
+		</div>
+		<GroupDetailModal />
+		
 	</div>
 </template>
 
@@ -24,12 +28,14 @@
 import { register } from 'vue-advanced-chat'
 import CreateGroupRoom from '../../components/Modal/CreateGroupRoom.vue'
 import TransmitMessage from '../../components/Modal/TransmitMessage.vue'
+import CombineTransmit from '../../components/Modal/CombineTransmit.vue'
+import GroupDetailModal from '../../components/Modal/GroupDetailModal.vue'
 // import  ChatWindow  from 'vue-advanced-chat'
 register()
 export default {
 	name: 'ChatView',
 	// components: { ChatWindow },
-	components: { CreateGroupRoom, TransmitMessage },
+	components: { CreateGroupRoom, TransmitMessage, CombineTransmit, GroupDetailModal },
 	mounted() {
 		this.currentUserId = this.$cookies.get('user_id')
 		this.roomsLoaded = false
@@ -58,7 +64,8 @@ export default {
 					timestamp: group.lastMessage.create_datetime.substring(11, 16),
 					date: group.lastMessage.create_datetime.substring(5, 10),
 					new: false,
-				}
+				},
+				is_private: group.is_private,
 			}))
 			if (this.rooms.length > 0) {
 				this.currentRoomId = this.rooms[0].roomId
@@ -73,13 +80,13 @@ export default {
 					},
 					...this.rooms[i].users
 				]
-				this.$http.get(`/api/groups/${this.rooms[i].roomId}/current_user_identity/`).then((response) => {
-					if (response.status == 200) {
-						if (response.data.identity == 'member') {
+				// this.$http.get(`/api/groups/${this.rooms[i].roomId}/current_user_identity/`).then((response) => {
+				// 	if (response.status == 200) {
+				// 		if (response.data.identity == 'member') {
 
-						}
-					}
-				})
+				// 		}
+				// 	}
+				// })
 				// WebSocket
 				this.ws[i] = new WebSocket(`ws://43.138.14.231:9000/ws/chat/group/${this.rooms[i].roomId}/${this.currentUserId}/`)
 				this.ws[i].onmessage = (messageEvent) => {
@@ -96,6 +103,15 @@ export default {
 				}
 			}
 			this.roomsLoaded = true
+			const groupId = this.$route.query.groupId
+			if (groupId != undefined) {
+				this.selectRoom(groupId)
+				const messageId = this.$route.query.messageId
+				if (messageId != undefined) {
+					this.fetchAllMessages()
+					this.scrollToMessage(messageId)
+				}
+			}
 		})
 		// test
 		const style = document.createElement('style')
@@ -236,7 +252,11 @@ export default {
 			}
 		`
 		this.$bus.on('scrollToMessage', messageId => this.fetchAllAndScroll(messageId))
-		
+		this.$bus.on('fetchAllMessages', () => this.fetchAllMessages())
+		this.$bus.on('scrollToMessage', messageId => this.scrollToMessage(messageId))
+		this.$bus.on('forwardMessages', transmitList => this.forwardMessages(transmitList))
+		this.$bus.on('showCombinedMessageRequest', messageId => this.showCombinedMessages(messageId))
+
 		this.$refs.chat.shadowRoot.appendChild(style)
 		// const newHTML = this.$refs.chat.shadowRoot.innerHTML.replace('placeholder="Search"', 'placeholder="检索"')
 		// console.log(newHTML)
@@ -257,12 +277,16 @@ export default {
 		for (let i = 0; i < this.ws.length; i++) {
 			this.ws[i].close()
 		}
+		this.$bus.off('fetchAllMessages')
 		this.$bus.off('scrollToMessage')
+		this.$bus.off('forwardMessages')
 	},
 	data() {
 		return {
 			showCreateRoomModal: false,
 			showTransmitMessageModal: false,
+			showCombinedmessageModal: false,
+			combineTransmitInstances: [],
 			transmitType: '',
 			ws: [],
 			currentUserId: '',
@@ -272,6 +296,8 @@ export default {
 			roomsLoaded: false,
 			messages: [],
 			messagesLoaded: false,
+			messagesToForward: [],
+			userTagsEnabled: true,
 			messageSelectionActions: [
 				{
 					name: 'forwardItemByItem',
@@ -377,12 +403,16 @@ export default {
 
 		fetchMessages({ room, options = {} }) {
 			this.currentRoomId = room.roomId
+			if (room.roomId == this.$route.query.groupId) {
+				return
+			}
 			const offset = options.reset ? 0 : this.messages.length
 			if (options.reset) {
 				this.messagesLoaded = false
 				for (let i = 0; i < this.rooms.length; i++) {
 					if (this.rooms[i].roomId == room.roomId) {
 						this.rooms[i].unreadCount = 0
+						this.userTagsEnabled = !this.rooms[i].is_private
 						break
 					}
 				}
@@ -422,7 +452,8 @@ export default {
 						size: message.file_content.size,
 						url: message.file_content.url,
 						type: message.file_content.name.split('.')[1]
-					}]
+					}],
+					forwardMessages: message.forward_messages
 				})).reverse()
 				if (options.reset) {
 					this.messages = messages
@@ -430,6 +461,13 @@ export default {
 				else {
 					this.messages = [...messages, ...this.messages]
 				}
+				setTimeout(() => {
+					for (let i = 0; i < this.messages.length; i++) {
+						if (this.messages[i].forwardMessages.length != 0) {
+							this.loadCombinedMessages(i)
+						}
+					}
+				}, 1000);
 			})
 		},
 
@@ -468,7 +506,9 @@ export default {
 				}]
 			}
 			if (this.currentRoomId != this.rooms[i].roomId) {
-				this.rooms[i].unreadCount++
+				if (message.sender.user.id != this.currentUserId) {
+					this.rooms[i].unreadCount++
+				}
 			}
 			else {
 				this.$http.post(`/api/groups/${this.currentRoomId}/messages/read_all/`)
@@ -476,6 +516,11 @@ export default {
 					...this.messages,
 					this.rooms[i].lastMessage
 				]
+				if (message.forwardMessages.length != 0) {
+					setTimeout(() => {
+						this.loadCombinedMessages(this.messages.length - 1)
+					});
+				}
 			}
 			for (let j = 0; j < this.rooms.length; j++) {
 				if (this.rooms[j].index > this.rooms[i].index) {
@@ -490,9 +535,16 @@ export default {
 					formData.append('group_message', message.id)
 					formData.append('receiver', this.currentUserId)
 					formData.append('sender', parseInt(message.sender.user.id))
-					this.$http.post('/api/news/', formData).then(() => {
-						this.$bus.emit('newMessage', message)
-					})
+					this.$http.post('/api/news/', formData).then(
+						response => {
+							this.$bus.emit('message', {
+								title: `群聊：${message.group_name} 收到消息`,
+								content: `${message.sender.user.username} @了你`,
+								time: 3000
+							})
+							this.$bus.emit('judgeHasUnreadMsg', true)
+						}
+					)
 					break
 				}
 			}
@@ -584,9 +636,15 @@ export default {
 					formData.append('group_message', message.id)
 					formData.append('receiver', this.currentUserId)
 					formData.append('sender', parseInt(message.sender.user.id))
-					this.$http.post('/api/news/', formData).then(() => {
-						this.$bus.emit('newMessage', message)
-					})
+					this.$http.post('/api/news/', formData).then(
+						response => {
+							this.$bus.emit('message', {
+								title: `文档：${message.group_name} 收到消息`,
+								content: `${message.sender.user.username} @了你`,
+								time: 3000
+							})
+							this.$bus.emit('judgeHasUnreadMsg', true)
+						})
 					break
 				}
 			}
@@ -614,7 +672,7 @@ export default {
 					else {
 						this.ws[i].send(JSON.stringify({
 							'option': 'edit',
-							'edit_file': false,
+							'edit_file': message.files == null,
 							'message_id': message.messageId,
 							'text_content': message.newContent,
 							'mentioned_users': message.usersTag,
@@ -672,83 +730,115 @@ export default {
 			}
 		},
 
-		fetchAllAndScroll(messageId) {
-			if (this.messagesLoaded == false) {
-				this.$http.get(`/api/groups/${this.currentRoomId}/messages/`).then((response) => {
-					this.messages = response.data.map((message) => ({
-						_id: message.id,
-						content: message.text_content,
-						senderId: `${message.sender.user.id}`,
-						username: message.sender.user.username,
-						avatar: message.sender.user.avatar,
-						timestamp: message.create_datetime.substring(11, 16),
-						date: message.create_datetime.substring(5, 10),
+		fetchAllMessages() {
+			this.$http.get(`/api/groups/${this.currentRoomId}/messages/`).then((response) => {
+				this.messages = response.data.map((message) => ({
+					_id: message.id,
+					content: message.text_content,
+					senderId: `${message.sender.user.id}`,
+					username: message.sender.user.username,
+					avatar: message.sender.user.avatar,
+					timestamp: message.create_datetime.substring(11, 16),
+					date: message.create_datetime.substring(5, 10),
+					new: false,
+					replyMessage: message.reply_message == null ? null : {
+						_id: message.reply_message.id,
+						content: message.reply_message.text_content,
+						senderId: `${message.reply_message.sender.user.id}`,
+						username: message.reply_message.sender.user.username,
+						avatar: message.reply_message.sender.user.avatar,
+						timestamp: message.reply_message.create_datetime.substring(11, 16),
+						date: message.reply_message.create_datetime.substring(5, 10),
 						new: false,
-						replyMessage: message.reply_message == null ? null : {
-							_id: message.reply_message.id,
-							content: message.reply_message.text_content,
-							senderId: `${message.reply_message.sender.user.id}`,
-							username: message.reply_message.sender.user.username,
-							avatar: message.reply_message.sender.user.avatar,
-							timestamp: message.reply_message.create_datetime.substring(11, 16),
-							date: message.reply_message.create_datetime.substring(5, 10),
-							new: false,
-							files: message.reply_message.file_content == null ? null : [{
-								name: message.reply_message.file_content.name.split('message/file/')[1],
-								size: message.reply_message.file_content.size,
-								url: message.reply_message.file_content.url,
-								type: message.reply_message.file_content.name.split('.')[1]
-							}]
-						},
-						files: message.file_content == null ? null : [{
-							name: message.file_content.name.split('message/file/')[1],
-							size: message.file_content.size,
-							url: message.file_content.url,
-							type: message.file_content.name.split('.')[1]
+						files: message.reply_message.file_content == null ? null : [{
+							name: message.reply_message.file_content.name.split('message/file/')[1],
+							size: message.reply_message.file_content.size,
+							url: message.reply_message.file_content.url,
+							type: message.reply_message.file_content.name.split('.')[1]
 						}]
-					})).reverse()
-					this.messagesLoaded = true
-					this.scrollToMessage(messageId)
-				})
-			}
-			else {
-				this.scrollToMessage(messageId)
-			}
+					},
+					files: message.file_content == null ? null : [{
+						name: message.file_content.name.split('message/file/')[1],
+						size: message.file_content.size,
+						url: message.file_content.url,
+						type: message.file_content.name.split('.')[1]
+					}],
+					forwardMessages: message.forward_messages
+				})).reverse()
+				this.messagesLoaded = true
+				setTimeout(() => {
+					for (let i = 0; i < this.messages.length; i++) {
+						if (this.messages[i].forwardMessages.length != 0) {
+							this.loadCombinedMessages(i)
+						}
+					}
+				}, 1000);
+			})
 		},
 
 		scrollToMessage(messageId) {
-			let i = 0
-			for (; i < this.messages.length; i++) {
-				if (this.messages[i]._id == messageId) {
-					break
+			setTimeout(() => {
+				let i = 0
+				for (; i < this.messages.length; i++) {
+					if (this.messages[i]._id == messageId) {
+						break
+					}
 				}
-			}
-			console.log(i)
-			let doc = null
-			if (this.$refs.chat) {
-				doc = this.$refs.chat.shadowRoot
-				const container = doc.querySelector('#messages-list')
-				const msg = doc.querySelector(`#messages-list>div>div>span>div:nth-child(${i})`)
-				if (container && msg) {
-					container.style.scrollBehavior = 'smooth'
-					// msg.style.position = 'absolute'
-					// msg.style.top = 0
-					console.log('msg: ', msg.getBoundingClientRect().top)
-					console.log('con: ', container.getBoundingClientRect().top)
-					container.scrollTop = -1 * msg.getBoundingClientRect().bottom - container.getBoundingClientRect().top
-					console.log('@@@', container.scrollTop)
-					// msg 最外层 div
-					// do something
+				i++
+				console.log(i)
+				if (this.$refs.chat) {
+					const doc = this.$refs.chat.shadowRoot
+					const container = doc.querySelector('#messages-list')
+					const msg = doc.querySelector(`#messages-list>div>div>span>div:nth-child(${i})`)
+					if (container && msg) {
+						// console.log('msg: ', msg.getBoundingClientRect().top, msg.getBoundingClientRect().bottom)
+						// console.log('con: ', container.getBoundingClientRect().top, container.getBoundingClientRect().bottom)
+						// console.log('@@@: ', container.scrollTop)
+						const height = msg.getBoundingClientRect().bottom - msg.getBoundingClientRect().top
+						container.scrollTo({
+							top: container.scrollTop + msg.getBoundingClientRect().top - 396.7 + height / 2,
+							left: 0,
+							behavior: 'smooth'
+						})
+					}
 				}
-			}
+			}, 6000);
+		},
+
+		selectRoom(roomId) {
+			this.$nextTick(() => {
+				this.currentRoomId = roomId
+				let i = 0
+				for (; i < this.rooms.length; i++) {
+					if (this.rooms[i].roomId == roomId) {
+						break
+					}
+				}
+				i++
+				if (this.$refs.chat) {
+					const doc = this.$refs.chat.shadowRoot
+					const item = doc.querySelector(`#rooms-list>div:nth-child(${i})`)
+					item.click()
+				}
+			});
 		},
 
 		addRoom() {
 			this.showCreateRoomModal = true
 		},
 
-		messageSelectionActionHandler({ roomId, action, message }) {
-			console.log(message)
+		forwardMessages(transmitList) {
+			for (const group of transmitList) {
+				this.ws[group.index].send(JSON.stringify({
+					'option': this.transmitType,
+					'messages': this.messagesToForward
+				}))
+			}
+		},
+
+		messageSelectionActionHandler({ roomId, action, messages }) {
+			this.messagesToForward = messages.map(message => message._id)
+			this.messagesToForward.sort((a, b) => a - b)
 			switch (action.name) {
 				case 'forwardItemByItem':
 					this.transmitType = 'forwardItemByItem'
@@ -759,7 +849,46 @@ export default {
 					this.showTransmitMessageModal = true
 					break
 			}
-		}
+		},
+
+		loadCombinedMessages(i) {
+			// #\35 07 > div > div.vac-message-container > div > div.vac-format-message-wrapper > div > div > span
+			if (this.$refs.chat) {
+				const doc = this.$refs.chat.shadowRoot
+				const msg = doc.querySelector(`#messages-list>div>div>span>div:nth-child(${i + 1})`)
+				//console.log(this.messages[i].forwardMessages)
+				msg.onclick = () => this.showCombinedMessages(this.messages[i]._id)
+			}
+		},
+
+		showCombinedMessages(messageId) {
+			this.$http.get(`/api/groups/messages/${messageId}/`).then((response) => {
+				const combinedMessage = response.data.forward_messages.map((message) => ({
+					id: message.id,
+					avatar: message.sender.user.avatar,
+					username: message.sender.user.username,
+					time: message.create_datetime,
+					content: message.text_content,
+					isPravite: message.group_is_private,
+					groupName: message.group_name,
+					isCombined: message.forward_messages.length	== 0 ? false : true
+				}))
+				combinedMessage.sort((a, b) => a.id - b.id)
+				this.openNewCombineTransmit(combinedMessage)
+			})
+		},
+		// 打开一个合并转发消息的模态框
+		openNewCombineTransmit(message) {
+      const newCombineTransmit = {
+        show: true,
+        combineMessageList: message, // 设置合并消息列表
+      };
+      this.combineTransmitInstances.push(newCombineTransmit);
+    },
+		// 关闭一个合并转发消息的模态框
+		closeCombineTransmit() {
+			this.combineTransmitInstances.pop()
+    }
 	}
 }
 </script>

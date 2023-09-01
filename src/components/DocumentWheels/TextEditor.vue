@@ -1,7 +1,36 @@
 <!-- 文本编辑器 -->
 <template>
+	<div v-if="isBusy > 0" class="mask" :style="{
+		'position': 'fixed',
+		'left': '0',
+		'top': '0',
+		'height': '100%',
+		'width': '100%',
+		'z-index': '10',
+		'background': 'rgba(200,200,200,0.5)',
+		'text-align': 'center'
+	}">
+		<div :style="{
+			'display': 'inline-block',
+			'vertical-align': 'middle',
+			'margin': '20% auto',
+			'color': 'rgb(199,29,35)',
+			'font-weight': '700',
+		}">
+			<div :style="{
+				'display': 'inline-block',
+				'width': '15px',
+				'vertical-align': 'middle',
+				'aspect-ratio': '1',
+				'margin': '0 30px',
+				'borderRadius': '15px',
+				'border': '5px dotted rgb(199,29,35)',
+				'animation': 'rotate 1s infinite linear'
+			}"></div>
+			<span style="font-size: 25px;">{{ busyTip }}...</span>
+		</div>
+	</div>
 	<div id="editor-wrapper" v-if="editor && provider">
-		<div class="mask"></div>
 		<!-- 气泡菜单 除了样式不要乱改 -->
 		<bubble-menu :editor="editor" class="editor-bubble-menu">
 			<div v-if="editor.isActive('codeBlock') === false">
@@ -217,6 +246,16 @@
 						p-id="9797"></path>
 				</svg>
 			</button>
+			<!-- 插入表格 -->
+			<button
+				@click="editor.chain().focus().insertTable({ cols: 5, rows: 3, withHeaderRow: true, background: 'black' }).run()">
+				<svg t="1693556919664" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+					p-id="4237" width="20" height="20">
+					<path
+						d="M469.333333 298.666667v85.333333h256V298.666667h-256zM384 298.666667H298.666667v85.333333h85.333333V298.666667z m85.333333 426.666666h256v-256h-256v256z m-85.333333 0v-256H298.666667v256h85.333333zM213.333333 213.333333h597.333334v597.333334H213.333333V213.333333z"
+						p-id="4238"></path>
+				</svg>
+			</button>
 		</floating-menu>
 		<!-- 顶部工具栏 -->
 		<div class="editor-bar" v-show="!isReadOnly">
@@ -344,6 +383,7 @@
 					</button>
 				</div>
 			</div>
+
 			<!-- 编辑模式与查看历史 + 插入图片 -->
 			<div class="edit-history">
 				<!-- 编辑模式 -->
@@ -369,7 +409,12 @@
 				<slot name="showHistoryButton"></slot>
 				<!-- 插入图片 -->
 				<input ref="imgInput" style="display:none;" type="file" accept="image" @input="insertImage">
-				<button @click="$refs.imgInput.click"><svg t="1693404668430" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3460" width="30" height="30"><path d="M938.666667 553.92V768c0 64.8-52.533333 117.333333-117.333334 117.333333H202.666667c-64.8 0-117.333333-52.533333-117.333334-117.333333V256c0-64.8 52.533333-117.333333 117.333334-117.333333h618.666666c64.8 0 117.333333 52.533333 117.333334 117.333333v297.92z m-64-74.624V256a53.333333 53.333333 0 0 0-53.333334-53.333333H202.666667a53.333333 53.333333 0 0 0-53.333334 53.333333v344.48A290.090667 290.090667 0 0 1 192 597.333333a286.88 286.88 0 0 1 183.296 65.845334C427.029333 528.384 556.906667 437.333333 704 437.333333c65.706667 0 126.997333 16.778667 170.666667 41.962667z m0 82.24c-5.333333-8.32-21.130667-21.653333-43.648-32.917333C796.768 511.488 753.045333 501.333333 704 501.333333c-121.770667 0-229.130667 76.266667-270.432 188.693334-2.730667 7.445333-7.402667 20.32-13.994667 38.581333-7.68 21.301333-34.453333 28.106667-51.370666 13.056-16.437333-14.634667-28.554667-25.066667-36.138667-31.146667A222.890667 222.890667 0 0 0 192 661.333333c-14.464 0-28.725333 1.365333-42.666667 4.053334V768a53.333333 53.333333 0 0 0 53.333334 53.333333h618.666666a53.333333 53.333333 0 0 0 53.333334-53.333333V561.525333zM320 480a96 96 0 1 1 0-192 96 96 0 0 1 0 192z m0-64a32 32 0 1 0 0-64 32 32 0 0 0 0 64z" fill="#707070" p-id="3461"></path></svg></button>
+				<button @click="$refs.imgInput.click"><svg t="1693404668430" class="icon" viewBox="0 0 1024 1024"
+						version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3460" width="30" height="30">
+						<path
+							d="M938.666667 553.92V768c0 64.8-52.533333 117.333333-117.333334 117.333333H202.666667c-64.8 0-117.333333-52.533333-117.333334-117.333333V256c0-64.8 52.533333-117.333333 117.333334-117.333333h618.666666c64.8 0 117.333333 52.533333 117.333334 117.333333v297.92z m-64-74.624V256a53.333333 53.333333 0 0 0-53.333334-53.333333H202.666667a53.333333 53.333333 0 0 0-53.333334 53.333333v344.48A290.090667 290.090667 0 0 1 192 597.333333a286.88 286.88 0 0 1 183.296 65.845334C427.029333 528.384 556.906667 437.333333 704 437.333333c65.706667 0 126.997333 16.778667 170.666667 41.962667z m0 82.24c-5.333333-8.32-21.130667-21.653333-43.648-32.917333C796.768 511.488 753.045333 501.333333 704 501.333333c-121.770667 0-229.130667 76.266667-270.432 188.693334-2.730667 7.445333-7.402667 20.32-13.994667 38.581333-7.68 21.301333-34.453333 28.106667-51.370666 13.056-16.437333-14.634667-28.554667-25.066667-36.138667-31.146667A222.890667 222.890667 0 0 0 192 661.333333c-14.464 0-28.725333 1.365333-42.666667 4.053334V768a53.333333 53.333333 0 0 0 53.333334 53.333333h618.666666a53.333333 53.333333 0 0 0 53.333334-53.333333V561.525333zM320 480a96 96 0 1 1 0-192 96 96 0 0 1 0 192z m0-64a32 32 0 1 0 0-64 32 32 0 0 0 0 64z"
+							p-id="3461"></path>
+					</svg></button>
 			</div>
 			<!-- 各类格式调整 -->
 			<div class="formats">
@@ -641,15 +686,6 @@
 			</div>
 
 			<div class="temp-container">
-
-
-
-
-
-
-
-
-
 				<!-- 普通段落 -->
 				<button style="display: none" @click="editor.chain().focus().setParagraph().run()"
 					:class="{ 'is-active': editor.isActive('paragraph') }">
@@ -660,19 +696,74 @@
 							p-id="10080"></path>
 					</svg>
 				</button>
-
-
-
-
-
-
 			</div>
-
-
+		</div>
+		<!-- 表格设置 -->
+		<div class="table">
+			<button @click="editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()">
+				插入表格
+			</button>
+			<button @click="editor.chain().focus().addColumnBefore().run()">
+				向前插入列
+			</button>
+			<button @click="editor.chain().focus().addColumnAfter().run()">
+				向后插入列
+			</button>
+			<button @click="editor.chain().focus().deleteColumn().run()">
+				删除列
+			</button>
+			<button @click="editor.chain().focus().addRowBefore().run()">
+				向前插入行
+			</button>
+			<button @click="editor.chain().focus().addRowAfter().run()">
+				向后插入行
+			</button>
+			<button @click="editor.chain().focus().deleteRow().run()">
+				删除行
+			</button>
+			<button @click="editor.chain().focus().deleteTable().run()">
+				删除表格
+			</button>
+			<button @click="editor.chain().focus().mergeCells().run()">
+				合并单元格
+			</button>
+			<button @click="editor.chain().focus().splitCell().run()">
+				分裂单元格
+			</button>
+			<button @click="editor.chain().focus().toggleHeaderColumn().run()"
+				:class="{ 'is-active': editor.isActive('headerColumn') }">
+				设置表头列
+			</button>
+			<button @click="editor.chain().focus().toggleHeaderRow().run()"
+				:class="{ 'is-active': editor.isActive('headerRow') }">
+				设置表头行
+			</button>
+			<button @click="editor.chain().focus().toggleHeaderCell().run()"
+				:class="{ 'is-active': editor.isActive('headerCell') }">
+				设置表头单元格
+			</button>
+			<button @click="editor.chain().focus().fixTables().run()">
+				修复表格
+			</button>
+			<button @click="editor.chain().focus().goToNextCell().run()">
+				下一单元格
+			</button>
+			<button @click="editor.chain().focus().goToPreviousCell().run()">
+				上一单元格
+			</button>
+			<!-- nuclear marine diving -->
 		</div>
 		<div class="document-title">{{ docName }}</div>
-		<!-- <editor-content :editor="editor" id="document-content" v-model="localContent"
-			@update="$emit('update:docContent', editor.storage.content)" /> -->
+		<node-view-wrapper class="toc">
+			<ul class="toc__list">
+				<li class="toc__item" :class="`toc__item--${heading.level}`" v-for="(heading, index) in headings"
+					:key="index">
+					<a :href="`#${heading.id}`">
+						<span>{{ heading.text }}</span>
+					</a>
+				</li>
+			</ul>
+		</node-view-wrapper>
 		<div class="flex">
 			<editor-content :editor="editor" id="document-content" />
 			<slot v-if="showHistoryVersion" name="version"></slot>
@@ -694,8 +785,11 @@
 <script>
 import StarterKit from '@tiptap/starter-kit'
 import CharactorCount from '@tiptap/extension-character-count'
-import Document from '@tiptap/extension-document'
 import Image from '@tiptap/extension-image'
+import Table from '@tiptap/extension-table'
+import TableCell from '@tiptap/extension-table-cell'
+import TableHeader from '@tiptap/extension-table-header'
+import TableRow from '@tiptap/extension-table-row'
 import Underline from '@tiptap/extension-underline'
 import FontFamily from '@tiptap/extension-font-family'
 import Typography from '@tiptap/extension-typography'//实时渲染markdown
@@ -706,9 +800,10 @@ import Dropcursor from '@tiptap/extension-dropcursor'//拖拽器
 import Mention from '@tiptap/extension-mention'
 import TaskItem from '@tiptap/extension-task-item'
 import TaskList from '@tiptap/extension-task-list'
-import Text from '@tiptap/extension-text'
 import TextStyle from '@tiptap/extension-text-style'
 import TextAlign from '@tiptap/extension-text-align'
+import ContentTable from './Content.js'
+import { nodeViewProps, NodeViewWrapper } from '@tiptap/vue-3'//目录
 import { lowlight } from 'lowlight'//代码高亮
 import CodeBlockLowLight from '@tiptap/extension-code-block-lowlight'//代码高亮
 import { Editor, EditorContent, BubbleMenu, FloatingMenu } from '@tiptap/vue-3'
@@ -731,7 +826,6 @@ import Suggestion from '@tiptap/suggestion'
 
 // color picker
 import { NColorPicker } from 'naive-ui'
-import { Static } from 'vue'
 
 export default {
 	name: 'TextEditor',
@@ -739,7 +833,8 @@ export default {
 		EditorContent,
 		BubbleMenu,
 		FloatingMenu,
-		NColorPicker
+		NColorPicker,
+		NodeViewWrapper,
 	},
 	props: {
 		showHistoryVersion: {
@@ -765,15 +860,22 @@ export default {
 	data() {
 		return {
 			userAvatar: '/src/assets/avatar.jpeg',
+			members: [],//当前团队用户(排除自己)，游客模式无效
 			// localContent: '',
 			docLimit: 100000,
 			autoSavePeriod: 10000,
+			autoSaver: undefined,
+			contentUpdater: undefined,
+			isBusy: 1,//处理完某些交互事项前用户不能操作
+			busyTip: '加载中',
+			showAtPosition: false,//初次连接前为false
 			editable: false,
 			fullScreen: false,
 			editor: undefined,
 			selectedFontFamily: 'sans-serif',
 			selectedFontSize: '',
 			provider: undefined,
+			headings: [],//目录的标题
 			fontOptions: [
 				{ value: 'consolas', label: 'consolas' },
 				{ value: 'monospace', label: 'monospace' },
@@ -792,9 +894,7 @@ export default {
 			],
 		}
 	},
-	updated() {
-		// this.clearColorPickerText()
-	},
+
 	methods: {
 		clearColorPickerText() {
 			const div = document.getElementsByClassName('n-color-picker-trigger__value')
@@ -835,15 +935,92 @@ export default {
 		//插入图片
 		insertImage(event) {
 			if (this.editable) {
+				this.isBusy++
 				const reader = new FileReader()
 				reader.onload = (event) => {
 					const imageData = event.target.result
 					this.editor.chain().focus().setImage({ src: imageData }).run()
+					this.isBusy--
 				}
 				reader.readAsDataURL(event.target.files[0])
 			}
 		},
+		//更新目录
+		handleContentUpdate() {
+			const headings = []
+			const transaction = this.editor.state.tr
+			this.editor.state.doc.descendants((node, pos) => {
+				if (node.type.name === 'heading') {
+					const id = `heading-${headings.length + 1}`
+
+					if (node.attrs.id !== id) {
+						transaction.setNodeMarkup(pos, undefined, {
+							...node.attrs,
+							id,
+						})
+					}
+
+					headings.push({
+						level: node.attrs.level,
+						text: node.textContent,
+						id,
+					})
+				}
+			})
+			transaction.setMeta('addToHistory', false)
+			transaction.setMeta('preventUpdate', true)
+
+			this.editor.view.dispatch(transaction)
+			this.headings = headings
+		},
+		//跳转到@位置
+		jumpToAt() {
+			//游客模式禁用跳转
+			if (this.$cookies.isKey('user_id') == false)
+				return
+			if (this.$route.params.atId !== undefined && (this.showAtPosition === false))//这里需要从路由获取是否跳转的信息
+			{
+				this.showAtPosition = true
+				let atId = this.$route.params.atId
+				//寻找@标签
+				// const nodes = this.editor.getJSON().content;
+				// // 递归处理内部节点
+				// function findMentionNodes(nodes, result = [], id = undefined) {
+				// 	for (const node of nodes) {
+				// 		if (node.type === 'mention' && node.attrs.id) {
+				// 			result.push(node);
+				// 		}
+				// 		if (node.content) {
+				// 			findMentionNodes(node.content, result);
+				// 		}
+				// 	}
+				// 	return result;
+				// }
+				// const targetMentions = findMentionNodes(nodes)
+				//如果有节点
+				// if (targetMentions.length !== 0) {
+				const targetMention = document.querySelector(`[data-id="${atId}"]`)
+				if (targetMention !== undefined) {
+					console.log('findAtTag,id=' + targetMention.attrs.id)
+					targetMention.scrollIntoView({ behavior: 'smooth', block: 'start' }).then(() => {
+						targetMention.classList.add('at-highlight')
+						setTimeout(() => {
+							targetMention.classList.remove('at-highlight')
+						}, 750)
+					});
+				}
+				else {
+					alert('@消息已被删除')
+				}
+			}
+			// else {
+			// 	alert('@消息已被删除')
+			// }
+			// }
+		},
 		exportAsPDF() {
+			this.busyTip = '正在导出为PDF'
+			this.isBusy++
 			let original = document.querySelector('#document-content')
 			let page = original.cloneNode(true)//需要对原样式进行一些修改，因此深拷贝
 			//修改样式和显示内容
@@ -887,18 +1064,26 @@ export default {
 			}).then(() => {
 				original.style.display = 'block'//恢复显示
 				document.querySelector('#hidden-area').removeChild(page)
-				console.log('成功保存为PDF')
+				alert('成功保存为PDF')
+				this.isBusy--
+				this.busyTip = '加载中'
 			})
 		},
 		exportAsWord() {
+			this.busyTip = '正在导出为Word'
+			this.isBusy++
 			exportWord(document.querySelector('#document-content'), {
 				addStyle: true,
 				fileName: this.docName,
 				// toImg: [],
 				// success() {}
 			})
+			this.isBusy--
+			this.busyTip = '加载中'
 		},
 		exportAsMarkdown() {
+			this.busyTip = '正在导出为Markdown'
+			this.isBusy++
 			const turndown = new Turndown()
 			let markdownContent = turndown.turndown(this.editor.getHTML())
 			//创建blob文件
@@ -912,6 +1097,8 @@ export default {
 			//清除url和链接
 			URL.revokeObjectURL(url)
 			link.remove()
+			this.isBusy--
+			this.busyTip = '加载中'
 		},
 		switchFullScreen() {
 			if (document.fullscreenElement === null) {
@@ -933,17 +1120,21 @@ export default {
 			// 	const dataUrl = event.target.result
 			// 	formData.append('source', dataUrl)
 			// formData.append('source', dataUrl.split('base64,')[1])
-			if (mode === 'manualsave') {		
+			if (mode === 'manualsave') {
+				this.busyTip = '保存中'
+				this.isBusy++
 				this.$http.post(`/api/projects/file/${this.docId}/store/`, formData, {
 					headers: {
 						'Content-type': 'multipart/form-data'
 					}
 				}).then(() => {
 					console.log('保存成功')
+					this.isBusy--
+					this.busyTip = '加载中'
 					this.$emit('updateVersion')
 				})
 			} else {
-				this.$http.post(`/api/projects/file/${this.docId}/autostore/`, formData,{
+				this.$http.post(`/api/projects/file/${this.docId}/autostore/`, formData, {
 					headers: {
 						'Content-type': 'multipart/form-data'
 					}
@@ -954,7 +1145,7 @@ export default {
 			}
 			// }
 			// reader.readAsText(blob)
-		}
+		},
 	},
 	watch: {
 		editable() {
@@ -970,6 +1161,12 @@ export default {
 		}
 	},
 	mounted() {
+		//清除一些残渣
+		if (this.provider !== undefined) { this.provider.destroy() }
+		if (this.editor !== undefined) { this.editor.destroy() }
+		if (this.autoSaver !== undefined) { clearInterval(this.autoSaver) }
+		if (this.contentUpdater !== undefined) { clearInterval(this.contentUpdater) }
+
 		const yDOC = new Y.Doc()//协作文档载体
 		this.provider = new HocuspocusProvider({//用户端
 			url: 'ws://43.138.14.231:1234',
@@ -979,88 +1176,127 @@ export default {
 			onConnect: () => {
 				setTimeout(() => {//异步执行，需要等到users加载完全
 					this.editor.commands.setContent(this.docContent)
+					this.isBusy--//释放最初的isBusy
+					this.jumpToAt()//跳转到@位置
 				}, 100)
+			},
+			onDisconnect: () => {
+				this.isBusy++
 			},
 			forceSyncInterval: 10,
 		})
 		//加载保存时间最近的文件,然后初始化编辑器
-		//查询团队成员,然后初始化编辑器
-		this.$http.get(`/api/teams/${this.$cookies.get('teamId')}/`).then((response) => {
-			let identityMap = {
-				'leader': '团队创建者',
-				'admin': '团队管理员',
-				'member': '团队成员'
-			}
-			this.members = response.data.members.map(element => {
-				return {
-					docId: this.docId,
-					id: element.user.id,
-					username: element.user.username,
-					identity: identityMap[element.identity]
+		//查询团队成员,然后初始化编辑器,游客模式下不可用
+		if (this.$cookies.isKey('user_id') == true) {
+			this.$http.get(`/api/teams/${this.$cookies.get('teamId')}/`).then((response) => {
+				let identityMap = {
+					'leader': '团队创建者',
+					'admin': '团队管理员',
+					'member': '团队成员'
 				}
+				this.members = response.data.members
+					.filter(e => this.$cookies.get('user_id') != e.user.id)//排除自己
+					.map(element => {
+						return {
+							docId: this.docId,
+							id: element.user.id,
+							username: element.user.username,
+							identity: identityMap[element.identity]
+						}
+					})
 			})
-		})
+		}
 		this.editor = new Editor({
 			extensions: [
-				Document,
+				ContentTable,
 				Mention.configure({
 					HTMLAttributes: {
 						class: 'mention',
 					},
-					suggestion: {
-						items: () => { return this.members },
-						render: () => {
-							let component
-							let popup
-							return {
+					// 只有登录状态才能@别人
+					suggestion: this.$cookies.isKey('user_id') ?
+						{
+							items: () => { return this.members },
+							//修改默认command
+							command: ({ editor, range, props }) => {
+								// increase range.to by one when the next node is of type "text"
+								// and starts with a space character
+								const nodeAfter = editor.view.state.selection.$to.nodeAfter
+								const overrideSpace = nodeAfter?.text?.startsWith(' ')
 
-								onStart: props => {
-									component = new VueRenderer(MentionList, {
-										props,
-										editor: props.editor,
-									})
+								if (overrideSpace) {
+									range.to += 1
+								}
+								editor
+									.chain()
+									.focus()
+									.insertContentAt(range, [
+										{
+											type: 'mention',
+											attrs: {
+												...props,
+												id: props.id,
+												label: props.name
+											}
+										},
+										{
+											type: 'text',
+											text: ' ',
+										},
+									])
+									.run()
+								window.getSelection()?.collapseToEnd()
+								this.saveDocument('autosave')//每次@自动保存
+							},
+							render: () => {
+								let component
+								let popup
+								return {
+									onStart: props => {
+										component = new VueRenderer(MentionList, {
+											props,
+											editor: props.editor,
+										})
 
-									if (!props.clientRect()) {
-										return
-									}
+										if (!props.clientRect()) {
+											return
+										}
+										popup = tippy('body', {
+											getReferenceClientRect: props.clientRect,
+											appendTo: () => document.body,
+											content: component.element,
+											showOnCreate: true,
+											interactive: true,
+											trigger: 'manual',
+											placement: 'bottom-start',
+										})
+									},
 
-									popup = tippy('body', {
-										getReferenceClientRect: props.clientRect,
-										appendTo: () => document.body,
-										content: component.element,
-										showOnCreate: true,
-										interactive: true,
-										trigger: 'manual',
-										placement: 'bottom-start',
-									})
-								},
+									onUpdate(props) {
+										component.updateProps(props)
+										if (!props.clientRect()) {
+											return
+										}
+										popup[0].setProps({
+											getReferenceClientRect: props.clientRect,
+										})
+									},
 
-								onUpdate(props) {
-									component.updateProps(props)
-									if (!props.clientRect()) {
-										return
-									}
-									popup[0].setProps({
-										getReferenceClientRect: props.clientRect,
-									})
-								},
+									onKeyDown(props) {
+										if (props.event.key === 'Escape') {
+											popup[0].hide()
+											return true
+										}
+										return component.ref?.onKeyDown(props)
+									},
 
-								onKeyDown(props) {
-									if (props.event.key === 'Escape') {
-										popup[0].hide()
-										return true
-									}
-
-									return component.ref?.onKeyDown(props)
-								},
-
-								onExit() {
-									popup[0].destroy()
-									component.destroy()
-								},
+									onExit() {
+										popup[0].destroy()
+										component.destroy()
+									},
+								}
 							}
-						}
-					}
+						} : {}
 				}),
 				StarterKit.configure({
 					history: false//使用collaboration的history
@@ -1074,7 +1310,7 @@ export default {
 				CollaborationCursor.configure({
 					provider: this.provider,
 					user: {
-						name: this.$cookies.get('username'),
+						name: this.$cookies.isKey('user_id') ? this.$cookies.get('username') : '游客',
 						id: this.$cookies.isKey('user_id') ? this.$cookies.get('user_id') : undefined,//过滤重复的用户
 						color: this.getRandomColor(),
 						avatar: this.userAvatar
@@ -1083,6 +1319,14 @@ export default {
 				Dropcursor.configure({
 					color: '#c71d23'
 				}),
+				Table.configure({
+					resizable: true,
+					// cellMinWidth: 25,
+					allowTableNodeSelection: true
+				}),
+				TableRow,
+				TableHeader,
+				TableCell,
 				Image.configure({
 					inline: true,
 					allowBase64: true
@@ -1095,7 +1339,6 @@ export default {
 				TaskItem.configure({
 					nested: true,
 				}),
-				Text,
 				TextStyle,
 				TextAlign.configure({
 					types: ['heading', 'paragraph'],
@@ -1114,7 +1357,7 @@ export default {
 					multicolor: true
 				})
 			],
-			// content: '',
+			content: '',
 			editable: this.editable,
 			onSelectionUpdate: () => {
 				let selected = window.getSelection()
@@ -1129,38 +1372,25 @@ export default {
 				}
 			},
 		})
-		//设置自动保存
-		setInterval(() => {
+		//设置自动保存,记得Unmounted清除
+		this.autoSaver = setInterval(() => {
 			if (this) {
 				this.saveDocument('autosave')
 			}
 		}, 10000)
-
-
-		this.editor.commands.clearContent()
-		//当provider连接上时的设置
-		this.provider.on('status', event => {
-
-		})
-		//只有没有人在同时编辑的时候才加载，否则使用正在共享编辑的版本
-		//好像并不需要，后端还是能保存一段时间？
-		// setTimeout(() => {
-		// 	if (this.editor.storage.collaborationCursor.users.length === 1 && this.editor.storage.content === '<p></p>') {
-		// 		console.log('插入保存的内容' + this.editor.storage.collaborationCursor.users.length)
-		// 		this.editor.commands.clearContent()
-		// 		setTimeout(() => {
-		// 			this.editor.commands.setContent(this.docContent)
-		// 		}, 100)
-		// 	}
-		// }, 1000)
 		//修改协作光标的文字颜色
 		document.querySelectorAll('.ProseMirror .collaboration-cursor__label').forEach(elm => {
 			elm.style.color = this.getFontColor(elm.style.backgroundColor)
 		})
+		//设置目录 因为需要放在编辑器外面所以只能这样
+		this.contentUpdater = setInterval(() => {
+			this.handleContentUpdate()
+		}, 500)
 	},
 	beforeUnmount() {
-
-	},
+		clearInterval(this.contentUpdater)
+		clearInterval(this.autoSaver)//important 不然重复保存
+	}
 }
 
 </script>
@@ -1316,8 +1546,14 @@ export default {
 	display: inline-flex;
 	justify-content: center;
 	align-items: center;
-	background: 0 !important;
+	/* background: 0 !important; */
+	background: transparent;
 	transition: 0.5s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
+	margin: 3px;
+	padding: 3px;
+	border-radius: 5px;
+	transition: all linear 0.2s;
+	cursor: pointer;
 }
 
 .editor-floating-menu button:hover {
@@ -1326,7 +1562,8 @@ export default {
 }
 
 .editor-floating-menu button.is-active {
-	border: 1px solid grey;
+	background: rgb(199, 29, 35);
+	fill: white;
 }
 
 /* 气泡菜单按钮样式 */
@@ -1357,15 +1594,6 @@ export default {
 	outline: 2px solid rgb(199, 29, 35);
 }
 
-.editor-floating-menu button {
-	padding: 3px 5px;
-	margin: 3px 5px;
-	border-radius: 2px;
-	background: #ddd;
-	color: #616161;
-	transition: all linear 0.2s;
-	cursor: pointer;
-}
 
 /* 工具栏按钮样式 */
 .editor-bar {
@@ -1562,22 +1790,6 @@ export default {
 	/* transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s; */
 }
 
-.ProseMirror:hover {
-	/* box-shadow: #666 3px 3px 3px 3px; */
-	/* background: #ddd; */
-	/* outline: #616161 1px solid; */
-	/* margin-top: 10px; */
-	/* transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s; */
-}
-
-.ProseMirror:focus {
-	/* margin-top: 0; */
-	/* box-shadow: #666 5px 5px 5px 5px; */
-	/* background: #fff; */
-	/* outline: #616161 5px solid; */
-	/* transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.7s; */
-}
-
 .ProseMirror:focus-visible {
 	outline: 0;
 }
@@ -1691,6 +1903,10 @@ export default {
 	pointer-events: none;
 }
 
+.ProseMirror .selectedCell {
+	background: rgb(199, 29, 35, 0.5);
+}
+
 /* 块引用 */
 .ProseMirror blockquote {
 	/* display: inline-block; */
@@ -1796,6 +2012,26 @@ export default {
 	margin: 2rem 0;
 }
 
+/* @样式 */
+.mention {
+	background: rgb(199, 29, 35);
+	color: white;
+	font-weight: 700;
+	line-height: 2;
+	padding: 0 7px;
+	border-radius: 10px;
+	transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s;
+}
+
+.at-highlight {
+	box-shadow: rgb(199, 29, 35) 0 0 5px;
+	color: rgb(199, 29, 35);
+	background: white;
+	transform: scale(1.05);
+}
+
+
+
 /* 协作光标样式 */
 .ProseMirror .collaboration-cursor__caret {
 	border-left: 1px solid #0D0D0D;
@@ -1847,6 +2083,24 @@ export default {
 .ProseMirror ol,
 .ProseMirror ol li {
 	list-style-type: decimal;
+}
+
+.ProseMirror table {
+	margin: 10px auto;
+	table-layout: fixed;
+	width: 100%;
+	overflow: hidden;
+}
+
+
+.ProseMirror th,
+.ProseMirror td {
+	text-overflow: ellipsis;
+	white-space: break-spaces;
+}
+
+.ProseMirror td {
+	min-width: 20px;
 }
 
 .temp-container {
@@ -1968,6 +2222,95 @@ export default {
 	100% {
 		background: #04a019;
 		box-shadow: rgba(21, 198, 1, 0.3) 0 0 5px;
+	}
+}
+</style>
+
+<style lang="scss" scoped>
+/* 目录区 */
+
+.toc {
+	opacity: 0.75;
+	border-radius: 0.5rem;
+	padding: 0.75rem;
+	background: rgba(black, 0.1);
+
+	&__list {
+		padding: 0;
+
+		// 标题栏
+		&::before {
+			display: block;
+			content: "目录";
+			text-align: center;
+			font-weight: 700;
+			letter-spacing: 0.05rem;
+			font-size: 30px;
+			text-transform: uppercase;
+			opacity: 0.5;
+		}
+	}
+}
+
+.toc__item {
+
+	line-height: 2rem;
+
+	* {
+		transition: all cubic-bezier(0.075, 0.82, 0.165, 1) 0.5s;
+	}
+
+	a:hover {
+		opacity: 0.5;
+	}
+
+	&--1 {
+		span {
+			font-size: 25px;
+			font-weight: 700;
+		}
+	}
+
+	&--2 {
+		padding-left: 15px;
+
+		span {
+			font-size: 20px;
+			font-weight: 700;
+		}
+	}
+
+	&--3 {
+		padding-left: 30px;
+
+		span {
+			font-size: 18px;
+			font-weight: 700;
+		}
+	}
+
+	&--4 {
+		padding-left: 40px;
+
+		span {
+			font-size: 18px;
+		}
+	}
+
+	&--5 {
+		padding-left: 50px;
+
+		span {
+			font-size: 17px;
+		}
+	}
+
+	&--6 {
+		padding-left: 60px;
+
+		span {
+			font-size: 16px;
+		}
 	}
 }
 </style>

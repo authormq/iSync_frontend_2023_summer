@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import { time } from 'echarts'
 export default {
     props: {
         items: {
@@ -84,9 +85,18 @@ export default {
         selectItem(index) {
             const item = this.items[index]
             if (item) {
-                this.command({ id: item.username })
-                console.log(item)
-                this.$bus.emit('wssend', { docId: item.docId, id: item.id })
+                let currentTime = String(new Date().getTime())
+                //获取当前时间作为@的ID(精确到毫秒)
+                let atId = `at_${item.id}_${currentTime}`
+                this.$bus.emit('wssend', {
+                    docId: item.docId,
+                    id: item.id,
+                    file_element: atId//本次@的ID
+                })
+                this.command({
+                    id: atId,
+                    name: item.username
+                })
             }
         },
     },
@@ -97,7 +107,7 @@ export default {
 .items {
     padding: 0.2rem;
     position: relative;
-    border-radius: 0.5rem;
+    border-radius: 10px;
     background: #FFF;
     color: rgba(0, 0, 0, 0.8);
     overflow: hidden;
@@ -114,16 +124,18 @@ export default {
     width: 100%;
     text-align: left;
     background: transparent;
-    border-radius: 0.4rem;
-    border: 1px solid transparent;
+    border-radius: 10px;
+    border: 2px solid transparent;
     padding: 0.2rem 0.4rem;
-
+    transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.4s;
 
 }
 
 .item.is-selected {
-    border-color: #000;
+    background: rgb(199, 29, 35);
+    color: white
 }
+
 
 .identity-tag {
     display: flex;
@@ -133,7 +145,6 @@ export default {
     font-family: Arial, Helvetica, sans-serif;
     display: inline-block;
     border-radius: 0.3rem;
-
     font-weight: 700;
     font-size: 0.8rem;
 }
@@ -151,5 +162,20 @@ export default {
 .identity-tag.member {
     color: #444;
     background: #ddd;
+}
+
+.item.is-selected .identity-tag.identity-tag.leader {
+    background: white;
+    color: rgb(139, 20, 25);
+}
+
+.item.is-selected .identity-tag.identity-tag.admin {
+    background: white;
+    color: rgb(199, 29, 35)
+}
+
+.item.is-selected .identity-tag.identity-tag.member {
+    background: white;
+    color: #444
 }
 </style>

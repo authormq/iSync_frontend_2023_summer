@@ -45,7 +45,9 @@
       <ProjectListItem v-for="project in recycleData" :key="project" type="delete" :data="project"></ProjectListItem>
     </template>
     <template v-else-if="showSearch">
-      <ProjectListItem v-for="project in searchData" :key="project" :data="project"></ProjectListItem>
+      <div v-for="project in searchData" :key="project" @click="jumpToProject(project.id,project.teamId)">
+      <ProjectListItem :key="project" :data="project"></ProjectListItem>
+      </div>
     </template>
   </div>
   <CreateProjectModal :show="showModal" @close="showModal = false" />
@@ -207,7 +209,7 @@ export default {
     handleCopyProject(id) {
       this.$http.post(`/api/projects/copy/${id}`).then(
         response => {
-
+          this.getProjectData()
         },
         error => {
           this.$bus.emit('message', {

@@ -1,7 +1,7 @@
 <template>
 	<span id="size-setter" v-if="Devices!==undefined">
 		<!-- 桌面端按钮 -->
-		<span @click="switchDevice(0)" v-tooltip="'桌面端'"
+		<span @click="switchDevice(0)"
 			:class="{ 'selected-device': Devices[0].selected, 'unselected-device': !Devices[0].selected }">
 			<svg t="1693450725716" class="icon" style="cursor: pointer;" viewBox="0 0 1024 1024" version="1.1"
 				xmlns="http://www.w3.org/2000/svg" p-id="1477" width="23" height="23">
@@ -11,7 +11,7 @@
 			</svg>
 		</span>
 		<!-- 平板按钮 -->
-		<span @click="switchDevice(1)" v-tooltip="'平板端'"
+		<span @click="switchDevice(1)"
 			:class="{ 'selected-device': Devices[1].selected, 'unselected-device': !Devices[1].selected }">
 			<svg t="1693456457079" class="icon" style="cursor: pointer;" viewBox="0 0 1024 1024" version="1.1"
 				xmlns="http://www.w3.org/2000/svg" p-id="2689" width="23" height="23">
@@ -22,7 +22,7 @@
 			</svg>
 		</span>
 		<!-- 手机按钮 -->
-		<span @click="switchDevice(2)" v-tooltip="'手机端'"
+		<span @click="switchDevice(2)"
 			:class="{ 'selected-device': Devices[2].selected, 'unselected-device': !Devices[2].selected }">
 			<svg t="1693456616174" class="icon" style="cursor: pointer;" viewBox="0 0 1024 1024" version="1.1"
 				xmlns="http://www.w3.org/2000/svg" p-id="4595" width="23" height="23">
@@ -37,7 +37,7 @@
 			</svg>
 		</span>
 		<!-- 自定义按钮 -->
-		<span @click="switchDevice(3)" v-tooltip="'自定义'"
+		<span @click="switchDevice(3)"
 			:class="{ 'selected-device': Devices[3].selected, 'unselected-device': !Devices[3].selected }">
 			<svg t="1693400825308" style="cursor: pointer;" class="icon" viewBox="0 0 1024 1024" version="1.1"
 				xmlns="http://www.w3.org/2000/svg" p-id="11286" id="mx_n_1693400825309" width="23" height="23">
@@ -50,11 +50,11 @@
 			</svg>
 		</span>
 		<span v-if="Devices[0].selected" class="animate__animated animate__fadeIn">
-			{{ Devices[0].width }} x {{ Devices[0].height }}</span>
+			{{ Devices[0].width }} × {{ Devices[0].height }}</span>
 		<span v-if="Devices[1].selected" class="animate__animated animate__fadeIn">
-			{{ Devices[1].width }} x {{ Devices[1].height }}</span>
+			{{ Devices[1].width }} × {{ Devices[1].height }}</span>
 		<span v-if="Devices[2].selected" class="animate__animated animate__fadeIn">
-			{{ Devices[2].width }} x {{ Devices[2].height }}</span>
+			{{ Devices[2].width }} × {{ Devices[2].height }}</span>
 		<span v-if="Devices[3].selected" class="animate__animated animate__fadeIn">
 			<svg t="1693312903898" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
 				p-id="2576" width="25" height="25">
@@ -1173,9 +1173,9 @@ button {
         },
 				assetManager: [],//预加载资产，图片/图标等
 				plugins: [
-					Plugin, 
-					BasicPlugin, 
-					ExportPlugin, 
+					Plugin,
+					BasicPlugin,
+					ExportPlugin,
 					Tabs,
 					Tooltip,
 					CodePlugin,
@@ -1255,24 +1255,24 @@ button {
 							// As the API stores projects in this format `{id: 1, data: projectData }`,
 							// we have to properly update the body before the store and extract the
 							// project data from the response result.
-							// onStore: data => {
-								// data['size'] = {
-								// 	height: this.canvasHeight,
-								// 	width: this.canvasWidth,
-								// }
-								// data['Devices'] = this.Devices
-								// this.ws.send(JSON.stringify(data))
-								// return {
-								// 	id: this.pageId,
-								// 	data,
-								// 	//存储画布宽高
-								// 	size: {
-								// 		height: this.canvasHeight,
-								// 		width: this.canvasWidth,
-								// 	},
-								// 	Devices: this.Devices,
-								// }
-							// },
+							onStore: data => {
+								data['size'] = {
+									height: this.canvasHeight,
+									width: this.canvasWidth,
+								}
+								data['Devices'] = this.Devices
+								this.ws.send(JSON.stringify(data))
+								return {
+									id: this.pageId,
+									data,
+									//存储画布宽高
+									size: {
+										height: this.canvasHeight,
+										width: this.canvasWidth,
+									},
+									Devices: this.Devices,
+								}
+							},
 							onLoad: result => {
 	
 								// this.Devices = result.Devices
@@ -1469,53 +1469,55 @@ button {
 
 
 :deep(.gjs-pn-btn:hover) {
-	background:rgb(199,29,35);
-	color:#ddd;
+	background: rgb(199, 29, 35);
+	color: #ddd;
 }
 
 :deep(.cm-s-hopscotch.CodeMirror) {
 	background-color: white;
 	color: black;
 }
+
 :deep(.cm-s-hopscotch .CodeMirror-gutters) {
-    background: #eee;
-    border-right: 0px;
+	background: #eee;
+	border-right: 0px;
 }
+
 :deep(.gjs-cm-editor#gjs-cm-css #gjs-cm-title) {
-    color: #804f7b;
+	color: #804f7b;
 }
 
 :deep(.CodeMirror) {
-    font-family: consolas;
-    height: 300px;
-    color: black;
-    direction: ltr;
+	font-family: consolas;
+	height: 300px;
+	color: black;
+	direction: ltr;
 }
 
 :deep(.gjs-layer-name) {
-    padding: 8px 0;
-    display: inline-block;
-    box-sizing: content-box;
-    overflow: hidden;
-    white-space: nowrap;
-    margin: 0 30px 0 15px;
-    max-width: 170px;
+	padding: 8px 0;
+	display: inline-block;
+	box-sizing: content-box;
+	overflow: hidden;
+	white-space: nowrap;
+	margin: 0 30px 0 15px;
+	max-width: 170px;
 }
 
 :deep(.gjs-layer-vis) {
-    left: 0;
-    top: 0;
-    padding: 7px 10px 7px 10px;
-    position: absolute;
-    box-sizing: content-box;
-    cursor: pointer;
-    width: 20px;
-    z-index: 1;
+	left: 0;
+	top: 0;
+	padding: 7px 10px 7px 10px;
+	position: absolute;
+	box-sizing: content-box;
+	cursor: pointer;
+	width: 20px;
+	z-index: 1;
 }
 
-#size-setter{
-	height:30px;
-	display:inline-block;
+#size-setter {
+	height: 30px;
+	display: inline-block;
 }
 
 #size-setter svg {
@@ -1553,7 +1555,19 @@ button {
 	background: none;
 	transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s;
 }
-#size-setter button:hover{
+
+#size-setter button:hover {
+	background: #c71d23;
+}
+
+.selected-device svg {
+	fill: white;
+	background: #c71d23;
+	box-shadow: #c71d23 0 0 3px;
+}
+
+.unselected-device svg:hover {
+	fill: white;
 	background: #c71d23;
 }
 
@@ -1568,6 +1582,7 @@ button {
 
 .unselected-device svg {
 	fill: #c71d23;
+	transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s;
 
 }
 .sharebutton {

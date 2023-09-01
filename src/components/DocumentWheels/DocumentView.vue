@@ -1,26 +1,4 @@
 <template>
-    <div v-if="!isLoaded" class="mask" :style="{
-        'position': 'fixed',
-        'left': '0',
-        'top': '0',
-        'width': '100%',
-        'height': '100%',
-        'background': 'rgba(200,200,200,0.5)'
-    }">
-        <div :style="{
-            'display': 'inline-block',
-            'vertical-align': 'middle',
-            'margin': '0 auto'
-        }">
-            <div :style="{
-                'width': '10px',
-                'aspect-ratio': '1',
-                'borderRadius': '10px',
-                'border': '3px dotted #777',
-                'animation': 'rotate 1s infinite linear'
-            }"></div><span>正在加载内容...</span>
-        </div>
-    </div>
     <div class="flex-container">
         <text-editor :isReadOnly="isReadOnlyIdentity" :doc-name="docName" :doc-id="docId" v-model:doc-content="docContent"
             @update-version="getVersionInfo" :showHistoryVersion="showHistoryVersion">
@@ -87,7 +65,7 @@ export default {
         },
         //展示选择的信息
         showVersionContent(versionId) {
-            this.currentVersionContent=''
+            this.currentVersionContent = ''
             this.currentVersionId = versionId
             this.$http.get(`/api/projects/file/${this.docId}/version/show/${versionId}`).then((response) => {
                 this.currentVersionContent = response.data
@@ -126,7 +104,7 @@ export default {
         //打开当前文件
         this.docId = this.$route.params.docId
         this.$http.get(`/api/projects/file/${this.docId}/open/`).then((response) => {
-            this.docName = response.headers['content-disposition'].match(/filename="([^"]+)"/)[1]
+            this.docName = decodeURI(response.headers['content-disposition'].match(/filename="([^"]+)"/)[1])
             this.docContent = response.data
             this.isLoaded = true
         })

@@ -41,7 +41,6 @@ export default {
   props: ['msg'],
   components: { MailIcon, TrashIcon },
   methods: {
-    // 这个函数需要检查正确性
     handleChangeStatus() {
       this.$bus.emit('sendChangeStatusSignal', this.msg)
     },
@@ -52,10 +51,10 @@ export default {
 
     jump() {
       if (this.msg.teamId != null) {
-        this.$router.push(`/team/${this.msg.teamId}/chat/?message=${this.msg.msgId}`)
+        this.$router.push(`/team/${this.msg.teamId}/chat/?groupId=${this.msg.groupId}&messageId=${this.msg.messageId}`)
       }
       else {
-        this.$router.push(`/doc/${this.msg.fileId}`)
+        this.$router.push(`/doc/${this.msg.fileId}/?atId=${this.msg.fileElementId}`)
       }
     }
   },

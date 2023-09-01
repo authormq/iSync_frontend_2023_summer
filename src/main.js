@@ -30,7 +30,7 @@ app.directive('tooltip', {
 
     tooltip.style.top = '0'
     tooltip.style.left = '0'
-    tooltip.style.position = 'fixed'
+    tooltip.style.position = 'absolute'
     tooltip.style.background = 'white'
     tooltip.style.zIndex = '9999'
 
@@ -42,6 +42,8 @@ app.directive('tooltip', {
       el.style.zIndex = '9998'
       tooltip.style.left = `${ e.clientX - el.getBoundingClientRect().left }px`
       tooltip.style.top = `${e.clientY - el.getBoundingClientRect().top }px`
+      // tooltip.style.left = `${ e.clientX }px`
+      // tooltip.style.top = `${e.clientY }px`
       tooltip.style.display = 'block'
     })
     el.addEventListener('click', () => {

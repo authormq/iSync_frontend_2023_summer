@@ -54,7 +54,7 @@ export default {
     }
   },
   emits: ['close'],
-  props: ['projectId'],
+  props: ['projectId', 'folder'],
   components: { StylishModal, CloseIcon },
   data() {
     return {
@@ -129,22 +129,26 @@ export default {
         }
       })
       console.log(formData);
-      this.$http.post(`/api/projects/file/create/`, formData).then(
-        response => {
-          let newDoc = {
-            id: response.data.id,
-            name: this.name,
-            isPublic: this.isPublic,
-            type: docType,
+      if (this.folder) {
+        this.$http.post(`/api/projects/folder/new_file/${this.folder.id}/`, formData).then(
+          response => {
+            this.$bus.emit('reloadDocListAfterCreateSucceed')
+          },
+          error => {
+            console.log(error)
           }
-          alert('111')
-          this.$bus.emit('reloadDocListAfterCreateSucceed', newDoc)
-          this.handleClose()
-        },
-        error => {
-          console.log('@@', error.message)
-        }
-      )
+        )
+      } else {
+        this.$http.post(`/api/projects/file/create/`, formData).then(
+          response => {
+            this.$bus.emit('reloadDocListAfterCreateSucceed')
+          },
+          error => {
+            console.log('@@', error.message)
+          }
+        )
+      }
+      this.handleClose()
     },
     handleModelSelect(index) {
       this.models.forEach((model) => {

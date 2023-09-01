@@ -384,7 +384,6 @@ export default {
 										width: this.canvasWidth,
 									},
 									Devices: this.Devices,
-									customize: this.customize
 								}
 							},
 							onLoad: result => {

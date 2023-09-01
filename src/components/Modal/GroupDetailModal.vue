@@ -90,6 +90,7 @@ export default {
       }
     },
     clickSearchRecordModal() {
+      this.$bus.emit('fetchAllMessages')
       this.showSearchRecordModal = true
     },
     handleQuitGroup() {

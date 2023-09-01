@@ -726,13 +726,16 @@
 			<button @click="editor.chain().focus().splitCell().run()">
 				分裂单元格
 			</button>
-			<button @click="editor.chain().focus().toggleHeaderColumn().run()" :class="{ 'is-active': editor.isActive('headerColumn') }">
+			<button @click="editor.chain().focus().toggleHeaderColumn().run()"
+				:class="{ 'is-active': editor.isActive('headerColumn') }">
 				设置表头列
 			</button>
-			<button @click="editor.chain().focus().toggleHeaderRow().run()" :class="{ 'is-active': editor.isActive('headerRow') }">
+			<button @click="editor.chain().focus().toggleHeaderRow().run()"
+				:class="{ 'is-active': editor.isActive('headerRow') }">
 				设置表头行
 			</button>
-			<button @click="editor.chain().focus().toggleHeaderCell().run()" :class="{ 'is-active': editor.isActive('headerCell') }">
+			<button @click="editor.chain().focus().toggleHeaderCell().run()"
+				:class="{ 'is-active': editor.isActive('headerCell') }">
 				设置表头单元格
 			</button>
 			<button @click="editor.chain().focus().fixTables().run()">
@@ -746,10 +749,17 @@
 			</button>
 		</div>
 		<div class="document-title">{{ docName }}</div>
-		<!-- <editor-content :editor="editor" id="document-content" v-model="localContent"
-			@update="$emit('update:docContent', editor.storage.content)" /> -->
+		<node-view-wrapper class="toc">
+			<ul class="toc__list">
+				<li class="toc__item" :class="`toc__item--${heading.level}`" v-for="(heading, index) in headings"
+					:key="index">
+					<a :href="`#${heading.id}`">
+						<span>{{ heading.text }}</span>
+					</a>
+				</li>
+			</ul>
+		</node-view-wrapper>
 		<div class="flex">
-			<toc></toc>
 			<editor-content :editor="editor" id="document-content" />
 			<slot v-if="showHistoryVersion" name="version"></slot>
 		</div>
@@ -788,6 +798,7 @@ import TaskList from '@tiptap/extension-task-list'
 import TextStyle from '@tiptap/extension-text-style'
 import TextAlign from '@tiptap/extension-text-align'
 import ContentTable from './Content.js'
+import { nodeViewProps, NodeViewWrapper } from '@tiptap/vue-3'//目录
 import { lowlight } from 'lowlight'//代码高亮
 import CodeBlockLowLight from '@tiptap/extension-code-block-lowlight'//代码高亮
 import { Editor, EditorContent, BubbleMenu, FloatingMenu } from '@tiptap/vue-3'
@@ -810,7 +821,6 @@ import Suggestion from '@tiptap/suggestion'
 
 // color picker
 import { NColorPicker } from 'naive-ui'
-import { Static } from 'vue'
 
 export default {
 	name: 'TextEditor',
@@ -818,7 +828,8 @@ export default {
 		EditorContent,
 		BubbleMenu,
 		FloatingMenu,
-		NColorPicker
+		NColorPicker,
+		NodeViewWrapper,
 	},
 	props: {
 		showHistoryVersion: {
@@ -847,6 +858,8 @@ export default {
 			// localContent: '',
 			docLimit: 100000,
 			autoSavePeriod: 10000,
+			autoSaver: undefined,
+			contentUpdater: undefined,
 			isBusy: 1,//处理完某些交互事项前用户不能操作
 			busyTip: '加载中',
 			editable: false,
@@ -855,6 +868,7 @@ export default {
 			selectedFontFamily: 'sans-serif',
 			selectedFontSize: '',
 			provider: undefined,
+			headings: [],//目录的标题
 			fontOptions: [
 				{ value: 'consolas', label: 'consolas' },
 				{ value: 'monospace', label: 'monospace' },
@@ -873,9 +887,7 @@ export default {
 			],
 		}
 	},
-	updated() {
-		// this.clearColorPickerText()
-	},
+
 	methods: {
 		clearColorPickerText() {
 			const div = document.getElementsByClassName('n-color-picker-trigger__value')
@@ -925,6 +937,34 @@ export default {
 				}
 				reader.readAsDataURL(event.target.files[0])
 			}
+		},
+		//更新目录
+		handleContentUpdate() {
+			const headings = []
+			const transaction = this.editor.state.tr
+			this.editor.state.doc.descendants((node, pos) => {
+				if (node.type.name === 'heading') {
+					const id = `heading-${headings.length + 1}`
+
+					if (node.attrs.id !== id) {
+						transaction.setNodeMarkup(pos, undefined, {
+							...node.attrs,
+							id,
+						})
+					}
+
+					headings.push({
+						level: node.attrs.level,
+						text: node.textContent,
+						id,
+					})
+				}
+			})
+			transaction.setMeta('addToHistory', false)
+			transaction.setMeta('preventUpdate', true)
+
+			this.editor.view.dispatch(transaction)
+			this.headings = headings
 		},
 		exportAsPDF() {
 			this.busyTip = '正在导出为PDF'
@@ -1221,7 +1261,7 @@ export default {
 					multicolor: true
 				})
 			],
-			// content: '',
+			content: '',
 			editable: this.editable,
 			onSelectionUpdate: () => {
 				let selected = window.getSelection()
@@ -1242,12 +1282,9 @@ export default {
 				this.saveDocument('autosave')
 			}
 		}, 10000)
-
-
-		this.editor.commands.clearContent()
 		//当provider连接上时的设置
 		this.provider.on('status', event => {
-
+			this.editor.commands.clearContent()
 		})
 		//只有没有人在同时编辑的时候才加载，否则使用正在共享编辑的版本
 		//好像并不需要，后端还是能保存一段时间？
@@ -1264,8 +1301,13 @@ export default {
 		document.querySelectorAll('.ProseMirror .collaboration-cursor__label').forEach(elm => {
 			elm.style.color = this.getFontColor(elm.style.backgroundColor)
 		})
+		//设置目录 因为需要放在编辑器外面所以只能这样
+		this.contentUpdater = setInterval(() => {
+			this.handleContentUpdate()
+		}, 500)
 	},
 	beforeUnmount() {
+		clearInterval(this.contentUpdater)
 		clearInterval(this.autoSaver)//important 不然重复保存
 	},
 }
@@ -1669,23 +1711,6 @@ export default {
 	/* transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s; */
 }
 
-
-.ProseMirror:hover {
-	/* box-shadow: #666 3px 3px 3px 3px; */
-	/* background: #ddd; */
-	/* outline: #616161 1px solid; */
-	/* margin-top: 10px; */
-	/* transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s; */
-}
-
-.ProseMirror:focus {
-	/* margin-top: 0; */
-	/* box-shadow: #666 5px 5px 5px 5px; */
-	/* background: #fff; */
-	/* outline: #616161 5px solid; */
-	/* transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.7s; */
-}
-
 .ProseMirror:focus-visible {
 	outline: 0;
 }
@@ -2080,6 +2105,95 @@ export default {
 	100% {
 		background: #04a019;
 		box-shadow: rgba(21, 198, 1, 0.3) 0 0 5px;
+	}
+}
+</style>
+
+<style lang="scss" scoped>
+/* 目录区 */
+
+.toc {
+	opacity: 0.75;
+	border-radius: 0.5rem;
+	padding: 0.75rem;
+	background: rgba(black, 0.1);
+
+	&__list {
+		padding: 0;
+
+		// 标题栏
+		&::before {
+			display: block;
+			content: "目录";
+			text-align: center;
+			font-weight: 700;
+			letter-spacing: 0.05rem;
+			font-size: 30px;
+			text-transform: uppercase;
+			opacity: 0.5;
+		}
+	}
+}
+
+.toc__item {
+
+	line-height: 2rem;
+
+	* {
+		transition: all cubic-bezier(0.075, 0.82, 0.165, 1) 0.5s;
+	}
+
+	a:hover {
+		opacity: 0.5;
+	}
+
+	&--1 {
+		span {
+			font-size: 25px;
+			font-weight: 700;
+		}
+	}
+
+	&--2 {
+		padding-left: 15px;
+
+		span {
+			font-size: 20px;
+			font-weight: 700;
+		}
+	}
+
+	&--3 {
+		padding-left: 30px;
+
+		span {
+			font-size: 18px;
+			font-weight: 700;
+		}
+	}
+
+	&--4 {
+		padding-left: 40px;
+
+		span {
+			font-size: 18px;
+		}
+	}
+
+	&--5 {
+		padding-left: 50px;
+
+		span {
+			font-size: 17px;
+		}
+	}
+
+	&--6 {
+		padding-left: 60px;
+
+		span {
+			font-size: 16px;
+		}
 	}
 }
 </style>

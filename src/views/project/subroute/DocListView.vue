@@ -30,17 +30,28 @@
         style="margin: 5px"
         class="folder-item"
         v-for="(folder, index) in folderList" :key="folder.id" 
-        @click="changeToFolder(folder)"
+        @click="changeToFolder($event, folder)"
         @drop="dropIntoFolder(folder.id); unhighlightFolder(index)"
         @dragover="allowDrop"
         @dragenter="highlightFolder(index)"
         @dragleave="unhighlightFolder(index)"
+        @contextmenu.prevent="handleRightClick($event, index)"
       >
         <div class="folder-container" :class="{'folder-highlight': folder.shouldHighlight}">
           <div class="folder-icon">
             <svg t="1693469503523" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5772" width="80" height="80"><path d="M912 208H427.872l-50.368-94.176A63.936 63.936 0 0 0 321.056 80H112c-35.296 0-64 28.704-64 64v736c0 35.296 28.704 64 64 64h800c35.296 0 64-28.704 64-64v-608c0-35.296-28.704-64-64-64z m-800-64h209.056l68.448 128H912v97.984c-0.416 0-0.8-0.128-1.216-0.128H113.248c-0.416 0-0.8 0.128-1.248 0.128V144z m0 736v-96l1.248-350.144 798.752 1.216V784h0.064v96H112z" fill="#c71d23" p-id="5773"></path></svg>
           </div>
-          <div class="folder-name">{{ folder.name }}</div>
+          <div class="folder-name" :id="`name${index}`">{{ folder.name }}</div>
+          <div class="input-hint" :id="`hint${index}`">敲击回车以确定</div>
+          <input type="text" :id="`input${index}`" v-model="newName" @keydown.enter="renameFolder(folder, index)" @blur="recoverFolder(index)">
+        </div>
+        <div 
+          class="menu" 
+          v-if="folder.showMenu"
+          :style="{ left: x + 'px', top: y + 'px'}"
+        >
+          <button @click.stop="handleRenameFolder(index)">重命名</button>
+          <button @click.stop="doNothing" @dblclick.stop="deleteFolder(folder)" v-tooltip="'文档删除后将无法找回。双击按钮以确认'">删除</button>
         </div>
       </div>
 
@@ -100,7 +111,12 @@ export default {
       docId: null,
       folderId: null,
       timer: null,
-      scrollDis: 0
+      scrollDis: 0,
+
+      // 右键文件夹
+      x: 0,
+      y: 0,
+      newName: ''
     }
   },
   mounted() {
@@ -111,6 +127,7 @@ export default {
     this.$bus.on('renameDocRequest', this.handleRenameDocRequest)
     this.$bus.on('reloadDocListAfterCreateSucceed', this.handleReloadDocList)
     this.$bus.on('flushFolder', this.flushFolder)
+    document.addEventListener('click', this.hideMenu)
   },
   methods: {
     handleDocClick(e, doc) {
@@ -198,8 +215,12 @@ export default {
         }
       )
     },
-    changeToFolder(folder) {
-      this.getFolderFiles(folder)
+    changeToFolder(e, folder) {
+      if (e.target.tagName === 'INPUT') {
+        e.target.querySelector('input').focus()
+      } else {
+        this.getFolderFiles(folder)
+      }
     },
     toCreateFolder() {
       this.isCreatingFolder = true
@@ -304,7 +325,66 @@ export default {
         clearInterval(this.timer)
         this.timer = null
       }
+    },
+
+
+    // 文件夹右键弹出菜单
+    handleRightClick(event, index) {
+      this.hideMenu()
+      this.folderList[index].showMenu = true
+      this.x = event.clientX
+      this.y = event.clientY
+    },
+    hideMenu() {
+      for (let i = 0; i < this.folderList.length; i++) {
+        if (this.folderList[i].showMenu)
+          this.folderList[i].showMenu = false
+      }
+    },
+    doNothing() {},
+    handleRenameFolder(index) {
+      this.newName = this.folderList[index].name
+      const name = document.getElementById(`name${index}`)
+      const hint = document.getElementById(`hint${index}`)
+      const input = document.getElementById(`input${index}`)
+      name.style.display = 'none'
+      hint.style.display = 'block'
+      input.style.display = 'block'
+      input.focus()
+      this.folderList[index].showMenu = false
+    },
+    renameFolder(folder, index) {
+      this.$http.post(`/api/projects/folder/${folder.id}/rename/${this.newName}/`).then(
+        response => {
+          this.recoverFolder(index)
+          this.getFiles()
+        },
+        error => {
+          this.$bus.emit('message', { title: '重命名失败', content: '', time: 1000 })
+        }
+      )
+    },
+    recoverFolder(index) {
+      this.newName = this.folderList[index].name
+      const name = document.getElementById(`name${index}`)
+      const hint = document.getElementById(`hint${index}`)
+      const input = document.getElementById(`input${index}`)
+      name.style.display = 'block'
+      hint.style.display = 'none'
+      input.style.display = 'none'
+    },
+    deleteFolder(folder) {
+      this.$http.delete(`/api/projects/folder/${folder.id}/delete/`).then(
+        response => {
+          this.getFiles()
+        },
+        error => {
+          this.$bus.emit('message', { title: '删除文件夹失败', content: '', time: 1500 })
+        }
+      )
     }
+
+
     
 
   }
@@ -430,5 +510,59 @@ export default {
 
 .prevent-bug * {
   pointer-events: none;
+}
+
+.menu {
+  width: 100px;
+  /* height: 90px; */
+  padding: 10px;
+  background: white;
+  /* border: 2px solid rgba(199, 29, 35, 1); */
+  box-shadow: 1px 1px 10px grey;
+  border-radius: 10px;
+  position: absolute;
+  z-index: 99;
+}
+
+.menu button {
+  /* display: block;/ */
+  width: 100px;
+  height: 30px;
+  box-shadow: 0px 0px 3px grey;
+  background: transparent;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+  margin-bottom: 5px;
+}
+
+.menu button:last-of-type {
+  margin-bottom: 0;
+}
+
+.menu button:hover {
+  background: rgba(199, 29, 35, 1);
+  color: white;
+}
+
+.folder-container input {
+  display: none;
+  width: 140px;
+  height: 20px;
+  border: 2px solid rgba(199, 29, 35, 1);
+  caret-color: rgba(199, 29, 35, 1);
+  font-size: 18px;
+  padding: 5px;
+  border-radius: 5px;
+  position: relative;
+}
+
+.input-hint {
+  display: none;
+  position: absolute;
+  font-size: 12px;
+  top: -15px;
+  font-weight: bold;
+  color: grey;
 }
 </style>

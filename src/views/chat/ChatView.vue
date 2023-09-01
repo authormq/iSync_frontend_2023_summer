@@ -505,6 +505,11 @@ export default {
 					...this.messages,
 					this.rooms[i].lastMessage
 				]
+				if (message.forwardMessages.length != 0) {
+					setTimeout(() => {
+						this.loadCombinedMessages(this.messages.length - 1)
+					});
+				}
 			}
 			for (let j = 0; j < this.rooms.length; j++) {
 				if (this.rooms[j].index > this.rooms[i].index) {

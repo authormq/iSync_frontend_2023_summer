@@ -250,7 +250,7 @@ export default {
 				margin: 0 !important;
 			}
 		`
-		this.$bus.on('scrollToMessage', messageId => this.fetchAllAndScroll(messageId))
+		this.$bus.on('scrollToMessage', messageId => this.scrollToMessage(messageId))
 		this.$bus.on('fetchAllMessages', () => this.fetchAllMessages())
 		this.$bus.on('scrollToMessage', messageId => this.scrollToMessage(messageId))
 		this.$bus.on('forwardMessages', transmitList => this.forwardMessages(transmitList))

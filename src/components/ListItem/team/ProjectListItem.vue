@@ -10,7 +10,7 @@
       <template v-if="renaming">
         <input type="text" ref="nameInput" v-model="name">
         <div class="check-icon" @click.stop="cancelRename"><CrossIcon size="15px"/></div>
-        <div class="check-icon" @click="updateRename"><CheckIcon size="15px"/></div>
+        <div class="check-icon" @click.stop="updateRename"><CheckIcon size="15px"/></div>
       </template>
       <div class="project-creator">
         创建者：{{ data.creator }}
@@ -165,7 +165,7 @@ export default {
 
 <style scoped>
 .project-container {
-  width: 240px;
+  /* width: 240px; */
   height: 230px;
   padding: 10px;
   border-radius: 10px;
@@ -189,7 +189,7 @@ img {
 }
 
 .project-info {
-  width: 200px;
+  /* width: 200px; */
   margin: 0 auto;
   margin-top: 10px;
 }

@@ -39,7 +39,7 @@ export default {
                 response => {
                   recentTeam = response.data.team_id
                   if (recentTeam) {
-                    this.$router.push(`/team/${recentTeam}/info`)
+                    // this.$router.push(`/team/${recentTeam}/info`)
                   }
                 }
               )
@@ -99,6 +99,6 @@ export default {
   /* max-height: 600px; */
   /* overflow-y: auto; */
   padding-left: 50px;
-
 }
+
 </style>

@@ -104,7 +104,7 @@ export default {
     mounted() {
         //打开当前文件
         this.docId = this.$route.params.docId
-        this.$http.get(`/api/projects/file/${this.docId}/open/`).then((response) => {
+        this.$http.get(`/api/projects/file/${this.docId}/open/`).then((response) => { //!!
             this.docName = decodeURI(response.headers['content-disposition'].match(/filename="([^"]+)"/)[1])
             this.docContent = response.data
             this.isLoaded = true

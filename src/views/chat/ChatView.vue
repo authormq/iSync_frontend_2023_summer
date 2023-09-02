@@ -282,6 +282,26 @@ export default {
 			.vac-selection-button {
 				background: rgba(199,29,35, 1) !important;
 			}
+
+			@keyframes blink {
+				from {
+					background: white !important;
+				}
+				50% {
+					background: rgba(199,29,35, 0.2) !important;
+				}
+				to {
+					background: white !important;
+				}
+			}
+
+			.blink-message {
+				animation: blink linear 10s forwards;
+			}
+
+			.vac-badge-counter.vac-messages-count {
+				background: rgba(199,29,35, 1) !important;
+			}
 		`
 		this.$bus.on('fetchAllMessages', () => this.fetchAllMessages())
 		this.$bus.on('scrollToMessage', messageId => this.scrollToMessage(messageId))
@@ -841,6 +861,7 @@ export default {
 					const doc = this.$refs.chat.shadowRoot
 					const container = doc.querySelector('#messages-list')
 					const msg = doc.querySelector(`#messages-list>div>div>span>div:nth-child(${i})`)
+					
 					if (container && msg) {
 						// console.log('msg: ', msg.getBoundingClientRect().top, msg.getBoundingClientRect().bottom)
 						// console.log('con: ', container.getBoundingClientRect().top, container.getBoundingClientRect().bottom)
@@ -852,6 +873,10 @@ export default {
 							left: 0,
 							behavior: 'smooth'
 						})
+						// msg.querySelector('.vac-message-card').classList.add('blink-message')
+						// setTimeout(() => {
+						// 	msg.querySelector('.vac-message-card').classList.remove('blink-message')
+						// }, 1500);
 					}
 				}
 			}, 500);

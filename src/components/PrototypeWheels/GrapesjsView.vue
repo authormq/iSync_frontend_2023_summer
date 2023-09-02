@@ -128,85 +128,84 @@ import 'animate.css'
 import PageSelect from './PageSelect.vue';
 
 export default {
-  name: 'GrapesEditor',
-  components: {
-    PageSelect
-  },
-  mounted() {
-    this.pageId = this.$route.params.protoId
-    this.initEditor()
-    this.addBlock()
-    // this.setLocale()
+	name: 'GrapesEditor',
+	components: {
+		PageSelect
+	},
+	mounted() {
+		this.pageId = this.$route.params.protoId
+		this.initEditor();
+		this.addBlock();
+    this.clearCanvas();
+		this.$watch(
+			() => this.$route.params,
+			() => {
+				this.pageId = this.$route.params.protoId
+				this.$http.get(`http://43.138.14.231/projects/${this.pageId}`).then((response) => {
+					this.editor.loadProjectData(response.data)
+				})
+			},
+			{ immediate: true }
+		)
+		this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/page/${this.pageId}/`)
+		this.ws.onmessage = (message) => {
+			const data = JSON.parse(message.data).data
+			if (JSON.stringify(this.editor.getProjectData()) !== JSON.stringify(data)) {
+				this.editor.loadProjectData(data)
+			}
+		}
     let topPanel = document.querySelector('.gjs-pn-panel.gjs-pn-devices-c.gjs-one-bg.gjs-two-color .gjs-pn-buttons')
-    let sizeSetter = document.querySelector('#size-setter')
-    topPanel.appendChild(sizeSetter)
-    this.$watch(
-      () => this.$route.params,
-      () => {
-        this.pageId = this.$route.params.protoId
-        this.$http.get(`http://43.138.14.231/projects/${this.pageId}`).then((response) => {
-          this.editor.loadProjectData(response.data)
-        })
-      },
-      { immediate: true }
-    )
-    console.log(this.editor.I18n.getMessages(''))
-    // this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/page/${this.pageId}/`)
-    // this.ws.onmessage = (message) => {
-    // 	const data = JSON.parse(message.data).data
-    // 	if (JSON.stringify(this.editor.getProjectData()) !== JSON.stringify(data)) {
-    // 		this.editor.loadProjectData(data)
-    // 	}
-    // }
-    //设置默认大小
-    // this.closeCategory();
-  },
-  unmounted() {
-    // this.ws.close()
-  },
-  data() {
-    return {
-      ws: '',
-      pageId: null,
-      pageName: 'page1',
-      pagesNum: 1,
-      canvasHeight: '1000',
-      canvasWidth: '1000',
-      Devices: [
-        {
-          selected: true,
-          id: 'Desktop',
-          // width: '1920px',
-          // height: '1080px',
-        },
-        {
-          selected: false,
-          id: 'Tablet',
-          width: '1024px',
-          height: '768px',
-        },
-        {
-          selected: false,
-          id: 'Mobile portrait',
-          width: '640px',
-          height: '1200px'
-        },
-        {
-          selected: false,
-          id: 'Customization',
-          width: '1000px',
-          height: '1000px',
-        },
-      ],
-      editor: undefined,
-      currentDevice: undefined
-    }
-  },
-  watch: {
-    //监听画布大小改变,更新设备配置
-    canvasHeight(value) {
-      if (this.editor !== undefined) {
-        if (value > 100000) {
+		let sizeSetter = document.querySelector('#size-setter')
+		topPanel.appendChild(sizeSetter)
+		//设置默认大小
+		// this.closeCategory();
+	},
+	unmounted() {
+		// this.ws.close()
+	},
+	data() {
+		return {
+			ws: '',
+			pageId: null,
+			pageName: 'page1',
+			pagesNum: 1,
+			canvasHeight: '1000',
+			canvasWidth: '1000',
+			Devices: [
+				{
+					selected: true,
+					id: 'Desktop',
+					// width: '1920px',
+					// height: '1080px',
+				},
+				{
+					selected: false,
+					id: 'Tablet',
+					width: '1024px',
+					height: '768px',
+				},
+				{
+					selected: false,
+					id: 'Mobile portrait',
+					width: '640px',
+          height:'1200px'
+				},
+				{
+					selected: false,
+					id: 'Customization',
+					width: '1000px',
+					height: '1000px',
+				},
+			],
+			editor: undefined,
+			currentDevice: undefined
+		}
+	},
+	watch: {
+		//监听画布大小改变,更新设备配置
+		canvasHeight(value) {
+			if (this.editor !== undefined) {
+				if (value > 100000) {
           this.$bus.emit('message', {
             title: '画布尺寸设置警告',
             content: '设置尺寸超过最大高度',
@@ -220,32 +219,31 @@ export default {
             content: '设置尺寸小于最小高度',
             time: 3000
           })
-          return
-        }
-        if (this.editor !== undefined) {
-          let oldName = this.editor.Devices.get('Customization') === null ? 'Customization1' : 'Customization'
-          let newName = oldName === 'Customization1' ? 'Customization' : 'Customization1'
-          let width = this.Devices[3].width//保持宽度不变
-          this.editor.Devices.add({//添加一个设备
-            id: newName,
-            name: newName,
-            height: value + 'px',
-            width: width
-          })
-          // console.log(this.editor.Devices.get('Desktop').attributes.height)
-          this.editor.Devices.select(newName)//选择该设备
-          this.editor.Devices.remove(oldName)//把原来的设备删了
-          this.Devices[3].id = newName//设置新id
-          this.Devices[3].height = value + 'px'//设置新高度
-          setTimeout(() => {
-            this.editor.store()
-          }, 100)
-        }
-      }
-
-    },
-    canvasWidth(value) {
-      if (this.editor !== undefined) {
+					return
+				}
+				if (this.editor !== undefined) {
+					let oldName = this.editor.Devices.get('Customization') === null ? 'Customization1' : 'Customization'
+					let newName = oldName === 'Customization1' ? 'Customization' : 'Customization1'
+					let width = this.Devices[3].width//保持宽度不变
+					this.editor.Devices.add({//添加一个设备
+						id: newName,
+						name: newName,
+						height: value + 'px',
+						width: width
+					})
+					// console.log(this.editor.Devices.get('Desktop').attributes.height)
+					this.editor.Devices.select(newName)//选择该设备
+					this.editor.Devices.remove(oldName)//把原来的设备删了
+					this.Devices[3].id = newName//设置新id
+					this.Devices[3].height = value + 'px'//设置新高度
+					setTimeout(() => {
+						this.editor.store()
+					}, 100)
+				}
+			}
+		},
+		canvasWidth(value) {
+			if(this.editor!==undefined){
         if (value > 100000) {
           this.$bus.emit('message', {
             title: '画布尺寸设置警告',
@@ -1419,35 +1417,35 @@ button {
               urlLoad: `http://43.138.14.231/projects/${this.pageId}/`,
               urlStore: `http://43.138.14.231/projects/${this.pageId}/`,
               // urlLoad: `http://localhost:3000/projects/${this.pageId}`,
-              // urlStore: `http://localhost:3000/projects/${this.pageId}`,
-              fetchOptions: opts => (opts.method === 'POST' ? { method: 'PATCH' } : {}),
-              // urlLoad: `http://localhost:3000/projects/1`,
-              // urlStore: `http://localhost:3000/projects/1`,
-              // The `remote` storage uses the POST method when stores data but
-              // the json-server API requires PATCH.
-
-              onStore: data => {
-                // this.ws.send(JSON.stringify(data))
-                return {
-                  id: this.pageId,
-                  data,
-                  // //存储画布宽高
-                  size: {
-                    height: this.canvasHeight,
-                    width: this.canvasWidth,
-                  },
-                  Devices: this.Devices,
+							// urlStore: `http://localhost:3000/projects/${this.pageId}`,
+              fetchOptions: opts => (opts.method === 'POST' ?  { method: 'PATCH' } : {}),
+							// urlLoad: `http://localhost:3000/projects/1`,
+							// urlStore: `http://localhost:3000/projects/1`,
+							// The `remote` storage uses the POST method when stores data but
+							// the json-server API requires PATCH.
+	
+							onStore: data => {
+								// this.ws.send(JSON.stringify(data))
+								return {
+									id: this.pageId,
+									data,
+									// //存储画布宽高
+									size: {
+										height: this.canvasHeight,
+										width: this.canvasWidth,
+									},
+									Devices: this.Devices,
+								}
+							},
+							onLoad: result => {
+                if(result.Devices&&result.size){
+								this.Devices = result.Devices
+								this.canvasHeight = result.size.height
+								this.canvasWidth = result.size.width
                 }
-              },
-              onLoad: result => {
-                if (result.Devices && result.size) {
-                  this.Devices = result.Devices
-                  this.canvasHeight = result.size.height
-                  this.canvasWidth = result.size.width
-                }
-                console.log(result)
-                return result.data
-              }
+								console.log(result)
+								return result.data
+							}
 
             }
           }
@@ -1515,12 +1513,22 @@ button {
         this.$bus.emit('close')
       })
     },
-    switchDevice(deviceIndex) {
-      this.Devices.forEach((device) => {
-        device.selected = false
+		switchDevice(deviceIndex) {
+			this.Devices.forEach((device) => {
+				device.selected = false
+			})
+			this.Devices[deviceIndex].selected = true
+			this.editor.Devices.select(this.Devices[deviceIndex].id)
+		},
+    clearCanvas() {
+      this.editor.Commands.add('canvas-clear', {
+        run: function(editor) {
+          editor.DomComponents.clear();
+          editor.CssComposer.clear();
+          document.querySelector('#gjs .gjs-editor.gjs-one-bg.gjs-two-color .gjs-pn-panels').lastChild.click()
+        }
       })
-      this.Devices[deviceIndex].selected = true
-      this.editor.Devices.select(this.Devices[deviceIndex].id)
+    
     }
   }
 }

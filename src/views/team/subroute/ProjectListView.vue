@@ -36,7 +36,6 @@
           【说明】ProjectListItem 有一个 type 属性，默认值为 'normal'，展示卡片
           任何非 'normal' 值会使之变成带头 “恢复” icon 的被删除卡片
       -->
-      {{ projectData }}
       <div v-for="project in projectData" :key="project" @click="jumpToProject(project.id, project.teamId)">
         <ProjectListItem :data="project"></ProjectListItem>
       </div>

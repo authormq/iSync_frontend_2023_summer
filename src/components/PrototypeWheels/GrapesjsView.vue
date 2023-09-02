@@ -135,14 +135,26 @@ export default {
 	mounted() {
 		this.pageId = this.$route.params.protoId
     this.$watch('$route.params', (newVal, oldVal) => {
-      this.pageId = newVal.protoId
-      this.$http.get(`http://43.138.14.231/projects/${this.pageId}`).then((response) => {
-        this.editor.loadProjectData(response.data.data)
+      this.$http.get(`http://43.138.14.231/projects/${newVal.protoId}`).then((response) => {
+        //保存一下size-setter
+        let sizeSetter =  document.querySelector('#size-setter')
+        document.body.appendChild(sizeSetter)
+        // const newData = response.data.data
+        this.pageId = newVal.protoId
+        this.initEditor();
+		    this.addBlock();
+        this.clearCanvas();
+        let topPanel = document.querySelector('.gjs-pn-panel.gjs-pn-devices-c.gjs-one-bg.gjs-two-color .gjs-pn-buttons')
+        topPanel.appendChild(sizeSetter)
+        // this.editor.loadProjectData(newData)
       })
     })
-		this.initEditor();
-		this.addBlock();
-    this.clearCanvas();
+      this.initEditor();
+		  this.addBlock();
+      this.clearCanvas();
+      let topPanel = document.querySelector('.gjs-pn-panel.gjs-pn-devices-c.gjs-one-bg.gjs-two-color .gjs-pn-buttons')
+      let sizeSetter = document.querySelector('#size-setter')
+      topPanel.appendChild(sizeSetter)
 		this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/page/${this.pageId}/`)
 		// this.ws.onmessage = (message) => {
 		// 	const data = JSON.parse(message.data).data
@@ -150,14 +162,9 @@ export default {
 		// 		this.editor.loadProjectData(data)
 		// 	}
 		// }
-    let topPanel = document.querySelector('.gjs-pn-panel.gjs-pn-devices-c.gjs-one-bg.gjs-two-color .gjs-pn-buttons')
-    let sizeSetter = document.querySelector('#size-setter')
-    topPanel.appendChild(sizeSetter)
+    
     //设置默认大小
     // this.closeCategory();
-  },
-  unmounted() {
-    // this.ws.close()
   },
   data() {
     return {
@@ -167,6 +174,7 @@ export default {
       pagesNum: 1,
       canvasHeight: '1000',
       canvasWidth: '1000',
+      autosave: true,
       Devices: [
         {
           selected: true,
@@ -1407,7 +1415,7 @@ button {
           type: 'remote',
           stepsBeforeSave: 1,
           autosave: true,
-          // autoload: true,
+          autoload: true,
           options: {
             remote: {
               urlLoad: `http://43.138.14.231/projects/${this.pageId}/`,
@@ -1421,6 +1429,7 @@ button {
 							// the json-server API requires PATCH.
 	
 							onStore: data => {  
+                console.log('store')
                 if (data.pages.length == 0) {
                   data.pages.push({})
                 }
@@ -1582,7 +1591,7 @@ textarea {
 
     },
     shareLink() {
-      this.$http.get(`/ api / projects / ${this.pageId} /generate_invite_url/page / `).then((response) => {
+      this.$http.get(`/api/projects/${this.pageId}/generate_invite_url/page/`).then((response) => {
         navigator.clipboard.writeText(response.data.url)
         this.$bus.emit('message', {
           title: '邀请链接已复制到剪切板',
@@ -1592,8 +1601,11 @@ textarea {
       })
     },
     closeShare() {
-      this.$http.post(`/ api / projects / page / ${this.pageId} /close/`).then(() => {
-        this.$bus.emit('close')
+      this.$bus.emit('closeShareRequest', this.pageId)
+      this.$bus.emit('message', {
+        title: '分享链接已失效',
+        content: '',
+        time: 3000
       })
     },
     switchDevice(deviceIndex) {

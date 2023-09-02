@@ -46,14 +46,6 @@ export default {
         const prv = document.querySelector('#gjs > div.gjs-editor.gjs-one-bg.gjs-two-color > span')
         prv.style.display = 'none'
       }, 2000)
-      this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/page/${this.pageId}/`)
-      this.ws.onmessage = () => {
-        alert('close')
-      }
-      this.$bus.on('close', () => this.ws.send(JSON.stringify({})))
-    },
-    unmounted() {
-      this.$bus.off('close')
     },
     methods: {
       initEditor() {

@@ -266,13 +266,13 @@ export default {
 			//grapesjs.plugins.add('my-custom-plugin', MyCustomPlugin);
 			this.editor = grapesjs.init({
 				container: '#gjs',
-				i18n: {
-					locale: 'en',
-					localeFallback: 'en',
-					messages: {
-						zh, en
-					}
-				},
+				// i18n: {
+				// 	locale: 'en',
+				// 	localeFallback: 'en',
+				// 	messages: {
+				// 		zh, en
+				// 	}
+				// },
 				height: 'calc(100vh - 70px)',
 				showOffsets: 1,
 				autosave: true,
@@ -1511,7 +1511,27 @@ button {
 	width: 20px;
 	z-index: 1;
 }
-
+:deep(.gjs-layer-caret) {
+    width: 20px;
+    padding: 0px;
+    cursor: pointer;
+    position: absolute;
+    box-sizing: content-box;
+    left: -8px;
+    top: 2px;
+    opacity: .7;
+    filter: alpha(opacity=70);
+}
+:deep(.gjs-layer-name) {
+    display: inline-block;
+    box-sizing: content-box;
+    overflow: hidden;
+    white-space: nowrap;
+    margin: 0 30px 0 15px;
+    max-width: 170px;
+    vertical-align: top;
+    height: 15px;
+}
 #size-setter {
 	height: 30px;
 	display: inline-block;

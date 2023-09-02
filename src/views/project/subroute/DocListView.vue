@@ -566,4 +566,8 @@ export default {
   font-weight: bold;
   color: grey;
 }
+
+.list-item {
+  height: 120px;
+}
 </style>

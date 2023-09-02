@@ -116,6 +116,7 @@ export default {
       this.$bus.emit('restoreRequest', this.data)
     },
     handleCopy() {
+      console.log('copy')
       this.$bus.emit('copyProject', this.data.id)
     },
     // 控制右键弹出菜单

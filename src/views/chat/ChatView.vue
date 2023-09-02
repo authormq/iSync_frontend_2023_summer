@@ -80,6 +80,7 @@ export default {
 					new: false,
 				},
 				is_private: group.is_private,
+				identity: group.identity
 			}))
 			if (this.rooms.length > 0) {
 				this.currentRoomId = this.rooms[0].roomId
@@ -87,20 +88,15 @@ export default {
 			this.allRooms = this.rooms
 			// @all && last_message
 			for (let i = 0; i < this.rooms.length; i++) {
-				this.rooms[i].users = [
-					{
-						_id: '0',
-						username: '所有人'
-					},
-					...this.rooms[i].users
-				]
-				// this.$http.get(`/api/groups/${this.rooms[i].roomId}/current_user_identity/`).then((response) => {
-				// 	if (response.status == 200) {
-				// 		if (response.data.identity == 'member') {
-
-				// 		}
-				// 	}
-				// })
+					if (this.rooms[i].identity != 'member') {
+						this.rooms[i].users = [
+							{
+								_id: '0',
+								username: '所有人'
+							},
+							...this.rooms[i].users
+						]
+					}
 				// WebSocket
 				this.ws[i] = new WebSocket(`ws://43.138.14.231:9000/ws/chat/group/${this.rooms[i].roomId}/${this.currentUserId}/`)
 				this.ws[i].onmessage = (messageEvent) => {
@@ -330,6 +326,9 @@ export default {
 				}
 			],
 			styles: {
+				general: {
+					backgroundcolorButton: 'rgba(199,29,35, 1)',
+				},
 				sidemenu: {
 					backgroundActive: 'rgba(199,29,35, 0.2)'
 				},
@@ -432,6 +431,7 @@ export default {
 			}
 			const offset = options.reset ? 0 : this.messages.length
 			if (options.reset) {
+				this.messages = []
 				this.messagesLoaded = false
 				for (let i = 0; i < this.rooms.length; i++) {
 					if (this.rooms[i].roomId == room.roomId) {
@@ -451,7 +451,6 @@ export default {
 			this.$http.get(`/api/groups/${room.roomId}/messages/?limit=30&offset=${offset}`).then((response) => {
 				if (response.data.results.length == 0) {
 					this.messagesLoaded = true
-					return
 				}
 				const messages = response.data.results.map((message) => ({
 					_id: message.id,
@@ -561,7 +560,8 @@ export default {
 			this.rooms[i].index = 0
 			// @
 			for (let j = 0; j < data.mentioned_users.length; j++) {
-				if (data.mentioned_users[j]._id == this.currentUserId || data.mentioned_users[j]._id == '0') {
+				if ((data.mentioned_users[j]._id == this.currentUserId || data.mentioned_users[j]._id == '0') 
+				&& message.sender.user.id != parseInt(this.currentUserId)) {
 					let formData = new FormData()
 					formData.append('group_message', message.id)
 					formData.append('receiver', this.currentUserId)
@@ -662,7 +662,8 @@ export default {
 			}
 			// @
 			for (let j = 0; j < data.mentioned_users.length; j++) {
-				if (data.mentioned_users[j]._id == this.currentUserId || data.mentioned_users[j]._id == '0') {
+				if ((data.mentioned_users[j]._id == this.currentUserId || data.mentioned_users[j]._id == '0')
+				&& message.sender.user.id != parseInt(this.currentUserId)) {
 					let formData = new FormData()
 					formData.append('group_message', message.id)
 					formData.append('receiver', this.currentUserId)
@@ -945,7 +946,6 @@ export default {
 				is_private: group.is_private,
 			}
 			this.rooms = [...this.rooms, room]
-			this.messages = []
 			const i = this.rooms.length - 1
 			this.ws[i] = new WebSocket(`ws://43.138.14.231:9000/ws/chat/group/${room.roomId}/${this.currentUserId}/`)
 			this.ws[i].onmessage = (messageEvent) => {

@@ -217,7 +217,7 @@ export default {
     },
     changeToFolder(e, folder) {
       if (e.target.tagName === 'INPUT') {
-        e.target.querySelector('input').focus()
+        // e.target.querySelector('input').focus()
       } else {
         this.getFolderFiles(folder)
       }
@@ -565,5 +565,9 @@ export default {
   /* top: 20px; */
   font-weight: bold;
   color: grey;
+}
+
+.list-item {
+  height: 120px;
 }
 </style>

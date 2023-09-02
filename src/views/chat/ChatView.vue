@@ -18,7 +18,7 @@
 			<CombineTransmit :show="message.show" :combineMessageList="message.combineMessageList"
 				@close="closeCombineTransmit"></CombineTransmit>
 		</div>
-		<GroupDetailModal />
+		<GroupDetailModal :groupId="currentRoomId"/>
 	</div>
 </template>
 
@@ -835,7 +835,7 @@ export default {
 						})
 					}
 				}
-			}, 1000);
+			}, 500);
 		},
 
 		selectRoom(roomId) {

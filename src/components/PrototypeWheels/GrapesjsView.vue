@@ -73,6 +73,7 @@
 		</span>
 		<button @click="exportAsImage">导出为图片</button>
 		<button class="sharebutton" @click="shareLink">生成预览链接</button>
+    <button class="sharebutton" @click="colseShare">取消预览</button>
 	</span>
 	<div class="page-select">
 		<PageSelect />
@@ -113,21 +114,20 @@ export default {
 		this.pageId = this.$route.params.protoId
 		this.initEditor();
 		this.addBlock();
-		
 		let topPanel = document.querySelector('.gjs-pn-panel.gjs-pn-devices-c.gjs-one-bg.gjs-two-color .gjs-pn-buttons')
 		let sizeSetter = document.querySelector('#size-setter')
 		topPanel.appendChild(sizeSetter)
-		// this.$watch(
-		// 	() => this.$route.params,
-		// 	() => {
-		// 		this.pageId = this.$route.params.protoId
-		// 		this.$http.get(`http://localhost:3000/projects/${this.pageId}`).then((response) => {
-		// 			this.editor.loadProjectData(response.data)
-		// 		})
-		// 	},
-		// 	{ immediate: true }
-		// )
-		// this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/page/2/`)
+		this.$watch(
+			() => this.$route.params,
+			() => {
+				this.pageId = this.$route.params.protoId
+				this.$http.get(`http://43.138.14.231/projects/${this.pageId}`).then((response) => {
+					this.editor.loadProjectData(response.data)
+				})
+			},
+			{ immediate: true }
+		)
+		// this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/page/${this.pageId}/`)
 		// this.ws.onmessage = (message) => {
 		// 	const data = JSON.parse(message.data).data
 		// 	if (JSON.stringify(this.editor.getProjectData()) !== JSON.stringify(data)) {
@@ -138,7 +138,7 @@ export default {
     // this.closeCategory();
 	},
 	unmounted() {
-		this.ws.close()
+		// this.ws.close()
 	},
 	data() {
 		return {
@@ -331,8 +331,10 @@ export default {
           <div class="gjs-cell" id="main-content">
           <div id="platform-title">学术成果分享平台</div>
           <div id="platform-subtitle">Make Academia VisiableMake Academia Visiable</div>
-          <input type="text" id="search-input" placeholder="Search"/>
-          <button type="button" id="search-button">搜索</button>
+          <div id="search-div">
+            <input type="text" id="search-input" placeholder="Search"/>
+            <button type="button" id="search-button">搜索</button>
+          </div>         
           </div>
           <div class="gjs-cell" id="right-space"></div>
           </div>
@@ -431,21 +433,31 @@ export default {
           #platform-subtitle {
               margin-bottom: 20px;
           }
+          #search-div {
+            display: flex;
+            justify-content: center;
+          }
 
           #search-input {
-              padding: 10px;
-              border-radius: 5px;
-              border: 1px solid #ccc;
+            margin-left: 10px;
+            margin-right: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            min-width: 200px;
+            
           }
 
           #search-button {
-              padding: 10px 15px;
-              background-color: #555;
-              border: none;
-              border-radius: 5px;
-              color: #fff;
-              cursor: pointer;
-              margin-left: 10px;
+            margin-left: 10px;
+            margin-right: 10px;
+            padding: 10px 15px;
+            background-color: #555;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+             
           }
 
           .tab-container {
@@ -654,30 +666,36 @@ button {
     background-color: #3498db;
     color: #fff;
     transition: background-color 0.3s;
+    display: inline-block;
 }
 
 .edit:hover {
     background-color: #2980b9;
+    display: inline-block;
 }
 
 .delete {
     background-color: #e74c3c;
     color: #fff;
     transition: background-color 0.3s;
+    display: inline-block;
 }
 
 .delete:hover {
     background-color: #c0392b;
+    display: inline-block;
 }
 
 .view {
     background-color: #2ecc71;
     color: #fff;
     transition: background-color 0.3s;
+    display: inline-block;
 }
 
 .view:hover {
     background-color: #27ae60;
+    display: inline-block;
 }
     </style>
           `
@@ -1240,11 +1258,15 @@ button {
 					type: 'remote',
 					stepsBeforeSave: 1,
 					autosave: true,
-					autoload: true,
+					// autoload: true,
 					options: {
 						remote: {
-							urlLoad: `http://localhost:3000/projects/${this.pageId}`,
-							urlStore: `http://localhost:3000/projects/${this.pageId}`,
+							urlLoad: `http://43.138.14.231/projects/${this.pageId}/`,
+							urlStore: `http://43.138.14.231/projects/${this.pageId}/`,
+
+              // urlLoad: `http://localhost:3000/projects/${this.pageId}`,
+							// urlStore: `http://localhost:3000/projects/${this.pageId}`,
+              fetchOptions: opts => (opts.method === 'POST' ?  { method: 'PATCH' } : {}),
 							// urlLoad: `http://localhost:3000/projects/1`,
 							// urlStore: `http://localhost:3000/projects/1`,
 							// The `remote` storage uses the POST method when stores data but
@@ -1259,7 +1281,7 @@ button {
 									width: this.canvasWidth,
 								}
 								data['Devices'] = this.Devices
-								this.ws.send(JSON.stringify(data))
+								// this.ws.send(JSON.stringify(data))
 								return {
 									id: this.pageId,
 									data,
@@ -1273,7 +1295,7 @@ button {
 							},
 							onLoad: result => {
 	
-								// this.Devices = result.Devices
+								this.Devices = result.Devices
 								this.canvasHeight = result.size.height
 								this.canvasWidth = result.size.width
 								console.log(result)
@@ -1339,6 +1361,9 @@ button {
         })
       })
 		},
+    colseShare() {
+      //
+    },
 		switchDevice(deviceIndex) {
 			this.Devices.forEach((device) => {
 				device.selected = false
@@ -1522,6 +1547,7 @@ button {
 
 #size-setter button:hover {
 	background: #c71d23;
+  color: white;
 }
 
 .selected-device svg {
@@ -1552,4 +1578,4 @@ button {
 .sharebutton {
 	margin-left: 20px;
 }
-</style> 
+</style>  

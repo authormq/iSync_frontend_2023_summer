@@ -23,7 +23,13 @@ export default {
 	},
 	methods: {
 		select(id) {
-			this.$router.replace(`/projects/${this.projectId}/page/${id}`)
+			if(this.$route.path.indexOf('preview') !== -1) {
+				this.$router.replace(`/preview/projects/${this.projectId}/page/${id}`)
+			}
+			else {
+				this.$router.replace(`/projects/${this.projectId}/page/${id}`)
+			}
+			
 		}
 	}
 }

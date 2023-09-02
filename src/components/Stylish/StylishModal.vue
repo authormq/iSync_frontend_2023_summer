@@ -32,9 +32,9 @@ export default {
       this.$refs.modal.style.border = this.border
       this.$refs.modal.style.boxShadow = this.shadow
       if (this.mask) {
-        this.$refs.mask.background = 'rgba(0, 0, 0, 0.5)'
+        this.$refs.mask.style.background = 'rgba(0, 0, 0, 0.5)'
       } else {
-        this.$refs.mask.background = 'transparent'
+        this.$refs.mask.style.background = 'transparent'
       }
     })
   },

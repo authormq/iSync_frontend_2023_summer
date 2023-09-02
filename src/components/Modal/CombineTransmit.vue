@@ -1,5 +1,9 @@
 <template>
-  <StylishModal :show="show" width="500px" height="700px" padding="25px">
+  <StylishModal 
+    :show="show" :mask="false" 
+    width="500px" height="700px" padding="25px" 
+    shadow="3px 3px 10px grey"  
+  >
     <div class="container-header">
       <div class="header-title">
         合并消息转发

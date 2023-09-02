@@ -141,4 +141,7 @@ export default {
   color: gray;
   cursor: pointer;
 }
+.item-right {
+  width: 85%;
+}
 </style>

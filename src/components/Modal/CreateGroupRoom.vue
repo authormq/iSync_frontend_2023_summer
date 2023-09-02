@@ -162,12 +162,13 @@ export default {
             'option': 'create',
             'group_data': data
           }))
-          this.handleClose()
+          
         },
         error => {
           console.log(error.message);
         }
       )
+      this.handleClose()
     }
   }
 }

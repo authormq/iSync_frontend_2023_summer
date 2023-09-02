@@ -1909,4 +1909,8 @@ textarea {
 .tooltip:hover .tooltiptext {
   visibility: visible;
 }
+
+:deep(.gjs-title){
+  font-weight: bold;
+}
 </style>  

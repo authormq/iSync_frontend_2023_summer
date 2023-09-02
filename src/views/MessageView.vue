@@ -49,7 +49,7 @@ export default {
           fileId: news.file_id,
           fileName: news.file_name,
           groupId: news.group_id,
-          content: news.group_message == null ? `${news.sender.username}提到了你` : `${news.group_message.sender.user.username}提到了你`,
+          content: news.group_message == null ? `${news.sender.username}提到了你` : news.group_message.text_content,
         }))
         // 这一行必须有，用来获取未读的信息
         for (let i = 0; i < this.allMessage.length; i++) {
@@ -115,7 +115,7 @@ export default {
       this.allMessage.filter(message => message.isRead == false).forEach(message => message.isRead = true)
       this.unReadMessage = []
       this.$http.post('/api/news/set_all_read/')
-      this.$bus.emit('handleJudgeHasUnreadMsg', false)
+      this.$bus.emit('judgeHasUnreadMsg', false)
     },
     deleteAllRead() {
       this.allMessage = this.allMessage.filter(message => message.isRead == false)

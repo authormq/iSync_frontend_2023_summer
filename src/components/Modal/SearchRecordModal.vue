@@ -34,7 +34,7 @@ import SearchIcon from '../Svg/SearchIcon.vue'
 import CloseIcon from '../Svg/CloseIcon.vue'
 export default {
   name: 'SearchRecordModal',
-  props: ['show'],
+  props: ['show', 'groupId'],
   emit: ['close'],
   components: {
     StylishModal,
@@ -45,7 +45,6 @@ export default {
     return {
       searchIconIsHovered: false,
       recordKeyword: '',
-      groupId: '',
       recordList: []
     }
   },
@@ -58,7 +57,8 @@ export default {
           time: 3000
         })
       } else {
-        this.groupId = 38
+        console.log(this.groupId);
+        console.log(this.recordKeyword);
         this.$http.get(`/api/groups/${this.groupId}/messages/?keyword=${this.recordKeyword}`).then(
           response => {
             this.recordList = response.data.map((record) => ({

@@ -25,8 +25,8 @@
       </div>
     </div>
     <div class="bottom" @click="jump">
-      <div>{{ msg.content }}</div>
-      <div class="botton-info">「点击可以跳转到@位置」</div>
+      <div v-html="msg.content"></div>
+      <div class="botton-info">「点击可以跳转到@聊天/位置」</div>
     </div>
     <div class="from-info">
       {{ showFrom }}
@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import Highlight from '@tiptap/extension-highlight'
 import MailIcon from '../../Svg/MailIcon.vue'
 import TrashIcon from '../../Svg/TrashIcon.vue'
 export default {

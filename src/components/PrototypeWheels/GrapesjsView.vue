@@ -226,34 +226,34 @@ export default {
 
 		},
 		canvasWidth(value) {
-			if (this.editor !== undefined) {
-				if (value > 100000) {
-					alert('超过最大宽度')
-					return
-				}
-				if (value <= 0) {
-					alert('小于最小宽度')
-				}
-				if (this.editor !== undefined) {
-					let oldName = this.editor.Devices.get('Customization') === null ? 'Customization1' : 'Customization'
-					let newName = oldName === 'Customization1' ? 'Customization' : 'Customization1'
-					let height = this.Devices[3].height//保持高度不变
-					this.editor.Devices.add({//添加一个设备
-						id: newName,
-						name: newName,
-						height: height,
-						width: value + 'px'
-					})
-					// console.log(this.editor.Devices.get('Desktop').attributes.height)
-					this.editor.Devices.select(newName)//选择该设备
-					this.editor.Devices.remove(oldName)//把原来的设备删了
-					this.Devices[3].id = newName//设置新id
-					this.Devices[3].width = value + 'px'//设置新宽度
-					setTimeout(() => {
-						this.editor.store()
-					}, 100)
-				}
-			}
+			if(this.editor!==undefined){
+        if (value > 100000) {
+          alert('超过最大宽度')
+          return
+        }
+        if (value <= 0) {
+          alert('小于最小宽度')
+        }
+        if (this.editor !== undefined) {
+          let oldName = this.editor.Devices.get('Customization') === null ? 'Customization1' : 'Customization'
+          let newName = oldName === 'Customization1' ? 'Customization' : 'Customization1'
+          let height = this.Devices[3].height//保持高度不变
+          this.editor.Devices.add({//添加一个设备
+            id: newName,
+            name: newName,
+            height: height,
+            width: value + 'px'
+          })
+          // console.log(this.editor.Devices.get('Desktop').attributes.height)
+          this.editor.Devices.select(newName)//选择该设备
+          this.editor.Devices.remove(oldName)//把原来的设备删了
+          this.Devices[3].id = newName//设置新id
+          this.Devices[3].width = value + 'px'//设置新宽度
+          setTimeout(() => {
+            this.editor.store()
+          }, 100)
+        }
+      }
 		}
 	},
 	methods: {
@@ -261,13 +261,13 @@ export default {
 			//grapesjs.plugins.add('my-custom-plugin', MyCustomPlugin);
 			this.editor = grapesjs.init({
 				container: '#gjs',
-				i18n: {
-					locale: 'en',
-					localeFallback: 'en',
-					messages: {
-						zh, en
-					}
-				},
+				// i18n: {
+				// 	locale: 'en',
+				// 	localeFallback: 'en',
+				// 	messages: {
+				// 		zh, en
+				// 	}
+				// },
 				height: 'calc(100vh - 70px)',
 				showOffsets: 1,
 				autosave: true,
@@ -1244,7 +1244,7 @@ button {
 					type: 'remote',
 					stepsBeforeSave: 1,
 					autosave: true,
-					// autoload: true,
+					autoload: true,
 					options: {
 						remote: {
 							urlLoad: `http://43.138.14.231/projects/${this.pageId}/`,
@@ -1256,10 +1256,7 @@ button {
 							// urlStore: `http://localhost:3000/projects/1`,
 							// The `remote` storage uses the POST method when stores data but
 							// the json-server API requires PATCH.
-							// fetchOptions: opts => (opts.method === 'POST' ? { method: 'PATCH' } : {}),
-							// As the API stores projects in this format `{id: 1, data: projectData }`,
-							// we have to properly update the body before the store and extract the
-							// project data from the response result.
+	
 							onStore: data => {
 								data['size'] = {
 									height: this.canvasHeight,
@@ -1270,7 +1267,7 @@ button {
 								return {
 									id: this.pageId,
 									data,
-									//存储画布宽高
+									// //存储画布宽高
 									size: {
 										height: this.canvasHeight,
 										width: this.canvasWidth,
@@ -1490,7 +1487,27 @@ button {
 	width: 20px;
 	z-index: 1;
 }
-
+:deep(.gjs-layer-caret) {
+    width: 20px;
+    padding: 0px;
+    cursor: pointer;
+    position: absolute;
+    box-sizing: content-box;
+    left: -8px;
+    top: 2px;
+    opacity: .7;
+    filter: alpha(opacity=70);
+}
+:deep(.gjs-layer-name) {
+    display: inline-block;
+    box-sizing: content-box;
+    overflow: hidden;
+    white-space: nowrap;
+    margin: 0 30px 0 15px;
+    max-width: 170px;
+    vertical-align: top;
+    height: 15px;
+}
 :deep(.gjs-select option, .gjs-field-select option, .gjs-clm-select option, .gjs-sm-select option, .gjs-fields option, .gjs-sm-unit option){
 	background: white;
 	color: #c71d23;

@@ -826,15 +826,16 @@ export default {
 						// console.log('msg: ', msg.getBoundingClientRect().top, msg.getBoundingClientRect().bottom)
 						// console.log('con: ', container.getBoundingClientRect().top, container.getBoundingClientRect().bottom)
 						// console.log('@@@: ', container.scrollTop)
-						const height = msg.getBoundingClientRect().bottom - msg.getBoundingClientRect().top
+						const msgHeight = msg.getBoundingClientRect().bottom - msg.getBoundingClientRect().top
+						const offset = (container.getBoundingClientRect().top + container.getBoundingClientRect().bottom) / 2
 						container.scrollTo({
-							top: container.scrollTop + msg.getBoundingClientRect().top - 396.7 + height / 2,
+							top: container.scrollTop + msg.getBoundingClientRect().top - offset + msgHeight / 2,
 							left: 0,
 							behavior: 'smooth'
 						})
 					}
 				}
-			}, 3000);
+			}, 1000);
 		},
 
 		selectRoom(roomId) {

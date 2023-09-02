@@ -1,4 +1,5 @@
 <template>
+	<button @click="backToProject">返回</button>
 	<div 
 		v-for="page in pages"
 		:key="page.id"
@@ -30,6 +31,9 @@ export default {
 				this.$router.replace(`/projects/${this.projectId}/page/${id}`)
 			}
 			
+		},
+		backToProject() {
+			this.$router.push(`/project/${this.projectId}/page`)
 		}
 	}
 }

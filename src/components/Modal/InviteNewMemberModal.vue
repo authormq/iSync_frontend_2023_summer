@@ -118,6 +118,10 @@ export default {
       formData.append('users', idList.join(' '))
       this.$http.post(`/api/groups/${this.groupId}/add/member/`, formData).then(
         response => {
+          this.$bus.emit('roomOption', JSON.stringify({
+            'option': 'join',
+            'group_data': response.data
+          }))
           this.$bus.emit('message', {
             title: '邀请新成员进群成功',
             content: '',

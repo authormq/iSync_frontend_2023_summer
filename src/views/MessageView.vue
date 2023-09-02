@@ -55,13 +55,38 @@ export default {
         for (let i = 0; i < this.allMessage.length; i++) {
           if (!this.allMessage[i].isRead) this.unReadMessage.push(this.allMessage[i])
         }
-        console.log('@@@', this.allMessage);
-        console.log('###', this.unReadMessage)
       })
     this.$bus.on('sendChangeStatusSignal', this.handleReadStatus)
     this.$bus.on('sendDeleteMessageRequest', this.handleDeleteMessage)
+    this.$bus.on('sendRefreshMessageViewRequest', this.handleRefresh)
   },
   methods: {
+    handleRefresh(value) {
+      //  不知道每一次@的时候都这样刷新一次会不会对服务器造成比较大的压力
+      this.$http.get('/api/news/').then(
+        (response) => {
+          this.allMessage = response.data.map((news) => ({
+            msgId: news.id,
+            messageId: news.group_message == null ? null : news.group_message.id,
+            isGroup: news.group_message == null ? false : true,
+            timeStamp: news.group_message == null ? news.create_datetime : news.group_message.create_datetime,
+            sender: news.group_message == null ? news.sender.username : news.group_message.sender.user.username,
+            fileElementId: news.file_element,
+            receiver: news.receiver,
+            isRead: news.is_read,
+            teamId: news.team_id,
+            teamName: news.team_name,
+            fileId: news.file_id,
+            fileName: news.file_name,
+            groupId: news.group_id,
+            content: news.group_message == null ? `${news.sender.username}提到了你` : `${news.group_message.sender.user.username}提到了你`,
+          }))
+          // 这一行必须有，用来获取未读的信息
+          for (let i = 0; i < this.allMessage.length; i++) {
+            if (!this.allMessage[i].isRead) this.unReadMessage.push(this.allMessage[i])
+          }
+        })
+    },
     handleReadStatus(message) {
       let formData = new FormData()
       formData.append('is_read', true)

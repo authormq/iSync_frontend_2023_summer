@@ -2,17 +2,18 @@
 	<span id="size-setter" v-if="Devices !== undefined">
 		<!-- 桌面端按钮 -->
 		<span @click="switchDevice(0)"
-			:class="{ 'selected-device': Devices[0].selected, 'unselected-device': !Devices[0].selected }">
+			:class="{ 'selected-device': Devices[0].selected, 'unselected-device': !Devices[0].selected }" class="tooltip">
 			<svg t="1693450725716" class="icon" style="cursor: pointer;" viewBox="0 0 1024 1024" version="1.1"
 				xmlns="http://www.w3.org/2000/svg" p-id="1477" width="23" height="23">
 				<path
 					d="M928 140H96c-17.7 0-32 14.3-32 32v496c0 17.7 14.3 32 32 32h380v112H304c-8.8 0-16 7.2-16 16v48c0 4.4 3.6 8 8 8h432c4.4 0 8-3.6 8-8v-48c0-8.8-7.2-16-16-16H548V700h380c17.7 0 32-14.3 32-32V172c0-17.7-14.3-32-32-32z m-40 488H136V212h752v416z"
 					p-id="1478"></path>
 			</svg>
+      <span class="tooltiptext">PC端</span>
 		</span>
 		<!-- 平板按钮 -->
 		<span @click="switchDevice(1)"
-			:class="{ 'selected-device': Devices[1].selected, 'unselected-device': !Devices[1].selected }">
+			:class="{ 'selected-device': Devices[1].selected, 'unselected-device': !Devices[1].selected }" class="tooltip">
 			<svg t="1693456457079" class="icon" style="cursor: pointer;" viewBox="0 0 1024 1024" version="1.1"
 				xmlns="http://www.w3.org/2000/svg" p-id="2689" width="23" height="23">
 				<path
@@ -20,10 +21,11 @@
 					p-id="2690"></path>
 				<path d="M512 784m-40 0a40 40 0 1 0 80 0 40 40 0 1 0-80 0Z" p-id="2691"></path>
 			</svg>
+      <span class="tooltiptext">平板端</span>
 		</span>
 		<!-- 手机按钮 -->
 		<span @click="switchDevice(2)"
-			:class="{ 'selected-device': Devices[2].selected, 'unselected-device': !Devices[2].selected }">
+			:class="{ 'selected-device': Devices[2].selected, 'unselected-device': !Devices[2].selected }" class="tooltip">
 			<svg t="1693456616174" class="icon" style="cursor: pointer;" viewBox="0 0 1024 1024" version="1.1"
 				xmlns="http://www.w3.org/2000/svg" p-id="4595" width="23" height="23">
 				<path
@@ -35,10 +37,11 @@
 					d="M597.333333 245.333333h-170.666666c-17.066667 0-32-14.933333-32-32s14.933333-32 32-32h170.666666c17.066667 0 32 14.933333 32 32s-14.933333 32-32 32z"
 					p-id="4598"></path>
 			</svg>
+      <span class="tooltiptext">手机端</span>
 		</span>
 		<!-- 自定义按钮 -->
 		<span @click="switchDevice(3)"
-			:class="{ 'selected-device': Devices[3].selected, 'unselected-device': !Devices[3].selected }">
+			:class="{ 'selected-device': Devices[3].selected, 'unselected-device': !Devices[3].selected }" class="tooltip">
 			<svg t="1693400825308" style="cursor: pointer;" class="icon" viewBox="0 0 1024 1024" version="1.1"
 				xmlns="http://www.w3.org/2000/svg" p-id="11286" id="mx_n_1693400825309" width="23" height="23">
 				<path
@@ -48,13 +51,8 @@
 					d="M482.304 896h-322.56c-17.92 0-32.256-14.336-32.256-31.744v-322.56c0-17.92 14.336-32.256 32.256-32.256h322.56c17.92 0 32.256 14.336 32.256 32.256v322.56c0 17.408-14.336 31.744-32.256 31.744z m-290.304-64H450.56V573.44H192v258.56z"
 					p-id="11288"></path>
 			</svg>
+      <span class="tooltiptext">自定义画布大小</span>
 		</span>
-		<span v-if="Devices[0].selected" class="animate__animated animate__fadeIn">
-			自适应尺寸</span>
-		<span v-if="Devices[1].selected" class="animate__animated animate__fadeIn">
-			{{ Devices[1].width }} × {{ Devices[1].height }}</span>
-		<span v-if="Devices[2].selected" class="animate__animated animate__fadeIn">
-			{{ Devices[2].width }} × {{ Devices[2].height }}</span>
 		<span v-if="Devices[3].selected" class="animate__animated animate__fadeIn">
 			<svg t="1693312903898" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
 				p-id="2576" width="25" height="25">
@@ -71,8 +69,23 @@
 			</svg>
 			<input type="number" v-model="canvasHeight" max="100000"> px
 		</span>
-		<button @click="exportAsImage">导出为图片</button>
-		<button class="sharebutton" @click="shareLink">生成预览链接</button>
+		<button @click="exportAsImage" class="tooltip">
+      <svg t="1693619986390" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2613" width="23" height="23">
+        <path d="M938.666667 553.92V768c0 64.8-52.533333 117.333333-117.333334 117.333333H202.666667c-64.8 0-117.333333-52.533333-117.333334-117.333333V256c0-64.8 52.533333-117.333333 117.333334-117.333333h618.666666c64.8 0 117.333333 52.533333 117.333334 117.333333v297.92z m-64-74.624V256a53.333333 53.333333 0 0 0-53.333334-53.333333H202.666667a53.333333 53.333333 0 0 0-53.333334 53.333333v344.48A290.090667 290.090667 0 0 1 192 597.333333a286.88 286.88 0 0 1 183.296 65.845334C427.029333 528.384 556.906667 437.333333 704 437.333333c65.706667 0 126.997333 16.778667 170.666667 41.962667z m0 82.24c-5.333333-8.32-21.130667-21.653333-43.648-32.917333C796.768 511.488 753.045333 501.333333 704 501.333333c-121.770667 0-229.130667 76.266667-270.432 188.693334-2.730667 7.445333-7.402667 20.32-13.994667 38.581333-7.68 21.301333-34.453333 28.106667-51.370666 13.056-16.437333-14.634667-28.554667-25.066667-36.138667-31.146667A222.890667 222.890667 0 0 0 192 661.333333c-14.464 0-28.725333 1.365333-42.666667 4.053334V768a53.333333 53.333333 0 0 0 53.333334 53.333333h618.666666a53.333333 53.333333 0 0 0 53.333334-53.333333V561.525333zM320 480a96 96 0 1 1 0-192 96 96 0 0 1 0 192z m0-64a32 32 0 1 0 0-64 32 32 0 0 0 0 64z" 
+         p-id="2614"></path></svg>
+      <span class="tooltiptext">导出为图片</span>
+    </button>
+		<button class="sharebutton tooltip" @click="shareLink">
+      <svg t="1693620510278" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="16296" width="23" height="23">
+        <path d="M477.934459 330.486594A50.844091 50.844091 0 0 1 406.752731 258.796425L512 152.532274a254.220457 254.220457 0 0 1 359.467726 359.467726L762.66137 618.772592a50.844091 50.844091 0 1 1-71.690168-71.690169l106.772591-106.772592a152.532274 152.532274 0 0 0-215.578947-215.578947z m70.164846 361.501489A50.844091 50.844091 0 1 1 619.789474 762.66137l-107.281033 107.281033A254.220457 254.220457 0 0 1 152.532274 512L259.813307 406.752731a50.844091 50.844091 0 1 1 72.19861 69.656405l-107.789474 107.281033a152.532274 152.532274 0 0 0 215.578947 215.578947z m-126.601788-16.77855a50.844091 50.844091 0 1 1-71.690168-71.690169l251.678252-251.678252a50.844091 50.844091 0 0 1 71.690169 71.690169z"
+         p-id="16297"></path></svg>
+      <span class="tooltiptext">生成预览链接</span>
+    </button>
+    <button class="sharebutton tooltip" @click="closeShare">
+      <svg t="1693620396396" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="13159" width="23" height="23">
+        <path d="M227.911022 493.700575A51.187203 51.187203 0 1 1 298.549363 563.315171l-105.957511 106.981255a149.978505 149.978505 0 0 0 204.748813 218.057486l6.3984-6.142465 105.957511-105.95751a51.187203 51.187203 0 0 1 70.63834 70.63834l-105.95751 105.957511a249.793552 249.793552 0 0 1-353.191702-353.191703zM606.696326 141.788553a249.793552 249.793552 0 0 1 243.139215 435.091227l-130.783304 72.941765a51.187203 51.187203 0 0 1-48.627843-86.506374l130.783304-72.941764a149.722569 149.722569 0 0 0-137.949513-265.405649l-7.934016 4.094976-130.783304 72.941765a51.187203 51.187203 0 0 1-48.883779-87.274182z m-25.593602 281.529617a51.187203 51.187203 0 0 1 70.638341 70.638341l-211.915022 211.915021a51.187203 51.187203 0 0 1-70.63834-70.63834z m0 0M179.539115 18.427393l106.981255 215.498126-224.455886-102.886279L179.283179 18.427393h0.255936zM429.332667 0l-66.7993 181.458635-66.799301-181.458635h133.598601zM42.869283 371.107223l188.880779-63.984004-188.880779-64.23994v128.223944z" p-id="13160"></path></svg>
+      <span class="tooltiptext">取消预览</span>
+  </button>
 	</span>
 	<div class="page-select">
 		<PageSelect />
@@ -117,17 +130,17 @@ export default {
 		let topPanel = document.querySelector('.gjs-pn-panel.gjs-pn-devices-c.gjs-one-bg.gjs-two-color .gjs-pn-buttons')
 		let sizeSetter = document.querySelector('#size-setter')
 		topPanel.appendChild(sizeSetter)
-		// this.$watch(
-		// 	() => this.$route.params,
-		// 	() => {
-		// 		this.pageId = this.$route.params.protoId
-		// 		this.$http.get(`http://localhost:3000/projects/${this.pageId}`).then((response) => {
-		// 			this.editor.loadProjectData(response.data)
-		// 		})
-		// 	},
-		// 	{ immediate: true }
-		// )
-		// this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/page/2/`)
+		this.$watch(
+			() => this.$route.params,
+			() => {
+				this.pageId = this.$route.params.protoId
+				this.$http.get(`http://43.138.14.231/projects/${this.pageId}`).then((response) => {
+					this.editor.loadProjectData(response.data)
+				})
+			},
+			{ immediate: true }
+		)
+		// this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/page/${this.pageId}/`)
 		// this.ws.onmessage = (message) => {
 		// 	const data = JSON.parse(message.data).data
 		// 	if (JSON.stringify(this.editor.getProjectData()) !== JSON.stringify(data)) {
@@ -158,14 +171,14 @@ export default {
 				{
 					selected: false,
 					id: 'Tablet',
-					width: '2388px',
-					height: '1668px',
+					width: '1024px',
+					height: '768px',
 				},
 				{
 					selected: false,
 					id: 'Mobile portrait',
-					width: '1170px',
-					height: '2532px',
+					width: '640px',
+          height:'1200px'
 				},
 				{
 					selected: false,
@@ -271,14 +284,13 @@ export default {
 						{
 							id: 'Tablet',
 							name: 'Tablet',
-							width: '2388px',
-							height: '1668px',
+							width: '1024px',
+					    height: '768px',
 						},
 						{
 							id: 'Mobile portrait',
 							name: 'Mobile portrait',
-							width: '1170px',
-							height: '2532px',
+							width: '640px'
 						},
 						{
 							id: 'Customization',
@@ -305,8 +317,10 @@ export default {
           <div class="gjs-cell" id="main-content">
           <div id="platform-title">学术成果分享平台</div>
           <div id="platform-subtitle">Make Academia VisiableMake Academia Visiable</div>
-          <input type="text" id="search-input" placeholder="Search"/>
-          <button type="button" id="search-button">搜索</button>
+          <div id="search-div">
+            <input type="text" id="search-input" placeholder="Search"/>
+            <button type="button" id="search-button">搜索</button>
+          </div>         
           </div>
           <div class="gjs-cell" id="right-space"></div>
           </div>
@@ -405,21 +419,31 @@ export default {
           #platform-subtitle {
               margin-bottom: 20px;
           }
+          #search-div {
+            display: flex;
+            justify-content: center;
+          }
 
           #search-input {
-              padding: 10px;
-              border-radius: 5px;
-              border: 1px solid #ccc;
+            margin-left: 10px;
+            margin-right: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            min-width: 200px;
+            
           }
 
           #search-button {
-              padding: 10px 15px;
-              background-color: #555;
-              border: none;
-              border-radius: 5px;
-              color: #fff;
-              cursor: pointer;
-              margin-left: 10px;
+            margin-left: 10px;
+            margin-right: 10px;
+            padding: 10px 15px;
+            background-color: #555;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+             
           }
 
           .tab-container {
@@ -628,30 +652,36 @@ button {
     background-color: #3498db;
     color: #fff;
     transition: background-color 0.3s;
+    display: inline-block;
 }
 
 .edit:hover {
     background-color: #2980b9;
+    display: inline-block;
 }
 
 .delete {
     background-color: #e74c3c;
     color: #fff;
     transition: background-color 0.3s;
+    display: inline-block;
 }
 
 .delete:hover {
     background-color: #c0392b;
+    display: inline-block;
 }
 
 .view {
     background-color: #2ecc71;
     color: #fff;
     transition: background-color 0.3s;
+    display: inline-block;
 }
 
 .view:hover {
     background-color: #27ae60;
+    display: inline-block;
 }
     </style>
           `
@@ -1214,11 +1244,14 @@ button {
 					type: 'remote',
 					stepsBeforeSave: 1,
 					autosave: true,
-					autoload: true,
+					// autoload: true,
 					options: {
 						remote: {
-							urlLoad: `http://localhost:3000/projects/${this.pageId}`,
-							urlStore: `http://localhost:3000/projects/${this.pageId}`,
+							urlLoad: `http://43.138.14.231/projects/${this.pageId}/`,
+							urlStore: `http://43.138.14.231/projects/${this.pageId}/`,
+              // urlLoad: `http://localhost:3000/projects/${this.pageId}`,
+							// urlStore: `http://localhost:3000/projects/${this.pageId}`,
+              fetchOptions: opts => (opts.method === 'POST' ?  { method: 'PATCH' } : {}),
 							// urlLoad: `http://localhost:3000/projects/1`,
 							// urlStore: `http://localhost:3000/projects/1`,
 							// The `remote` storage uses the POST method when stores data but
@@ -1246,8 +1279,7 @@ button {
 								}
 							},
 							onLoad: result => {
-
-								// this.Devices = result.Devices
+								this.Devices = result.Devices
 								this.canvasHeight = result.size.height
 								this.canvasWidth = result.size.width
 								console.log(result)
@@ -1313,6 +1345,11 @@ button {
 				})
 			})
 		},
+    closeShare() {
+      this.$http.post(`/api/projects/page/${this.pageId}/close/`).then(() => {
+        this.$bus.emit('close')
+      })
+    },
 		switchDevice(deviceIndex) {
 			this.Devices.forEach((device) => {
 				device.selected = false
@@ -1382,15 +1419,14 @@ button {
 
 :deep(.gjs-cv-canvas) {
 	overflow: auto;
-	box-sizing: border-box;
-	width: 80%;
-	height: calc(100% - 40px);
-	bottom: 0;
-	overflow: hidden;
-	z-index: 1;
-	position: absolute;
-	left: 0;
-	top: 40px;
+  box-sizing: border-box;
+    width: 80%;
+    height: calc(100% - 40px);
+    bottom: 0;
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    top: 40px;
 }
 
 :deep(.gjs-pn-devices-c .gjs-pn-btn) {
@@ -1470,7 +1506,7 @@ button {
 	vertical-align: middle;
 	margin-right: 10px;
 	cursor: default;
-	border-radius: 3px;
+	border-radius: 5px;
 }
 
 #size-setter input {
@@ -1493,18 +1529,24 @@ button {
 #size-setter button {
 	font-weight: 500;
 	cursor: pointer;
-	padding: 0 10px;
+	padding: 0;
+  margin: 0 10px;
 	vertical-align: bottom;
-	border: #c71d23 2px solid;
-	color: #c71d23;
+	color: #c71d23;	
 	border-radius: 5px;
 	background: none;
-	transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s;
 }
 
-#size-setter button:hover {
+#size-setter button svg{
+  fill: #c71d23;
+  transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s;
+  cursor: pointer;
+}
+
+#size-setter button svg:hover {
 	background: #c71d23;
-	color: white;
+  transform: scale(1.3);
+  fill: white;
 }
 
 .selected-device svg {
@@ -1516,15 +1558,8 @@ button {
 
 .unselected-device svg:hover {
 	fill: white;
-	background: #c71d23;
-}
-
-.unselected-device {
-	transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s;
-}
-
-.unselected-device:hover {
-	transform: scale(1.3);
+	background: #c71d23;	
+  transform: scale(1.3);
 }
 
 
@@ -1536,4 +1571,36 @@ button {
 
 .sharebutton {
 	margin-left: 20px;
-}</style> 
+}
+
+
+/* Tooltip 容器 */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+ 
+/* Tooltip 文本 */
+.tooltip .tooltiptext {
+    font-weight: 300 !important;
+    font-family: Microsoft Yahei;
+    font-size: 10px;
+    visibility: hidden;
+    white-space: nowrap;
+    background-color: white;
+    border:1px black solid;
+    color:black;
+    text-align: center;
+    padding: 4px 8px;
+    /* 定位 */
+    position: absolute;
+    z-index: 1;
+    bottom:-30px;
+    right:-50px
+}
+ 
+/* 鼠标移动上去后显示提示框 */
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+</style>  

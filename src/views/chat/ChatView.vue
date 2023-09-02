@@ -37,6 +37,22 @@ export default {
 	mounted() {
 		this.currentUserId = this.$cookies.get('user_id')
 		this.roomsLoaded = false
+		this.teamws = new WebSocket(`ws://43.138.14.231:9000/ws/team/${this.$route.params.teamId}/${this.currentUserId}/`)
+		this.teamws.onmessage = (messageEvent) => {
+			const data = JSON.parse(messageEvent.data)
+			if (data.option == 'create') {
+				this.handleCreateRoom(data)
+			}
+			else if (data.option == 'edit') {
+				this.handleEditRoom(data)
+			}
+			else if (data.option == 'delete') {
+				this.handleDeleteRoom(data)
+			}
+			else if (data.option == 'quit') {
+				this.handleQuitRoom(data)
+			}
+		}
 		this.$http.get(`/api/groups/list_by_team_id/?team_id=${this.$route.params.teamId}`).then((response) => {
 			// rooms
 			this.rooms = response.data.map((group, index) => ({
@@ -252,11 +268,11 @@ export default {
 				margin: 0 !important;
 			}
 		`
-		this.$bus.on('scrollToMessage', messageId => this.fetchAllAndScroll(messageId))
 		this.$bus.on('fetchAllMessages', () => this.fetchAllMessages())
 		this.$bus.on('scrollToMessage', messageId => this.scrollToMessage(messageId))
 		this.$bus.on('forwardMessages', transmitList => this.forwardMessages(transmitList))
 		this.$bus.on('showCombinedMessageRequest', messageId => this.showCombinedMessages(messageId))
+		this.$bus.on('roomOption', data => this.teamws.send(data))
 
 		this.$refs.chat.shadowRoot.appendChild(style)
 		// const newHTML = this.$refs.chat.shadowRoot.innerHTML.replace('placeholder="Search"', 'placeholder="检索"')
@@ -275,15 +291,19 @@ export default {
 		document.removeEventListener('click', this.showGroupInfo)
 	},
 	unmounted() {
+		this.teamws.close()
 		for (let i = 0; i < this.ws.length; i++) {
 			this.ws[i].close()
 		}
 		this.$bus.off('fetchAllMessages')
 		this.$bus.off('scrollToMessage')
 		this.$bus.off('forwardMessages')
+		this.$bus.off('showCombinedMessageRequest')
+		this.$bus.off('roomOption')
 	},
 	data() {
 		return {
+			teamws: undefined,
 			showCreateRoomModal: false,
 			showTransmitMessageModal: false,
 			showCombinedmessageModal: false,
@@ -813,7 +833,7 @@ export default {
 						})
 					}
 				}
-			}, 6000);
+			}, 3000);
 		},
 
 		selectRoom(roomId) {
@@ -901,7 +921,58 @@ export default {
 		// 关闭一个合并转发消息的模态框
 		closeCombineTransmit() {
 			this.combineTransmitInstances.pop()
-    }
+    },
+
+		handleCreateRoom(data) {
+			const group = data.group_data
+			for (let j = 0; j < this.rooms.length; j++) {
+					this.rooms[j].index--
+			}
+			const room = {
+				index: 0,
+				roomId: group.id,
+				roomName: group.is_private ? (
+					group.members[0].user.id == this.currentUserId ? group.members[1].user.username : group.members[0].user.username
+				) : group.name,
+				avatar: group.is_private ? (
+					group.members[0].user.id == this.currentUserId ? group.members[1].user.avatar : group.members[0].user.avatar
+				) : group.avatar,
+				unreadCount: group.unreadCount,
+				users: group.members.map((member) => ({
+					_id: `${member.user.id}`,
+					username: member.user.username
+				})),
+				is_private: group.is_private,
+			}
+			this.rooms = [...this.rooms, room]
+			this.messages = []
+			const i = this.rooms.length - 1
+			this.ws[i] = new WebSocket(`ws://43.138.14.231:9000/ws/chat/group/${room.roomId}/${this.currentUserId}/`)
+			this.ws[i].onmessage = (messageEvent) => {
+				const data = JSON.parse(messageEvent.data)
+				if (data.option == 'send') {
+					this.handleSendMessage(i, data)
+				}
+				else if (data.option == 'edit') {
+					this.handleEditMessage(i, data)
+				}
+				else if (data.option == 'delete') {
+					this.handleDeleteMessage(i, data)
+				}
+			}
+		},
+
+		handleEditRoom(data) {
+
+		},
+
+		handleDeleteRoom(data) {
+
+		},
+
+		handleQuitRoom(data) {
+
+		},
 	}
 }
 </script>

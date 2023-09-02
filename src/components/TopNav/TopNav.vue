@@ -51,7 +51,6 @@ export default {
       username: '',
       avatarUrl: '/src/assets/avatar.jpeg',
       hasUnreadMsg: false,
-      ws: undefined
     }
   },
   mounted() {
@@ -63,17 +62,15 @@ export default {
       this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/news/${this.userId}/`)
       this.ws.onmessage = (messageEvent) => {
         const data = JSON.parse(messageEvent.data)
-        console.log(data)
         for (let i = 0; i < data.mentioned_users.length; i++) {
           if (data.mentioned_users[i] == this.userId || data.mentioned_users[i] == '0') {
             let formData = new FormData()
-            console.log('1234')
             formData.append('file', data.file_id)
             formData.append('receiver', this.userId)
             formData.append('sender', data.sender.id)
             formData.append('file_element', data.file_element)
             this.$http.post('/api/news/', formData).then(() => {
-              this.$bus.emit('newFileMessage', data.file_id)
+              this.$bus.emit('judgeHasUnreadMsg', true)
             })
             break
           }
@@ -107,6 +104,9 @@ export default {
     handleJudgeHasUnreadMsg(hasUnread) {
       if (hasUnread) {
         this.hasUnreadMsg = true
+        // 只要是true，就说明有新的news出现了，因此需要刷一遍消息列表
+        // to do
+        this.$bus.emit('sendRefreshMessageViewRequest', true)
       } else {
         this.hasUnreadMsg = false
       }

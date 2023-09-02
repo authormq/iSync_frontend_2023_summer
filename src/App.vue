@@ -6,6 +6,7 @@
   <!-- 消息组件 -->
   <!-- 如果要展示分享链接，这一句代码就必须要加上 -->
   <StylishMessage :show="showMessage" :title="messageTitle" :content="messageContent" />
+  <!-- <TeamInviteConfirm></TeamInviteConfirm> -->
 </template>
 
 <script setup>
@@ -13,6 +14,7 @@ import { ref, getCurrentInstance } from 'vue'
 import DocumentView from './components/DocumentWheels/DocumentView.vue'
 import TopNav from './components/TopNav/TopNav.vue'
 import StylishMessage from './components/Stylish/StylishMessage.vue'
+import TeamInviteConfirm from './views/TeamInviteConfirm.vue'
 
 import { useStore } from 'vuex'
 

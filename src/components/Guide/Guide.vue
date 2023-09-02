@@ -37,22 +37,22 @@
       </div>
     </div>
     <div 
-      class="intro-1-right-img animate__animated" 
+      class="intro-1-right-img animate__animated" style="background: url('/src/assets/show/1.png')"
       :class="{'animate__fadeIn': cnt === 0, 'animate__fadeInBottomLeft': cnt === 3, 'intro-1-all-img intro-1-all-img-1': cnt === 3}"
       v-if="cnt === 0 || cnt === 3"
     >1</div>
     <div 
-      class="intro-1-right-img animate__animated" 
+      class="intro-1-right-img animate__animated" style="background: url('/src/assets/show/1.png')"
       :class="{'animate__fadeIn': cnt === 1, 'animate__fadeInBottomLeft': cnt === 3, 'intro-1-all-img intro-1-all-img-2': cnt === 3}"
       v-if="cnt === 1 || cnt === 3"
     >2</div>
     <div 
-      class="intro-1-right-img animate__animated"
+      class="intro-1-right-img animate__animated" style="background: url('/src/assets/show/1.png')"
       :class="{'animate__fadeIn': cnt === 2, 'animate__fadeInTopLeft': cnt === 3, 'intro-1-all-img intro-1-all-img-3': cnt === 3}" 
       v-if="cnt === 2 || cnt === 3"
     >3</div>
     <div 
-      class="intro-1-right-img animate__animated" 
+      class="intro-1-right-img animate__animated" style="background: url('/src/assets/show/1.png')"
       :class="{'animate__fadeInTopLeft': cnt === 3, 'intro-1-all-img intro-1-all-img-4': cnt === 3}"
       v-if="cnt === 3"
     >4</div>
@@ -491,5 +491,10 @@ button:hover {
 
 .gradually-bright {
   animation: bright 3s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+div {
+  background-position: center center !important;
+  background-size: cover !important;
 }
 </style>

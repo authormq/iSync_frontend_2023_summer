@@ -58,7 +58,7 @@
 
       <!-- 文件列表 -->
       <div 
-        style="margin: 5px"
+        style="margin-bottom: 40px"
         class="list-item"
         v-for="doc in docList" 
         :key="doc.id" 

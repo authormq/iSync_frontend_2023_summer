@@ -84,7 +84,7 @@ export default {
           isSelected: false,
           imgSrc: "/src/assets/avatar.jpeg",
           type: 'management',
-          name: '管理'
+          name: '团队管理'
         },
         {
           isSelected: false,

@@ -226,33 +226,33 @@ export default {
 		},
 		canvasWidth(value) {
 			if(this.editor!==undefined){
-			if (value > 100000) {
-				alert('超过最大宽度')
-				return
-			}
-			if (value <= 0) {
-				alert('小于最小宽度')
-			}
-			if (this.editor !== undefined) {
-				let oldName = this.editor.Devices.get('Customization') === null ? 'Customization1' : 'Customization'
-				let newName = oldName === 'Customization1' ? 'Customization' : 'Customization1'
-				let height = this.Devices[3].height//保持高度不变
-				this.editor.Devices.add({//添加一个设备
-					id: newName,
-					name: newName,
-					height: height,
-					width: value + 'px'
-				})
-				// console.log(this.editor.Devices.get('Desktop').attributes.height)
-				this.editor.Devices.select(newName)//选择该设备
-				this.editor.Devices.remove(oldName)//把原来的设备删了
-				this.Devices[3].id = newName//设置新id
-				this.Devices[3].width = value + 'px'//设置新宽度
-				setTimeout(() => {
-					this.editor.store()
-				}, 100)
-			}
-		}
+        if (value > 100000) {
+          alert('超过最大宽度')
+          return
+        }
+        if (value <= 0) {
+          alert('小于最小宽度')
+        }
+        if (this.editor !== undefined) {
+          let oldName = this.editor.Devices.get('Customization') === null ? 'Customization1' : 'Customization'
+          let newName = oldName === 'Customization1' ? 'Customization' : 'Customization1'
+          let height = this.Devices[3].height//保持高度不变
+          this.editor.Devices.add({//添加一个设备
+            id: newName,
+            name: newName,
+            height: height,
+            width: value + 'px'
+          })
+          // console.log(this.editor.Devices.get('Desktop').attributes.height)
+          this.editor.Devices.select(newName)//选择该设备
+          this.editor.Devices.remove(oldName)//把原来的设备删了
+          this.Devices[3].id = newName//设置新id
+          this.Devices[3].width = value + 'px'//设置新宽度
+          setTimeout(() => {
+            this.editor.store()
+          }, 100)
+        }
+      }
 		}
 	},
 	// beforeDestroy() {
@@ -1269,7 +1269,7 @@ button {
 					type: 'remote',
 					stepsBeforeSave: 1,
 					autosave: true,
-					// autoload: true,
+					autoload: true,
 					options: {
 						remote: {
 							urlLoad: `http://43.138.14.231/projects/${this.pageId}/`,
@@ -1281,10 +1281,7 @@ button {
 							// urlStore: `http://localhost:3000/projects/1`,
 							// The `remote` storage uses the POST method when stores data but
 							// the json-server API requires PATCH.
-							// fetchOptions: opts => (opts.method === 'POST' ? { method: 'PATCH' } : {}),
-							// As the API stores projects in this format `{id: 1, data: projectData }`,
-							// we have to properly update the body before the store and extract the
-							// project data from the response result.
+	
 							onStore: data => {
 								data['size'] = {
 									height: this.canvasHeight,
@@ -1295,7 +1292,7 @@ button {
 								return {
 									id: this.pageId,
 									data,
-									//存储画布宽高
+									// //存储画布宽高
 									size: {
 										height: this.canvasHeight,
 										width: this.canvasWidth,

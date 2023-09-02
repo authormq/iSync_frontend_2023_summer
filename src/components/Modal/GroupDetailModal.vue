@@ -25,7 +25,7 @@
       <button @click="showInviteNewMember">邀请新成员</button>
     </div>
     <SearchRecordModal :show="showSearchRecordModal" :groupId="groupId" @close="showSearchRecordModal = false"></SearchRecordModal>
-    <InviteNewMemberModal :show="showInviteNewMemberModal" @close="showInviteNewMemberModal = false"></InviteNewMemberModal>
+    <InviteNewMemberModal :show="showInviteNewMemberModal" :groupId="groupId" @close="showInviteNewMemberModal = false"></InviteNewMemberModal>
   </div>
   <!-- </StylishModal> -->
 </template>
@@ -164,6 +164,7 @@ export default {
             content: '',
             time: 2000
           })
+          this.$bus.emit('hideGroupDetail')
         },
         error => {
           console.log(error.message)

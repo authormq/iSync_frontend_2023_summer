@@ -950,6 +950,15 @@ export default {
 				})),
 				is_private: group.is_private,
 			}
+			if (group.creator == this.currentUserId) {
+				room.users = [
+					{
+						_id: '0',
+						username: '所有人'
+					},
+					...room.users
+				]
+			}
 			this.rooms = [...this.rooms, room]
 			const i = this.rooms.length - 1
 			this.ws[i] = new WebSocket(`ws://43.138.14.231:9000/ws/chat/group/${room.roomId}/${this.currentUserId}/`)
@@ -998,7 +1007,7 @@ export default {
 						this.ws.splice(i, 1)
 					}
 					else {
-						this.rooms[i].users = this.rooms[i].users.filter(user => user != group.user_id)
+						this.rooms[i].users = this.rooms[i].users.filter(user => user._id != group.user_id)
 					}
 					break
 				}

@@ -11,19 +11,19 @@
       <div class="inputs">
         <input type="text" placeholder="文档名称" v-model="name">
         <span>文档权限</span>
-        <button v-if="isPublic == 0" @click="isPublic = 1">私密</button>
-        <button v-else @click="isPublic = 0">公开</button>
+        <button @click="isPublic = 1-isPublic" :style="{
+          'color':isPublic===0?'':'white',
+          'background-color':isPublic===0?'':'rgba(199,29,35,0.8)'}">
+          {{isPublic===0?'私密':'公开'}}
+        </button>
       </div>
-    </div>
-    <div class="introduction">
-      <input type="text" placeholder="文档简介" v-model="profile">
     </div>
     <div class="model-title">文档模板</div>
     <div class="model-container">
       <ul>
         <li v-for="(model, index) in models" :key="index" style="display: inline-block;">
           <button class="model-select-button"
-            :style="{ 'background': model.isSelected ? 'rgba(199, 29, 35, 1)' : 'transparent' }"
+            :style="{ 'background': model.isSelected ? 'rgba(199, 29, 35, 0.8)' : 'transparent' }"
             @click="handleModelSelect(index)">
             <img class="model-img" :src="model.imgSrc">
             <span class="model-type" :style="{ 'color': model.isSelected ? 'white' : 'rgba(199, 29, 35, 1)' }">
@@ -64,49 +64,49 @@ export default {
       models: [
         {
           isSelected: true,
-          imgSrc: "/src/assets/avatar.jpeg",
+          imgSrc: "/src/assets/empty-document.png",
           type: 'empty',
           name: '空文档'
         },
         {
           isSelected: false,
-          imgSrc: "/src/assets/avatar.jpeg",
+          imgSrc: "/src/assets/project-plan.png",
           type: 'project_plan',
           name: '项目计划'
         },
         {
           isSelected: false,
-          imgSrc: "/src/assets/avatar.jpeg",
+          imgSrc: "/src/assets/conference-summary.png",
           type: 'meeting_minutes',
           name: '会议纪要'
         },
         {
           isSelected: false,
-          imgSrc: "/src/assets/avatar.jpeg",
+          imgSrc: "/src/assets/team-management.png",
           type: 'management',
-          name: '管理'
+          name: '团队管理'
         },
         {
           isSelected: false,
-          imgSrc: "/src/assets/avatar.jpeg",
+          imgSrc: "/src/assets/weekly-review.png",
           type: 'weekly_report',
           name: '工作周报'
         },
         {
           isSelected: false,
-          imgSrc: "/src/assets/avatar.jpeg",
+          imgSrc: "/src/assets/research-report.png",
           type: 'research_report',
           name: '研究报告'
         },
         {
           isSelected: false,
-          imgSrc: "/src/assets/avatar.jpeg",
+          imgSrc: "/src/assets/specification-sheet.png",
           type: 'specification_manual',
           name: '规格手册'
         },
         {
           isSelected: false,
-          imgSrc: "/src/assets/avatar.jpeg",
+          imgSrc: "/src/assets/design-handbook.png",
           type: 'design_manual',
           name: '设计手册'
         },
@@ -193,13 +193,13 @@ export default {
 .content-container {
   display: flex;
   justify-content: space-between;
-  margin: 0 60px;
+  margin: 50px 60px 0 60px ;
 }
 
 .inputs input {
   box-sizing: border-box;
   display: inline-block;
-  width: 200px;
+  width: 250px;
   height: 35px;
   border: 1px solid rgba(199, 29, 35, 1);
   border-radius: 10px;
@@ -229,7 +229,7 @@ input:focus {
   padding: 0 15px;
   margin-left: 50px;
   height: 30px;
-  font-size: 18px;
+  font-size: 15px;
   border-radius: 5px;
   cursor: pointer;
   transition: 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
@@ -242,6 +242,7 @@ input:focus {
 .inputs button:hover {
   border: 1px solid rgba(199, 29, 35, 0.8);
   color: rgba(199, 29, 35, 0.8);
+  transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s;
 }
 
 .introduction {
@@ -265,7 +266,7 @@ input:focus {
 .model-title {
   font-size: 25px;
   font-weight: bold;
-  margin: 15px 0 5px 65px;
+  margin: 20px 0 15px 65px;
   color: rgba(199, 29, 35, 1);
 }
 
@@ -277,7 +278,7 @@ input:focus {
 
 .model-select-button {
   text-align: center;
-  margin: 10px 30px;
+  margin: 10px 25px;
   padding: 0 0 5px 0;
   border-radius: 20px;
   border: 2px solid rgba(199, 29, 35, 1);
@@ -290,9 +291,10 @@ input:focus {
 }
 
 .model-img {
-  width: 130px;
+  width: 120px;
   border-radius: 20px;
-  margin-bottom: 5px;
+  margin: 15px 10px;
+  aspect-ratio: 1.2;
 }
 
 .model-type {
@@ -303,8 +305,8 @@ input:focus {
 .bottom-box {
   display: flex;
   padding: 10px 80px 30px 80px;
-  justify-content: space-between;
-  margin-bottom: 20px;
+  justify-content: flex-end;
+  margin: 20px 12px 20px 0;
 }
 
 
@@ -312,8 +314,8 @@ input:focus {
 .confirm,
 .cancel {
   display: block;
-  width: 100px;
-  height: 35px;
+  width: 120px;
+  height: 40px;
   font-size: 18px;
   border-radius: 5px;
   cursor: pointer;
@@ -339,8 +341,7 @@ input:focus {
   background: rgba(199, 29, 35, 1);
   color: white;
   display: inline-block;
-  width: 100px;
-  height: 35px;
+  margin-left: 50px;
   font-size: 18px;
   border-radius: 5px;
   cursor: pointer;

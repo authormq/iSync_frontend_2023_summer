@@ -18,7 +18,7 @@
 			<CombineTransmit :show="message.show" :combineMessageList="message.combineMessageList"
 				@close="closeCombineTransmit"></CombineTransmit>
 		</div>
-		<GroupDetailModal />
+		<GroupDetailModal :groupId="currentRoomId"/>
 	</div>
 </template>
 
@@ -263,6 +263,10 @@ export default {
 			.vac-message-wrapper .vac-message-container-offset {
 				margin: 0 !important;
 			}
+
+			em {
+				font-style: normal !important;
+			}
 		`
 		this.$bus.on('fetchAllMessages', () => this.fetchAllMessages())
 		this.$bus.on('scrollToMessage', messageId => this.scrollToMessage(messageId))
@@ -326,6 +330,9 @@ export default {
 				}
 			],
 			styles: {
+				general: {
+					backgroundcolorButton: 'rgba(199,29,35, 1)',
+				},
 				sidemenu: {
 					backgroundActive: 'rgba(199,29,35, 0.2)'
 				},
@@ -422,7 +429,6 @@ export default {
 		},
 
 		fetchMessages({ room, options = {} }) {
-			console.log(room)
 			this.currentRoomId = room.roomId
 			if (room.roomId == this.$route.query.groupId) {
 				return
@@ -558,7 +564,8 @@ export default {
 			this.rooms[i].index = 0
 			// @
 			for (let j = 0; j < data.mentioned_users.length; j++) {
-				if (data.mentioned_users[j]._id == this.currentUserId || data.mentioned_users[j]._id == '0') {
+				if ((data.mentioned_users[j]._id == this.currentUserId || data.mentioned_users[j]._id == '0') 
+				&& message.sender.user.id != parseInt(this.currentUserId)) {
 					let formData = new FormData()
 					formData.append('group_message', message.id)
 					formData.append('receiver', this.currentUserId)
@@ -659,7 +666,8 @@ export default {
 			}
 			// @
 			for (let j = 0; j < data.mentioned_users.length; j++) {
-				if (data.mentioned_users[j]._id == this.currentUserId || data.mentioned_users[j]._id == '0') {
+				if ((data.mentioned_users[j]._id == this.currentUserId || data.mentioned_users[j]._id == '0')
+				&& message.sender.user.id != parseInt(this.currentUserId)) {
 					let formData = new FormData()
 					formData.append('group_message', message.id)
 					formData.append('receiver', this.currentUserId)
@@ -822,15 +830,16 @@ export default {
 						// console.log('msg: ', msg.getBoundingClientRect().top, msg.getBoundingClientRect().bottom)
 						// console.log('con: ', container.getBoundingClientRect().top, container.getBoundingClientRect().bottom)
 						// console.log('@@@: ', container.scrollTop)
-						const height = msg.getBoundingClientRect().bottom - msg.getBoundingClientRect().top
+						const msgHeight = msg.getBoundingClientRect().bottom - msg.getBoundingClientRect().top
+						const offset = (container.getBoundingClientRect().top + container.getBoundingClientRect().bottom) / 2
 						container.scrollTo({
-							top: container.scrollTop + msg.getBoundingClientRect().top - 396.7 + height / 2,
+							top: container.scrollTop + msg.getBoundingClientRect().top - offset + msgHeight / 2,
 							left: 0,
 							behavior: 'smooth'
 						})
 					}
 				}
-			}, 3000);
+			}, 500);
 		},
 
 		selectRoom(roomId) {

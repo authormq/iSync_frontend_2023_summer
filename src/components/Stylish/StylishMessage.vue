@@ -1,6 +1,6 @@
 <template>
   <teleport to="html">
-    <div class="stylish-message" ref="message" v-if="show">
+    <div class="stylish-message" ref="message" v-if="showMessage" :class="{ 'fade-out': !show }">
       <div class="stylish-message-title">{{ title }}</div>
       <div class="stylish-message-content">{{ content }}</div>
     </div>
@@ -10,10 +10,25 @@
 <script>
 export default {
   name: 'StylishMessage',
-  props: { 
+  data() {
+    showMessage: false
+  },
+  props: {
     show: { type: Boolean, default: false },
-    title: { type: String, default: ''},
-    content: { type: String, default: ''}
+    title: { type: String, default: '' },
+    content: { type: String, default: '' }
+  },
+  watch: {
+    show(value) {
+      if (value === false) {
+        setTimeout(() => {
+          this.showMessage = value
+        }, 1000)
+      }
+      else {
+        this.showMessage = value
+      }
+    }
   }
 }
 </script>
@@ -37,7 +52,7 @@ export default {
   font-size: 20px;
   font-weight: bold;
   text-align: center;
-  color: rgba(199,29,35, 1);
+  color: rgba(199, 29, 35, 1);
   padding-bottom: 10px;
 }
 
@@ -47,5 +62,10 @@ export default {
   text-align: center;
   color: grey;
   word-break: break-all;
+}
+
+.fade-out {
+  transition: all linear 1s;
+  opacity: 0;
 }
 </style>

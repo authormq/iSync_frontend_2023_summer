@@ -151,57 +151,57 @@ export default {
 		// 	}
 		// }
     let topPanel = document.querySelector('.gjs-pn-panel.gjs-pn-devices-c.gjs-one-bg.gjs-two-color .gjs-pn-buttons')
-		let sizeSetter = document.querySelector('#size-setter')
-		topPanel.appendChild(sizeSetter)
-		//设置默认大小
-		// this.closeCategory();
-	},
-	unmounted() {
-		// this.ws.close()
-	},
-	data() {
-		return {
-			ws: '',
-			pageId: null,
-			pageName: 'page1',
-			pagesNum: 1,
-			canvasHeight: '1000',
-			canvasWidth: '1000',
-			Devices: [
-				{
-					selected: true,
-					id: 'Desktop',
-					// width: '1920px',
-					// height: '1080px',
-				},
-				{
-					selected: false,
-					id: 'Tablet',
-					width: '1024px',
-					height: '768px',
-				},
-				{
-					selected: false,
-					id: 'Mobile portrait',
-					width: '640px',
-          height:'1200px'
-				},
-				{
-					selected: false,
-					id: 'Customization',
-					width: '1000px',
-					height: '1000px',
-				},
-			],
-			editor: undefined,
-			currentDevice: undefined
-		}
-	},
-	watch: {
-		//监听画布大小改变,更新设备配置
-		canvasHeight(value) {
-			if (this.editor !== undefined) {
-				if (value > 100000) {
+    let sizeSetter = document.querySelector('#size-setter')
+    topPanel.appendChild(sizeSetter)
+    //设置默认大小
+    // this.closeCategory();
+  },
+  unmounted() {
+    // this.ws.close()
+  },
+  data() {
+    return {
+      ws: '',
+      pageId: null,
+      pageName: 'page1',
+      pagesNum: 1,
+      canvasHeight: '1000',
+      canvasWidth: '1000',
+      Devices: [
+        {
+          selected: true,
+          id: 'Desktop',
+          // width: '1920px',
+          // height: '1080px',
+        },
+        {
+          selected: false,
+          id: 'Tablet',
+          width: '1024px',
+          height: '768px',
+        },
+        {
+          selected: false,
+          id: 'Mobile portrait',
+          width: '640px',
+          height: '1200px'
+        },
+        {
+          selected: false,
+          id: 'Customization',
+          width: '1000px',
+          height: '1000px',
+        },
+      ],
+      editor: undefined,
+      currentDevice: undefined
+    }
+  },
+  watch: {
+    //监听画布大小改变,更新设备配置
+    canvasHeight(value) {
+      if (this.editor !== undefined) {
+        if (value > 100000) {
           this.$bus.emit('message', {
             title: '画布尺寸设置警告',
             content: '设置尺寸超过最大高度',
@@ -215,31 +215,31 @@ export default {
             content: '设置尺寸小于最小高度',
             time: 3000
           })
-					return
-				}
-				if (this.editor !== undefined) {
-					let oldName = this.editor.Devices.get('Customization') === null ? 'Customization1' : 'Customization'
-					let newName = oldName === 'Customization1' ? 'Customization' : 'Customization1'
-					let width = this.Devices[3].width//保持宽度不变
-					this.editor.Devices.add({//添加一个设备
-						id: newName,
-						name: newName,
-						height: value + 'px',
-						width: width
-					})
-					// console.log(this.editor.Devices.get('Desktop').attributes.height)
-					this.editor.Devices.select(newName)//选择该设备
-					this.editor.Devices.remove(oldName)//把原来的设备删了
-					this.Devices[3].id = newName//设置新id
-					this.Devices[3].height = value + 'px'//设置新高度
-					setTimeout(() => {
-						this.editor.store()
-					}, 100)
-				}
-			}
-		},
-		canvasWidth(value) {
-			if(this.editor!==undefined){
+          return
+        }
+        if (this.editor !== undefined) {
+          let oldName = this.editor.Devices.get('Customization') === null ? 'Customization1' : 'Customization'
+          let newName = oldName === 'Customization1' ? 'Customization' : 'Customization1'
+          let width = this.Devices[3].width//保持宽度不变
+          this.editor.Devices.add({//添加一个设备
+            id: newName,
+            name: newName,
+            height: value + 'px',
+            width: width
+          })
+          // console.log(this.editor.Devices.get('Desktop').attributes.height)
+          this.editor.Devices.select(newName)//选择该设备
+          this.editor.Devices.remove(oldName)//把原来的设备删了
+          this.Devices[3].id = newName//设置新id
+          this.Devices[3].height = value + 'px'//设置新高度
+          setTimeout(() => {
+            this.editor.store()
+          }, 100)
+        }
+      }
+    },
+    canvasWidth(value) {
+      if (this.editor !== undefined) {
         if (value > 100000) {
           this.$bus.emit('message', {
             title: '画布尺寸设置警告',
@@ -321,7 +321,7 @@ export default {
                   'button': '按钮',
                   'label': '标签',
                   'checkbox': '多选框',
-                  'radio':'单选框'
+                  'radio': '单选框'
                 },
                 categories: {
                   // 'category-id': 'Category Label',
@@ -1467,36 +1467,122 @@ button {
       let node = document.createElement('div')
       node.style.position = 'fixed'
       node.style.zIndex = -1
-      node.style.top = 0
-      node.style.left = 0
-      node.style.height = this.canvasHeight + 'px'
-      node.style.width = this.canvasWidth + 'px'
-      node.innerHTML = `<div style="{
-				height:${this.canvasHeight}px;
-				width:${this.canvasWidth}px}">
-			${this.editor.getHtml()}
-			<style>
-			img{
-				display:inline;
-			}
-			${this.editor.getCss()}  
-			</style>
-			</div>`
-      console.log(node.innerHTML)
-      document.querySelector('iframe').appendChild(node)
+      node.style.top = '-100000px'
+      node.style.left = '0px'
+      node.classList.add("export-image")
+      node.style.width = document.querySelector('.gjs-frame').contentDocument.documentElement.scrollWidth + 'px'
+      node.style.height = document.querySelector('.gjs-frame').contentDocument.documentElement.scrollHeight + 'px'
+      node.innerHTML =
+        `${this.editor.getHtml()}
+            <style>
+            /* 清除reset.css的影响 */
+              /* 恢复默认字体大小和滚动行为 */
+* {
+    font-size: inherit;
+    scroll-behavior: auto;
+}
+
+/* 恢复常见标签的内外边距 */
+body,
+h1, h2, h3, h4, h5, h6,
+hr,
+p, pre,
+blockquote,
+dl, dt, dd, ul, ol, li,
+form, fieldset, legend, input, button, textarea,
+th, td {
+    margin: inherit;
+    padding: inherit;
+}
+
+/* 恢复列表符号 */
+ul, ol {
+    list-style: inherit;
+}
+
+/* 恢复图片的默认显示方式和边框 */
+img {
+    display: inline; /* 或根据需要设置其他值 */
+    border: inherit;
+}
+
+/* 恢复强调性文字的默认字体重量和样式 */
+b, strong {
+    font-weight: bolder;
+}
+
+i, em {
+    font-style: italic;
+}
+
+/* 恢复标题的默认字体大小和字重 */
+h1, h2, h3, h4, h5, h6 {
+    font-size: inherit;
+    font-weight: bold;
+}
+
+/* 恢复删除线和下划线 */
+u, s, ins, del {
+    text-decoration: inherit;
+}
+
+/* 恢复表格的默认边框样式 */
+table {
+    border: inherit;
+    border-spacing: inherit;
+    border-collapse: inherit;
+}
+
+/* 恢复单元格的默认边框样式 */
+th, td {
+    border: inherit;
+}
+
+/* 恢复输入元素和按钮的默认轮廓和边框 */
+input, button {
+    outline: inherit;
+    border: inherit;
+}
+
+/* 恢复超链接的默认文本装饰和颜色 */
+a {
+    text-decoration: inherit;
+    color: inherit;
+}
+
+/* 清除浮动 */
+.leftfix, .rightfix, .clearfix::after {
+    float: none;
+    clear: none;
+}
+
+/* 恢复SVG的默认显示方式 */
+svg {
+    display: inline; /* 或根据需要设置其他值 */
+}
+
+/* 恢复文本区域的默认调整大小方式 */
+textarea {
+    resize: auto;
+}
+
+          ${this.editor.getCss().replace(/body/g, '.export-image')} 
+            </style>
+        `
+      document.body.appendChild(node)
       html2canvas(node).then(canvas => {
+        document.body.removeChild(node)
         let link = document.createElement('a')
         link.style.display = 'none'
         link.download = `${this.pageName}.png`
         link.href = canvas.toDataURL("image/png")
         link.click()
         link.remove()
-        document.querySelector('iframe').removeChild(node)
       })
 
     },
     shareLink() {
-      this.$http.get(`/api/projects/${this.pageId}/generate_invite_url/page/`).then((response) => {
+      this.$http.get(`/ api / projects / ${this.pageId} /generate_invite_url/page / `).then((response) => {
         navigator.clipboard.writeText(response.data.url)
         this.$bus.emit('message', {
           title: '邀请链接已复制到剪切板',
@@ -1506,26 +1592,26 @@ button {
       })
     },
     closeShare() {
-      this.$http.post(`/api/projects/page/${this.pageId}/close/`).then(() => {
+      this.$http.post(`/ api / projects / page / ${this.pageId} /close/`).then(() => {
         this.$bus.emit('close')
       })
     },
-		switchDevice(deviceIndex) {
-			this.Devices.forEach((device) => {
-				device.selected = false
-			})
-			this.Devices[deviceIndex].selected = true
-			this.editor.Devices.select(this.Devices[deviceIndex].id)
-		},
+    switchDevice(deviceIndex) {
+      this.Devices.forEach((device) => {
+        device.selected = false
+      })
+      this.Devices[deviceIndex].selected = true
+      this.editor.Devices.select(this.Devices[deviceIndex].id)
+    },
     clearCanvas() {
       this.editor.Commands.add('canvas-clear', {
-        run: function(editor) {
+        run: function (editor) {
           editor.DomComponents.clear();
           editor.CssComposer.clear();
           document.querySelector('#gjs .gjs-editor.gjs-one-bg.gjs-two-color .gjs-pn-panels').lastChild.click()
         }
       })
-    
+
     }
   }
 }
@@ -1539,6 +1625,7 @@ button {
 #gjs {
   margin: 0 auto;
   display: inline-block;
+  position: relative;
   /* --frame-height: 1080px;
 	 --frame-width: 1920px; */
 }
@@ -1600,7 +1687,7 @@ button {
 }
 
 :deep(.gjs-cv-canvas) {
-  overflow: auto;
+  /* overflow: auto; */
   box-sizing: border-box;
   width: 80%;
   height: calc(100% - 40px);
@@ -1652,7 +1739,7 @@ button {
   direction: ltr;
 }
 
-:deep(.gjs-block-label){
+:deep(.gjs-block-label) {
   font-family: sans-serif;
   font-size: 110%;
   font-weight: 700;
@@ -1664,7 +1751,7 @@ button {
 }
 
 :deep(.gjs-editor-cont .sp-cancel, .gjs-editor-cont .sp-cancel:hover) {
-  color:#c71d23 !important
+  color: #c71d23 !important
 }
 
 :deep(.gjs-editor-cont .sp-container button, .gjs-editor-cont .sp-container button:hover, .gjs-editor-cont .sp-container button:active) {
@@ -1818,5 +1905,9 @@ button {
 /* 鼠标移动上去后显示提示框 */
 .tooltip:hover .tooltiptext {
   visibility: visible;
+}
+
+:deep(.gjs-title){
+  font-weight: bold;
 }
 </style>  

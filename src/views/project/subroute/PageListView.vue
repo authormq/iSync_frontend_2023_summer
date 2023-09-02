@@ -18,11 +18,11 @@
         <div class="folder-input">
           <input type="text" v-model="newProtoName" ref="newFolderInput">
           <button @click="cancleCreating">取消</button>
-          <button >新建</button>
+          <button @click="commitCreate">新建</button>
         </div>
       </div>
 
-    <div style="margin: 5px" class="list-item" v-for="proto in protoList" :key="proto.id" @click="$router.push(`/projects/${projectId}/page/${proto.id}`)">
+    <div style="margin: 5px" class="list-item" v-for="proto in protoList" :key="proto.id" @click="handleProtoClick($event,`/projects/${projectId}/page/${proto.id}`)">
       <PageListItem :proto="proto" />
     </div>
   </div>
@@ -50,30 +50,34 @@ export default {
   },
   mounted() {
     this.projectId = this.$route.params.projectId
-    this.$http.get(`/api/projects/page/${this.projectId}/list/`).then(
-      response => {
-        this.protoList = response.data.map((proto) => ({
-          id: proto.id,
-          name: proto.name,
-          // image: proto.image
-        }))
-      },
-      error => {
-        console.log(error.message)
-      }
-    )
+    this.getData()
     this.$bus.on('reloadProtoListAfterCreateSucceed', this.handleReloadProtoList)
     this.$bus.on('deleteProtoRequest', this.handleDeleteProtoRequest)
     this.$bus.on('renameProtoRequest', this.handleRenameProtoRequest)
   },
   methods: {
+    getData() {
+      this.$http.get(`/api/projects/page/${this.projectId}/list/`).then(
+        response => {
+          this.protoList = response.data.map((proto) => ({
+            id: proto.id,
+            name: proto.name,
+            // image: proto.image
+          }))
+        },
+        error => {
+          console.log(error.message)
+        }
+      )
+    },
     handleReloadProtoList(proto) {
       this.protoList.unshift(proto)
     },
     handleDeleteProtoRequest(proto) {
       this.$http.delete(`/api/projects/page/${proto.id}/delete/`).then(
         response => {
-          this.protoList.splice(this.protoList.indexOf(proto), 1)
+          // this.protoList.splice(this.protoList.indexOf(proto), 1)
+          this.getData()
         },
         error => {
           console.log(error.message)
@@ -83,7 +87,8 @@ export default {
     handleRenameProtoRequest(protoRenameData) {
       this.$http.post(`/api/projects/page/${protoRenameData.proto.id}/rename/${protoRenameData.rename}/`).then(
         response => {
-          this.protoList[this.protoList.indexOf(protoRenameData.proto)].name = protoRenameData.rename
+          // this.protoList[this.protoList.indexOf(protoRenameData.proto)].name = protoRenameData.rename
+          this.getData()
         },
         error => {
           this.$bus.emit('message', {
@@ -98,6 +103,28 @@ export default {
       this.showCreateProto = false
       this.newProtoName = ''
     },
+    commitCreate() {
+      let formData = new FormData()
+      formData.append('project', this.projectId)
+      formData.append('name', this.newProtoName)
+      formData.append('profile', '')
+      this.$http.post(`/api/projects/page/create/`, formData).then(
+        response => {
+         this.getData()
+         this.showCreateProto = false
+        },
+        error => {
+          console.log(error.message)
+        }
+      )
+    },
+    handleProtoClick(e, path) {
+      if (e.target.tagName === 'INPUT') {
+        e.target.focus() 
+      } else {
+        this.$router.push(path)
+      }
+    }
   }
 }
 </script>

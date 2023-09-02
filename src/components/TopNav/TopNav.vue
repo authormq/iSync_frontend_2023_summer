@@ -51,7 +51,6 @@ export default {
       username: '',
       avatarUrl: '/src/assets/avatar.jpeg',
       hasUnreadMsg: false,
-      ws: undefined
     }
   },
   mounted() {

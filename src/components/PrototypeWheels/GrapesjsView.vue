@@ -1592,11 +1592,11 @@ textarea {
     },
     shareLink() {
       this.$http.get(`/api/projects/${this.pageId}/generate_invite_url/page/`).then((response) => {
-        navigator.clipboard.writeText(response.data.url)
+        // navigator.clipboard.writeText(response.data.url)
         this.$bus.emit('message', {
-          title: '邀请链接已复制到剪切板',
+          title: '复制链接，即刻预览',
           content: response.data.url,
-          time: 3000
+          time: 5000
         })
       })
     },

@@ -47,8 +47,8 @@
             </div>
           </div>
         </div>
+        <hr>
       </div>
-      <hr>
     </div>
   </StylishModal>
 </template>
@@ -90,6 +90,12 @@ export default {
 }
 </script>
 <style scoped>
+hr {
+  color: grey; /* 修改水平线的颜色 */
+  width: 90%;
+  margin: 5px 0;       /* 修改水平线的上下边距 */
+  text-align: right;
+}
 .container-header {
   display: flex;
   justify-content: space-between;

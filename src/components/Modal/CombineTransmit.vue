@@ -32,6 +32,14 @@
               </div>
             </div>
             <div class="message-content-normal" v-if="!message.isCombined">
+              <div v-if="message.content.trim().length == 0">
+                <div v-if="isImageFile(message.fileContent.name)">
+                  <img :src="message.fileContent.url" style="width: 335px;">
+                </div>
+                <div v-else class="normal-file-info" @click="openFile(message)">
+                  「文件」{{ getFileName(message.fileContent.name) }}
+                </div>
+              </div>
               <div v-html="message.content"></div>
             </div>
             <div class="message-content-combined" v-else
@@ -55,6 +63,23 @@ export default {
   methods: {
     handleClose() {
       this.$emit('close')
+    },
+    isImageFile(name) {
+      const imageExtensions = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg"]
+      const fileExtension = name.toLowerCase().slice((name.lastIndexOf(".") - 1 >>> 0) + 2)
+      console.log(fileExtension)
+      return imageExtensions.includes("." + fileExtension);
+    },
+    getFileName(name) {
+      return name.slice((name.lastIndexOf("/") - 1 >>> 0) + 2)
+    },
+    openFile(message) {
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.download = this.getFileName(message.fileContent.name);
+      a.href = message.fileContent.url;
+      a.click();
+      a.remove()
     }
   },
   computed: {
@@ -140,6 +165,12 @@ export default {
   margin-left: 10px;
   color: gray;
   cursor: pointer;
+}
+
+.normal-file-info {
+  cursor: pointer;
+  font-weight: bold;
+  color: rgb(9, 61, 103);
 }
 .item-right {
   width: 85%;

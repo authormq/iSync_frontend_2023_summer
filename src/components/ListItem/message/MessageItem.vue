@@ -26,7 +26,7 @@
     </div>
     <div class="bottom" @click="jump">
       <div v-html="msg.content"></div>
-      <div class="botton-info">「点击可以跳转到@聊天/位置」</div>
+      <div class="botton-info">「点击定位到@位置」</div>
     </div>
     <div class="from-info">
       {{ showFrom }}

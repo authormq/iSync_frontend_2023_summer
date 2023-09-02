@@ -831,7 +831,7 @@
 			
 			<!-- nuclear marine diving -->
 		</div>
-		<div @click="provider.destroy">点击下线</div>
+		<!-- <div @click="provider.destroy">点击下线</div> -->
 		<div class="document-title">{{ docName }}</div>
 		<node-view-wrapper class="toc" id="content">
 			<ul class="toc__list">
@@ -1547,7 +1547,7 @@ export default {
 			if (this) {
 				this.saveDocument('autosave')
 			}
-		}, 10000)
+		}, 30000)
 		//修改协作光标的文字颜色
 		document.querySelectorAll('.ProseMirror .collaboration-cursor__label').forEach(elm => {
 			elm.style.color = this.getFontColor(elm.style.backgroundColor)
@@ -2296,12 +2296,12 @@ export default {
 	color: yellow
 }
 
-.has-focus {
+/* .has-focus {
 	border-radius: 10px;
 	padding: 5px 0;
 	box-shadow: 0 0 6px 3px rgb(199, 29, 35);
 	transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s
-}
+} */
 
 .flex {
 	display: flex;

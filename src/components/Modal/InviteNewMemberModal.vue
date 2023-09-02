@@ -102,32 +102,36 @@ export default {
       this.$emit('close')
     },
     getData() {
-      this.$http.get(`/api/teams/${this.$route.params.teamId}/`).then(
-        response => {
-          this.teamMemberList = response.data.members.map((member) => ({
-            id: member.user.id,
-            username: member.user.username,
-            avatar: member.user.avatar,
-            isSelect: false
-          }))
-        },
-        error => {
-          console.log(error.message)
-        }
-      )
-      this.$http.get(`/api/groups/${this.groupId}/`).then(
-        response => {
-          this.groupMemberList = response.data.members.map((member) => ({
-            id: member.user.id,
-            username: member.user.username,
-            avatar: member.user.avatar,
-            isSelect: false
-          }))
-        },
-        error => {
-          console.log(error.message)
-        }
-      )
+      if (this.$route.params.teamId.length != 0) {
+        this.$http.get(`/api/teams/${this.$route.params.teamId}/`).then(
+          response => {
+            this.teamMemberList = response.data.members.map((member) => ({
+              id: member.user.id,
+              username: member.user.username,
+              avatar: member.user.avatar,
+              isSelect: false
+            }))
+          },
+          error => {
+            console.log(error.message)
+          }
+        )
+      }
+      if (this.groupId.length != 0) {
+        this.$http.get(`/api/groups/${this.groupId}/`).then(
+          response => {
+            this.groupMemberList = response.data.members.map((member) => ({
+              id: member.user.id,
+              username: member.user.username,
+              avatar: member.user.avatar,
+              isSelect: false
+            }))
+          },
+          error => {
+            console.log(error.message)
+          }
+        )
+      }
     },
     handleSelect(member) {
       if (!member.isSelect) {
@@ -145,6 +149,10 @@ export default {
       formData.append('users', idList.join(' '))
       this.$http.post(`/api/groups/${this.groupId}/add/member/`, formData).then(
         response => {
+          this.$bus.emit('roomOption', JSON.stringify({
+            'option': 'join',
+            'group_data': response.data
+          }))
           this.$bus.emit('message', {
             title: '邀请新成员进群成功',
             content: '',

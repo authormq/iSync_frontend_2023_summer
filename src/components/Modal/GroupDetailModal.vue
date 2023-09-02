@@ -22,17 +22,20 @@
         退出群聊
       </button>
       <button @click="handleDisbandGroup">解散群聊</button>
+      <button @click="showInviteNewMember">邀请新成员</button>
     </div>
     <SearchRecordModal :show="showSearchRecordModal" :groupId="groupId" @close="showSearchRecordModal = false"></SearchRecordModal>
+    <InviteNewMemberModal :show="showInviteNewMemberModal" :groupId="groupId" @close="showInviteNewMemberModal = false"></InviteNewMemberModal>
   </div>
   <!-- </StylishModal> -->
 </template>
 <script>
 import StylishModal from '../Stylish/StylishModal.vue'
 import SearchRecordModal from './SearchRecordModal.vue'
+import InviteNewMemberModal from './InviteNewMemberModal.vue'
 export default {
   name: 'GroupDetailModal',
-  components: { StylishModal, SearchRecordModal },
+  components: { StylishModal, SearchRecordModal, InviteNewMemberModal },
   props: ['groupId'],
   data() {
     return {
@@ -42,6 +45,7 @@ export default {
       groupAvatar: '',
       rename: '',
       showSearchRecordModal: false, // 展示搜索聊天记录的模态框
+      showInviteNewMemberModal: false, // 展示邀请新成员的模态框
       isShowing: false
     }
   },
@@ -101,6 +105,10 @@ export default {
         formData.append('name', this.rename)
         this.$http.patch(`/api/groups/${this.groupId}/`, formData).then(
           response => {
+            this.$bus.emit('roomOption', JSON.stringify({
+              'option': 'edit',
+              'group_data': response.data
+            }))
             this.groupName = this.rename
             this.$bus.emit('message', {
               title: '重命名成功',
@@ -125,6 +133,10 @@ export default {
     handleQuitGroup() {
       this.$http.delete(`/api/groups/${this.groupId}/quit/`).then(
         response => {
+          this.$bus.emit('roomOption', JSON.stringify({
+            'option': 'quit',
+            'group_data': {'id': this.groupId, 'user_id': this.$cookies.get('user_id')}
+          }))
           this.$bus.emit('message', {
             title: '退出群聊成功',
             content: '',
@@ -134,7 +146,7 @@ export default {
         error => {
           this.$bus.emit('message', {
             title: '退出群聊失败',
-            content: '',
+            content: '你是群主，不可退出群聊，可以选择解散该群',
             time: 2000
           })
         }
@@ -143,16 +155,24 @@ export default {
     handleDisbandGroup() {
       this.$http.delete(`/api/groups/${this.groupId}/`).then(
         response => {
+          this.$bus.emit('roomOption', JSON.stringify({
+            'option': 'delete',
+            'group_data': {'id': this.groupId}
+          }))
           this.$bus.emit('message', {
             title: '解散群聊成功',
             content: '',
             time: 2000
           })
+          this.$bus.emit('hideGroupDetail')
         },
         error => {
           console.log(error.message)
         }
       )
+    },
+    showInviteNewMember() {
+      this.showInviteNewMemberModal = true
     },
     handleRename() {
       this.rename = this.groupName

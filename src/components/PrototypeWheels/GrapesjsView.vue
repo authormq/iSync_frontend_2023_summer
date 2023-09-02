@@ -196,11 +196,19 @@ export default {
 		canvasHeight(value) {
 			if (this.editor !== undefined) {
 				if (value > 100000) {
-					alert('超过最大高度')
+          this.$bus.emit('message', {
+            title: '画布尺寸设置警告',
+            content: '设置尺寸超过最大高度',
+            time: 3000
+          })
 					return
 				}
 				if (value <= 0) {
-					alert('小于最小高度')
+					this.$bus.emit('message', {
+            title: '画布尺寸设置警告',
+            content: '设置尺寸小于最小高度',
+            time: 3000
+          })
 					return
 				}
 				if (this.editor !== undefined) {
@@ -227,11 +235,19 @@ export default {
 		canvasWidth(value) {
 			if(this.editor!==undefined){
         if (value > 100000) {
-          alert('超过最大宽度')
+          this.$bus.emit('message', {
+            title: '画布尺寸设置警告',
+            content: '设置尺寸超过最大宽度',
+            time: 3000
+          })
           return
         }
         if (value <= 0) {
-          alert('小于最小宽度')
+          this.$bus.emit('message', {
+            title: '画布尺寸设置警告',
+            content: '设置尺寸小于最小宽度',
+            time: 3000
+          })
         }
         if (this.editor !== undefined) {
           let oldName = this.editor.Devices.get('Customization') === null ? 'Customization1' : 'Customization'

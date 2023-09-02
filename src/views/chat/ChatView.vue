@@ -267,6 +267,18 @@ export default {
 			em {
 				font-style: normal !important;
 			}
+
+			/* 被选中消息的样式 */
+			div.vac-message-card.vac-item-clickable.vac-message-selected {
+				background: white !important;
+				border: 2px solid rgba(199,29,35, 1) !important;
+				box-sizing: border-box !important;
+			}
+
+			/* 多选时顶部按钮背景色 */
+			.vac-selection-button {
+				background: rgba(199,29,35, 1) !important;
+			}
 		`
 		this.$bus.on('fetchAllMessages', () => this.fetchAllMessages())
 		this.$bus.on('scrollToMessage', messageId => this.scrollToMessage(messageId))
@@ -931,6 +943,16 @@ export default {
 
 		handleCreateRoom(data) {
 			const group = data.group_data
+			let flag = false
+			for (let j = 0; j < group.members.length; j++) {
+				if (group.members[j].user.id == parseInt(this.currentUserId)) {
+					flag = true
+					break
+				}
+			}
+			if (!flag) {
+				return
+			}
 			for (let j = 0; j < this.rooms.length; j++) {
 					this.rooms[j].index--
 			}
@@ -950,6 +972,15 @@ export default {
 				})),
 				is_private: group.is_private,
 			}
+			if (group.creator == this.currentUserId) {
+				room.users = [
+					{
+						_id: '0',
+						username: '所有人'
+					},
+					...room.users
+				]
+			}
 			this.rooms = [...this.rooms, room]
 			const i = this.rooms.length - 1
 			this.ws[i] = new WebSocket(`ws://43.138.14.231:9000/ws/chat/group/${room.roomId}/${this.currentUserId}/`)
@@ -968,15 +999,41 @@ export default {
 		},
 
 		handleEditRoom(data) {
-
+			const group = data.group_data
+			for (let i = 0; i < this.rooms.length; i++) {
+				if (this.rooms[i].roomId == group.id) {
+					this.rooms[i].roomName = group.name
+					this.rooms[i].avatar = group.avatar
+					break
+				}
+			}
 		},
 
 		handleDeleteRoom(data) {
-
+			const group = data.group_data
+			for (let i = 0; i < this.rooms.length; i++) {
+				if (this.rooms[i].roomId == group.id) {
+					this.rooms.splice(i, 1)
+					this.ws.splice(i, 1)
+					break
+				}
+			}
 		},
 
 		handleQuitRoom(data) {
-
+			const group = data.group_data
+			for (let i = 0; i < this.rooms.length; i++) {
+				if (this.rooms[i].roomId == group.id) {
+					if (this.currentUserId == group.user_id) {
+						this.rooms.splice(i, 1)
+						this.ws.splice(i, 1)
+					}
+					else {
+						this.rooms[i].users = this.rooms[i].users.filter(user => user._id != group.user_id)
+					}
+					break
+				}
+			}
 		},
 	}
 }

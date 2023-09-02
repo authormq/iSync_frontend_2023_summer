@@ -156,10 +156,11 @@ export default {
       formData.append('users', this.selectList.join(' '))
       this.$http.post('/api/groups/create/', formData).then(
         response => {
-          console.log(response.data);
+          let data = response.data
+          data['creator'] = this.$cookies.get('user_id')
           this.$bus.emit('roomOption', JSON.stringify({
             'option': 'create',
-            'group_data': response.data
+            'group_data': data
           }))
           this.handleClose()
         },

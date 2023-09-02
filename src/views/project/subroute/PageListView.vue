@@ -28,7 +28,6 @@ export default {
         this.protoList = response.data.map((proto) => ({
           id: proto.id,
           name: proto.name,
-          // image: proto.image
         }))
       },
       error => {

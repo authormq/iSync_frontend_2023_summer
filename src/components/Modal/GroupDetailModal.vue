@@ -21,8 +21,9 @@
       <button @dblclick="handleQuitGroup" v-tooltip="'双击以确认退出群聊'">
         退出群聊
       </button>
+      <button @click="handleDisbandGroup">解散群聊</button>
     </div>
-    <SearchRecordModal :show="showSearchRecordModal" @close="showSearchRecordModal = false"></SearchRecordModal>
+    <SearchRecordModal :show="showSearchRecordModal" :groupId="groupId" @close="showSearchRecordModal = false"></SearchRecordModal>
   </div>
   <!-- </StylishModal> -->
 </template>
@@ -32,11 +33,11 @@ import SearchRecordModal from './SearchRecordModal.vue'
 export default {
   name: 'GroupDetailModal',
   components: { StylishModal, SearchRecordModal },
+  props: ['groupId'],
   data() {
     return {
       memberList: [],
       teamId: '',
-      groupId: '',
       groupName: '',
       groupAvatar: '',
       rename: '',
@@ -75,7 +76,6 @@ export default {
   methods: {
     getData() {
       this.teamId = this.$route.params.teamId
-      this.groupId = 38
       this.$http.get(`/api/groups/${this.groupId}/`).then(
         response => {
           this.memberList = response.data.members.map((member) => ({
@@ -137,6 +137,20 @@ export default {
             content: '',
             time: 2000
           })
+        }
+      )
+    },
+    handleDisbandGroup() {
+      this.$http.delete(`/api/groups/${this.groupId}/`).then(
+        response => {
+          this.$bus.emit('message', {
+            title: '解散群聊成功',
+            content: '',
+            time: 2000
+          })
+        },
+        error => {
+          console.log(error.message)
         }
       )
     },

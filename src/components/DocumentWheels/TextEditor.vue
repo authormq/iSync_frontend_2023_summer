@@ -1339,7 +1339,7 @@ export default {
 			onDisconnect: () => {
 				this.isBusy++
 			},
-			forceSyncInterval: 10,
+			forceSyncInterval: 100,
 		})
 		//加载保存时间最近的文件,然后初始化编辑器
 		//查询团队成员,然后初始化编辑器,游客模式下不可用
@@ -1559,7 +1559,8 @@ export default {
 
 	},
 	beforeUnmount() {
-		alert(111111111)
+		this.editor.destroy()
+		this.provider.destroy()
 		clearInterval(this.contentUpdater)
 		clearInterval(this.autoSaver)//important 不然重复保存
 	}

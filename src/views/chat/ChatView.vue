@@ -968,15 +968,41 @@ export default {
 		},
 
 		handleEditRoom(data) {
-
+			const group = data.group_data
+			for (let i = 0; i < this.rooms.length; i++) {
+				if (this.rooms[i].roomId == group.id) {
+					this.rooms[i].roomName = group.name
+					this.rooms[i].avatar = group.avatar
+					break
+				}
+			}
 		},
 
 		handleDeleteRoom(data) {
-
+			const group = data.group_data
+			for (let i = 0; i < this.rooms.length; i++) {
+				if (this.rooms[i].roomId == group.id) {
+					this.rooms.splice(i, 1)
+					this.ws.splice(i, 1)
+					break
+				}
+			}
 		},
 
 		handleQuitRoom(data) {
-
+			const group = data.group_data
+			for (let i = 0; i < this.rooms.length; i++) {
+				if (this.rooms[i].roomId == group.id) {
+					if (this.currentUserId == group.user_id) {
+						this.rooms.splice(i, 1)
+						this.ws.splice(i, 1)
+					}
+					else {
+						this.rooms[i].users = this.rooms[i].users.filter(user => user != group.user_id)
+					}
+					break
+				}
+			}
 		},
 	}
 }

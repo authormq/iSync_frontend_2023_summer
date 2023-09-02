@@ -10,7 +10,9 @@
       <li><router-link class="link" :to="`/team/${teamId}/chat`">团队群聊</router-link></li>
     </ul>
     <div>
-      <RouterView></RouterView>
+      <keep-alive>
+        <RouterView></RouterView>
+      </keep-alive>
     </div>
   </div>
 </template>
@@ -18,19 +20,19 @@
 <script>
 // import FirstView from '../FirstView.vue';
 export default {
-    name: 'TeamView',
-    data() {
-      return {
-        teamId: null
-      }
-    },
-    mounted() {
-      this.teamId = this.$route.params.teamId
-    },
-    updated() {
-      this.teamId = this.$route.params.teamId
+  name: 'TeamView',
+  data() {
+    return {
+      teamId: null
     }
-    // components: { FirstView }
+  },
+  mounted() {
+    this.teamId = this.$route.params.teamId
+  },
+  updated() {
+    this.teamId = this.$route.params.teamId
+  }
+  // components: { FirstView }
 }
 </script>
 
@@ -79,8 +81,8 @@ ul {
 
 .router-link-active {
   box-sizing: border-box;
-  color: rgba(199,29,35, 1);
-  border: 1px solid rgba(199,29,35, 1);
-  box-shadow: 2px 2px  rgba(199,29,35, 1);
+  color: rgba(199, 29, 35, 1);
+  border: 1px solid rgba(199, 29, 35, 1);
+  box-shadow: 2px 2px rgba(199, 29, 35, 1);
 }
 </style>

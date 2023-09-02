@@ -1,5 +1,5 @@
 <template>
-	<span id="size-setter" v-if="Devices!==undefined">
+	<span id="size-setter" v-if="Devices !== undefined">
 		<!-- 桌面端按钮 -->
 		<span @click="switchDevice(0)"
 			:class="{ 'selected-device': Devices[0].selected, 'unselected-device': !Devices[0].selected }" class="tooltip">
@@ -81,7 +81,7 @@
          p-id="16297"></path></svg>
       <span class="tooltiptext">生成预览链接</span>
     </button>
-    <button class="sharebutton tooltip" @click="colseShare">
+    <button class="sharebutton tooltip" @click="closeShare">
       <svg t="1693620396396" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="13159" width="23" height="23">
         <path d="M227.911022 493.700575A51.187203 51.187203 0 1 1 298.549363 563.315171l-105.957511 106.981255a149.978505 149.978505 0 0 0 204.748813 218.057486l6.3984-6.142465 105.957511-105.95751a51.187203 51.187203 0 0 1 70.63834 70.63834l-105.95751 105.957511a249.793552 249.793552 0 0 1-353.191702-353.191703zM606.696326 141.788553a249.793552 249.793552 0 0 1 243.139215 435.091227l-130.783304 72.941765a51.187203 51.187203 0 0 1-48.627843-86.506374l130.783304-72.941764a149.722569 149.722569 0 0 0-137.949513-265.405649l-7.934016 4.094976-130.783304 72.941765a51.187203 51.187203 0 0 1-48.883779-87.274182z m-25.593602 281.529617a51.187203 51.187203 0 0 1 70.638341 70.638341l-211.915022 211.915021a51.187203 51.187203 0 0 1-70.63834-70.63834z m0 0M179.539115 18.427393l106.981255 215.498126-224.455886-102.886279L179.283179 18.427393h0.255936zM429.332667 0l-66.7993 181.458635-66.799301-181.458635h133.598601zM42.869283 371.107223l188.880779-63.984004-188.880779-64.23994v128.223944z" p-id="13160"></path></svg>
       <span class="tooltiptext">取消预览</span>
@@ -104,7 +104,7 @@ import 'grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min.js';
 import Plugin from 'grapesjs-blocks-basic'; //basic-blocks
 import BasicPlugin from 'grapesjs-preset-webpage'; //basic-blocks
 import gjsForms from 'grapesjs-plugin-forms'; //form-blocks
-import Navbar from 'grapesjs-navbar'; 
+import Navbar from 'grapesjs-navbar';
 import Countdown from 'grapesjs-component-countdown'; //倒计时
 import Tabs from 'grapesjs-tabs';
 import Tooltip from 'grapesjs-tooltip';
@@ -126,6 +126,7 @@ export default {
 		this.pageId = this.$route.params.protoId
 		this.initEditor();
 		this.addBlock();
+
 		let topPanel = document.querySelector('.gjs-pn-panel.gjs-pn-devices-c.gjs-one-bg.gjs-two-color .gjs-pn-buttons')
 		let sizeSetter = document.querySelector('#size-setter')
 		topPanel.appendChild(sizeSetter)
@@ -147,7 +148,7 @@ export default {
 		// 	}
 		// }
 		//设置默认大小
-    // this.closeCategory();
+		// this.closeCategory();
 	},
 	unmounted() {
 		// this.ws.close()
@@ -193,111 +194,85 @@ export default {
 	watch: {
 		//监听画布大小改变,更新设备配置
 		canvasHeight(value) {
-			if(this.editor!==undefined){
-			if (value > 100000) {
-				alert('超过最大高度')
-				return
-			}
-			if (value <= 0) {
-				alert('小于最小高度')
-				return
-			}
 			if (this.editor !== undefined) {
-				let oldName = this.editor.Devices.get('Customization') === null ? 'Customization1' : 'Customization'
-				let newName = oldName === 'Customization1' ? 'Customization' : 'Customization1'
-				let width = this.Devices[3].width//保持宽度不变
-				this.editor.Devices.add({//添加一个设备
-					id: newName,
-					name: newName,
-					height: value + 'px',
-					width: width
-				})
-				// console.log(this.editor.Devices.get('Desktop').attributes.height)
-				this.editor.Devices.select(newName)//选择该设备
-				this.editor.Devices.remove(oldName)//把原来的设备删了
-				this.Devices[3].id = newName//设置新id
-				this.Devices[3].height = value + 'px'//设置新高度
-				setTimeout(() => {
-					this.editor.store()
-				}, 100)
+				if (value > 100000) {
+					alert('超过最大高度')
+					return
+				}
+				if (value <= 0) {
+					alert('小于最小高度')
+					return
+				}
+				if (this.editor !== undefined) {
+					let oldName = this.editor.Devices.get('Customization') === null ? 'Customization1' : 'Customization'
+					let newName = oldName === 'Customization1' ? 'Customization' : 'Customization1'
+					let width = this.Devices[3].width//保持宽度不变
+					this.editor.Devices.add({//添加一个设备
+						id: newName,
+						name: newName,
+						height: value + 'px',
+						width: width
+					})
+					// console.log(this.editor.Devices.get('Desktop').attributes.height)
+					this.editor.Devices.select(newName)//选择该设备
+					this.editor.Devices.remove(oldName)//把原来的设备删了
+					this.Devices[3].id = newName//设置新id
+					this.Devices[3].height = value + 'px'//设置新高度
+					setTimeout(() => {
+						this.editor.store()
+					}, 100)
+				}
 			}
-		}
 
 		},
 		canvasWidth(value) {
 			if(this.editor!==undefined){
-			if (value > 100000) {
-				alert('超过最大宽度')
-				return
-			}
-			if (value <= 0) {
-				alert('小于最小宽度')
-			}
-			if (this.editor !== undefined) {
-				let oldName = this.editor.Devices.get('Customization') === null ? 'Customization1' : 'Customization'
-				let newName = oldName === 'Customization1' ? 'Customization' : 'Customization1'
-				let height = this.Devices[3].height//保持高度不变
-				this.editor.Devices.add({//添加一个设备
-					id: newName,
-					name: newName,
-					height: height,
-					width: value + 'px'
-				})
-				// console.log(this.editor.Devices.get('Desktop').attributes.height)
-				this.editor.Devices.select(newName)//选择该设备
-				this.editor.Devices.remove(oldName)//把原来的设备删了
-				this.Devices[3].id = newName//设置新id
-				this.Devices[3].width = value + 'px'//设置新宽度
-				setTimeout(() => {
-					this.editor.store()
-				}, 100)
-			}
-		}
+        if (value > 100000) {
+          alert('超过最大宽度')
+          return
+        }
+        if (value <= 0) {
+          alert('小于最小宽度')
+        }
+        if (this.editor !== undefined) {
+          let oldName = this.editor.Devices.get('Customization') === null ? 'Customization1' : 'Customization'
+          let newName = oldName === 'Customization1' ? 'Customization' : 'Customization1'
+          let height = this.Devices[3].height//保持高度不变
+          this.editor.Devices.add({//添加一个设备
+            id: newName,
+            name: newName,
+            height: height,
+            width: value + 'px'
+          })
+          // console.log(this.editor.Devices.get('Desktop').attributes.height)
+          this.editor.Devices.select(newName)//选择该设备
+          this.editor.Devices.remove(oldName)//把原来的设备删了
+          this.Devices[3].id = newName//设置新id
+          this.Devices[3].width = value + 'px'//设置新宽度
+          setTimeout(() => {
+            this.editor.store()
+          }, 100)
+        }
+      }
 		}
 	},
-	// beforeDestroy() {
-	//   当组件销毁时，我们也应该销毁 GrapesJS 编辑器以释放内存
-	//   if (this.editor) {
-	// 		this.editor.destroy();
-	// 	}
-	// },
 	methods: {
 		initEditor() {
 			//grapesjs.plugins.add('my-custom-plugin', MyCustomPlugin);
 			this.editor = grapesjs.init({
 				container: '#gjs',
-				i18n: {
-					locale: 'en',
-					localeFallback: 'en',
-					messages: {
-						zh, en
-					}
-				},
+				// i18n: {
+				// 	locale: 'en',
+				// 	localeFallback: 'en',
+				// 	messages: {
+				// 		zh, en
+				// 	}
+				// },
 				height: 'calc(100vh - 70px)',
 				showOffsets: 1,
 				autosave: true,
 				noticeOnUnload: 0,
 				formElement: true,
-				// storageManager: {
-				// 	type: 'remote',
-				// 	stepsBeforeSave: 3,
-				// 	autoload: true,
-				// 	autosave: true,
-				// 	options: {
-				// 		remote: {
-				// 			// urlLoad: projectEndpoint,
-				// 			// urlStore: projectEndpoint,
-				// 			// The `remote` storage uses the POST method when stores data but
-				// 			// the json-server API requires PATCH.
-				// 			fetchOptions: opts => (opts.method === 'POST' ? { method: 'PATCH' } : {}),
-				// 			// As the API stores projects in this format `{id: 1, data: projectData }`,
-				// 			// we have to properly update the body before the store and extract the
-				// 			// project data from the response result.
-				// 			onStore: data => ({ id: projectID, data }),
-				// 			onLoad: result => result.data,
-				// 		}
-				// 	}
-				// },
 				deviceManager: {
 					devices: [
 						{
@@ -324,15 +299,15 @@ export default {
 							height: this.canvasHeight + 'px',
 						}]
 				},
-        blockManager: {
-          //添加模板
-          blocks: [
-				  {
-					id: 't1',
-					label: '学术成果分享平台',
-					category: '原型模板',
-          media: `<img src = '/src/assets/zixunfabu.png' style:"width=110px, height=110px">`,
-          content:`
+				blockManager: {
+					//添加模板
+					blocks: [
+						{
+							id: 't1',
+							label: '学术成果分享平台',
+							category: '原型模板',
+							media: `<img src = '/src/assets/zixunfabu.png' style:"width=110px, height=110px">`,
+							content: `
           <div class="gjs-row" id="top-space">
             <div id="button1">登录</div>
             <div id="button2">注册</div>
@@ -507,13 +482,13 @@ export default {
 
           </style>
           `
-				  },
-          {
-					id: 't2',
-					label: '后台用户管理界面',
-					category: '原型模板',
-          media: `<img src = '/src/assets/Channel.png' style:"width=110px, height=110px">`,
-          content:`
+						},
+						{
+							id: 't2',
+							label: '后台用户管理界面',
+							category: '原型模板',
+							media: `<img src = '/src/assets/Channel.png' style:"width=110px, height=110px">`,
+							content: `
           <body>
     <header>
         <div class="logo">后台用户管理界面</div>
@@ -710,13 +685,13 @@ button {
 }
     </style>
           `
-				  },
-          {
-					id: 't3',
-					label: '个人博客',
-					category: '原型模板',
-          media: `<img src = '/src/assets/Kinguser.png' style:"width=110px, height=110px">`,
-          content:`
+						},
+						{
+							id: 't3',
+							label: '个人博客',
+							category: '原型模板',
+							media: `<img src = '/src/assets/Kinguser.png' style:"width=110px, height=110px">`,
+							content: `
           <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -843,13 +818,13 @@ button {
           }
           </style>
         `
-				  },
-				  {
-					id: 't4',
-					label: '计划清单',
-					category: '原型模板',
-          media: `<img src = '/src/assets/Zhishifabu.png' style:"width=110px, height=110px">`,
-          content:`
+						},
+						{
+							id: 't4',
+							label: '计划清单',
+							category: '原型模板',
+							media: `<img src = '/src/assets/Zhishifabu.png' style:"width=110px, height=110px">`,
+							content: `
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -996,13 +971,13 @@ button {
 
         </style>
           `
-				  },
-				  {
-					id: 't5',
-					label: '线上商城',
-					category: '原型模板',
-          media: `<img src = '/src/assets/zixun-zhuanti.png' style:"width=110px, height=110px">`,
-          content:`
+						},
+						{
+							id: 't5',
+							label: '线上商城',
+							category: '原型模板',
+							media: `<img src = '/src/assets/zixun-zhuanti.png' style:"width=110px, height=110px">`,
+							content: `
         <body>
             <header>
                 <div class="logo">MyShop</div>
@@ -1195,9 +1170,9 @@ button {
 
         </style>
         `
-				  }
-          ]
-        },
+						}
+					]
+				},
 				assetManager: [],//预加载资产，图片/图标等
 				plugins: [
 					Plugin,
@@ -1213,25 +1188,25 @@ button {
 					ScriptPlugin
 				],
 				pluginsOpts: {
-          [Plugin]: {
-            category: '基础组件'
-          },
-					[BasicPlugin]: {
-						blocks:['quote', 'text-basic'],
-            block:() => ({category: '基础组件'})
+					[Plugin]: {
+						category: '基础组件'
 					},
-          [Navbar]: {
-            block: {category: '进阶组件'}
-          },
-          [Countdown]: {
-            block: {category: '进阶组件'}
-          },
-          [Tooltip]: {
-            blockTooltip: {category: '进阶组件'}
-          },
-          [CodePlugin]: {
-            blockCustomCode: {category: '进阶组件'}
-          },
+					[BasicPlugin]: {
+						blocks: ['quote', 'text-basic'],
+						block: () => ({ category: '基础组件' })
+					},
+					[Navbar]: {
+						block: { category: '进阶组件' }
+					},
+					[Countdown]: {
+						block: { category: '进阶组件' }
+					},
+					[Tooltip]: {
+						blockTooltip: { category: '进阶组件' }
+					},
+					[CodePlugin]: {
+						blockCustomCode: { category: '进阶组件' }
+					},
 					[ExportPlugin]: {
 						addExportBtn: true,
 						btnLabel: '导出项目文件ZIP',
@@ -1260,16 +1235,16 @@ button {
 							category: '进阶组件'
 						}
 					},
-          [gjsForms]: {
-            category: '表单组件'
-          }
+					[gjsForms]: {
+						category: '表单组件'
+					}
 				},
 				styleManager: [],
 				storageManager: {
 					type: 'remote',
 					stepsBeforeSave: 1,
 					autosave: true,
-					// autoload: true,
+					autoload: true,
 					options: {
 						remote: {
 							urlLoad: `http://43.138.14.231/projects/${this.pageId}/`,
@@ -1281,10 +1256,7 @@ button {
 							// urlStore: `http://localhost:3000/projects/1`,
 							// The `remote` storage uses the POST method when stores data but
 							// the json-server API requires PATCH.
-							// fetchOptions: opts => (opts.method === 'POST' ? { method: 'PATCH' } : {}),
-							// As the API stores projects in this format `{id: 1, data: projectData }`,
-							// we have to properly update the body before the store and extract the
-							// project data from the response result.
+	
 							onStore: data => {
 								data['size'] = {
 									height: this.canvasHeight,
@@ -1295,7 +1267,7 @@ button {
 								return {
 									id: this.pageId,
 									data,
-									//存储画布宽高
+									// //存储画布宽高
 									size: {
 										height: this.canvasHeight,
 										width: this.canvasWidth,
@@ -1361,17 +1333,19 @@ button {
 
 		},
 		shareLink() {
-      this.$http.get(`/api/projects/${this.pageId}/generate_invite_url/page/`).then((response) => {
-        navigator.clipboard.writeText(response.data.url)
-        this.$bus.emit('message', {
-          title: '邀请链接已复制到剪切板',
-          content: response.data.url,
-          time: 3000
-        })
-      })
+			this.$http.get(`/api/projects/${this.pageId}/generate_invite_url/page/`).then((response) => {
+				navigator.clipboard.writeText(response.data.url)
+				this.$bus.emit('message', {
+					title: '邀请链接已复制到剪切板',
+					content: response.data.url,
+					time: 3000
+				})
+			})
 		},
-    colseShare() {
-      //
+    closeShare() {
+      this.$http.post(`/api/projects/page/${this.pageId}/close/`).then(() => {
+        this.$bus.emit('close')
+      })
     },
 		switchDevice(deviceIndex) {
 			this.Devices.forEach((device) => {
@@ -1386,8 +1360,9 @@ button {
 
 <style scoped>
 #gjs * {
-  font-family: sans-serif !important;
+	font-family: sans-serif !important;
 }
+
 #gjs {
 	margin: 0 auto;
 	display: inline-block;
@@ -1450,6 +1425,7 @@ button {
     left: 0;
     top: 40px;
 }
+
 :deep(.gjs-pn-devices-c .gjs-pn-btn) {
 	display: none;
 }
@@ -1510,6 +1486,32 @@ button {
 	cursor: pointer;
 	width: 20px;
 	z-index: 1;
+}
+:deep(.gjs-layer-caret) {
+    width: 20px;
+    padding: 0px;
+    cursor: pointer;
+    position: absolute;
+    box-sizing: content-box;
+    left: -8px;
+    top: 2px;
+    opacity: .7;
+    filter: alpha(opacity=70);
+}
+:deep(.gjs-layer-name) {
+    display: inline-block;
+    box-sizing: content-box;
+    overflow: hidden;
+    white-space: nowrap;
+    margin: 0 30px 0 15px;
+    max-width: 170px;
+    vertical-align: top;
+    height: 15px;
+}
+:deep(.gjs-select option, .gjs-field-select option, .gjs-clm-select option, .gjs-sm-select option, .gjs-fields option, .gjs-sm-unit option){
+	background: white;
+	color: #c71d23;
+	/* transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s; */
 }
 
 #size-setter {
@@ -1583,9 +1585,9 @@ button {
 	transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s;
 
 }
+
 .sharebutton {
 	margin-left: 20px;
-  
 }
 
 

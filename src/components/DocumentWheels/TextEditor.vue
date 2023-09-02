@@ -381,6 +381,7 @@
 								p-id="4798"></path>
 						</svg>
 					</button>
+
 				</div>
 			</div>
 
@@ -404,7 +405,6 @@
 							p-id="8753"></path>
 					</svg>
 				</button>
-
 				<!--  -->
 				<slot name="showHistoryButton"></slot>
 				
@@ -515,6 +515,16 @@
 								fill="#5C5C66" p-id="16536"></path>
 						</svg>
 					</button>
+					<!-- 切换上标 -->
+					<button @click="editor.chain().focus().toggleSuperscript().run()"
+						:class="{ 'is-active': editor.isActive('superscript') }" v-tooltip="'切换上标'">
+						<svg t="1693626607568" class="icon" viewBox="0 0 1024 1024" version="1.1"
+							xmlns="http://www.w3.org/2000/svg" p-id="4919" width="20" height="20">
+							<path
+								d="M217.856 218a16 16 0 0 1 12.608 6.15L402.06 443.78 573.655 224.15A16 16 0 0 1 586.263 218h82.39a8 8 0 0 1 6.305 12.925L455.358 512 676.52 795.075A8 8 0 0 1 670.217 808h-82.391a16 16 0 0 1-12.608-6.15L402.06 580.219 228.9 801.851A16 16 0 0 1 216.293 808h-82.39a8 8 0 0 1-6.305-12.925l221.163-283.076-219.6-281.074A8 8 0 0 1 135.465 218h82.391zM809.5 104c56.61 0 102.5 45.89 102.5 102.5 0 26.976-10.697 49.264-30.232 67.89l-0.807 0.766c-12.522 11.778-25.321 20.055-50.158 33.802l-11.76 6.469c-23.251 12.853-34.51 20.212-43.935 29.451-3.45 3.383-6.323 6.802-8.64 10.356l-0.237 0.366 137.791 0.378a8 8 0 0 1 7.978 8v36a8 8 0 0 1-8 8h-0.023l-189-0.535a8 8 0 0 1-7.977-8V381.5c0-29.405 11.17-53.621 31.704-73.753l0.86-0.838c13.776-13.316 28.004-22.493 55.676-37.74l8.57-4.706c22.672-12.5 33.27-19.313 42.074-27.706C855.644 227.45 860 218.375 860 206.5c0-27.89-22.61-50.5-50.5-50.5-27.611 0-50.047 22.16-50.493 49.665l-0.007 0.835v3.5a8 8 0 0 1-8 8h-36a8 8 0 0 1-8-8v-3.5c0-56.61 45.89-102.5 102.5-102.5z"
+								p-id="4920"></path>
+						</svg>
+					</button>
 				</div>
 				<!-- 各类格式的下半部分 -->
 				<div>
@@ -577,6 +587,7 @@
 								p-id="15727"></path>
 						</svg>
 					</button>
+
 					<!-- 暂不清楚清楚节点和标记的区别，将其 @click 一并放到上面 -->
 					<!-- <button @click="editor.chain().focus().clearNodes().run()">
 						清除节点
@@ -614,6 +625,16 @@
 							<path
 								d="M313.6 358.4H177.066667c-17.066667 0-32 14.933333-32 32s14.933333 32 32 32h213.333333c4.266667 0 8.533333 0 10.666667-2.133333 8.533333-4.266667 14.933333-8.533333 17.066666-17.066667 2.133333-4.266667 2.133333-8.533333 2.133334-10.666667v-213.333333c0-17.066667-14.933333-32-32-32s-32 14.933333-32 32v136.533333L172.8 125.866667c-12.8-12.8-32-12.8-44.8 0-12.8 12.8-12.8 32 0 44.8l185.6 187.733333zM695.466667 650.666667H832c17.066667 0 32-14.933333 32-32s-14.933333-32-32-32H618.666667c-4.266667 0-8.533333 0-10.666667 2.133333-8.533333 4.266667-14.933333 8.533333-17.066667 17.066667-2.133333 4.266667-2.133333 8.533333-2.133333 10.666666v213.333334c0 17.066667 14.933333 32 32 32s32-14.933333 32-32v-136.533334l200.533333 200.533334c6.4 6.4 14.933333 8.533333 23.466667 8.533333s17.066667-2.133333 23.466667-8.533333c12.8-12.8 12.8-32 0-44.8l-204.8-198.4zM435.2 605.866667c-4.266667-8.533333-8.533333-14.933333-17.066667-17.066667-4.266667-2.133333-8.533333-2.133333-10.666666-2.133333H192c-17.066667 0-32 14.933333-32 32s14.933333 32 32 32h136.533333L128 851.2c-12.8 12.8-12.8 32 0 44.8 6.4 6.4 14.933333 8.533333 23.466667 8.533333s17.066667-2.133333 23.466666-8.533333l200.533334-200.533333V832c0 17.066667 14.933333 32 32 32s32-14.933333 32-32V618.666667c-2.133333-4.266667-2.133333-8.533333-4.266667-12.8zM603.733333 403.2c4.266667 8.533333 8.533333 14.933333 17.066667 17.066667 4.266667 2.133333 8.533333 2.133333 10.666667 2.133333h213.333333c17.066667 0 32-14.933333 32-32s-14.933333-32-32-32h-136.533333L896 170.666667c12.8-12.8 12.8-32 0-44.8-12.8-12.8-32-12.8-44.8 0l-187.733333 187.733333V177.066667c0-17.066667-14.933333-32-32-32s-32 14.933333-32 32v213.333333c2.133333 4.266667 2.133333 8.533333 4.266666 12.8z"
 								fill="#666666" p-id="3829"></path>
+						</svg>
+					</button>
+					<!-- 切换下标 -->
+					<button @click="editor.chain().focus().toggleSubscript().run()"
+						:class="{ 'is-active': editor.isActive('subscript') }" v-tooltip="'切换下标'">
+						<svg t="1693626713828" class="icon" viewBox="0 0 1024 1024" version="1.1"
+							xmlns="http://www.w3.org/2000/svg" p-id="6018" width="20" height="20">
+							<path
+								d="M809.5 608c56.61 0 102.5 45.89 102.5 102.5 0 26.976-10.697 49.264-30.232 67.89l-0.807 0.766c-12.522 11.778-25.321 20.055-50.158 33.802l-11.76 6.469c-23.251 12.853-34.51 20.212-43.935 29.451-3.45 3.383-6.323 6.802-8.64 10.356l-0.237 0.366 137.791 0.378a8 8 0 0 1 7.978 8v36a8 8 0 0 1-8 8h-0.023l-189-0.535a8 8 0 0 1-7.977-8V885.5c0-29.405 11.17-53.621 31.704-73.753l0.86-0.838c13.776-13.316 28.004-22.493 55.676-37.74l8.57-4.706c22.672-12.5 33.27-19.313 42.074-27.706C855.644 731.45 860 722.375 860 710.5c0-27.89-22.61-50.5-50.5-50.5-27.611 0-50.047 22.16-50.493 49.665l-0.007 0.835v3.5a8 8 0 0 1-8 8h-36a8 8 0 0 1-8-8v-3.5c0-56.61 45.89-102.5 102.5-102.5zM217.856 218a16 16 0 0 1 12.608 6.15L402.06 443.78 573.655 224.15A16 16 0 0 1 586.263 218h82.39a8 8 0 0 1 6.305 12.925L455.358 512 676.52 795.075A8 8 0 0 1 670.217 808h-82.391a16 16 0 0 1-12.608-6.15L402.06 580.219 228.9 801.851A16 16 0 0 1 216.293 808h-82.39a8 8 0 0 1-6.305-12.925l221.163-283.076-219.6-281.074A8 8 0 0 1 135.465 218h82.391z"
+								p-id="6019"></path>
 						</svg>
 					</button>
 				</div>
@@ -810,6 +831,7 @@
 			
 			<!-- nuclear marine diving -->
 		</div>
+		<div @click="provider.destroy">点击下线</div>
 		<div class="document-title">{{ docName }}</div>
 		<node-view-wrapper class="toc" id="content">
 			<ul class="toc__list">
@@ -830,7 +852,17 @@
 		<div class="document-words">
 			{{ editor.storage.characterCount.words() }} 个单词,
 			{{ editor.storage.characterCount.characters() }} / {{ docLimit }} 个字符 &nbsp;
-			{{ editor.storage.collaborationCursor.users.length }}人正在编辑该文档
+			{{ selectUniqueUser(editor.storage.collaborationCursor.users) }}人正在编辑该文档
+			<span :style="{
+				'font-size': 'inherit',
+				'opacity': lastSaveTime === undefined ? '0' : '1',
+				'transition': 'all linear 1s'
+			}">&nbsp;&nbsp;
+				<div v-if="lastSaveTime !== undefined"
+					:class="saveCompleted === false ? 'connecting-dot' : 'connected-dot'">
+				</div>
+				{{ lastSaveTime !== undefined ? (saveCompleted === false ? '正在自动保存...' : '上次自动保存于' + lastSaveTime) : '' }}
+			</span>
 		</div>
 		<div class="connection-status">
 			<div :class="provider.status === 'connecting' ? 'connecting-dot' : 'connected-dot'"></div>
@@ -849,7 +881,10 @@ import TableHeader from '@tiptap/extension-table-header'
 import TableRow from '@tiptap/extension-table-row'
 import Underline from '@tiptap/extension-underline'
 import FontFamily from '@tiptap/extension-font-family'
+import Focus from '@tiptap/extension-focus'
 import Typography from '@tiptap/extension-typography'//实时渲染markdown
+import Subscript from '@tiptap/extension-subscript'
+import Superscript from '@tiptap/extension-superscript'
 import Highlight from '@tiptap/extension-highlight'//文本高亮
 import Placeholder from '@tiptap/extension-placeholder'
 import { Color } from '@tiptap/extension-color'
@@ -918,11 +953,12 @@ export default {
 		return {
 			userAvatar: '/src/assets/avatar.jpeg',
 			members: [],//当前团队用户(排除自己)，游客模式无效
-			// localContent: '',
 			docLimit: 100000,
 			autoSavePeriod: 10000,
 			autoSaver: undefined,
 			contentUpdater: undefined,
+			lastSaveTime: undefined,//上次自动保存的时间
+			saveCompleted: undefined,//是否处于自动保存状态
 			isBusy: 1,//处理完某些交互事项前用户不能操作
 			busyTip: '加载中',
 			showAtPosition: false,//初次连接前为false
@@ -991,6 +1027,19 @@ export default {
 				div[0].innerHTML = ''
 			}
 		},
+		//协作人数有时候总会出错，因此需要查重
+		selectUniqueUser(users) {
+			let dic = {}
+			let cnt = 0
+			for (const obj of users) {
+				// 如果字典中不存在该 id，则将对象添加到结果数组中，并将该 id 添加到字典中
+				if (!dic[obj.id]) {
+					dic[obj.id] = true;
+					cnt++
+				}
+			}
+			return cnt
+		},
 		//为协作光标获取随机颜色
 		getRandomColor() {
 			const letters = '0123456789ABCDEF';
@@ -1016,7 +1065,21 @@ export default {
 
 			return fontColor;
 		},
+		//获取当前时间
+		getCurrentDateTime() {
+			const now = new Date();
 
+			const year = now.getFullYear();
+			const month = String(now.getMonth() + 1).padStart(2, '0'); // 月份从 0 开始，需要加 1，并且要保证两位数字
+			const day = String(now.getDate()).padStart(2, '0'); // 日期需要保证两位数字
+			const hours = String(now.getHours()).padStart(2, '0');
+			const minutes = String(now.getMinutes()).padStart(2, '0');
+			const seconds = String(now.getSeconds()).padStart(2, '0');
+
+			const dateTimeString = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+			return dateTimeString;
+		},
 		//更改字体
 		changeFont() {
 			this.editor.chain().focus().setFontFamily(this.selectedFontFamily || 'unset').run()
@@ -1225,12 +1288,14 @@ export default {
 					this.$emit('updateVersion')
 				})
 			} else {
+				this.saveCompleted = false
 				this.$http.post(`/api/projects/file/${this.docId}/autostore/`, formData, {
 					headers: {
 						'Content-type': 'multipart/form-data'
 					}
 				}).then(() => {
-					console.log('自动保存成功')
+					this.lastSaveTime = this.getCurrentDateTime()//更新自动保存
+					this.saveCompleted = true
 					this.$emit('updateVersion')
 				})
 			}
@@ -1410,6 +1475,20 @@ export default {
 				Dropcursor.configure({
 					color: "#c71d23"
 				}),
+				Focus.configure({
+					className: 'has-focus',
+					mode: 'shallowest'
+				}),
+				Subscript.configure({
+					HTMLAttributes: {
+						class: 'subscript'
+					}
+				}),
+				Superscript.configure({
+					HTMLAttributes: {
+						class: 'superscript'
+					}
+				}),
 				Table.configure({
 					resizable: true,
 					// cellMinWidth: 25,
@@ -1477,8 +1556,10 @@ export default {
 		this.contentUpdater = setInterval(() => {
 			this.handleContentUpdate()
 		}, 500)
+
 	},
 	beforeUnmount() {
+		alert(111111111)
 		clearInterval(this.contentUpdater)
 		clearInterval(this.autoSaver)//important 不然重复保存
 	}
@@ -2088,6 +2169,11 @@ export default {
 	font-weight: 700;
 }
 
+.ProseMirror .subscript,
+.ProseMirror .superscript {
+	font-size: 0.6em;
+}
+
 .ProseMirror img {
 	max-width: 100%;
 	height: auto;
@@ -2207,6 +2293,13 @@ export default {
 	max-height: 70px;
 	overflow-y: auto;
 	color: yellow
+}
+
+.has-focus {
+	border-radius: 10px;
+	padding: 5px 0;
+	box-shadow: 0 0 6px 3px rgb(199, 29, 35);
+	transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s
 }
 
 .flex {

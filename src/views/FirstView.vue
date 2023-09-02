@@ -1,5 +1,5 @@
 <template>
-  <!-- <Guide /> -->
+  <Guide v-if="isNew"/>
   <div class="first-view">
     <div class="all-projects">全部项目</div>
     <!-- 暂未拥有项目的 UI 可以在拓展 -->
@@ -21,9 +21,30 @@ export default {
   components: { ProjectListItem, Guide },
   data() {
     return {
-      projectData: []
+      projectData: [],
+      isNew: false,
+      hasTeam: false
     };
   },
+  created() {
+    this.$http.get(`/api/accounts/${this.$cookies.get('user_id')}/`).then(
+      response => {
+        this.isNew = response.data.is_new
+        this.$http.get(`/api/teams/list_by_identity/`).then(
+          response => {
+            this.hasTeam = response.data.length > 0 ? true : false
+            if (!this.isNew && this.hasTeam) {
+              // jump
+            }
+          }
+        )
+      },
+      error => {
+        console.log(error)
+      }
+    )
+  },
+
   methods: {
     jumpToProject(id, teamId) {
       // console.log('teAm: ', teamId)

@@ -52,6 +52,9 @@ export default {
 			else if (data.option == 'quit') {
 				this.handleQuitRoom(data)
 			}
+			else if (data.option == 'join') {
+				this.handleJoinRoom(data)
+			}
 		}
 		this.$http.get(`/api/groups/list_by_team_id/?team_id=${this.$route.params.teamId}`).then((response) => {
 			// rooms
@@ -266,6 +269,18 @@ export default {
 
 			em {
 				font-style: normal !important;
+			}
+
+			/* 被选中消息的样式 */
+			div.vac-message-card.vac-item-clickable.vac-message-selected {
+				background: white !important;
+				border: 2px solid rgba(199,29,35, 1) !important;
+				box-sizing: border-box !important;
+			}
+
+			/* 多选时顶部按钮背景色 */
+			.vac-selection-button {
+				background: rgba(199,29,35, 1) !important;
 			}
 		`
 		this.$bus.on('fetchAllMessages', () => this.fetchAllMessages())
@@ -933,6 +948,15 @@ export default {
 
 		handleCreateRoom(data) {
 			const group = data.group_data
+			for (let j = 0; j < group.members.length; j++) {
+				if (group.members[j].user.id == parseInt(this.currentUserId)) {
+					createRoom(group)
+					return
+				}
+			}
+		},
+
+		createRoom(group) {
 			for (let j = 0; j < this.rooms.length; j++) {
 					this.rooms[j].index--
 			}
@@ -1015,6 +1039,33 @@ export default {
 				}
 			}
 		},
+
+		handleJoinRoom(data) {
+			const group = data.group_data
+			for (let i = 0; i < this.rooms.length; i++) {
+				if (this.rooms[i].roomId == group.id) {
+					this.rooms[i].users = group.members.map((member) => ({
+						_id: `${member.user.id}`,
+						username: member.user.username
+					}))
+					return
+				}
+			}
+			group['creator'] = null
+			createRoom(group)
+			if (group.lastMessage != null) {
+				this.rooms[this.rooms.length - 1].lastMessage = {
+					_id: group.lastMessage.id,
+					content: group.lastMessage.text_content,
+					senderId: `${group.lastMessage.sender.user.id}`,
+					username: group.lastMessage.sender.user.username,
+					avatar: group.lastMessage.sender.user.avatar,
+					timestamp: group.lastMessage.create_datetime.substring(11, 16),
+					date: group.lastMessage.create_datetime.substring(5, 10),
+					new: false,
+				}
+			}
+		}
 	}
 }
 </script>

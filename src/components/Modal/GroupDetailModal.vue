@@ -1,6 +1,6 @@
 <template>
   <!-- <StylishModal :show="false" width="500px" height="400px" padding="25px"> -->
-  <div class="outer-container" ref="container">
+  <div class="outer-container" ref="container" id="temp">
     <div class="group-name" ref="name">
       {{ groupName }}
     </div>
@@ -47,21 +47,28 @@ export default {
   mounted() {
     this.$bus.on('showGroupDetail', () => {
       this.isShowing  = true
-      this.$refs.container.style.display = 'block'
-      this.$refs.container.classList.add('slide-out')
+      const div = document.getElementById('temp')
+      div.style.display = 'block'
+      // this.$refs.container.style.display = 'block'
+      div.classList.add('slide-out')
+      // this.$refs.container.classList.add('slide-out')
       setTimeout(() => {
-        this.$refs.container.classList.remove('slide-out')
+        div.classList.remove('slide-out')
       }, 250)
       this.getData()
       document.addEventListener('click', this.close)
     })
     this.$bus.on('hideGroupDetail', () => {
       this.isShowing  = false
-      this.$refs.container.classList.add('slide-hide')
+      const div = document.getElementById('temp')
+      div.classList.add('slide-hide')
+      // this.$refs.container.classList.add('slide-hide')
       document.removeEventListener('click', this.close)
       setTimeout(() => {
-        this.$refs.container.classList.remove('slide-hide')
-        this.$refs.container.style.display = 'none'
+        div.classList.remove('slide-hide')
+        // this.$refs.container.classList.remove('slide-hide')
+        div.style.display = 'none'
+        // this.$refs.container.style.display = 'none'
       }, 250);
     })
   },
@@ -150,7 +157,8 @@ export default {
       if (this.isShowing) {
         const x = event.clientX
         const y = event.clientY
-        const rect = this.$refs.container.getBoundingClientRect()
+        const div = document.getElementById('temp')
+        const rect = div.getBoundingClientRect()
         if (!(rect.left <= x && x <= rect.right && rect.top <= y && y <= rect.bottom)) {
           this.$bus.emit('hideGroupDetail')
         }

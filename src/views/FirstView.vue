@@ -34,7 +34,15 @@ export default {
           response => {
             this.hasTeam = response.data.length > 0 ? true : false
             if (!this.isNew && this.hasTeam) {
-              // jump
+              let recentTeam = null
+              this.$http.get('/api/accounts/recent_team/').then(
+                response => {
+                  recentTeam = response.data.team_id
+                  if (recentTeam) {
+                    this.$router.push(`/team/${recentTeam}/info`)
+                  }
+                }
+              )
             }
           }
         )

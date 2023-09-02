@@ -28,7 +28,7 @@
           p-id="2363"></path>
       </svg>
     </div>
-    <div class="stylish-select-dropdown" v-show="showDropdown" @mouseenter="leaveDropdown = false" ref="dropdown"
+    <div id="drop" class="stylish-select-dropdown" v-show="showDropdown" @mouseenter="leaveDropdown = false" ref="dropdown"
       @mouseleave="leaveDropdown = true">
       <div class="stylish-select-dropdown-item" v-for="(option, index) in optionData" :key="index"
         @click="handleSelect(index); option.click(option.value)" @mousedown="handleMouseDown(index)"
@@ -169,8 +169,9 @@ export default {
             break
           }
         }
-        console.log('options', this.$refs.dropdown)
-        this.$refs.dropdown.children[i].dispatchEvent(
+        // console.log('options', this.$refs.dropdown)
+        
+        document.getElementsByClassName('stylish-select-dropdown-item')[i].dispatchEvent(
           new MouseEvent('click', {
           bubbles: true,
           cancelable: true,

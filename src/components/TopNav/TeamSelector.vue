@@ -58,10 +58,36 @@ export default {
                 selected: true
               }
               this.options.splice(i, 1, newOption)
+              this.$bus.emit('manualSet', this.options[i].value)
               break
             }
           }
-        }
+        } else {
+            let recentTeam = null
+            this.$http.get('/api/accounts/recent_team/').then(
+              response => {
+                recentTeam = response.data.team_id
+                
+                if (recentTeam) {
+                  for (let i = 0; i < this.options.length; i++) {
+                    if (this.options[i].value === recentTeam) {
+                      console.log('id', recentTeam, i)
+                      const newOption = {
+                        label: this.options[i].label,
+                        avatar: this.options[i].avatar,
+                        value: this.options[i].value,
+                        click: this.jump,
+                        selected: true
+                      }
+                      this.options.splice(i, 1, newOption)
+                      this.$bus.emit('manualSet', this.options[i].value)
+                      break
+                    }
+                  }
+                }
+              }
+            )
+          }
         // 必须放在外面
         this.$bus.emit('flushData', this.options)
       },
@@ -117,11 +143,12 @@ export default {
                   selected: true
                 }
                 this.options.splice(i, 1, newOption)
+                this.$bus.emit('manualSet', this.options[i].value)
                 break
               }
             }
-            console.log('over!', this.options)
-          }
+            // console.log('over!', this.options)
+          } 
           // 必须放在外面
           this.$bus.emit('flushData', this.options)
         },

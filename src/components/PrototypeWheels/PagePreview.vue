@@ -23,7 +23,8 @@ export default {
     data() {
       return {
         pageId: '',
-        editor: undefined
+        editor: undefined,
+        ws: undefined,
       }
         
     },
@@ -36,20 +37,27 @@ export default {
       this.banButton();
       this.setPreview();
       this.$watch(
-			() => this.$route.params,
-			() => {
-				this.pageId = this.$route.params.protoId
-				this.$http.get(`http://43.138.14.231/projects/${this.pageId}`).then((response) => {
-					this.editor.loadProjectData(response.data)
-				})
-			},
-			{ immediate: true }
-		)
+        () => this.$route.params,
+        () => {
+          this.pageId = this.$route.params.protoId
+          this.$http.get(`http://43.138.14.231/projects/${this.pageId}`).then((response) => {
+            this.editor.loadProjectData(response.data)
+          })
+        },
+        { immediate: true }
+      )
       setTimeout(() => {
         const prv = document.querySelector('#gjs > div.gjs-editor.gjs-one-bg.gjs-two-color > span')
         prv.style.display = 'none'
       }, 1000)
-      
+      this.ws = new WebSocket(`ws://43.138.14.231/ws/page/${this.pageId}/`)
+      this.ws.onmessage(() => {
+        alert('close')
+      })
+      this.$bus.on('close', () => this.ws.send(JSON.stringify({})))
+    },
+    unmounted() {
+      this.$bus.off('close')
     },
     methods: {
       initEditor() {

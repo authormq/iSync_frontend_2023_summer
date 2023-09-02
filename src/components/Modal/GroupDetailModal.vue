@@ -129,6 +129,10 @@ export default {
     handleQuitGroup() {
       this.$http.delete(`/api/groups/${this.groupId}/quit/`).then(
         response => {
+          this.$bus.emit('roomOption', JSON.stringify({
+            'option': 'quit',
+            'group_data': {'id': this.groupId, 'user_id': this.$cookies.get('user_id')}
+          }))
           this.$bus.emit('message', {
             title: '退出群聊成功',
             content: '',
@@ -147,6 +151,10 @@ export default {
     handleDisbandGroup() {
       this.$http.delete(`/api/groups/${this.groupId}/`).then(
         response => {
+          this.$bus.emit('roomOption', JSON.stringify({
+            'option': 'delete',
+            'group_data': {'id': this.groupId}
+          }))
           this.$bus.emit('message', {
             title: '解散群聊成功',
             content: '',

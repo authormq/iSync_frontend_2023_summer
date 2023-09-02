@@ -170,13 +170,16 @@ export default {
           }
         }
         // console.log('options', this.$refs.dropdown)
-        
-        document.getElementsByClassName('stylish-select-dropdown-item')[i].dispatchEvent(
-          new MouseEvent('click', {
-          bubbles: true,
-          cancelable: true,
-          view: window
+        if (document.getElementsByClassName('stylish-select-dropdown-item')) {
+          console.log('123', i)
+          document.getElementsByClassName('stylish-select-dropdown-item')[i].dispatchEvent(
+            new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            view: window
         }))
+        }
+        
       })
     })
     

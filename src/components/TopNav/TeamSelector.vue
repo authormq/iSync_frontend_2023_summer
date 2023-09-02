@@ -58,7 +58,7 @@ export default {
                 selected: true
               }
               this.options.splice(i, 1, newOption)
-              this.$bus.emit('manualSet', this.options[i].value)
+              // this.$bus.emit('manualSet', this.options[i].value)
               break
             }
           }
@@ -143,7 +143,7 @@ export default {
                   selected: true
                 }
                 this.options.splice(i, 1, newOption)
-                this.$bus.emit('manualSet', this.options[i].value)
+                // this.$bus.emit('manualSet', this.options[i].value)
                 break
               }
             }

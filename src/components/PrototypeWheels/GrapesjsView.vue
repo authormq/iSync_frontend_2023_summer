@@ -126,10 +126,7 @@ export default {
 		this.pageId = this.$route.params.protoId
 		this.initEditor();
 		this.addBlock();
-
-		let topPanel = document.querySelector('.gjs-pn-panel.gjs-pn-devices-c.gjs-one-bg.gjs-two-color .gjs-pn-buttons')
-		let sizeSetter = document.querySelector('#size-setter')
-		topPanel.appendChild(sizeSetter)
+    this.clearCanvas();
 		this.$watch(
 			() => this.$route.params,
 			() => {
@@ -140,13 +137,16 @@ export default {
 			},
 			{ immediate: true }
 		)
-		// this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/page/${this.pageId}/`)
-		// this.ws.onmessage = (message) => {
-		// 	const data = JSON.parse(message.data).data
-		// 	if (JSON.stringify(this.editor.getProjectData()) !== JSON.stringify(data)) {
-		// 		this.editor.loadProjectData(data)
-		// 	}
-		// }
+		this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/page/${this.pageId}/`)
+		this.ws.onmessage = (message) => {
+			const data = JSON.parse(message.data).data
+			if (JSON.stringify(this.editor.getProjectData()) !== JSON.stringify(data)) {
+				this.editor.loadProjectData(data)
+			}
+		}
+    let topPanel = document.querySelector('.gjs-pn-panel.gjs-pn-devices-c.gjs-one-bg.gjs-two-color .gjs-pn-buttons')
+		let sizeSetter = document.querySelector('#size-setter')
+		topPanel.appendChild(sizeSetter)
 		//设置默认大小
 		// this.closeCategory();
 	},
@@ -223,7 +223,6 @@ export default {
 					}, 100)
 				}
 			}
-
 		},
 		canvasWidth(value) {
 			if(this.editor!==undefined){
@@ -261,13 +260,13 @@ export default {
 			//grapesjs.plugins.add('my-custom-plugin', MyCustomPlugin);
 			this.editor = grapesjs.init({
 				container: '#gjs',
-				// i18n: {
-				// 	locale: 'en',
-				// 	localeFallback: 'en',
-				// 	messages: {
-				// 		zh, en
-				// 	}
-				// },
+				i18n: {
+					locale: 'en',
+					localeFallback: 'en',
+					messages: {
+						zh, en
+					}
+				},
 				height: 'calc(100vh - 70px)',
 				showOffsets: 1,
 				autosave: true,
@@ -1258,11 +1257,6 @@ button {
 							// the json-server API requires PATCH.
 	
 							onStore: data => {
-								data['size'] = {
-									height: this.canvasHeight,
-									width: this.canvasWidth,
-								}
-								data['Devices'] = this.Devices
 								// this.ws.send(JSON.stringify(data))
 								return {
 									id: this.pageId,
@@ -1276,9 +1270,11 @@ button {
 								}
 							},
 							onLoad: result => {
+                if(result.Devices&&result.size){
 								this.Devices = result.Devices
 								this.canvasHeight = result.size.height
 								this.canvasWidth = result.size.width
+                }
 								console.log(result)
 								return result.data
 							}
@@ -1353,8 +1349,18 @@ button {
 			})
 			this.Devices[deviceIndex].selected = true
 			this.editor.Devices.select(this.Devices[deviceIndex].id)
-		}
-	}
+		},
+    clearCanvas() {
+      this.editor.Commands.add('canvas-clear', {
+        run: function(editor) {
+          editor.DomComponents.clear();
+          editor.CssComposer.clear();
+          document.querySelector('#gjs .gjs-editor.gjs-one-bg.gjs-two-color .gjs-pn-panels').lastChild.click()
+        }
+      })
+    
+    }
+  }
 }
 </script>
 

@@ -101,6 +101,10 @@ export default {
         formData.append('name', this.rename)
         this.$http.patch(`/api/groups/${this.groupId}/`, formData).then(
           response => {
+            this.$bus.emit('roomOption', JSON.stringify({
+              'option': 'edit',
+              'group_data': response.data
+            }))
             this.groupName = this.rename
             this.$bus.emit('message', {
               title: '重命名成功',

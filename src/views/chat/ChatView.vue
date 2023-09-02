@@ -968,11 +968,18 @@ export default {
 		},
 
 		handleEditRoom(data) {
-
+			const group = data.group_data
+			for (let i = 0; i < this.rooms.length; i++) {
+				if (this.rooms[i].roomId == group.id) {
+					this.rooms[i].roomName = group.name
+					this.rooms[i].avatar = group.avatar
+					break
+				}
+			}
 		},
 
 		handleDeleteRoom(data) {
-
+			
 		},
 
 		handleQuitRoom(data) {

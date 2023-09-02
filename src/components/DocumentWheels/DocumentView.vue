@@ -87,6 +87,7 @@ export default {
                         saveTime: ele.creatTime
                     }
                 });
+                this.versions.reverse()
             })
         },
         handleUpdateContent(content) {

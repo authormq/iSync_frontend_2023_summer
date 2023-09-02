@@ -17,6 +17,7 @@ import FirstView from '../views/FirstView.vue'
 import DocumentView from '../components/DocumentWheels/DocumentView.vue'
 import GrapesjsView from '../components/PrototypeWheels/GrapesjsView.vue'
 import TeamInviteConfirm from '../views/TeamInviteConfirm.vue'
+import PagePreview from '../components/PrototypeWheels/PagePreview.vue'
 
 import store from '../store'
 
@@ -92,7 +93,11 @@ const router = createRouter({
     {
       path: '/team/:teamId/invite/confirm',
       component: TeamInviteConfirm
-    }
+    },
+    {
+      path: `/preview/projects/:projectId/page/:protoId`,
+      component: PagePreview
+    },
   ]
 })
 

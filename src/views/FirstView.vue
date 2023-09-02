@@ -37,7 +37,7 @@ export default {
                 response => {
                   recentTeam = response.data.team_id
                   if (recentTeam) {
-                    this.$router.push(`/team/${recentTeam}/info`)
+                    // this.$router.push(`/team/${recentTeam}/info`)
                   }
                 }
               )
@@ -83,4 +83,5 @@ export default {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
 </style>

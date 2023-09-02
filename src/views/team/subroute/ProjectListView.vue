@@ -36,6 +36,7 @@
           【说明】ProjectListItem 有一个 type 属性，默认值为 'normal'，展示卡片
           任何非 'normal' 值会使之变成带头 “恢复” icon 的被删除卡片
       -->
+      {{ projectData }}
       <div v-for="project in projectData" :key="project" @click="jumpToProject(project.id, project.teamId)">
         <ProjectListItem :data="project"></ProjectListItem>
       </div>
@@ -104,12 +105,15 @@ export default {
     this.$bus.on('regetProjectListRequest', this.regetProjectList)
     this.$bus.on('copyProject', this.handleCopyProject)
   },
+  beforeUnmount() {
+    this.$bus.off('copyProject')
+  },
   methods: {
     // 将获取数据从 mounted 中抽离，在复制项目时复用
     getProjectData() {
       this.$http.get(`/api/projects/list/${this.teamId}/`).then(
         response => {
-          console.log(response.data);
+          // console.log(response.data);
           this.projectData = response.data.map((project) => ({
             teamId: project.teamId,
             id: project.id,
@@ -207,8 +211,11 @@ export default {
       this.$router.push(`/project/${id}/doc`)
     },
     handleCopyProject(id) {
+      console.log('before', this.projectData)
+      console.log('to request')
       this.$http.post(`/api/projects/copy/${id}`).then(
         response => {
+          console.log('response')
           this.getProjectData()
         },
         error => {
@@ -219,7 +226,8 @@ export default {
           })
         }
       )
-      this.getProjectData()
+      console.log('after', this.projectData)
+      // this.getProjectData()
     },
 
     // 排序

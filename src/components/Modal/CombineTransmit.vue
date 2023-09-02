@@ -1,9 +1,5 @@
 <template>
-  <StylishModal 
-    :show="show" :mask="false" 
-    width="500px" height="700px" padding="25px" 
-    shadow="3px 3px 10px grey"  
-  >
+  <StylishModal :show="show" :mask="false" width="500px" height="700px" padding="25px" shadow="3px 3px 10px grey">
     <div class="container-header">
       <div class="header-title">
         合并消息转发
@@ -36,11 +32,10 @@
               </div>
             </div>
             <div class="message-content-normal" v-if="!message.isCombined">
-              {{ message.content }}
+              <div v-html="message.content"></div>
             </div>
             <div class="message-content-combined" v-else
-              @click="this.$bus.emit('showCombinedMessageRequest', message.id)"
-              >{{ message.content }}
+              @click="this.$bus.emit('showCombinedMessageRequest', message.id)">{{ message.content }}
             </div>
           </div>
         </div>

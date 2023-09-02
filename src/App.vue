@@ -37,6 +37,25 @@ instance.proxy.$bus.on('message', (data) => {
   }, data.time)
 })
 
+const ws = new WebSocket('ws://43.138.14.231:9000/ws/page/view/');
+instance.proxy.$bus.on('closeShareRequest', (pageId) => {
+  ws.send(JSON.stringify({"page_id":pageId}))
+})
+ws.onmessage = (messageEvent) => {
+  const data = JSON.parse(messageEvent.data)
+  if (instance.proxy.$route.path.indexOf('preview') !== -1) {
+    if (data.project_id == instance.proxy.$route.params.projectId) {
+      instance.proxy.$bus.emit('message', {
+        title: '原型预览链接失效',
+        content: '',
+        time: 3000
+      })
+      window.opener = null
+      window.open('about:blank', '_top').close()
+    }
+  }
+}
+
 const store = useStore()
 store.commit('setIsLoggedIn', getCurrentInstance().proxy.$cookies.get('user_id') ? true : false)
 

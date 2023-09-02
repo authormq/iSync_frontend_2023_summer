@@ -22,17 +22,20 @@
         退出群聊
       </button>
       <button @click="handleDisbandGroup">解散群聊</button>
+      <button @click="showInviteNewMember">邀请新成员</button>
     </div>
     <SearchRecordModal :show="showSearchRecordModal" :groupId="groupId" @close="showSearchRecordModal = false"></SearchRecordModal>
+    <InviteNewMemberModal :show="showInviteNewMemberModal" @close="showInviteNewMemberModal = false"></InviteNewMemberModal>
   </div>
   <!-- </StylishModal> -->
 </template>
 <script>
 import StylishModal from '../Stylish/StylishModal.vue'
 import SearchRecordModal from './SearchRecordModal.vue'
+import InviteNewMemberModal from './InviteNewMemberModal.vue'
 export default {
   name: 'GroupDetailModal',
-  components: { StylishModal, SearchRecordModal },
+  components: { StylishModal, SearchRecordModal, InviteNewMemberModal },
   props: ['groupId'],
   data() {
     return {
@@ -42,6 +45,7 @@ export default {
       groupAvatar: '',
       rename: '',
       showSearchRecordModal: false, // 展示搜索聊天记录的模态框
+      showInviteNewMemberModal: false, // 展示邀请新成员的模态框
       isShowing: false
     }
   },
@@ -142,7 +146,7 @@ export default {
         error => {
           this.$bus.emit('message', {
             title: '退出群聊失败',
-            content: '',
+            content: '你是群主，不可退出群聊，可以选择解散该群',
             time: 2000
           })
         }
@@ -165,6 +169,9 @@ export default {
           console.log(error.message)
         }
       )
+    },
+    showInviteNewMember() {
+      this.showInviteNewMemberModal = true
     },
     handleRename() {
       this.rename = this.groupName

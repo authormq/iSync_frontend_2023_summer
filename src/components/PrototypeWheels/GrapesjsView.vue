@@ -134,26 +134,22 @@ export default {
 	},
 	mounted() {
 		this.pageId = this.$route.params.protoId
+    this.$watch('$route.params', (newVal, oldVal) => {
+      this.pageId = newVal.protoId
+      this.$http.get(`http://43.138.14.231/projects/${this.pageId}`).then((response) => {
+        this.editor.loadProjectData(response.data.data)
+      })
+    })
 		this.initEditor();
 		this.addBlock();
     this.clearCanvas();
-		this.$watch(
-			() => this.$route.params,
-			() => {
-				this.pageId = this.$route.params.protoId
-				this.$http.get(`http://43.138.14.231/projects/${this.pageId}`).then((response) => {
-					this.editor.loadProjectData(response.data)
-				})
-			},
-			{ immediate: true }
-		)
 		this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/page/${this.pageId}/`)
-		this.ws.onmessage = (message) => {
-			const data = JSON.parse(message.data).data
-			if (JSON.stringify(this.editor.getProjectData()) !== JSON.stringify(data)) {
-				this.editor.loadProjectData(data)
-			}
-		}
+		// this.ws.onmessage = (message) => {
+		// 	const data = JSON.parse(message.data).data
+		// 	if (JSON.stringify(this.editor.getProjectData()) !== JSON.stringify(data)) {
+		// 		this.editor.loadProjectData(data)
+		// 	}
+		// }
     let topPanel = document.querySelector('.gjs-pn-panel.gjs-pn-devices-c.gjs-one-bg.gjs-two-color .gjs-pn-buttons')
 		let sizeSetter = document.querySelector('#size-setter')
 		topPanel.appendChild(sizeSetter)
@@ -1409,9 +1405,9 @@ button {
         styleManager: [],
         storageManager: {
           type: 'remote',
-          // stepsBeforeSave: 1,
-          autosave: false,
-          autoload: true,
+          stepsBeforeSave: 1,
+          autosave: true,
+          // autoload: true,
           options: {
             remote: {
               urlLoad: `http://43.138.14.231/projects/${this.pageId}/`,
@@ -1424,8 +1420,11 @@ button {
 							// The `remote` storage uses the POST method when stores data but
 							// the json-server API requires PATCH.
 	
-							onStore: data => {
-								// this.ws.send(JSON.stringify(data))
+							onStore: data => {  
+                if (data.pages.length == 0) {
+                  data.pages.push({})
+                }
+                this.ws.send(JSON.stringify(data))
 								return {
 									id: this.pageId,
 									data,
@@ -1438,15 +1437,13 @@ button {
 								}
 							},
 							onLoad: result => {
-                if(result.Devices&&result.size){
-								this.Devices = result.Devices
-								this.canvasHeight = result.size.height
-								this.canvasWidth = result.size.width
+                if (result.Devices && result.size) {
+                  this.Devices = result.Devices
+                  this.canvasHeight = result.size.height
+                  this.canvasWidth = result.size.width
                 }
-								console.log(result)
 								return result.data
 							}
-
             }
           }
         },

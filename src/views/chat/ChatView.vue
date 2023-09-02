@@ -945,6 +945,7 @@ export default {
 				is_private: group.is_private,
 			}
 			this.rooms = [...this.rooms, room]
+			this.messages = []
 			const i = this.rooms.length - 1
 			this.ws[i] = new WebSocket(`ws://43.138.14.231:9000/ws/chat/group/${room.roomId}/${this.currentUserId}/`)
 			this.ws[i].onmessage = (messageEvent) => {

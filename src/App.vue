@@ -1,7 +1,7 @@
 <template>
   <!-- <div> -->
   <!-- 处于首页、文档编辑页时不显示 -->
-  <TopNav v-if="!('/' === instance.proxy.$route.path || instance.proxy.$route.path.indexOf('invite') !== -1)"
+  <TopNav v-if="!('/' === instance.proxy.$route.path || instance.proxy.$route.path.indexOf('invite') !== -1 || instance.proxy.$route.path.indexOf('preview') !== -1)"
     v-show="!(instance.proxy.$route.path.indexOf('/doc/') !== -1)" />
   <!-- </div> -->
   <RouterView />
@@ -14,6 +14,7 @@
   <!-- <GrapesjsView /> -->
   <!-- <CreateGroupRoom></CreateGroupRoom> -->
   <!-- <GroupDetailModal></GroupDetailModal> -->
+  <!-- <PagePreviewVue/> -->
 </template>
 
 <script setup>
@@ -22,10 +23,13 @@ import DocumentView from './components/DocumentWheels/DocumentView.vue'
 import TopNav from './components/TopNav/TopNav.vue'
 import StylishMessage from './components/Stylish/StylishMessage.vue'
 import GrapesjsView from './components/PrototypeWheels/GrapesjsView.vue'
+
+//ZJQ test
+import PagePreviewVue from './components/PrototypeWheels/PagePreview.vue'
+
 import CreateGroupRoom from './components/Modal/CreateGroupRoom.vue'
 import GroupDetailModal from './components/Modal/GroupDetailModal.vue'
 import { useStore } from 'vuex'
-
 
 let showMessage = ref(false)  // 展示消息
 let messageTitle = ref('')    // 消息标题

@@ -75,32 +75,36 @@ export default {
       this.$emit('close')
     },
     getData() {
-      this.$http.get(`/api/teams/${this.$route.params.teamId}/`).then(
-        response => {
-          this.teamMemberList = response.data.members.map((member) => ({
-            id: member.user.id,
-            username: member.user.username,
-            avatar: member.user.avatar,
-            isSelect: false
-          }))
-        },
-        error => {
-          console.log(error.message)
-        }
-      )
-      this.$http.get(`/api/groups/${this.groupId}/`).then(
-        response => {
-          this.groupMemberList = response.data.members.map((member) => ({
-            id: member.user.id,
-            username: member.user.username,
-            avatar: member.user.avatar,
-            isSelect: false
-          }))
-        },
-        error => {
-          console.log(error.message)
-        }
-      )
+      if (this.$route.params.teamId.length != 0) {
+        this.$http.get(`/api/teams/${this.$route.params.teamId}/`).then(
+          response => {
+            this.teamMemberList = response.data.members.map((member) => ({
+              id: member.user.id,
+              username: member.user.username,
+              avatar: member.user.avatar,
+              isSelect: false
+            }))
+          },
+          error => {
+            console.log(error.message)
+          }
+        )
+      }
+      if (this.groupId.length != 0) {
+        this.$http.get(`/api/groups/${this.groupId}/`).then(
+          response => {
+            this.groupMemberList = response.data.members.map((member) => ({
+              id: member.user.id,
+              username: member.user.username,
+              avatar: member.user.avatar,
+              isSelect: false
+            }))
+          },
+          error => {
+            console.log(error.message)
+          }
+        )
+      }
     },
     handleSelect(member) {
       if (!member.isSelect) {

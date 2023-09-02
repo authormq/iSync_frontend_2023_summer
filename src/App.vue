@@ -43,8 +43,10 @@ instance.proxy.$bus.on('message', (data) => {
   showMessage.value = true
   setTimeout(() => {
     showMessage.value = false
-    messageTitle.value = ''
-    messageContent.value = ''
+    setTimeout(() => {
+      messageTitle.value = ''
+      messageContent.value = ''
+    },1000)
   }, data.time)
 })
 

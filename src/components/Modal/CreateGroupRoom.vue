@@ -123,6 +123,32 @@ export default {
       }
     },
     createGroupConfirm() {
+      // const groupName = this.name
+      // if (this.avatarFile != null) {
+      //   const reader = new FileReader()
+      //   const avatarName = this.avatarFile.name
+      //   reader.onload = (event) => {
+      //     this.$bus.emit('roomOption', JSON.stringify({
+      //       'option': 'create',
+      //       'name': groupName,
+      //       'avatar': event.target.result.split('base64,')[1],
+      //       'avatar_name': avatarName,
+      //       'team': this.teamId,
+      //       'users': this.selectList
+      //     }))
+      //   }
+      //   reader.readAsDataURL(this.avatarFile)
+      // }
+      // else {
+      //   this.$bus.emit('roomOption', JSON.stringify({
+      //     'option': 'create',
+      //     'name': groupName,
+      //     'avatar': null,
+      //     'team': this.teamId,
+      //     'users': this.selectList
+      //   }))
+      // }
+      // this.handleClose()
       let formData = new FormData()
       formData.append('name', this.name)
       formData.append('avatar', this.avatarFile)
@@ -131,6 +157,10 @@ export default {
       this.$http.post('/api/groups/create/', formData).then(
         response => {
           console.log(response.data);
+          this.$bus.emit('roomOption', JSON.stringify({
+            'option': 'create',
+            'group_data': response.data
+          }))
           this.handleClose()
         },
         error => {

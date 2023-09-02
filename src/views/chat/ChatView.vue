@@ -263,6 +263,10 @@ export default {
 			.vac-message-wrapper .vac-message-container-offset {
 				margin: 0 !important;
 			}
+
+			em {
+				font-style: normal !important;
+			}
 		`
 		this.$bus.on('fetchAllMessages', () => this.fetchAllMessages())
 		this.$bus.on('scrollToMessage', messageId => this.scrollToMessage(messageId))

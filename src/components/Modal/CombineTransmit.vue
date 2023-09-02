@@ -178,4 +178,7 @@ hr {
   font-weight: bold;
   color: rgb(9, 61, 103);
 }
+.item-right {
+  width: 85%;
+}
 </style>

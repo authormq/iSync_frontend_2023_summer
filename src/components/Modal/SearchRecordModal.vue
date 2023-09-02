@@ -8,8 +8,8 @@
         <CloseIcon size="30" />
       </div>
     </div>
-    <div>
-      <input type="text" placeholder="输入搜索的关键词" v-model="recordKeyword" @keyup.enter="searchRecord" />
+    <div class="input-container">
+      <input type="text" placeholder="聊天记录关键词" v-model="recordKeyword" @keyup.enter="searchRecord" />
       <div class="search-icon" @click="searchRecord" @mouseover="searchIconIsHovered = true"
         @mouseleave="searchIconIsHovered = false">
         <SearchIcon :color="searchIconIsHovered ? 'rgba(199,29,35, 1)' : 'lightgrey'" />
@@ -17,17 +17,27 @@
     </div>
     <div class="container-result">
       <div v-for="record in recordList" :key="record.id">
-        <div>
-          <img :src="record.sender.user.avatar" style="width: 20px;">
-          {{ record.sender.user.last_name + record.sender.user.first_name }}
-          {{ record.createDatetime }}
-          {{ record.textContent }}
+        <img :src="record.sender.user.avatar" >
+        <div class="rec-content">
+          <div>
+            <div class="sender">{{ record.sender.user.username }}</div>
+            <div class="time">{{ record.createDatetime }}</div>
+          </div>
+          <div>
+            <div>{{ record.textContent }}</div>
+            <button @click="locateToMessage(record.id)">定位到聊天位置</button>
+          </div>
+          
         </div>
-        <button @click="locateToMessage(record.id)">定位到聊天位置</button>
+        
+       
+        
+       
       </div>
     </div>
   </StylishModal>
 </template>
+
 <script>
 import StylishModal from '../Stylish/StylishModal.vue'
 import SearchIcon from '../Svg/SearchIcon.vue'
@@ -88,6 +98,7 @@ export default {
   }
 }
 </script>
+
 <style scoped>
 ::placeholder {
   color: lightgrey;
@@ -95,16 +106,32 @@ export default {
 
 .container-header {
   display: flex;
+  width: 100%;
+  text-align: center;
 }
 
 .modal-title {
   font-size: 30px;
   font-weight: bold;
   text-align: center;
+  color: rgba(199, 29, 35, 1);
+  width: 100%;
+  text-align: center;
 }
 
 .close-icon {
   cursor: pointer;
+}
+
+input {
+  width: 400px;
+  height: 50px;
+  font-size: 18px;
+  caret-color: rgba(199, 29, 35, 1);
+  border: 1px solid rgba(199, 29, 35, 1);
+  border-radius: 10px;
+  padding: 5px;
+  box-sizing: border-box;
 }
 
 .search-icon {
@@ -113,7 +140,91 @@ export default {
 }
 
 .container-result {
-  overflow: auto;
-  height: 450px;
+  height: 410px;
+  width: 600px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  overflow-y: auto;
 }
+.container-result::-webkit-scrollbar {
+  display: none;
+}
+.container-result>div {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid lightgrey;
+}
+
+.input-container {
+  width: 80%;
+  margin: 20px auto;
+  display: flex;
+  padding: 0 20px;
+  justify-content: space-between;
+}
+
+img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.rec-content {
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.rec-content * {
+  display: inline-block;
+}
+
+.rec-content>div:first-child {
+  display: flex;
+  justify-content: space-between;
+  width: 450px;
+}
+.rec-content>div:last-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.rec-content>div:last-child>div {
+  width: 350px;
+  word-break: break-all;
+
+}
+
+.sender {
+  font-size: 18px;
+  font-weight: bold;
+  color:rgba(199, 29, 35, 1);
+}
+.time {
+  font-size: 14px;
+  color: grey;
+}
+
+.rec-content button {
+  width: 108px;
+  padding: 0 5px;
+  margin: 0 auto;
+  font-size: 14px;
+  background: transparent;
+  transition: 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+  color: grey;
+  cursor: pointer;
+}
+
+.rec-content button:hover {
+  font-weight: bold;
+  color: rgba(199, 29, 35, 1);
+}
+
+
+
 </style>

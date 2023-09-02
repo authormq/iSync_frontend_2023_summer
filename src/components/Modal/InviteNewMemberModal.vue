@@ -1,5 +1,30 @@
 <template>
-  <StylishModal :show="show" width="500px" height="500px" padding="25px" shadow="3px 3px 10px grey">
+<StylishModal :show="show" width="500px" height="630px" padding="25px">
+    <div class="container-header">
+      <div class="header-title">
+        邀请成员进群
+      </div>
+      <div class="list">
+        <img  v-for="member in selectedList" :key="member.id" :src="member.avatar">
+      <!-- <div @click="handleClose">
+        <CloseIcon size="30"></CloseIcon>
+      </div> -->
+      </div>
+      <!-- <button @click="confirmSend">确认发送</button> -->
+      <div class="container-rooms">
+        <div v-for="member in inviteList" :key="member.id" @click="handleSelect(member)">
+          <img :src="member.avatar">
+          <div>{{ member.username }}</div>
+          <!-- <div v-if="group.isSelect">已选择</div> -->
+        </div>
+      </div>
+      <div class="buttons">
+        <button @click="handleClose">取消</button>
+        <button @click="handleInvite">邀请</button>
+      </div>
+    </div>
+  </StylishModal>
+  <!-- <StylishModal :show="show" width="500px" height="500px" padding="25px" shadow="3px 3px 10px grey">
     <div class="container-header">
       <div class="header-title">
         邀请成员进群
@@ -13,7 +38,7 @@
         已选择邀请的成员
       </div>
       <div>
-        <!-- 这里应该是横向加一个滚动条 -->
+        这里应该是横向加一个滚动条
         <div v-for="member in selectedList" :key="member.id">
           <img :src="member.avatar" style="height: 40px;">
         </div>
@@ -37,7 +62,7 @@
       <button @click="handleClose">取消</button>
       <button @click="handleInvite">确认</button>
     </div>
-  </StylishModal>
+  </StylishModal> -->
 </template>
 <script>
 import StylishModal from '../Stylish/StylishModal.vue';
@@ -72,6 +97,8 @@ export default {
   },
   methods: {
     handleClose() {
+      this.groupMemberList = []
+      this.selectedList = []
       this.$emit('close')
     },
     getData() {
@@ -140,36 +167,116 @@ export default {
           })
         }
       )
+      this.handleClose()
     }
   }
 }
 </script>
 <style scoped>
 .container-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 50px;
-  margin-bottom: 5px;
+  height: 100%;
 }
-
 .header-title {
   font-size: 30px;
   font-weight: bold;
+  text-align: center;
   color: rgba(199, 29, 35, 1);
-  padding-left: 130px;
 }
 
-.container-selected {
-  width: 450px;
-  height: 60px;
-  background-color: orange;
+.show-list {
+  height: 50px;
+  display: flex;
+  border: rgba(199, 29, 35, 0.8) solid;
   overflow-x: auto;
+  width: 500;
 }
 
-.body-members {
-  height: 300px;
-  background-color: bisque;
+.group-list-item {
+  margin-bottom: 7px;
+  display: flex;
+  cursor: pointer;
+  border-radius: 50px;
+}
+
+
+.list {
+  width: 430px;
+  height: 50px;
+  display: flex;
+  overflow-x: auto;
+  border-bottom: 1px solid lightgrey;
+  padding-bottom: 10px;
+  margin-bottom: 30px;
+  margin-left: 10px;
+  padding-top: 10px;
+}
+.list::-webkit-scrollbar {
+  display: none;
+}
+img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin: 0;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+
+.container-rooms {
+  width: 450px;
+  height: 350px;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  margin-left: 10px;
   overflow-y: auto;
+}
+
+.container-rooms>div {
+  display: flex;
+  width: 200px;
+  padding-right: 10px;
+  margin-bottom: 10px;
+}
+.container-rooms>div>div {
+  width: 150px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.buttons {
+  width: 100%;
+  height: calc(100% - 510px);
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+.buttons button {
+  width: 100px;
+  height: 40px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.buttons button:first-child {
+  border: 1px solid rgba(199, 29, 35, 1);
+  color: rgba(199, 29, 35, 1);
+  background: white;
+  box-sizing: border-box;
+}
+.buttons button:last-child {
+  color: white;
+  background: rgba(199, 29, 35, 1);
+}
+.buttons button:first-child:hover {
+  border: 1px solid rgba(199, 29, 35, 0.8);
+  color: rgba(199, 29, 35, 0.8);
+}
+.buttons button:last-child:hover {
+  color: white;
+  background: rgba(199, 29, 35, 0.8);
 }
 </style>

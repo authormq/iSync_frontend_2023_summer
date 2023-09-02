@@ -18,11 +18,12 @@
       <button @click="confirmRenameGroup">重命名确认按钮</button>
     </div> -->
     <div class="quit">
+      <button @click="showInviteNewMember">邀请新成员</button>
       <button @dblclick="handleQuitGroup" v-tooltip="'双击以确认退出群聊'">
         退出群聊
       </button>
       <button @click="handleDisbandGroup">解散群聊</button>
-      <button @click="showInviteNewMember">邀请新成员</button>
+      
     </div>
     <SearchRecordModal :show="showSearchRecordModal" :groupId="groupId" @close="showSearchRecordModal = false"></SearchRecordModal>
     <InviteNewMemberModal :show="showInviteNewMemberModal" :groupId="groupId" @close="showInviteNewMemberModal = false"></InviteNewMemberModal>
@@ -292,13 +293,15 @@ button.line-btn:hover {
   width: 100%;
   height: 250px;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
+  align-content: center;
 }
 
 .quit button {
   width: 120px;
   height: 40px;
+  margin: 5px 20px;
   box-sizing: border-box;
   background: transparent;
   border: 1px solid rgba(199,29,35, 1);

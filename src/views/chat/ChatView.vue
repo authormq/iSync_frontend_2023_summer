@@ -1,7 +1,6 @@
 <!-- 聊天详情页 -->
 <template>
 	<div>
-		<!-- <vue-advanced-chat -->
 		<vue-advanced-chat ref="chat" theme="light" height="calc(100vh - 90px)" :styles="JSON.stringify(styles)"
 			:current-user-id="currentUserId" :rooms="JSON.stringify(rooms)" :rooms-loaded="roomsLoaded"
 			:messages="JSON.stringify(messages)" :messages-loaded="messagesLoaded" :custom-search-room-enabled="true"
@@ -19,7 +18,7 @@
 			<CombineTransmit :show="message.show" :combineMessageList="message.combineMessageList"
 				@close="closeCombineTransmit"></CombineTransmit>
 		</div>
-		<!-- <GroupDetailModal /> -->
+		<GroupDetailModal />
 	</div>
 </template>
 
@@ -217,8 +216,11 @@ export default {
 			}
 
 			/* header 右边的 ··· */
+			.vac-room-header {
+				--header-content: '···';
+			}
 			.vac-room-header::before {
-				content: '···' !important;
+				content: var(--header-content) !important;
 				position: absolute !important;
 				right: 10px !important;
 				font-size: 20px !important;
@@ -250,7 +252,7 @@ export default {
 				margin: 0 !important;
 			}
 		`
-		this.$bus.on('scrollToMessage', messageId => this.fetchAllAndScroll(messageId))
+		this.$bus.on('scrollToMessage', messageId => this.scrollToMessage(messageId))
 		this.$bus.on('fetchAllMessages', () => this.fetchAllMessages())
 		this.$bus.on('scrollToMessage', messageId => this.scrollToMessage(messageId))
 		this.$bus.on('forwardMessages', transmitList => this.forwardMessages(transmitList))
@@ -384,6 +386,7 @@ export default {
 		},
 
 		showGroupInfo(e) {
+			e.stopPropagation()
 			const x = e.clientX
 			const y = e.clientY
 			let doc = null
@@ -395,7 +398,9 @@ export default {
 				const right = header.getBoundingClientRect().right
 				const top = header.getBoundingClientRect().top
 				if (right - 50 <= x && x <= right - 10 && top + 15 <= y && y <= top + 40) {
-					// 
+					if (this.userTagsEnabled) {
+						this.$bus.emit('showGroupDetail')
+					}
 				}
 			}
 		},
@@ -416,6 +421,13 @@ export default {
 					}
 				}
 			}
+			setTimeout(() => {
+				if (!this.userTagsEnabled) {
+					this.$refs.chat.shadowRoot.querySelector('.vac-room-header').style.setProperty('--header-content', '···')
+				} else {
+					this.$refs.chat.shadowRoot.querySelector('.vac-room-header').style.setProperty('--header-content', '')
+				}
+			}, 100)
 			this.$http.get(`/api/groups/${room.roomId}/messages/?limit=30&offset=${offset}`).then((response) => {
 				if (response.data.results.length == 0) {
 					this.messagesLoaded = true
@@ -801,7 +813,7 @@ export default {
 						})
 					}
 				}
-			}, 6000);
+			}, 1000);
 		},
 
 		selectRoom(roomId) {
@@ -856,6 +868,8 @@ export default {
 				const msg = doc.querySelector(`#messages-list>div>div>span>div:nth-child(${i + 1})`)
 				const span = msg.querySelector('.vac-format-container>span>span')
 				span.style.cursor = 'pointer'
+				span.style.fontWeight = 'bold'
+				span.style.color = 'gray'
 				span.onclick = () => this.showCombinedMessages(this.messages[i]._id)
 			}
 		},

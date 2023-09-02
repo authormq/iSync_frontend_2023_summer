@@ -1548,6 +1548,7 @@ button {
 #size-setter button:hover {
 	background: #c71d23;
   color: white;
+	color:white;
 }
 
 .selected-device svg {
@@ -1555,6 +1556,7 @@ button {
 	background: #c71d23;
 	box-shadow: #c71d23 0 0 3px;
 }
+
 
 .unselected-device svg:hover {
 	fill: white;

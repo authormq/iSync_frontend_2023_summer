@@ -1,26 +1,25 @@
 <template>
   <!-- <StylishModal :show="false" width="500px" height="400px" padding="25px"> -->
-  <div class="outer-container">
-    <div class="group-name">
+  <div class="outer-container" ref="container" id="temp">
+    <div class="group-name" ref="name">
       {{ groupName }}
     </div>
-    <div v-for="member in memberList" :key="member.id" class="member-container">
-      <img class="member-avatar" :src="member.avatar">
+    <input type="text" v-model="rename" ref="nameInput" @keydown.enter="confirmRenameGroup" @blur="recover">
+    <div class="input-hint" ref="hint">敲击回车以确认</div>
+    <div class="member-container">
+      <img class="member-avatar" v-for="member in memberList" :key="member.id" :src="member.avatar">
     </div>
-    <hr>
-    <div class="group-name">
-      {{ groupName }}
-      这里需要一个重命名的样式
+    <button class="line-btn" @click="handleRename">重命名</button>
+    <button class="line-btn" @click="clickSearchRecordModal">
+      查找聊天记录
+    </button>
+    <!-- <div class="group-name">
       <input type="text" v-model="rename">
       <button @click="confirmRenameGroup">重命名确认按钮</button>
-    </div>
-    <div>
-      <button @click="clickSearchRecordModal">
-        查找聊天记录
-      </button>
-      <button @click="handleQuitGroup">
+    </div> -->
+    <div class="quit">
+      <button @dblclick="handleQuitGroup" v-tooltip="'双击以确认退出群聊'">
         退出群聊
-        退出群聊的时候最好还是有一个确认框比较好
       </button>
     </div>
     <SearchRecordModal :show="showSearchRecordModal" @close="showSearchRecordModal = false"></SearchRecordModal>
@@ -41,38 +40,68 @@ export default {
       groupName: '',
       groupAvatar: '',
       rename: '',
-      showSearchRecordModal: false // 展示搜索聊天记录的模态框
+      showSearchRecordModal: false, // 展示搜索聊天记录的模态框
+      isShowing: false
     }
   },
   mounted() {
-    this.teamId = this.$route.params.teamId
-    this.groupId = 38
-    this.$http.get(`/api/groups/${this.groupId}/`).then(
-      response => {
-        this.memberList = response.data.members.map((member) => ({
-          id: member.user.id,
-          username: member.user.username,
-          realname: member.user.last_name + member.user.first_name,
-          avatar: member.user.avatar
-        }))
-        this.groupAvatar = response.data.avatar
-        this.groupName = response.data.name
-      }
-    )
+    this.$bus.on('showGroupDetail', () => {
+      this.isShowing  = true
+      const div = document.getElementById('temp')
+      div.style.display = 'block'
+      // this.$refs.container.style.display = 'block'
+      div.classList.add('slide-out')
+      // this.$refs.container.classList.add('slide-out')
+      setTimeout(() => {
+        div.classList.remove('slide-out')
+      }, 250)
+      this.getData()
+      document.addEventListener('click', this.close)
+    })
+    this.$bus.on('hideGroupDetail', () => {
+      this.isShowing  = false
+      const div = document.getElementById('temp')
+      div.classList.add('slide-hide')
+      // this.$refs.container.classList.add('slide-hide')
+      document.removeEventListener('click', this.close)
+      setTimeout(() => {
+        div.classList.remove('slide-hide')
+        // this.$refs.container.classList.remove('slide-hide')
+        div.style.display = 'none'
+        // this.$refs.container.style.display = 'none'
+      }, 250);
+    })
   },
   methods: {
+    getData() {
+      this.teamId = this.$route.params.teamId
+      this.groupId = 38
+      this.$http.get(`/api/groups/${this.groupId}/`).then(
+        response => {
+          this.memberList = response.data.members.map((member) => ({
+            id: member.user.id,
+            username: member.user.username,
+            realname: member.user.last_name + member.user.first_name,
+            avatar: member.user.avatar
+          }))
+          this.groupAvatar = response.data.avatar
+          this.groupName = response.data.name
+        }
+      )
+    },
     confirmRenameGroup() {
       if (this.rename.trim() == '') {
         this.$bus.emit('message', {
-          title: '重命名失败',
-          content: '重命名不能为空',
-          time: 3000
+          title: '群聊名不能为空',
+          content: '',
+          time: 1500
         })
       } else {
         let formData = new FormData()
         formData.append('name', this.rename)
         this.$http.patch(`/api/groups/${this.groupId}/`, formData).then(
           response => {
+            this.groupName = this.rename
             this.$bus.emit('message', {
               title: '重命名成功',
               content: '重命名为：' + this.rename,
@@ -110,45 +139,153 @@ export default {
           })
         }
       )
+    },
+    handleRename() {
+      this.rename = this.groupName
+      this.$refs.name.style.display = 'none'
+      this.$refs.nameInput.style.display = 'block'
+      this.$refs.hint.style.display = 'block'
+      this.$refs.nameInput.focus()
+    },
+    recover() {
+      this.rename = this.groupName
+      this.$refs.name.style.display = 'block'
+      this.$refs.nameInput.style.display = 'none'
+      this.$refs.hint.style.display = 'none'
+    },
+    close(event) {
+      if (this.isShowing) {
+        const x = event.clientX
+        const y = event.clientY
+        const div = document.getElementById('temp')
+        const rect = div.getBoundingClientRect()
+        if (!(rect.left <= x && x <= rect.right && rect.top <= y && y <= rect.bottom)) {
+          this.$bus.emit('hideGroupDetail')
+        }
+      }
     }
   }
 }
 </script>
 <style scoped>
 .outer-container {
-  background-color: yellow;
-  border: gray solid;
+  display: none;
+  background-color: white;
   border-radius: 10px;
   position: fixed;
-  width: 250px;
+  width: 270px;
+  padding: 5px;
   /* height: 100px; */
-  height: 100vh - 70;
   z-index: 999;
   right: 50px;
   top: 145px;
+  box-shadow: -1px 1px 5px grey;
 }
 
 .group-name {
-  font-size: 16px;
-  margin-top: 8px;
-  margin-left: 5px;
+  font-size: 18px;
   font-weight: bold;
   text-align: center;
+  color: rgba(199,29,35, 1);
+  margin: 10px auto;
+  max-width: 240px;
+  word-break: break-all;
+}
+
+input {
+  display: none;
+  margin: 10px auto;
+  margin-bottom: 0;
+  width: 240px;
+  height: 30px;
+  border-radius: 5px;
+  box-sizing: border-box;
+  font-size: 18px;
+  caret-color: rgba(199,29,35, 1);
+  border: 1px solid rgba(199,29,35, 1);
+  padding: 5px;
+}
+input:focus-visible {
+  outline: 2px solid rgba(199,29,35, 1);
+}
+
+.input-hint {
+  display: none;
+  margin-left: 10px;
+  font-size: 12px;
+  color: grey;
+  margin-bottom: 10px;
+}
+
+button.line-btn {
+  width: 100%;
+  text-align: left;
+  padding: 5px;
+  height: 60px;
+  background: white;
+  font-weight: bold;
+  font-size: 18px;
+  border-bottom: 1px solid lightgrey;
+  cursor: pointer;
+  transition: 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+  border-radius: 5px;
+}
+button.line-btn:first-of-type {
+  border-top: 1px solid lightgrey;
+}
+button.line-btn:hover {
+  background: rgba(199,29,35, 1);
+  color: white;
 }
 
 .member-avatar {
   width: 40px;
   height: 40px;
+  margin: 5px;
+  border-radius: 5px;
 }
 
 .member-container {
   display: flex;
+  flex-wrap: wrap;
+  align-content: space-between;
+  height: 200px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.quit {
+  width: 100%;
+  height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.quit button {
+  width: 120px;
+  height: 40px;
+  box-sizing: border-box;
+  background: transparent;
+  border: 1px solid rgba(199,29,35, 1);
+  font-size: 18px;
+  border-radius: 5px;
+  /* font-weight: lighter; */
+  color: rgba(199,29,35, 1);
+  cursor: pointer;
+  transition: 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.quit button:hover {
+  box-sizing: content-box;
+  background: rgba(199,29,35, 1);
+  color: white;
+  font-weight: bold;
+
 }
 
 @keyframes popout {
   from {
     width: 0;
-    display: none;
   }
 
   to {
@@ -157,10 +294,11 @@ export default {
 }
 
 .slide-out {
-  animation: popout .5s ease;
+  animation: popout .2s ease;
 }
 
 .slide-hide {
-  animation: popout .5s ease reverse forwards;
+  animation: popout .2s ease reverse forwards;
 }
+
 </style>

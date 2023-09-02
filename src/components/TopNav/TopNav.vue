@@ -71,7 +71,7 @@ export default {
             formData.append('sender', data.sender.id)
             formData.append('file_element', data.file_element)
             this.$http.post('/api/news/', formData).then(() => {
-              this.$bus.emit('newFileMessage', data.file_id)
+              this.$bus.emit('judgeHasUnreadMsg', true)
             })
             break
           }
@@ -105,6 +105,9 @@ export default {
     handleJudgeHasUnreadMsg(hasUnread) {
       if (hasUnread) {
         this.hasUnreadMsg = true
+        // 只要是true，就说明有新的news出现了，因此需要刷一遍消息列表
+        // to do
+        this.$bus.emit('sendRefreshMessageViewRequest', true)
       } else {
         this.hasUnreadMsg = false
       }

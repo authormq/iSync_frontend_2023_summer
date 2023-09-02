@@ -267,6 +267,18 @@ export default {
 			em {
 				font-style: normal !important;
 			}
+
+			/* 被选中消息的样式 */
+			div.vac-message-card.vac-item-clickable.vac-message-selected {
+				background: white !important;
+				border: 2px solid rgba(199,29,35, 1) !important;
+				box-sizing: border-box !important;
+			}
+
+			/* 多选时顶部按钮背景色 */
+			.vac-selection-button {
+				background: rgba(199,29,35, 1) !important;
+			}
 		`
 		this.$bus.on('fetchAllMessages', () => this.fetchAllMessages())
 		this.$bus.on('scrollToMessage', messageId => this.scrollToMessage(messageId))

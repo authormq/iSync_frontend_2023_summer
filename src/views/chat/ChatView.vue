@@ -908,6 +908,7 @@ export default {
 					username: message.sender.user.username,
 					time: message.create_datetime,
 					content: message.text_content,
+					fileContent: message.file_content,
 					isPravite: message.group_is_private,
 					groupName: message.group_name,
 					isCombined: message.forward_messages.length	== 0 ? false : true
@@ -922,6 +923,7 @@ export default {
         show: true,
         combineMessageList: message, // 设置合并消息列表
       };
+			console.log(message);
       this.combineTransmitInstances.push(newCombineTransmit);
     },
 		// 关闭一个合并转发消息的模态框

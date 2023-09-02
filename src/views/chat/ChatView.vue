@@ -87,20 +87,19 @@ export default {
 			this.allRooms = this.rooms
 			// @all && last_message
 			for (let i = 0; i < this.rooms.length; i++) {
-				this.rooms[i].users = [
-					{
-						_id: '0',
-						username: '所有人'
-					},
-					...this.rooms[i].users
-				]
-				// this.$http.get(`/api/groups/${this.rooms[i].roomId}/current_user_identity/`).then((response) => {
-				// 	if (response.status == 200) {
-				// 		if (response.data.identity == 'member') {
-
-				// 		}
-				// 	}
-				// })
+				this.$http.get(`/api/groups/${this.rooms[i].roomId}/current_user_identity/`).then((response) => {
+					if (response.status == 200) {
+						if (response.data.identity != 'member') {
+							this.rooms[i].users = [
+								{
+									_id: '0',
+									username: '所有人'
+								},
+								...this.rooms[i].users
+							]
+						}
+					}
+				})
 				// WebSocket
 				this.ws[i] = new WebSocket(`ws://43.138.14.231:9000/ws/chat/group/${this.rooms[i].roomId}/${this.currentUserId}/`)
 				this.ws[i].onmessage = (messageEvent) => {

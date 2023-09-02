@@ -931,6 +931,16 @@ export default {
 
 		handleCreateRoom(data) {
 			const group = data.group_data
+			let flag = false
+			for (let j = 0; j < group.members.length; j++) {
+				if (group.members[j].user.id == parseInt(this.currentUserId)) {
+					flag = true
+					break
+				}
+			}
+			if (!flag) {
+				return
+			}
 			for (let j = 0; j < this.rooms.length; j++) {
 					this.rooms[j].index--
 			}

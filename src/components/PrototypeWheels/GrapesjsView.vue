@@ -102,7 +102,7 @@
     <div id="gjs"></div>
   </div>
 </template>
-	
+
 <script>
 import grapesjs from 'grapesjs'; // 引入 GrapesJS
 import zh from 'grapesjs/locale/zh.js'//引入中文
@@ -127,42 +127,47 @@ import html2canvas from 'html2canvas';
 import 'animate.css'
 import PageSelect from './PageSelect.vue';
 
+
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
+import JSZipUtils from 'jszip-utils';
+
 export default {
-	name: 'GrapesEditor',
-	components: {
-		PageSelect
-	},
-	mounted() {
-		this.pageId = this.$route.params.protoId
+  name: 'GrapesEditor',
+  components: {
+    PageSelect
+  },
+  mounted() {
+    this.pageId = this.$route.params.protoId
     this.$watch('$route.params', (newVal, oldVal) => {
       this.$http.get(`http://43.138.14.231/projects/${newVal.protoId}`).then((response) => {
         //保存一下size-setter
-        let sizeSetter =  document.querySelector('#size-setter')
+        let sizeSetter = document.querySelector('#size-setter')
         document.body.appendChild(sizeSetter)
         // const newData = response.data.data
         this.pageId = newVal.protoId
         this.initEditor();
-		    this.addBlock();
+        this.addBlock();
         this.clearCanvas();
         let topPanel = document.querySelector('.gjs-pn-panel.gjs-pn-devices-c.gjs-one-bg.gjs-two-color .gjs-pn-buttons')
         topPanel.appendChild(sizeSetter)
         // this.editor.loadProjectData(newData)
       })
     })
-      this.initEditor();
-		  this.addBlock();
-      this.clearCanvas();
-      let topPanel = document.querySelector('.gjs-pn-panel.gjs-pn-devices-c.gjs-one-bg.gjs-two-color .gjs-pn-buttons')
-      let sizeSetter = document.querySelector('#size-setter')
-      topPanel.appendChild(sizeSetter)
-		this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/page/${this.pageId}/`)
-		this.ws.onmessage = (message) => {
-			const data = JSON.parse(message.data).data
-			if (JSON.stringify(this.editor.getProjectData()) !== JSON.stringify(data)) {
-				this.editor.loadProjectData(data)
-			}
-		}
-    
+    this.initEditor();
+    this.addBlock();
+    this.clearCanvas();
+    let topPanel = document.querySelector('.gjs-pn-panel.gjs-pn-devices-c.gjs-one-bg.gjs-two-color .gjs-pn-buttons')
+    let sizeSetter = document.querySelector('#size-setter')
+    topPanel.appendChild(sizeSetter)
+    this.ws = new WebSocket(`ws://43.138.14.231:9000/ws/page/${this.pageId}/`)
+    this.ws.onmessage = (message) => {
+      const data = JSON.parse(message.data).data
+      if (JSON.stringify(this.editor.getProjectData()) !== JSON.stringify(data)) {
+        this.editor.loadProjectData(data)
+      }
+    }
+
     //设置默认大小
     // this.closeCategory();
   },
@@ -473,870 +478,870 @@ export default {
               id: 't1',
               label: '学术成果分享平台',
               category: '原型模板',
-              media: `<img src = '/src/assets/zixunfabu.png' style="height:100%;width:100%">`,
+              media: `<img src = '/api/media/image/zixunfabu.png' style="height:100%;width:100%">`,
               content: `
-          <div class="gjs-row" id="top-space">
-            <div id="button1">登录</div>
-            <div id="button2">注册</div>
-          </div>
-          <div class="gjs-row" id="header-row">
-            <div class="gjs-cell" id="left-space"></div>
-          <div class="gjs-cell" id="main-content">
-          <div id="platform-title">学术成果分享平台</div>
-          <div id="platform-subtitle">Make Academia VisiableMake Academia Visiable</div>
-          <div id="search-div">
-            <input type="text" id="search-input" placeholder="Search"/>
-            <button type="button" id="search-button">搜索</button>
-          </div>         
-          </div>
-          <div class="gjs-cell" id="right-space"></div>
-          </div>
-          <div id="tab-section">
-              <div role="tablist" class="tab-container">
-                <div role="tab" aria-controls="tab1-content" id="tab1" class="tab">
-                  <span id="tab1-label">业界精英</span>
-                </div>
-                <div role="tab" aria-controls="tab2-content" id="tab2" class="tab">
-                  <span id="tab2-label">学术论文</span>
-                </div>
-                <div role="tab" aria-controls="tab3-content" id="tab3" class="tab">
-                  <span id="tab3-label">科技前沿</span>
-                </div>
-                <div role="tab" aria-controls="tab4-content" id="tab4" class="tab">
-                  <span id="tab4-label">最新成果</span>
-                </div>
-                <div role="tab" aria-controls="tab5-content" id="tab5" class="tab">
-                  <span id="tab5-label">新闻资讯</span>
-                </div>
+        <div class="gjs-row" id="top-space">
+          <div id="button1">登录</div>
+          <div id="button2">注册</div>
+        </div>
+        <div class="gjs-row" id="header-row">
+          <div class="gjs-cell" id="left-space"></div>
+        <div class="gjs-cell" id="main-content">
+        <div id="platform-title">学术成果分享平台</div>
+        <div id="platform-subtitle">Make Academia VisiableMake Academia Visiable</div>
+        <div id="search-div">
+          <input type="text" id="search-input" placeholder="Search"/>
+          <button type="button" id="search-button">搜索</button>
+        </div>         
+        </div>
+        <div class="gjs-cell" id="right-space"></div>
+        </div>
+        <div id="tab-section">
+            <div role="tablist" class="tab-container">
+              <div role="tab" aria-controls="tab1-content" id="tab1" class="tab">
+                <span id="tab1-label">业界精英</span>
               </div>
-              <div class="gjs-row" id="image-row">
-                  <div class="gjs-cell" id="image1-cell">
-                      <img id="image1" src="/src/assets/template1-4.jpg"/>
-                  </div>
-                  <div class="gjs-cell" id="image2-cell">
-                      <img id="image2" src="/src/assets/template1-3.jpg"/>
-                  </div>
-                  <div class="gjs-cell" id="image3-cell">
-                      <img id="image3" src="/src/assets/template1-2.jpg"/>
-                  </div>
-                  <div class="gjs-cell" id="image4-cell">
-                      <img id="image4" src="/src/assets/template1-5.jpg"/>
-                  </div>
-                  <div class="gjs-cell" id="image5-cell">
-                      <img id="image5" src="/src/assets/template1-1.jpg"/>
-                  </div>
+              <div role="tab" aria-controls="tab2-content" id="tab2" class="tab">
+                <span id="tab2-label">学术论文</span>
               </div>
-              <div class="tab-contents">
-                  <div role="tabpanel" id="tab1-content" aria-labelledby="tab1" hidden class="tab-content">
-                  </div>
-                  <div role="tabpanel" id="tab2-content" aria-labelledby="tab2" hidden class="tab-content">
-                  </div>
-                  <div role="tabpanel" id="tab3-content" aria-labelledby="tab3" hidden class="tab-content">
-                  </div>
-                  <div role="tabpanel" id="tab4-content" aria-labelledby="tab4" hidden class="tab-content">
-                  </div>
+              <div role="tab" aria-controls="tab3-content" id="tab3" class="tab">
+                <span id="tab3-label">科技前沿</span>
               </div>
-          </div>
-          <style>
-          body {
-              font-family: 'Arial', sans-serif;
-              margin: 0;
-              padding: 0;
-              background-color: #c2cedc;
-          }
+              <div role="tab" aria-controls="tab4-content" id="tab4" class="tab">
+                <span id="tab4-label">最新成果</span>
+              </div>
+              <div role="tab" aria-controls="tab5-content" id="tab5" class="tab">
+                <span id="tab5-label">新闻资讯</span>
+              </div>
+            </div>
+            <div class="gjs-row" id="image-row">
+                <div class="gjs-cell" id="image1-cell">
+                    <img id="image1" src="/api/media/image/template1-4.jpg"/>
+                </div>
+                <div class="gjs-cell" id="image2-cell">
+                    <img id="image2" src="/api/media/image/template1-3.jpg"/>
+                </div>
+                <div class="gjs-cell" id="image3-cell">
+                    <img id="image3" src="/api/media/image/template1-2.jpg"/>
+                </div>
+                <div class="gjs-cell" id="image4-cell">
+                    <img id="image4" src="/api/media/image/template1-5.jpg"/>
+                </div>
+                <div class="gjs-cell" id="image5-cell">
+                    <img id="image5" src="/api/media/image/template1-1.jpg"/>
+                </div>
+            </div>
+            <div class="tab-contents">
+                <div role="tabpanel" id="tab1-content" aria-labelledby="tab1" hidden class="tab-content">
+                </div>
+                <div role="tabpanel" id="tab2-content" aria-labelledby="tab2" hidden class="tab-content">
+                </div>
+                <div role="tabpanel" id="tab3-content" aria-labelledby="tab3" hidden class="tab-content">
+                </div>
+                <div role="tabpanel" id="tab4-content" aria-labelledby="tab4" hidden class="tab-content">
+                </div>
+            </div>
+        </div>
+        <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #c2cedc;
+        }
 
-          #button1 {
-            margin-top:8px;
-            float:right;
-            margin-right:20px;
-            padding:10px;
-          }
+        #button1 {
+          margin-top:8px;
+          float:right;
+          margin-right:20px;
+          padding:10px;
+        }
 
-          #button2 {
-            margin-top:8px;
-            float:right;
-            margin-right:20px;
-            padding:10px;
-          }
-          #top-space {
-              height: 60px;
-          }
+        #button2 {
+          margin-top:8px;
+          float:right;
+          margin-right:20px;
+          padding:10px;
+        }
+        #top-space {
+            height: 60px;
+        }
 
-          #header-row {
-              background-color: #686789;
-              color: #ffffff;
-              padding: 50px;
-              display: flex;
-          }
-
-          #left-space, #right-space {
-              flex: 1;
-          }
-
-          #main-content {
-              flex: 3;
-              text-align: center;
-          }
-
-          #platform-title {
-              font-size: 30px;
-              margin-bottom: 10px;
-          }
-
-          #platform-subtitle {
-              margin-bottom: 20px;
-          }
-          #search-div {
+        #header-row {
+            background-color: #686789;
+            color: #ffffff;
+            padding: 50px;
             display: flex;
-            justify-content: center;
-          }
+        }
 
-          #search-input {
-            margin-left: 10px;
-            margin-right: 10px;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            min-width: 200px;
-            
-          }
+        #left-space, #right-space {
+            flex: 1;
+        }
 
-          #search-button {
-            margin-left: 10px;
-            margin-right: 10px;
-            padding: 10px 15px;
-            background-color: #555;
-            border: none;
-            border-radius: 5px;
-            color: #fff;
+        #main-content {
+            flex: 3;
+            text-align: center;
+        }
+
+        #platform-title {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        #platform-subtitle {
+            margin-bottom: 20px;
+        }
+        #search-div {
+          display: flex;
+          justify-content: center;
+        }
+
+        #search-input {
+          margin-left: 10px;
+          margin-right: 10px;
+          padding: 10px;
+          border-radius: 5px;
+          border: 1px solid #ccc;
+          min-width: 200px;
+          
+        }
+
+        #search-button {
+          margin-left: 10px;
+          margin-right: 10px;
+          padding: 10px 15px;
+          background-color: #555;
+          border: none;
+          border-radius: 5px;
+          color: #fff;
+          cursor: pointer;
+           
+        }
+
+        .tab-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 50px;
+        }
+
+        .tab {
             cursor: pointer;
-             
-          }
+            padding: 5px 20px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            background-color: #f4f4f4;
+        }
 
-          .tab-container {
-              display: flex;
-              justify-content: space-around;
-              margin-top: 50px;
-          }
+        .tab:hover {
+            background-color: #ddd;
+        }
 
-          .tab {
-              cursor: pointer;
-              padding: 5px 20px;
-              border: 2px solid #ccc;
-              border-radius: 5px;
-              background-color: #f4f4f4;
-          }
+        #image-row {
+            margin-top: 30px;
+            display: flex;
+        }
 
-          .tab:hover {
-              background-color: #ddd;
-          }
+        .gjs-cell {
+            flex: 1;
+            padding: 10px;
+        }
 
-          #image-row {
-              margin-top: 30px;
-              display: flex;
-          }
+        img {
+            max-width: 100%;
+            display: block;
+            margin: 0 auto;
+        }
 
-          .gjs-cell {
-              flex: 1;
-              padding: 10px;
-          }
-
-          img {
-              max-width: 100%;
-              display: block;
-              margin: 0 auto;
-          }
-
-          </style>
-          `
-            },
+        </style>
+        `,     
+      },
             {
               id: 't2',
               label: '后台用户管理界面',
               category: '原型模板',
-              media: `<img src = '/src/assets/Channel.png' style="height:100%;width:100%">`,
+              media: `<img src = '/api/media/image/Channel.png' style="height:100%;width:100%">`,
               content: `
-          <body>
-    <header>
-        <div class="logo">后台用户管理界面</div>
-        <nav>
-            <ul>
-                <li><a href="#">仪表板</a></li>
-                <li><a href="#">用户管理</a></li>
-                <li><a href="#">设置</a></li>
-                <li><a href="#">注销</a></li>
-            </ul>
-        </nav>
-    </header>
+        <body>
+  <header>
+      <div class="logo">后台用户管理界面</div>
+      <nav>
+          <ul>
+              <li><a href="#">仪表板</a></li>
+              <li><a href="#">用户管理</a></li>
+              <li><a href="#">设置</a></li>
+              <li><a href="#">注销</a></li>
+          </ul>
+      </nav>
+  </header>
 
-    <main>
-        <h1>用户管理</h1>
-        <table>
-            <thead>
-                <tr>
-                    <th>用户名</th>
-                    <th>邮箱</th>
-                    <th>电话</th>
-                    <th>城市</th>
-                    <th>注册日期</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>John Doe</td>
-                    <td>john@example.com</td>
-                    <td>1234567890</td>
-                    <td>北京</td>
-                    <td>2023-09-01</td>
-                    <td>
-                        <button class="edit">编辑</button>
-                        <button class="delete">删除</button>
-                        <button class="view">查看</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Jane Smith</td>
-                    <td>jane@example.com</td>
-                    <td>0987654321</td>
-                    <td>上海</td>
-                    <td>2023-08-28</td>
-                    <td>
-                        <button class="edit">编辑</button>
-                        <button class="delete">删除</button>
-                        <button class="view">查看</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Lucas Green</td>
-                    <td>lucas@example.com</td>
-                    <td>1112223334</td>
-                    <td>广州</td>
-                    <td>2023-08-20</td>
-                    <td>
-                        <button class="edit">编辑</button>
-                        <button class="delete">删除</button>
-                        <button class="view">查看</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Mary Johnson</td>
-                    <td>mary@example.com</td>
-                    <td>5556667778</td>
-                    <td>深圳</td>
-                    <td>2023-07-15</td>
-                    <td>
-                        <button class="edit">编辑</button>
-                        <button class="delete">删除</button>
-                        <button class="view">查看</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </main>
-    <style>
-    body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #fff;
+  <main>
+      <h1>用户管理</h1>
+      <table>
+          <thead>
+              <tr>
+                  <th>用户名</th>
+                  <th>邮箱</th>
+                  <th>电话</th>
+                  <th>城市</th>
+                  <th>注册日期</th>
+                  <th>操作</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr>
+                  <td>John Doe</td>
+                  <td>john@example.com</td>
+                  <td>1234567890</td>
+                  <td>北京</td>
+                  <td>2023-09-01</td>
+                  <td>
+                      <button class="edit">编辑</button>
+                      <button class="delete">删除</button>
+                      <button class="view">查看</button>
+                  </td>
+              </tr>
+              <tr>
+                  <td>Jane Smith</td>
+                  <td>jane@example.com</td>
+                  <td>0987654321</td>
+                  <td>上海</td>
+                  <td>2023-08-28</td>
+                  <td>
+                      <button class="edit">编辑</button>
+                      <button class="delete">删除</button>
+                      <button class="view">查看</button>
+                  </td>
+              </tr>
+              <tr>
+                  <td>Lucas Green</td>
+                  <td>lucas@example.com</td>
+                  <td>1112223334</td>
+                  <td>广州</td>
+                  <td>2023-08-20</td>
+                  <td>
+                      <button class="edit">编辑</button>
+                      <button class="delete">删除</button>
+                      <button class="view">查看</button>
+                  </td>
+              </tr>
+              <tr>
+                  <td>Mary Johnson</td>
+                  <td>mary@example.com</td>
+                  <td>5556667778</td>
+                  <td>深圳</td>
+                  <td>2023-07-15</td>
+                  <td>
+                      <button class="edit">编辑</button>
+                      <button class="delete">删除</button>
+                      <button class="view">查看</button>
+                  </td>
+              </tr>
+          </tbody>
+      </table>
+  </main>
+  <style>
+  body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #fff;
 }
 
 
 header {
-    background-color: #2c3e50;
-    color: #ecf0f1;
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .logo {
-    font-size: 24px;
-    font-weight: bold;
+  font-size: 24px;
+  font-weight: bold;
 }
 
 nav ul {
-    list-style-type: none;
-    display: flex;
+  list-style-type: none;
+  display: flex;
 }
 
 nav ul li {
-    margin-right: 20px;
+  margin-right: 20px;
 }
 
 nav ul li a {
-    text-decoration: none;
-    color: #fff;
-    padding: 8px 16px;
-    border-radius: 4px;
-    transition: background-color 0.3s;
+  text-decoration: none;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
 }
 
 nav ul li a:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 main {
-    max-width: 1100px;
-    margin: 40px auto;
-    padding: 20px;
-    background-color: #ffffff;
-    border-radius: 5px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
-    border-bottom: 2px solid black;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-    font-size: 24px;
+  border-bottom: 2px solid black;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  font-size: 24px;
 }
 
 table {
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 table, th, td {
-    border: 1px solid black;
+  border: 1px solid black;
 }
 
 th, td {
-    padding: 10px;
-    text-align: left;
+  padding: 10px;
+  text-align: left;
 }
 
 button {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-right: 5px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 5px;
 }
 
 .edit {
-    background-color: #3498db;
-    color: #fff;
-    transition: background-color 0.3s;
-    display: inline-block;
+  background-color: #3498db;
+  color: #fff;
+  transition: background-color 0.3s;
+  display: inline-block;
 }
 
 .edit:hover {
-    background-color: #2980b9;
-    display: inline-block;
+  background-color: #2980b9;
+  display: inline-block;
 }
 
 .delete {
-    background-color: #e74c3c;
-    color: #fff;
-    transition: background-color 0.3s;
-    display: inline-block;
+  background-color: #e74c3c;
+  color: #fff;
+  transition: background-color 0.3s;
+  display: inline-block;
 }
 
 .delete:hover {
-    background-color: #c0392b;
-    display: inline-block;
+  background-color: #c0392b;
+  display: inline-block;
 }
 
 .view {
-    background-color: #2ecc71;
-    color: #fff;
-    transition: background-color 0.3s;
-    display: inline-block;
+  background-color: #2ecc71;
+  color: #fff;
+  transition: background-color 0.3s;
+  display: inline-block;
 }
 
 .view:hover {
-    background-color: #27ae60;
-    display: inline-block;
+  background-color: #27ae60;
+  display: inline-block;
 }
-    </style>
-          `
+  </style>
+        `
             },
             {
               id: 't3',
               label: '个人博客',
               category: '原型模板',
-              media: `<img src = '/src/assets/Kinguser.png' style="height:100%;width:100%">`,
+              media: `<img src = '/api/media/image/Kinguser.png' style="height:100%;width:100%">`,
               content: `
-          <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <link rel="stylesheet" href="blog-styles.css">
-            <title>我的博客</title>
-          </head>
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <link rel="stylesheet" href="blog-styles.css">
+          <title>我的博客</title>
+        </head>
 
-          <body>
-            <header>
-              <div class="logo">我的个人博客</div>
-              <nav>
-                <ul>
-                  <li><a href="#">首页</a></li>
-                  <li><a href="#">关于我</a></li>
-                  <li><a href="#">博客文章</a></li>
-                  <li><a href="#">联系</a></li>
-                </ul>
-              </nav>
-            </header>
+        <body>
+          <header>
+            <div class="logo">我的个人博客</div>
+            <nav>
+              <ul>
+                <li><a href="#">首页</a></li>
+                <li><a href="#">关于我</a></li>
+                <li><a href="#">博客文章</a></li>
+                <li><a href="#">联系</a></li>
+              </ul>
+            </nav>
+          </header>
 
-            <main>
-              <section class="intro">
-                <img src="/src/assets/template2.png" alt="个人照片">
-                <p>欢迎来到我的博客! 请随便看看吧！</p>
-              </section>
-              <section class="posts">
-                <article>
-                  <h2>博客标题1</h2>
-                  <p>这里是博客摘要。点击阅读更多...</p>
-                  <footer>
-                    <span>发布于 2023-09-01</span>
-                    <a href="#">阅读更多</a>
-                  </footer>
-                </article>
-                <article>
-                  <h2>博客标题2</h2>
-                  <p>这里是博客摘要。点击阅读更多...</p>
-                  <footer>
-                    <span>发布于 2023-08-25</span>
-                    <a href="#">阅读更多</a>
-                  </footer>
-                </article>
-                <!-- 更多博客文章... -->
-              </section>
-            </main>
-            <footer>
-            </footer>
-          </body>
+          <main>
+            <section class="intro">
+              <img src="/api/media/image/template2.png" alt="个人照片">
+              <p>欢迎来到我的博客! 请随便看看吧！</p>
+            </section>
+            <section class="posts">
+              <article>
+                <h2>博客标题1</h2>
+                <p>这里是博客摘要。点击阅读更多...</p>
+                <footer>
+                  <span>发布于 2023-09-01</span>
+                  <a href="#">阅读更多</a>
+                </footer>
+              </article>
+              <article>
+                <h2>博客标题2</h2>
+                <p>这里是博客摘要。点击阅读更多...</p>
+                <footer>
+                  <span>发布于 2023-08-25</span>
+                  <a href="#">阅读更多</a>
+                </footer>
+              </article>
+              <!-- 更多博客文章... -->
+            </section>
+          </main>
+          <footer>
+          </footer>
+        </body>
 
-          <style>
-          a {
-            color: #fff;
-            margin-left: 10px;
-          }
-          body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #fffed7;
-            color: #333;
-          }
-          header {
-            background-color: #e5e2b9;
-            color: #fff;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-          }
-          .logo {
-            font-size: 28px;
-            font-weight: bold;
-          }
-          nav ul {
-            list-style-type: none;
-            display: flex;
-            gap: 20px;
-          }
-          nav ul li a {
-            text-decoration: none;
-            color: #fff;
-            padding: 10px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-          }
-          nav ul li a:hover {
-            background-color: #3a4750;
-          }
-          main {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 20px;
-          }
-          .intro {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          }
-          .intro img {
-            max-width: 150px;
-            border-radius: 50%;
-          }
-          .posts article {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-          }
-          h2 {
-            color: #1b262c;
-            margin-top: 0;
-          }
-          footer {
-            background-color: #e5e2b9;
-            color: #fff;
-            text-align: center;
-            padding: 20px 0;
-            margin-top: 40px;
-          }
-          </style>
-        `
+        <style>
+        a {
+          color: #fff;
+          margin-left: 10px;
+        }
+        body {
+          font-family: 'Arial', sans-serif;
+          margin: 0;
+          padding: 0;
+          background-color: #fffed7;
+          color: #333;
+        }
+        header {
+          background-color: #e5e2b9;
+          color: #fff;
+          padding: 20px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .logo {
+          font-size: 28px;
+          font-weight: bold;
+        }
+        nav ul {
+          list-style-type: none;
+          display: flex;
+          gap: 20px;
+        }
+        nav ul li a {
+          text-decoration: none;
+          color: #fff;
+          padding: 10px;
+          border-radius: 5px;
+          transition: background-color 0.3s;
+        }
+        nav ul li a:hover {
+          background-color: #3a4750;
+        }
+        main {
+          max-width: 900px;
+          margin: 40px auto;
+          padding: 20px;
+        }
+        .intro {
+          display: flex;
+          gap: 20px;
+          align-items: center;
+          background-color: #fff;
+          padding: 20px;
+          border-radius: 5px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .intro img {
+          max-width: 150px;
+          border-radius: 50%;
+        }
+        .posts article {
+          background-color: #fff;
+          padding: 20px;
+          border-radius: 5px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          margin-bottom: 20px;
+        }
+        h2 {
+          color: #1b262c;
+          margin-top: 0;
+        }
+        footer {
+          background-color: #e5e2b9;
+          color: #fff;
+          text-align: center;
+          padding: 20px 0;
+          margin-top: 40px;
+        }
+        </style>
+      `
             },
             {
               id: 't4',
               label: '计划清单',
               category: '原型模板',
-              media: `<img src = '/src/assets/Zhishifabu.png' style="height:100%;width:100%">`,
+              media: `<img src = '/api/media/image/Zhishifabu.png' style="height:100%;width:100%">`,
               content: `
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <link rel="stylesheet" href="styles.css">
-            <title>计划清单</title>
-        </head>
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <link rel="stylesheet" href="styles.css">
+          <title>计划清单</title>
+      </head>
 
-        <body>
-            <header>
-                <h1>我的计划清单</h1>
-            </header>
+      <body>
+          <header>
+              <h1>我的计划清单</h1>
+          </header>
 
-            <main>
-                <section class="todo-section">
-                    <div id="todo-inputs">
-                        <input type="text" id="new-todo" placeholder="新任务...">
-                        <textarea id="description" placeholder="任务描述..."></textarea>
-                        <input type="date" id="due-date">
-                        <button id="add-button">添加</button>
-                    </div>
+          <main>
+              <section class="todo-section">
+                  <div id="todo-inputs">
+                      <input type="text" id="new-todo" placeholder="新任务...">
+                      <textarea id="description" placeholder="任务描述..."></textarea>
+                      <input type="date" id="due-date">
+                      <button id="add-button">添加</button>
+                  </div>
 
-                    <ul id="todo-list">
-                        <li>
-                            <input type="checkbox">
-                            <div>
-                                <strong>学习CSS</strong>
-                                <p>学习关于Flexbox和Grid的基本知识。</p>
-                                <small>到期日: 2023-09-15</small>
-                            </div>
-                        </li>
-                        <li>
-                            <input type="checkbox">
-                            <div>
-                                <strong>完成项目报告</strong>
-                                <p>为下周的会议完成关于项目进展的报告。</p>
-                                <small>到期日: 2023-09-10</small>
-                            </div>
-                        </li>
-                    </ul>
-                </section>
-            </main>
-        </body>
-        <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f7f7f7;
-            color: #333;
-        }
+                  <ul id="todo-list">
+                      <li>
+                          <input type="checkbox">
+                          <div>
+                              <strong>学习CSS</strong>
+                              <p>学习关于Flexbox和Grid的基本知识。</p>
+                              <small>到期日: 2023-09-15</small>
+                          </div>
+                      </li>
+                      <li>
+                          <input type="checkbox">
+                          <div>
+                              <strong>完成项目报告</strong>
+                              <p>为下周的会议完成关于项目进展的报告。</p>
+                              <small>到期日: 2023-09-10</small>
+                          </div>
+                      </li>
+                  </ul>
+              </section>
+          </main>
+      </body>
+      <style>
+      body {
+          font-family: 'Arial', sans-serif;
+          margin: 0;
+          padding: 0;
+          background-color: #f7f7f7;
+          color: #333;
+      }
 
-        header {
-            background-color: #4CAF50;
-            color: #ffffff;
-            padding: 20px 0;
-            text-align: center;
-        }
+      header {
+          background-color: #4CAF50;
+          color: #ffffff;
+          padding: 20px 0;
+          text-align: center;
+      }
 
-        main {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+      main {
+          max-width: 600px;
+          margin: 50px auto;
+          padding: 20px;
+          background-color: #fff;
+          border-radius: 8px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
 
-        .todo-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+      .todo-section {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+      }
 
-        #todo-inputs {
-            width: 80%;
-        }
+      #todo-inputs {
+          width: 80%;
+      }
 
-        #new-todo, #description, #due-date {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
+      #new-todo, #description, #due-date {
+          width: 100%;
+          padding: 10px;
+          margin-bottom: 10px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+      }
 
-        #description {
-            height: 80px;
-            resize: vertical;
-        }
+      #description {
+          height: 80px;
+          resize: vertical;
+      }
 
-        #add-button {
-            padding: 10px 20px;
-            margin-top: 20px;
-            background-color: #4CAF50;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+      #add-button {
+          padding: 10px 20px;
+          margin-top: 20px;
+          background-color: #4CAF50;
+          color: #fff;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+      }
 
-        #add-button:hover {
-            background-color: #45a049;
-        }
+      #add-button:hover {
+          background-color: #45a049;
+      }
 
-        #todo-list {
-            list-style-type: none;
-            width: 80%;
-            margin-top: 20px;
-            padding: 0;
-        }
+      #todo-list {
+          list-style-type: none;
+          width: 80%;
+          margin-top: 20px;
+          padding: 0;
+      }
 
-        #todo-list li {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-        }
+      #todo-list li {
+          display: flex;
+          align-items: center;
+          padding: 10px;
+          border-bottom: 1px solid #eee;
+      }
 
-        #todo-list li:last-child {
-            border-bottom: none;
-        }
+      #todo-list li:last-child {
+          border-bottom: none;
+      }
 
-        strong {
-            font-size: 18px;
-        }
+      strong {
+          font-size: 18px;
+      }
 
-        small {
-            display: block;
-            margin-top: 10px;
-            color: #777;
-        }
+      small {
+          display: block;
+          margin-top: 10px;
+          color: #777;
+      }
 
-        footer {
-            background-color: #4CAF50;
-            color: #ffffff;
-            text-align: center;
-            padding: 20px 0;
-            margin-top: 40px;
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-        }
+      footer {
+          background-color: #4CAF50;
+          color: #ffffff;
+          text-align: center;
+          padding: 20px 0;
+          margin-top: 40px;
+          position: absolute;
+          bottom: 0;
+          width: 100%;
+      }
 
-        </style>
-          `
+      </style>
+        `
             },
             {
               id: 't5',
               label: '线上商城',
               category: '原型模板',
-              media: `<img src = '/src/assets/zixun-zhuanti.png' style="height:100%;width:100%">`,
+              media: `<img src = '/api/media/image/zixun-zhuanti.png' style="height:100%;width:100%">`,
               content: `
-        <body>
-            <header>
-                <div class="logo">MyShop</div>
-                <nav>
-                    <ul>
-                        <li><a href="#">首页</a></li>
-                        <li><a href="#">商品分类</a></li>
-                        <li><a href="#">热销商品</a></li>
-                        <li><a href="#">关于我们</a></li>
-                        <li><a href="#">联系方式</a></li>
-                    </ul>
-                </nav>
-                <div class="cart">
-                    <a href="#"><svg t="1693569366497" class="icon" viewBox="0 0 1028 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2624" width="32" height="32"><path d="M332.8 790.528q19.456 0 36.864 7.168t30.208 19.968 20.48 30.208 7.68 36.864-7.68 36.864-20.48 30.208-30.208 20.48-36.864 7.68q-20.48 0-37.888-7.68t-30.208-20.48-20.48-30.208-7.68-36.864 7.68-36.864 20.48-30.208 30.208-19.968 37.888-7.168zM758.784 792.576q19.456 0 37.376 7.168t30.72 19.968 20.48 30.208 7.68 36.864-7.68 36.864-20.48 30.208-30.72 20.48-37.376 7.68-36.864-7.68-30.208-20.48-20.48-30.208-7.68-36.864 7.68-36.864 20.48-30.208 30.208-19.968 36.864-7.168zM930.816 210.944q28.672 0 44.544 7.68t22.528 18.944 6.144 24.064-3.584 22.016-13.312 37.888-22.016 62.976-23.552 68.096-18.944 53.248q-13.312 40.96-33.28 56.832t-49.664 15.872l-35.84 0-65.536 0-86.016 0-96.256 0-253.952 0 14.336 92.16 517.12 0q49.152 0 49.152 41.984 0 20.48-9.728 35.84t-38.4 14.336l-49.152 0-94.208 0-118.784 0-119.808 0-99.328 0-55.296 0q-20.48 0-34.304-9.216t-23.04-24.064-14.848-32.256-8.704-32.768q-1.024-6.144-5.632-29.696t-11.264-58.88-14.848-78.848-16.384-87.552q-19.456-103.424-44.032-230.4l-76.8 0q-15.36 0-25.6-7.68t-16.896-18.432-9.216-23.04-2.56-22.528q0-20.48 13.824-33.792t37.376-12.288l103.424 0q20.48 0 32.768 6.144t19.456 15.36 10.24 18.944 5.12 16.896q2.048 8.192 4.096 23.04t4.096 30.208q3.072 18.432 6.144 38.912l700.416 0zM892.928 302.08l-641.024-2.048 35.84 185.344 535.552 1.024z" p-id="2625" fill="#ffffff"></path></svg></a>
-                </div>
-            </header>
+      <body>
+          <header>
+              <div class="logo">MyShop</div>
+              <nav>
+                  <ul>
+                      <li><a href="#">首页</a></li>
+                      <li><a href="#">商品分类</a></li>
+                      <li><a href="#">热销商品</a></li>
+                      <li><a href="#">关于我们</a></li>
+                      <li><a href="#">联系方式</a></li>
+                  </ul>
+              </nav>
+              <div class="cart">
+                  <a href="#"><svg t="1693569366497" class="icon" viewBox="0 0 1028 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2624" width="32" height="32"><path d="M332.8 790.528q19.456 0 36.864 7.168t30.208 19.968 20.48 30.208 7.68 36.864-7.68 36.864-20.48 30.208-30.208 20.48-36.864 7.68q-20.48 0-37.888-7.68t-30.208-20.48-20.48-30.208-7.68-36.864 7.68-36.864 20.48-30.208 30.208-19.968 37.888-7.168zM758.784 792.576q19.456 0 37.376 7.168t30.72 19.968 20.48 30.208 7.68 36.864-7.68 36.864-20.48 30.208-30.72 20.48-37.376 7.68-36.864-7.68-30.208-20.48-20.48-30.208-7.68-36.864 7.68-36.864 20.48-30.208 30.208-19.968 36.864-7.168zM930.816 210.944q28.672 0 44.544 7.68t22.528 18.944 6.144 24.064-3.584 22.016-13.312 37.888-22.016 62.976-23.552 68.096-18.944 53.248q-13.312 40.96-33.28 56.832t-49.664 15.872l-35.84 0-65.536 0-86.016 0-96.256 0-253.952 0 14.336 92.16 517.12 0q49.152 0 49.152 41.984 0 20.48-9.728 35.84t-38.4 14.336l-49.152 0-94.208 0-118.784 0-119.808 0-99.328 0-55.296 0q-20.48 0-34.304-9.216t-23.04-24.064-14.848-32.256-8.704-32.768q-1.024-6.144-5.632-29.696t-11.264-58.88-14.848-78.848-16.384-87.552q-19.456-103.424-44.032-230.4l-76.8 0q-15.36 0-25.6-7.68t-16.896-18.432-9.216-23.04-2.56-22.528q0-20.48 13.824-33.792t37.376-12.288l103.424 0q20.48 0 32.768 6.144t19.456 15.36 10.24 18.944 5.12 16.896q2.048 8.192 4.096 23.04t4.096 30.208q3.072 18.432 6.144 38.912l700.416 0zM892.928 302.08l-641.024-2.048 35.84 185.344 535.552 1.024z" p-id="2625" fill="#ffffff"></path></svg></a>
+              </div>
+          </header>
 
-            <main>
-                <section class="product-section">
-                    <!-- Sample products. You can add more similar structures -->
-                    <article class="product">
-                        <img src="/src/assets/shopping1.png" alt="商品1">
-                        <h3>商品1</h3>
-                        <p>简洁的商品描述1</p>
-                        <span class="price">$19.99</span>
-                        <button class="add-to-cart">添加到购物车</button>
-                    </article>
+          <main>
+              <section class="product-section">
+                  <!-- Sample products. You can add more similar structures -->
+                  <article class="product">
+                      <img src="/api/media/image/shopping1.png" alt="商品1">
+                      <h3>商品1</h3>
+                      <p>简洁的商品描述1</p>
+                      <span class="price">$19.99</span>
+                      <button class="add-to-cart">添加到购物车</button>
+                  </article>
 
-                    <article class="product">
-                        <img src="/src/assets/shopping2.png" alt="商品2">
-                        <h3>商品2</h3>
-                        <p>美观的商品描述2</p>
-                        <span class="price">$24.99</span>
-                        <button class="add-to-cart">添加到购物车</button>
-                    </article>
+                  <article class="product">
+                      <img src="/api/media/image/shopping2.png" alt="商品2">
+                      <h3>商品2</h3>
+                      <p>美观的商品描述2</p>
+                      <span class="price">$24.99</span>
+                      <button class="add-to-cart">添加到购物车</button>
+                  </article>
 
-                    <article class="product">
-                        <img src="/src/assets/shopping3.png" alt="商品3">
-                        <h3>商品3</h3>
-                        <p>优雅的商品描述3</p>
-                        <span class="price">$29.99</span>
-                        <button class="add-to-cart">添加到购物车</button>
-                    </article>
+                  <article class="product">
+                      <img src="/api/media/image/shopping3.png" alt="商品3">
+                      <h3>商品3</h3>
+                      <p>优雅的商品描述3</p>
+                      <span class="price">$29.99</span>
+                      <button class="add-to-cart">添加到购物车</button>
+                  </article>
 
-                    <article class="product">
-                        <img src="/src/assets/shopping4.png" alt="商品4">
-                        <h3>商品4</h3>
-                        <p>古典的商品描述4</p>
-                        <span class="price">$14.99</span>
-                        <button class="add-to-cart">添加到购物车</button>
-                    </article>
+                  <article class="product">
+                      <img src="/api/media/image/shopping4.png" alt="商品4">
+                      <h3>商品4</h3>
+                      <p>古典的商品描述4</p>
+                      <span class="price">$14.99</span>
+                      <button class="add-to-cart">添加到购物车</button>
+                  </article>
 
-                    <article class="product">
-                        <img src="/src/assets/shopping5.png" alt="商品5">
-                        <h3>商品5</h3>
-                        <p>动感的商品描述5</p>
-                        <span class="price">$34.99</span>
-                        <button class="add-to-cart">添加到购物车</button>
-                    </article>
+                  <article class="product">
+                      <img src="/api/media/image/shopping5.png" alt="商品5">
+                      <h3>商品5</h3>
+                      <p>动感的商品描述5</p>
+                      <span class="price">$34.99</span>
+                      <button class="add-to-cart">添加到购物车</button>
+                  </article>
 
-                    <article class="product">
-                        <img src="/src/assets/shopping6.png" alt="商品6">
-                        <h3>商品6</h3>
-                        <p>流畅的商品描述6</p>
-                        <span class="price">$44.99</span>
-                        <button class="add-to-cart">添加到购物车</button>
-                    </article>
-                </section>
-            </main>
-        </body>
-        <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f2f5;
-            color: #333;
-        }
+                  <article class="product">
+                      <img src="/api/media/image/shopping6.png" alt="商品6">
+                      <h3>商品6</h3>
+                      <p>流畅的商品描述6</p>
+                      <span class="price">$44.99</span>
+                      <button class="add-to-cart">添加到购物车</button>
+                  </article>
+              </section>
+          </main>
+      </body>
+      <style>
+      body {
+          font-family: 'Arial', sans-serif;
+          margin: 0;
+          padding: 0;
+          background-color: #f0f2f5;
+          color: #333;
+      }
 
-        header {
-            background-color: #b57c82;
-            color: #ecf0f1;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+      header {
+          background-color: #b57c82;
+          color: #ecf0f1;
+          padding: 20px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+      }
 
-        .logo {
-            font-size: 28px;
-            font-weight: bold;
-        }
+      .logo {
+          font-size: 28px;
+          font-weight: bold;
+      }
 
-        nav ul {
-            list-style-type: none;
-            display: flex;
-        }
+      nav ul {
+          list-style-type: none;
+          display: flex;
+      }
 
-        nav ul li {
-            margin-right: 25px;
-        }
+      nav ul li {
+          margin-right: 25px;
+      }
 
-        nav ul li a {
-            text-decoration: none;
-            color: #ecf0f1;
-            transition: color 0.3s ease;
-        }
+      nav ul li a {
+          text-decoration: none;
+          color: #ecf0f1;
+          transition: color 0.3s ease;
+      }
 
-        nav ul li a:hover {
-            color: #bdc3c7;
-        }
+      nav ul li a:hover {
+          color: #bdc3c7;
+      }
 
-        .cart img {
-            width: 32px;
-            height: 32px;
-            cursor: pointer;
-        }
+      .cart img {
+          width: 32px;
+          height: 32px;
+          cursor: pointer;
+      }
 
-        main {
-            max-width: 1200px;
+      main {
+          max-width: 1200px;
 
-            padding: 20px;
-        }
+          padding: 20px;
+      }
 
-        .product-section {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-        }
+      .product-section {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 30px;
+      }
 
-        .product {
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
+      .product {
+          background-color: #ffffff;
+          padding: 20px;
+          border-radius: 8px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          text-align: center;
+          transition: transform 0.3s ease;
+      }
 
-        .product:hover {
-            transform: translateY(-10px);
-        }
+      .product:hover {
+          transform: translateY(-10px);
+      }
 
-        .product img {
-            max-width: 250px;
-            height: auto;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
+      .product img {
+          max-width: 250px;
+          height: auto;
+          border-radius: 8px;
+          margin-bottom: 15px;
+      }
 
-        .product h3 {
-            font-size: 20px;
-            margin-top: 0;
-            color: #2c3e50;
-        }
+      .product h3 {
+          font-size: 20px;
+          margin-top: 0;
+          color: #2c3e50;
+      }
 
-        .product p {
-            color: #7f8c8d;
-            margin-bottom: 15px;
-        }
+      .product p {
+          color: #7f8c8d;
+          margin-bottom: 15px;
+      }
 
-        .price {
-            font-size: 20px;
-            color: #724e52;
-            display: block;
-            margin-bottom: 15px;
-        }
+      .price {
+          font-size: 20px;
+          color: #724e52;
+          display: block;
+          margin-bottom: 15px;
+      }
 
-        .add-to-cart {
-            padding: 10px 20px;
-            background-color: #ecced0;
-            color: #ffffff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+      .add-to-cart {
+          padding: 10px 20px;
+          background-color: #ecced0;
+          color: #ffffff;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+      }
 
-        .add-to-cart:hover {
-            background-color: #2980b9;
-        }
+      .add-to-cart:hover {
+          background-color: #2980b9;
+      }
 
-        footer {
-            background-color: #34495e;
-            color: #ecf0f1;
-            text-align: center;
-            padding: 20px 0;
-            margin-top: 60px;
-        }
+      footer {
+          background-color: #34495e;
+          color: #ecf0f1;
+          text-align: center;
+          padding: 20px 0;
+          margin-top: 60px;
+      }
 
-        </style>
-        `
+      </style>
+      `
             }
           ]
         },
@@ -1381,18 +1386,87 @@ button {
           [ExportPlugin]: {
             addExportBtn: true,
             btnLabel: '导出项目文件ZIP',
-            fileName: this.fileName,
-            root: {
-              css: {
-                'style.css': ed => ed.getCss(),
-              },
-              'index.html': ed => `<body>${ed.getHtml()}</body>`,
-              'index.js': ed => ed.getJs()
+            fileName: ()=>this.fileName,
+            isBinary:()=>true,
+  //           root: {
+  //             css: {
+  //               'style.css': ed => ed.getCss(),
+  //             },//引入JS和CSS是吧
+  //             img: async ed => {
+  //               let extractImagePaths=(htmlString)=> {
+  //   const regex = /<img[^>]+src="(.*?)"[^>]*>/g;
+  //   let match;
+  //   const imagePaths = [];
+
+  //   while ((match = regex.exec(htmlString)) !== null) {
+  //       imagePaths.push(match[1]);
+  //   }
+  //   return imagePaths
+  // }
+  // const imagePaths = extractImagePaths(ed.getHtml())
+  //   let imgContents=[]
+  //   for(let i=0;i<imagePaths.length;i++){
+  //     let path=imagePaths[i]
+  //     // let a=document.createElement('a')
+  //     // a.href=path
+  //     // a.download=path.split('/').pop()
+  //     // a.click()
+  //     // a.remove()
+  //   //   await this.$http.get(path).then(response=>{
+  //   //   let name=path.split('/').pop()
+  //   //   imgContents[name]=response.data.slice
+  //   // })
+  //   }
+  //   console.log(imgContents)
+  //   return imgContents;
+  //             },
+  //             'index.html': ed => `
+  //             <!DOCTYPE html><html><head><link rel="stylesheet" href="./css/style.css" type="text/css"></head>
+  //                         <body>${ed.getHtml().replace(/(<img [^>]*?src=")[^"]+\/([^\/"]+)/gi, '$1./img/$2')}</body>
+  //                         <script src="./index.js">`+ `<` + `/script></html>
+  //                         `,
+  //             'index.js': ed => ed.getJs()
+  //           }
+            root:async ed=>{
+              
+              const cssString = ed.getCss();
+              const jsString =ed.getJs();
+              const htmlString = `
+              <!DOCTYPE html><html><head><link rel="stylesheet" href="./css/style.css" type="text/css"></head>
+                          <body>${ed.getHtml().replace(/(<img [^>]*?src=")[^"]+\/([^\/"]+)/gi, '$1./img/$2')}</body>
+                          <script src="./index.js">`+ `<` + `/script></html>
+                          `
+                          let extractImagePaths=(htmlString)=> {
+                          const regex = /<img[^>]+src="(.*?)"[^>]*>/g;
+                          let match;
+                          const imagePaths = [];
+
+                          while ((match = regex.exec(htmlString)) !== null) {
+                              imagePaths.push(match[1]);
+                          }
+                          return imagePaths
+                        }
+              const imagePaths = extractImagePaths(ed.getHtml())
+              console.log(imagePaths)
+              const zip = new JSZip()
+              zip.file('index.html', htmlString);
+              zip.file('css/style.css', cssString);
+              zip.file('js/script.js', jsString);
+              for (const path of imagePaths) {
+                const response = await this.$http.get(path, { responseType: "arraybuffer" });
+                const filename = path.split("/").pop(); // 从URL获取文件名
+                zip.folder("img").file(filename, response.data);
+              }
+
+              // 生成ZIP并保存
+              zip.generateAsync({ type: 'blob' }).then(content => {
+                  saveAs(content, `${this.pageName}.zip`);
+              });
             }
           },
           [ScriptPlugin]: {
             starter: `//对该元素节点进行代码编辑
-						let el = this`,
+          let el = this`,
             buttonLabel: '保存',
 
           },
@@ -1421,38 +1495,38 @@ button {
               urlLoad: `http://43.138.14.231/projects/${this.pageId}/`,
               urlStore: `http://43.138.14.231/projects/${this.pageId}/`,
               // urlLoad: `http://localhost:3000/projects/${this.pageId}`,
-							// urlStore: `http://localhost:3000/projects/${this.pageId}`,
-              fetchOptions: opts => (opts.method === 'POST' ?  { method: 'PATCH' } : {}),
-							// urlLoad: `http://localhost:3000/projects/1`,
-							// urlStore: `http://localhost:3000/projects/1`,
-							// The `remote` storage uses the POST method when stores data but
-							// the json-server API requires PATCH.
-	
-							onStore: data => {  
+              // urlStore: `http://localhost:3000/projects/${this.pageId}`,
+              fetchOptions: opts => (opts.method === 'POST' ? { method: 'PATCH' } : {}),
+              // urlLoad: `http://localhost:3000/projects/1`,
+              // urlStore: `http://localhost:3000/projects/1`,
+              // The `remote` storage uses the POST method when stores data but
+              // the json-server API requires PATCH.
+
+              onStore: data => {
                 console.log('store')
                 if (data.pages.length == 0) {
                   data.pages.push({})
                 }
                 this.ws.send(JSON.stringify(data))
-								return {
-									id: this.pageId,
-									data,
-									// //存储画布宽高
-									size: {
-										height: this.canvasHeight,
-										width: this.canvasWidth,
-									},
-									Devices: this.Devices,
-								}
-							},
-							onLoad: result => {
+                return {
+                  id: this.pageId,
+                  data,
+                  // //存储画布宽高
+                  size: {
+                    height: this.canvasHeight,
+                    width: this.canvasWidth,
+                  },
+                  Devices: this.Devices,
+                }
+              },
+              onLoad: result => {
                 if (result.Devices && result.size) {
                   this.Devices = result.Devices
                   this.canvasHeight = result.size.height
                   this.canvasWidth = result.size.width
                 }
-								return result.data
-							}
+                return result.data
+              }
             }
           }
         },
@@ -1483,12 +1557,12 @@ button {
       node.style.height = document.querySelector('.gjs-frame').contentDocument.documentElement.scrollHeight + 'px'
       node.innerHTML =
         `${this.editor.getHtml()}
-            <style>
-            /* 清除reset.css的影响 */
-              /* 恢复默认字体大小和滚动行为 */
+          <style>
+          /* 清除reset.css的影响 */
+            /* 恢复默认字体大小和滚动行为 */
 * {
-    font-size: inherit;
-    scroll-behavior: auto;
+  font-size: inherit;
+  scroll-behavior: auto;
 }
 
 /* 恢复常见标签的内外边距 */
@@ -1500,84 +1574,84 @@ blockquote,
 dl, dt, dd, ul, ol, li,
 form, fieldset, legend, input, button, textarea,
 th, td {
-    margin: inherit;
-    padding: inherit;
+  margin: inherit;
+  padding: inherit;
 }
 
 /* 恢复列表符号 */
 ul, ol {
-    list-style: inherit;
+  list-style: inherit;
 }
 
 /* 恢复图片的默认显示方式和边框 */
 img {
-    display: inline; /* 或根据需要设置其他值 */
-    border: inherit;
+  display: inline; /* 或根据需要设置其他值 */
+  border: inherit;
 }
 
 /* 恢复强调性文字的默认字体重量和样式 */
 b, strong {
-    font-weight: bolder;
+  font-weight: bolder;
 }
 
 i, em {
-    font-style: italic;
+  font-style: italic;
 }
 
 /* 恢复标题的默认字体大小和字重 */
 h1, h2, h3, h4, h5, h6 {
-    font-size: inherit;
-    font-weight: bold;
+  font-size: inherit;
+  font-weight: bold;
 }
 
 /* 恢复删除线和下划线 */
 u, s, ins, del {
-    text-decoration: inherit;
+  text-decoration: inherit;
 }
 
 /* 恢复表格的默认边框样式 */
 table {
-    border: inherit;
-    border-spacing: inherit;
-    border-collapse: inherit;
+  border: inherit;
+  border-spacing: inherit;
+  border-collapse: inherit;
 }
 
 /* 恢复单元格的默认边框样式 */
 th, td {
-    border: inherit;
+  border: inherit;
 }
 
 /* 恢复输入元素和按钮的默认轮廓和边框 */
 input, button {
-    outline: inherit;
-    border: inherit;
+  outline: inherit;
+  border: inherit;
 }
 
 /* 恢复超链接的默认文本装饰和颜色 */
 a {
-    text-decoration: inherit;
-    color: inherit;
+  text-decoration: inherit;
+  color: inherit;
 }
 
 /* 清除浮动 */
 .leftfix, .rightfix, .clearfix::after {
-    float: none;
-    clear: none;
+  float: none;
+  clear: none;
 }
 
 /* 恢复SVG的默认显示方式 */
 svg {
-    display: inline; /* 或根据需要设置其他值 */
+  display: inline; /* 或根据需要设置其他值 */
 }
 
 /* 恢复文本区域的默认调整大小方式 */
 textarea {
-    resize: auto;
+  resize: auto;
 }
 
-          ${this.editor.getCss().replace(/body/g, '.export-image')} 
-            </style>
-        `
+        ${this.editor.getCss().replace(/body/g, '.export-image')} 
+          </style>
+      `
       document.body.appendChild(node)
       html2canvas(node).then(canvas => {
         document.body.removeChild(node)
@@ -1639,7 +1713,7 @@ textarea {
   display: inline-block;
   position: relative;
   /* --frame-height: 1080px;
-	 --frame-width: 1920px; */
+ --frame-width: 1920px; */
 }
 
 :deep(.gjs-editor) {
@@ -1715,10 +1789,10 @@ textarea {
 }
 
 /* :deep(.gjs-pn-devices-c .gjs-pn-btn:nth-child(3)) {
-	display: none;
+display: none;
 }
 :deep(.gjs-pn-devices-c .gjs-pn-btn:nth-child(2)) {
-	display: none;
+display: none;
 } */
 :deep(.gjs-pn-btn) {
   transition: all cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s;
@@ -1919,7 +1993,7 @@ textarea {
   visibility: visible;
 }
 
-:deep(.gjs-title){
+:deep(.gjs-title) {
   font-weight: bold;
 }
 </style>  

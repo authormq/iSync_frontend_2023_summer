@@ -20,12 +20,12 @@
       </ul>
     </div>
     <div class="team-intro-img">
-      <img src="/src/assets/1.jpg">
+      <img src="http://43.138.14.231/api/media/image/m1.png">
     </div>
   </div>
   <div id="message" class="homepage-intro message-intro">
     <div class="message-intro-img">
-      <img src="/src/assets/2.jpg">
+      <img src="http://43.138.14.231/api/media/image/m2.png">
     </div>
     <div class="message-intro-text">
       <h3>叮咚～来自团队的一封信</h3>
@@ -48,7 +48,7 @@
       <div v-for="(intro, index) in projectsIntro" :key="index">
         <div class="project-intro-item">
           <img :src="intro.src" alt="hh">
-          <h3>{{ intro.msg }}</h3>
+          <h3 style="color: rgba(199,29,35,1)">{{ intro.msg }}</h3>
         </div>
       </div>
     </StylishSlider>
@@ -128,37 +128,37 @@ export default {
       ],
       projectsIntro: [
         {
-          src: '/src/assets/1.jpg',
+          src: 'http://43.138.14.231/api/media/image/m1.png',
           msg: '项目管理？很简单！'
         },
         {
-          src: '/src/assets/2.jpg',
+          src: 'http://43.138.14.231/api/media/image/m2.png',
           msg: '原型设计，简洁易用'
         },
         {
-          src: '/src/assets/3.jpg',
+          src: 'http://43.138.14.231/api/media/image/m3.png',
           msg: '组件丰富，支持导出'
         },
         {
-          src: '/src/assets/4.jpg',
+          src: 'http://43.138.14.231/api/media/image/m4.png',
           msg: '发挥想象力，尽在此刻'
         }
       ],
       docIntro: [
         {
-          src: '/src/assets/1.jpg',
+          src: 'http://43.138.14.231/api/media/image/m1.png',
           msg: '新建编辑，一键搞定',
         },
         {
-          src: '/src/assets/2.jpg',
+          src: 'http://43.138.14.231/api/media/image/m2.png',
           msg: '链接分享，全网共建',
         },
         {
-          src: '/src/assets/3.jpg',
+          src: 'http://43.138.14.231/api/media/image/m3.png',
           msg: '多人编辑，实时同步',
         },
         {
-          src: '/src/assets/4.jpg',
+          src: 'http://43.138.14.231/api/media/image/m4.png',
           msg: '自动保存，版本回退',
         }
       ]
@@ -183,7 +183,7 @@ export default {
   width: 100%;
   height: 100vh;
   box-sizing: border-box;
-  background-image: url('/src/assets/head.jpg');
+  background-image: url('http://43.138.14.231/api/media/image/head.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;

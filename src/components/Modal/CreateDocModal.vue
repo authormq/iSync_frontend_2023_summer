@@ -64,49 +64,49 @@ export default {
       models: [
         {
           isSelected: true,
-          imgSrc: "/src/assets/empty-document.png",
+          imgSrc: "http://43.138.14.231/api/media/image/empty-document.png",
           type: 'empty',
           name: '空文档'
         },
         {
           isSelected: false,
-          imgSrc: "/src/assets/project-plan.png",
+          imgSrc: "http://43.138.14.231/api/media/image/project-plan.png",
           type: 'project_plan',
           name: '项目计划'
         },
         {
           isSelected: false,
-          imgSrc: "/src/assets/conference-summary.png",
+          imgSrc: "http://43.138.14.231/api/media/image/conference-summary.png",
           type: 'meeting_minutes',
           name: '会议纪要'
         },
         {
           isSelected: false,
-          imgSrc: "/src/assets/team-management.png",
+          imgSrc: "http://43.138.14.231/api/media/image/team-management.png",
           type: 'management',
           name: '团队管理'
         },
         {
           isSelected: false,
-          imgSrc: "/src/assets/weekly-review.png",
+          imgSrc: "http://43.138.14.231/api/media/image/weekly-review.png",
           type: 'weekly_report',
           name: '工作周报'
         },
         {
           isSelected: false,
-          imgSrc: "/src/assets/research-report.png",
+          imgSrc: "http://43.138.14.231/api/media/image/research-report.png",
           type: 'research_report',
           name: '研究报告'
         },
         {
           isSelected: false,
-          imgSrc: "/src/assets/specification-sheet.png",
+          imgSrc: "http://43.138.14.231/api/media/image/specification-sheet.png",
           type: 'specification_manual',
           name: '规格手册'
         },
         {
           isSelected: false,
-          imgSrc: "/src/assets/design-handbook.png",
+          imgSrc: "http://43.138.14.231/api/media/image/design-handbook.png",
           type: 'design_manual',
           name: '设计手册'
         },

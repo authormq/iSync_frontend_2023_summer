@@ -975,7 +975,7 @@ export default {
 			const group = data.group_data
 			for (let j = 0; j < group.members.length; j++) {
 				if (group.members[j].user.id == parseInt(this.currentUserId)) {
-					createRoom(group)
+					this.createRoom(group)
 					return
 				}
 			}
@@ -1077,7 +1077,7 @@ export default {
 				}
 			}
 			group['creator'] = null
-			createRoom(group)
+			this.createRoom(group)
 			if (group.lastMessage != null) {
 				this.rooms[this.rooms.length - 1].lastMessage = {
 					_id: group.lastMessage.id,

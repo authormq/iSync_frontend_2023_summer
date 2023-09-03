@@ -1,5 +1,8 @@
 # 说明
 > 此版本为9月3日答辩展示版本，不代表最终版本，后续可能会更新以及添置域名
+> (sudo) npm i (报错开启超级权限）
+> **同时需要引入两个文件**，直接存放在node_modules_add中，`(sudo) npm run dev`前挪入`node_module/grapesjs-preset-webpage/dist/`中。
+> (sudo) npm run dev
 
 ## 1 已安装插件
 
